@@ -17,6 +17,7 @@ from collections import Counter
 import pdfplumber
 
 from .common import PROCESSED, PDF_DIR, log, now_iso, read_jsonl, write_jsonl
+from .extract.ocr import has_text_layer, ocr_document
 from .extract.records import parse_all
 from .extract.tables import extract_tables
 
@@ -88,7 +89,8 @@ def detect_report_year(text: str, local_path: str) -> int | None:
     return None
 
 
-def process_pdf(entry: dict, max_pages: int | None = None) -> dict[str, list[dict]]:
+def process_pdf(entry: dict, max_pages: int | None = None,
+                ocr: bool = False, ocr_max_pages: int | None = None) -> dict[str, list[dict]]:
     path = PDF_DIR / entry["local_path"]
     issuer, ref_year = issuer_from_title(entry.get("title", ""), entry.get("issuer_hint"))
     doc = {
@@ -98,12 +100,25 @@ def process_pdf(entry: dict, max_pages: int | None = None) -> dict[str, list[dic
         "pdf_url": entry.get("pdf_url"),
         "filing_date": entry.get("filing_date"),
     }
+    scanned = False
     with pdfplumber.open(path) as pdf:
-        tables = extract_tables(pdf, max_pages=max_pages)
         n_pages = len(pdf.pages)
+        scanned = ocr and not has_text_layer(pdf)
+        if not scanned:
+            tables = extract_tables(pdf, max_pages=max_pages)
+            if entry.get("doc_type") == "rapport_annuel" and ref_year is None:
+                head = "\n".join((p.extract_text() or "") for p in pdf.pages[:6])
+                ref_year = detect_report_year(head, entry.get("local_path", ""))
+
+    if scanned:
+        # No text layer at all: the file is page images. Read it by OCR, which
+        # yields word positions and so goes through the from-words path.
+        ocr_doc = ocr_document(path, max_pages=ocr_max_pages)
+        tables = extract_tables(ocr_doc, from_words=True)
         if entry.get("doc_type") == "rapport_annuel" and ref_year is None:
-            head = "\n".join((p.extract_text() or "") for p in pdf.pages[:6])
+            head = "\n".join(p.extract_text() for p in ocr_doc.pages[:6])
             ref_year = detect_report_year(head, entry.get("local_path", ""))
+
     out = parse_all(tables, doc)
     for kind, rows in out.items():
         for r in rows:
@@ -111,6 +126,9 @@ def process_pdf(entry: dict, max_pages: int | None = None) -> dict[str, list[dic
             r["issuer_ref_year"] = ref_year
             r["doc_sha256"] = entry.get("sha256")
             r["record_kind"] = kind
+            # Marked on every row, because an OCR'd row is weaker evidence than
+            # a row read from a text layer and an analyst may want to drop them.
+            r["from_ocr"] = scanned
     out["_meta"] = [
         {
             "node_key": entry["node_key"],
@@ -118,6 +136,7 @@ def process_pdf(entry: dict, max_pages: int | None = None) -> dict[str, list[dic
             "issuer_ref_year": ref_year,
             "n_pages": n_pages,
             "n_tables": len(tables),
+            "from_ocr": scanned,
             "counts": {k: len(v) for k, v in out.items() if k != "_meta"},
             "extracted_at": now_iso(),
         }
@@ -125,17 +144,20 @@ def process_pdf(entry: dict, max_pages: int | None = None) -> dict[str, list[dic
     return out
 
 
-def _safe_process(entry: dict, max_pages: int | None):
+def _safe_process(entry: dict, max_pages: int | None, ocr: bool = False,
+                  ocr_max_pages: int | None = None):
     """Run extraction, returning (result, error) so one bad file cannot abort a run."""
     try:
-        return process_pdf(entry, max_pages=max_pages), None
+        return process_pdf(entry, max_pages=max_pages, ocr=ocr,
+                           ocr_max_pages=ocr_max_pages), None
     except Exception as exc:
         return {}, f"{type(exc).__name__}: {exc} | {traceback.format_exc(limit=2)}"
 
 
-def _safe_process_pair(entry: dict, max_pages: int | None):
+def _safe_process_pair(entry: dict, max_pages: int | None, ocr: bool = False,
+                       ocr_max_pages: int | None = None):
     """Pool worker: returns the entry alongside its outcome, to keep them paired."""
-    return entry, _safe_process(entry, max_pages)
+    return entry, _safe_process(entry, max_pages, ocr, ocr_max_pages)
 
 
 def main() -> None:
@@ -152,6 +174,15 @@ def main() -> None:
     ap.add_argument("--skip-processed", action="store_true",
                     help="skip documents already present in the extraction log, "
                          "so a long corpus can be worked through in batches")
+    ap.add_argument("--ocr", action="store_true",
+                    help="read documents that carry no text layer by OCR; without "
+                         "this they are recorded as yielding nothing")
+    ap.add_argument("--ocr-max-pages", type=int, default=None,
+                    help="pages to OCR per document (default 40). Governance "
+                         "tables sit in the front matter; the tail is accounts")
+    ap.add_argument("--only-scanned", action="store_true",
+                    help="process only documents with no text layer, for working "
+                         "through the scanned part of the corpus on its own")
     args = ap.parse_args()
 
     entries = [
@@ -179,6 +210,29 @@ def main() -> None:
         before = len(entries)
         entries = [e for e in entries if e["node_key"] not in done]
         log.info("%d of %d documents already extracted", before - len(entries), before)
+    # The manifest outlives the files: source PDFs are not redistributed, and a
+    # corpus larger than the disk is worked through by extracting a batch and
+    # dropping its files. A missing file is not a failure to report, it is a
+    # document this machine does not currently hold.
+    present = [e for e in entries if (PDF_DIR / e["local_path"]).exists()]
+    if len(present) != len(entries):
+        log.info("%d of %d documents are not downloaded; skipping them",
+                 len(entries) - len(present), len(entries))
+        entries = present
+
+    if args.only_scanned:
+        # Opening every PDF to test its text layer is cheap next to OCR'ing it,
+        # and it keeps an OCR run from re-reading the digital majority.
+        kept = []
+        for e in entries:
+            try:
+                with pdfplumber.open(PDF_DIR / e["local_path"]) as pdf:
+                    if not has_text_layer(pdf):
+                        kept.append(e)
+            except Exception:
+                continue
+        log.info("%d of %d documents have no text layer", len(kept), len(entries))
+        entries = kept
     if args.limit:
         entries = entries[: args.limit]
     log.info("extracting from %d documents", len(entries))
@@ -188,12 +242,13 @@ def main() -> None:
     # Documents are independent and each is CPU-bound in pdfplumber, so this
     # scales close to linearly with cores.
     if args.workers == 1:
-        results = ((e, _safe_process(e, args.max_pages)) for e in entries)
+        results = ((e, _safe_process(e, args.max_pages, args.ocr, args.ocr_max_pages))
+                   for e in entries)
     else:
         with mp.Pool(args.workers) as pool:
             pairs = pool.starmap(
                 _safe_process_pair,
-                [(e, args.max_pages) for e in entries],
+                [(e, args.max_pages, args.ocr, args.ocr_max_pages) for e in entries],
                 chunksize=1,
             )
         results = iter(pairs)

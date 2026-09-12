@@ -395,8 +395,223 @@ _RELEVANT_PAGE = re.compile(
 )
 
 
-def extract_tables(pdf, max_pages: int | None = None) -> list[FoundTable]:
-    """Walk a pdfplumber PDF and return every table we can classify."""
+# Scanned filings do not number their sections; they set titles in capitals
+# ("STRUCTURE DU CAPITAL", "LE CONSEIL D'ADMINISTRATION"). The heading is then
+# the only thing identifying a table, because the column header is frequently
+# a single merged cell or missing altogether.
+_HEADING_KINDS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    # Ordered: the first match wins, so the more specific headings come first.
+    ("director_holdings", ("participations des dirigeants", "actions detenues par les membres",
+                           "participation des membres", "actions des dirigeants")),
+    ("interlocks", ("mandats d'administrateurs", "mandats d administrateurs",
+                    "mandats dans d'autres societes", "mandats dans d autres societes",
+                    "autres mandats")),
+    ("executives", ("activites exercees en dehors", "fonctions exercees en dehors")),
+    ("subsidiaries", ("societes du groupe", "filiales et participations",
+                      "liste des filiales", "participations financieres",
+                      "portefeuille de participations")),
+    ("board", ("conseil d'administration", "conseil d administration",
+               "membres du conseil", "administrateurs", "president du conseil",
+               "president directeur general", "composition du conseil",
+               "organes d'administration", "organes d administration",
+               "conseil de surveillance", "directoire")),
+    ("blockholders", ("principaux actionnaires", "actionnaires detenant",
+                      "repartition du capital", "actionnariat",
+                      "structure de l'actionnariat", "structure de l actionnariat",
+                      "liste des actionnaires")),
+)
+
+# Kinds whose rows carry figures, and so can be qualified by the existing
+# borderless-row rule. `capital_structure` is deliberately absent: its parser
+# maps columns by fixed position for synthesized rows, and a scanned table that
+# omits the shareholder-count column would have its share figures read out of
+# the percentage column. An aggregate carries no edge, so a wrong number there
+# would be a pure loss.
+_OCR_FIGURE_KINDS = {"blockholders", "director_holdings", "subsidiaries"}
+_OCR_ROSTER_KINDS = {"board", "interlocks", "executives"}
+
+# A synthetic header, since scanned rosters rarely print one. The column order
+# is what these filings actually use, and `parse_board` maps by header name.
+_ROSTER_HEADER = ["Membre", "Qualité", "Représenté par"]
+
+_HONORIFIC_ONLY = re.compile(r"^(?:mr?|mm|mme|mlle|dr|pr|me)s?\.?$", re.I)
+_ROLE_TAIL = re.compile(
+    r"\s(?:repr[ée]sentant|repr[ée]sent[ée]\s+par|pr[ée]sident|administrateur|"
+    r"directeur\s+g[ée]n[ée]ral|membre)\b.*$", re.I)
+_PROSE = re.compile(r"\b(?:que|dont|ainsi|lequel|selon|apres|lors de|il est|elle est)\b", re.I)
+
+
+def classify_from_heading(heading: str) -> str | None:
+    """Identify a table from its heading alone.
+
+    Used only for OCR'd pages. A digital filing is classified from its column
+    header, which is far stronger evidence; this is the weaker rule that scanned
+    pages leave available, and it is why the OCR path is kept separate.
+    """
+    ctx = norm(heading)
+    if not ctx:
+        return None
+    for kind, needles in _HEADING_KINDS:
+        if _any(ctx, *needles):
+            return kind
+    return None
+
+
+def _is_caps_title(line: str) -> bool:
+    """Whether a line reads as a typeset section title rather than body text."""
+    s = line.strip()
+    if not (6 <= len(s) <= 90) or s.endswith((".", ",", ";", ":")):
+        return False
+    letters = [c for c in s if c.isalpha()]
+    if len(letters) < 5:
+        return False
+    return sum(c.isupper() for c in letters) / len(letters) >= 0.85
+
+
+def ocr_headings(page) -> list[tuple[float, str]]:
+    """Headings on a scanned page: numbered ones, plus capitalised titles."""
+    heads = list(page_headings(page))
+    seen = {round(y) for y, _ in heads}
+    for y, cells in _page_cell_lines(page):
+        line = " ".join(c for c in cells if c.strip()).strip()
+        if round(y) not in seen and _is_caps_title(line):
+            heads.append((y, line))
+    heads.sort(key=lambda h: h[0])
+    return heads
+
+
+def _roster_rows(page, top: float, bottom: float) -> list[list[str]]:
+    """Rows of a scanned membership list.
+
+    A board list is typeset as a list, not a ruled table: a name, sometimes a
+    capacity beside it, sometimes the officer representing a corporate seat.
+    There are no figures to qualify a row with, so the test is that the row
+    opens with something name-shaped and does not read as a sentence.
+    """
+    rows = []
+    for y, cells in _page_cell_lines(page):
+        if not (top < y < bottom):
+            continue
+        cells = [c.strip() for c in cells if c.strip()]
+        if not cells:
+            continue
+        # "MM." printed once before a column of names is its own cell; it is a
+        # label for the list, not a member.
+        if _HONORIFIC_ONLY.match(cells[0]) and len(cells) > 1:
+            cells = [f"{cells[0]} {cells[1]}"] + cells[2:]
+        # A capacity printed tight against the name is not split off by the
+        # column-gap rule: "Seifeddine NAGHMOUCHI Representant l'Etat" arrives
+        # as one cell. Cutting on the capacity keeps it out of the name.
+        m = _ROLE_TAIL.search(cells[0])
+        if m and m.start() > 2:
+            cells = [cells[0][:m.start()].strip(), cells[0][m.start():].strip()] + cells[1:]
+        name = cells[0]
+        if len(name) < 3 or len(name) > 70 or len(" ".join(cells)) > 160:
+            continue
+        if _PROSE.search(" ".join(cells)):
+            continue
+        # A trailing full stop marks a sentence, but not an acronym: "C.N.S.S."
+        # and "E.T.A.P." are corporate board members and must survive.
+        if re.search(r"[a-zà-þ]{3,}[.,;]$", name):
+            continue
+        # Name-shaped: a capitalised word, an all-caps word, or a dotted
+        # acronym - state bodies sit on these boards as "E.T.A.P." and "B.C.T.".
+        if not re.search(r"[A-ZÀ-Þ][a-zà-þ'’-]|[A-ZÀ-Þ]{2,}|(?:[A-ZÀ-Þ]\.){2,}", name):
+            continue
+        if is_table_noise_line(name):
+            continue
+        rows.append(cells)
+    return rows
+
+
+def is_table_noise_line(text: str) -> bool:
+    """Page furniture that would otherwise read as a member or a holder."""
+    t = norm(text)
+    return (
+        not t
+        or t.isdigit()
+        or _any(t, "rapport annuel", "sommaire", "page", "exercice clos",
+                "etats financiers", "commissaires aux comptes", "note aux",
+                "controleur", "siege social", "capital social")
+    )
+
+
+def tables_from_cell_lines(page, heads, last_heading: str, page_bottom: float):
+    """Find tables on a page that reports no ruling lines at all.
+
+    A scanned page has no vector graphics, so `find_tables` sees nothing and the
+    ordinary path - which starts from a ruled table and only *fills* a
+    borderless body - never runs. Tables are located from their headings
+    instead, each running down to the next heading on the page.
+
+    Returns (kind, heading, header, rows) tuples. A region that yields no
+    qualifying rows is dropped, which is what keeps a heading with nothing
+    beneath it from becoming an empty table.
+    """
+    out = []
+    if not heads:
+        heads = []
+    bounds = [h[0] for h in heads] + [page_bottom]
+    for i, (y, heading) in enumerate(heads):
+        kind = classify_from_heading(heading)
+        if kind is None:
+            continue
+        bottom = bounds[i + 1] if i + 1 < len(bounds) else page_bottom
+        if bottom <= y:
+            bottom = page_bottom
+        if kind in _OCR_FIGURE_KINDS:
+            rows = synth_rows_from_text(page, y, bottom)
+            header = _header_line(page, y, bottom) or ["Actionnaires", "Nombre", "%"]
+        elif kind in _OCR_ROSTER_KINDS:
+            rows = _roster_rows(page, y, bottom)
+            header = _ROSTER_HEADER
+        else:
+            continue
+        if not rows:
+            continue
+        out.append((kind, heading, header, rows))
+
+    # A scanned page can also carry a genuine column header, which is stronger
+    # evidence than the heading. Those are picked up by the ordinary classifier.
+    claimed = [(h[0], b) for h, b in zip(heads, bounds[1:])] if heads else []
+    for y, cells in _page_cell_lines(page):
+        cells = [c.strip() for c in cells if c.strip()]
+        if len(cells) < 2 or any(t <= y <= b for t, b in claimed):
+            continue
+        above = [h for h in heads if h[0] < y]
+        heading = above[-1][1] if above else last_heading
+        kind = classify_table(cells, heading)
+        if kind is None or kind not in _OCR_FIGURE_KINDS:
+            continue
+        below = [h[0] for h in heads if h[0] > y + 1]
+        rows = synth_rows_from_text(page, y, below[0] if below else page_bottom)
+        if rows:
+            out.append((kind, heading, cells, rows))
+    return out
+
+
+def _header_line(page, top: float, bottom: float) -> list[str] | None:
+    """The column header inside a region, where the filing prints one."""
+    for y, cells in _page_cell_lines(page):
+        if not (top < y < bottom):
+            continue
+        cells = [c.strip() for c in cells if c.strip()]
+        if cells and _any(norm(" ".join(cells)), "actionnaire", "nombre d'actions",
+                          "nbre d'actions", "societe", "filiale"):
+            return cells
+    return None
+
+
+def extract_tables(pdf, max_pages: int | None = None,
+                   from_words: bool = False) -> list[FoundTable]:
+    """Walk a pdfplumber PDF and return every table we can classify.
+
+    ``from_words`` switches to reconstructing tables from word positions alone,
+    for documents that have been OCR'd and so carry no ruling lines. It is a
+    parameter rather than a fallback on an empty ``find_tables`` so that
+    digitally filed documents keep their existing, validated behaviour
+    unchanged.
+    """
     found: list[FoundTable] = []
     last_heading = ""          # carries across pages for tables that continue
     doc_as_of: str | None = None
@@ -413,7 +628,7 @@ def extract_tables(pdf, max_pages: int | None = None) -> list[FoundTable]:
                 last_heading = h
             continue
 
-        heads = page_headings(page)
+        heads = ocr_headings(page) if from_words else page_headings(page)
         try:
             tables = page.find_tables()
         except Exception:
@@ -421,6 +636,29 @@ def extract_tables(pdf, max_pages: int | None = None) -> list[FoundTable]:
 
         table_tops = sorted(t.bbox[1] for t in tables)
         page_bottom = float(page.height)
+
+        if from_words:
+            for kind, heading, header, rows in tables_from_cell_lines(
+                page, heads, last_heading, page_bottom
+            ):
+                as_of = (find_as_of_date(heading) or find_as_of_date(text[:600])
+                         or doc_as_of)
+                if as_of and not doc_as_of:
+                    doc_as_of = as_of
+                found.append(
+                    FoundTable(
+                        kind=kind,
+                        page=idx + 1,
+                        heading=heading.strip(),
+                        as_of=as_of,
+                        header=header,
+                        rows=rows,
+                        synthesized=True,
+                    )
+                )
+            if heads:
+                last_heading = heads[-1][1]
+            continue
 
         for tf in tables:
             try:

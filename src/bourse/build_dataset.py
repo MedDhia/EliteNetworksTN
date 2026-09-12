@@ -151,6 +151,10 @@ def build_edges(res: Resolver) -> tuple[list[dict], dict[str, dict]]:
                 "doc_url": rec.get("doc_url"),
                 "page": rec.get("page"),
                 "doc_sha256": rec.get("doc_sha256"),
+                # Whether the row was read by OCR rather than from a text
+                # layer. Carried onto the edge so a reader can weight or drop
+                # the scanned part of the archive without rejoining records.
+                "from_ocr": int(bool(rec.get("from_ocr"))),
                 **extra,
             }
         )
@@ -556,7 +560,7 @@ EDGE_FIELDS = [
     "mandate_start", "mandate_end", "n_shares", "seat_holder_type", "represents",
     "shared_actors", "event_type", "pct_stated", "price_tnd",
     "at_firm", "mandate_end",
-    "doc_node_key", "doc_type", "doc_url", "page", "doc_sha256",
+    "doc_node_key", "doc_type", "doc_url", "page", "doc_sha256", "from_ocr",
 ]
 
 

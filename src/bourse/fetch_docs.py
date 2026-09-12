@@ -53,8 +53,11 @@ def download(
             continue
         for url in rec.get("pdf_urls") or []:
             if skip_existing and url in manifest:
-                path = PDF_DIR / manifest[url]["local_path"]
-                if path.exists():
+                # A failed entry carries no local_path, and a file extracted
+                # and then pruned no longer exists. Both should be fetched
+                # again rather than skipped - or crash the run.
+                local = manifest[url].get("local_path")
+                if local and (PDF_DIR / local).exists():
                     continue
             todo.append((rec, url))
     if limit:

@@ -55,9 +55,11 @@ clean-derived: ## remove everything derived, keeping the raw mirror
 BPY := PYTHONPATH=src python3
 
 .PHONY: bourse bourse-spine bourse-crawl bourse-resolve bourse-fetch \
-        bourse-extract bourse-movements bourse-resolutions bourse-build \
-        bourse-export bourse-validate bourse-test
+        bourse-extract bourse-ocr bourse-movements bourse-resolutions \
+        bourse-build bourse-export bourse-validate bourse-test
 
+# bourse-ocr is deliberately out of the default chain: it needs tesseract-ocr
+# with the French model installed, and it takes hours. Run it explicitly.
 bourse: bourse-spine bourse-crawl bourse-resolve bourse-fetch bourse-extract \
         bourse-movements bourse-resolutions bourse-build bourse-export \
         bourse-validate
@@ -77,10 +79,16 @@ bourse-fetch:    ## download registration documents and movement notices
 	        operation_sur_capital augmentation_de_capital
 	$(BPY) -m bourse.fetch_docs --doc-types resolutions_ag
 	$(BPY) -m bourse.fetch_docs --doc-types rapport_annuel
+	$(BPY) -m bourse.fetch_docs --doc-types prospectus
 
 bourse-extract:  ## parse tables into typed records (slow; parallel)
 	$(BPY) -m bourse.pipeline --doc-types document_de_reference
 	$(BPY) -m bourse.pipeline --doc-types rapport_annuel --skip-processed
+	$(BPY) -m bourse.pipeline --doc-types prospectus --skip-processed
+
+bourse-ocr:      ## read the scanned filings by OCR (very slow; needs tesseract)
+	$(BPY) -m bourse.pipeline --ocr --only-scanned --skip-processed \
+	        --doc-types document_de_reference rapport_annuel prospectus
 
 bourse-movements: ## parse dated operations out of CMF notices
 	$(BPY) -m bourse.movements_pipeline

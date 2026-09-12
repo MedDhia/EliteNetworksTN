@@ -250,29 +250,34 @@ These are properties of the sources, and should be stated in any write-up.
     operating companies less so. 483 of 606 rows concern operating companies,
     across 78 firms.
 
-11. **Annual reports extend the series forward, not backward.** They are the
-    second source of board and blockholder tables, and they widen the set of
-    firms observed considerably, because many more issuers file an annual report
-    than file a registration document. They do **not** repair the 2012–2017 hole
-    in limitation 9, and it is worth being explicit about why, because the
-    natural assumption is that they would.
+11. **Part of the record is read by OCR, and is weaker evidence.** About a
+    third of the corpus was scanned from paper rather than filed digitally and
+    carries no text layer at all. These filings are concentrated in exactly the
+    years where digital coverage is thinnest, so they are read with Tesseract
+    and fed to the same table extractor (see `docs/SOURCES-bourse.md`).
 
-    The CMF's annual-report section holds nothing at all for financial years
-    2012, 2013 and 2014. For 2004–2011 it holds 165 reports, of which 164 are
-    scanned page images carrying no text layer: an automated reader returns
-    literally nothing from them. Born-digital filing arrives across 2016–2018
-    (62% of FY2016 reports are still images, 50% of FY2017, 11% of FY2018, and
-    under 6% from FY2019 on). The rows this source contributes therefore land
-    overwhelmingly in 2018 and later.
+    Every row obtained this way carries **`from_ocr = 1`**, in the records and
+    on the edge list. Treat those edges as a lower-confidence stratum: the
+    tables are located from their heading rather than a column header, and
+    misread characters are left uncorrected on purpose, so a name may appear
+    with a wrong letter ("Abdeikader" for "Abdelkader") and resolve to its own
+    entity instead of merging. Check `n_aliases` and the alias crosswalk before
+    treating a scanned-era actor as distinct, and use `from_ocr` to test whether
+    a result depends on the scanned stratum.
 
-    Making the older reports usable means OCR, not a better parser. That is a
-    real and worthwhile extension — Tesseract with the `fra` model, then table
-    reconstruction from OCR word boxes — but it would produce data of a
-    different and lower reliability class than the rest of this dataset, so it
-    is left undone rather than mixed in silently.
+    Aggregate `capital_structure` rows are deliberately **not** read from
+    scanned pages: that parser maps columns by position, and a scanned table
+    omitting the shareholder-count column would take its share figures from the
+    percentage column. An aggregate carries no edge, so a wrong number there
+    would be pure loss.
 
-    For the 2012–2017 window the `board_seat` and `ownership` layers, sourced
-    from registration documents, remain the only coverage.
+12. **Date an annual report by its file name, not by its text.** The CMF names
+    these files with the financial year, and for a scanned report that is the
+    only year available before OCR. Counting coverage from extracted text makes
+    the scanned years look empty — a fact about the text layer, not about what
+    the regulator published. An earlier draft of this codebook reported no
+    annual reports at all for FY2012–2014 for exactly this reason; there are
+    195.
 
    Two firm-years still show declared stakes above 100% (see
    `validation_report.md`). Both trace to inconsistencies in the filings

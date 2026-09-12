@@ -455,6 +455,91 @@ check("filing date is the last resort",
       _year({"filing_date": "2020-06-30"}), 2020)
 
 
+# --- scanned filings ------------------------------------------------------
+# A third of the archive is page images. These rules are what let the ordinary
+# table extractor read OCR output, so they are tested on the shapes that broke
+# them: acronym board members, honorific-only cells, capacities run into names.
+from bourse.extract.ocr import _text_from_words, _words_from_tsv  # noqa: E402
+from bourse.extract.tables import (  # noqa: E402
+    _is_caps_title,
+    _roster_rows,
+    classify_from_heading,
+)
+
+
+class _FakePage:
+    """Minimal stand-in carrying positioned words, as an OCR page does."""
+
+    def __init__(self, rows, height=800.0):
+        self.words = []
+        self.height = height
+        for top, cells in rows:
+            x = 50.0
+            for cell in cells:
+                for tok in cell.split():
+                    self.words.append({"text": tok, "x0": x, "x1": x + 6.0 * len(tok),
+                                       "top": top, "bottom": top + 9.0})
+                    x += 6.0 * len(tok) + 3.0
+                x += 40.0          # a column gap, wider than word spacing
+
+    def extract_words(self, **_kw):
+        return self.words
+
+
+check("heading identifies a board table",
+      classify_from_heading("LE CONSEIL D'ADMINISTRATION"), "board")
+check("heading identifies administrators",
+      classify_from_heading("ADMINISTRATEURS"), "board")
+check("heading identifies named shareholders",
+      classify_from_heading("PRINCIPAUX ACTIONNAIRES"), "blockholders")
+check("heading identifies group participations",
+      classify_from_heading("SOCIETES DU GROUPE"), "subsidiaries")
+check("auditors are not a board", classify_from_heading("COMMISSAIRES AUX COMPTES"), None)
+check("prose is not a heading", classify_from_heading("Le conseil s'est réuni"), None)
+
+check("capitalised title recognised", _is_caps_title("STRUCTURE DU CAPITAL"), True)
+check("sentence is not a title",
+      _is_caps_title("Le conseil d'administration s'est réuni quatre fois."), False)
+
+page = _FakePage([
+    (100.0, ["M. Laroussi BAYOUDH", "Représentant l'Etat"]),
+    (120.0, ["MM.", "Hédi BEN CHEIKH", "Représentant l'Etat"]),
+    (140.0, ["E.T.A.P.", "représenté par son P.D.G", "M. Taïeb KAMEL"]),
+    (160.0, ["Seïfeddine NAGHMOUCHI Représentant l'Etat"]),
+    (180.0, ["Les propriétaires de moins de 10 actions peuvent se réunir."]),
+])
+rows = _roster_rows(page, 90.0, 200.0)
+names = [r[0] for r in rows]
+check("dotted acronym survives as a board member", "E.T.A.P." in names, True)
+check("honorific-only cell folds into the name",
+      any(n.startswith("MM. Hédi") for n in names), True)
+check("capacity split off a name that ran into it",
+      any(n == "Seïfeddine NAGHMOUCHI" for n in names), True)
+check("prose is not a roster row",
+      any(n.startswith("Les propriétaires") for n in names), False)
+
+# Tesseract reports each word's own glyph box, so words without ascenders sit a
+# point or two off their neighbours. Unsnapped, they bucket as separate lines.
+_tsv = {
+    "text": ["Laroussi", "BAYOUDH", "M."],
+    "conf": [96, 95, 90],
+    "left": [300, 700, 100], "top": [1000, 1000, 1006],
+    "width": [300, 300, 60], "height": [30, 30, 24],
+    "block_num": [1, 1, 1], "par_num": [1, 1, 1], "line_num": [1, 1, 1],
+}
+_w = _words_from_tsv(_tsv, 1, scale=300 / 72.0)
+check("words on one printed line share a vertical position",
+      len({round(w["top"], 3) for w in _w}), 1)
+check("coordinates come back in points, not pixels",
+      round(max(w["x1"] for w in _w)) <= 300, True)
+check("a snapped line flattens to one line of text",
+      _text_from_words(_w).count("\n"), 0)
+
+_tsv_low = dict(_tsv, conf=[96, 95, 10])
+check("low-confidence speckle is dropped",
+      len(_words_from_tsv(_tsv_low, 1, scale=300 / 72.0)), 2)
+
+
 if __name__ == "__main__":
     if failures:
         print(f"FAILED ({len(failures)}):")

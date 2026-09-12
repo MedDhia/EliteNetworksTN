@@ -179,9 +179,29 @@ def parse_node_for_pdf(html: str, base_url: str) -> list[str]:
     return urls
 
 
-def resolve_pdfs(fetcher: Fetcher, cfg: dict, records: list[dict], limit: int | None) -> None:
+def resolve_pdfs(
+    fetcher: Fetcher,
+    cfg: dict,
+    records: list[dict],
+    limit: int | None,
+    doc_types: list[str] | None = None,
+    year_min: int | None = None,
+    year_max: int | None = None,
+) -> None:
     base = cfg["base_url"].rstrip("/")
     todo = [r for r in records if "pdf_urls" not in r]
+    if doc_types:
+        todo = [r for r in todo if r.get("doc_type") in set(doc_types)]
+    if year_min or year_max:
+        # Resolution is rate-limited and the registry is large, so a period
+        # that matters more than the rest can be worked through first. A
+        # filing with no listed date is kept: its date is only readable from
+        # the node page, which is what this pass fetches.
+        lo, hi = year_min or 0, year_max or 9999
+        def _in_window(r):
+            d = (r.get("filing_date") or "")[:4]
+            return not d.isdigit() or lo <= int(d) <= hi
+        todo = [r for r in todo if _in_window(r)]
     todo.sort(key=lambda r: (r.get("priority", 2), r.get("filing_date", ""), ), reverse=False)
     todo = [r for r in todo if r.get("priority", 2) == 1] + [
         r for r in todo if r.get("priority", 2) != 1
@@ -211,6 +231,11 @@ def main() -> None:
     ap.add_argument("--resolve", type=int, nargs="?", const=0, default=None,
                     help="resolve PDF links; optional cap on filings to resolve")
     ap.add_argument("--delay", type=float, default=1.2)
+    ap.add_argument("--doc-types", nargs="*", help="restrict --resolve to these doc_types")
+    ap.add_argument("--year-min", type=int, default=None,
+                    help="restrict --resolve to filings dated this year or later")
+    ap.add_argument("--year-max", type=int, default=None,
+                    help="restrict --resolve to filings dated this year or earlier")
     args = ap.parse_args()
 
     cfg = load_config()
@@ -231,7 +256,9 @@ def main() -> None:
 
     if args.resolve is not None:
         records = list(existing.values())
-        resolve_pdfs(fetcher, cfg, records, args.resolve or None)
+        resolve_pdfs(fetcher, cfg, records, args.resolve or None,
+                     doc_types=args.doc_types,
+                     year_min=args.year_min, year_max=args.year_max)
         with_pdf = sum(1 for r in records if r.get("pdf_urls"))
         log.info("registry: %d filings, %d with a PDF attached", len(records), with_pdf)
 
