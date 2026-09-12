@@ -51,8 +51,8 @@ OWNERSHIP_LABELS = {"SHAREHOLDER"}
 
 # Every dyadic covariate, defaulting to absent. Named once so a new covariate
 # cannot be added to the writer and forgotten in the accumulator.
-BLANK_COV = {"kin_in_org": 0, "owner_of": 0, "prior_comembership": 0,
-             "is_shareholder": 0}
+BLANK_COV = {"kin_in_org": 0, "owner_of": 0, "owner_of_seed": 0,
+             "prior_comembership": 0, "is_shareholder": 0}
 
 # Administrative prefixes the segmenter leaves on an otherwise sound name.
 # The organisation is real; only the label needs trimming.
@@ -87,7 +87,12 @@ def _d(iso: str) -> date | None:
 
 
 def _read(name: str) -> list[dict]:
-    with (PROCESSED / name).open(encoding="utf-8", newline="") as fh:
+    path = PROCESSED / name
+    if not path.exists():
+        # The org-org layer is optional: tergm still builds without it, with
+        # owner_of simply empty rather than the stage failing.
+        return []
+    with path.open(encoding="utf-8", newline="") as fh:
         return list(csv.DictReader(fh))
 
 
@@ -140,7 +145,8 @@ def org_lifecycle(events: list[dict], resolution: list[dict]) -> tuple[dict, dic
 
 def build(panel: list[dict], spells: list[dict], seed_nodes: list[dict],
           seed_edges: list[dict], events: list[dict],
-          resolution: list[dict]) -> dict:
+          resolution: list[dict],
+          org_panel: list[dict] | None = None) -> dict:
     """Re-index the yearly panel. Returns the five tables plus a diagnostics dict."""
     pers = periods("yearly")
     period_ids = [p for p, _s, _e in pers]
@@ -319,6 +325,14 @@ def build(panel: list[dict], spells: list[dict], seed_nodes: list[dict],
             else:
                 owns[a].add(b)
 
+    # Ownership active per period, holder -> companies, from the dated layer.
+    owns_at: dict[str, dict[str, set[str]]] = defaultdict(lambda: defaultdict(set))
+    for r in (org_panel or []):
+        if r.get("is_ownership") != "1" or r.get("evidence_tier") != "gazette_dated":
+            continue
+        period = r["panel_id"].split(":", 1)[1]
+        owns_at[period][r["from_node_id"]].add(r["to_node_id"])
+
     first_seen: dict[int, str] = {}
     for p in period_ids:
         for t, h in ties_by_period[p]:
@@ -394,9 +408,20 @@ def build(panel: list[dict], spells: list[dict], seed_nodes: list[dict],
             # i held a post at t-1 in an organisation that is a shareholder of j.
             held = orgs_of.get(pv, set())
             for o in held:
-                for company in owns.get(id_of[o], ()):
+                # Dated ownership: the holding company's stakes as they stood in
+                # the lagged period, from the org-org layer. This used to be the
+                # undated seed sheet applied to every period alike, which
+                # asserted a 2020 shareholding in 1994.
+                for company in owns_at.get(prev, {}).get(id_of[o], ()):
                     if company in vid:
                         bump(pv, vid[company], "owner_of")
+                # The undated seed component is kept as its own covariate
+                # rather than folded in: it carries no date, so mixing it with
+                # the dated series would smuggle a time-invariant term into one
+                # that is supposed to vary.
+                for company in owns.get(id_of[o], ()):
+                    if company in vid:
+                        bump(pv, vid[company], "owner_of_seed")
             # i shared an organisation at t-1 with someone who held a post in j.
             for o in held:
                 for k in members_of.get(o, ()):
@@ -444,6 +469,7 @@ def run() -> dict:
         seed_edges=_read("seed_edges.csv"),
         events=_read("events.csv"),
         resolution=_read("resolution.csv"),
+        org_panel=_read("panel_org_ties_yearly.csv"),
     )
     _write(OUT / "node_key.csv", tables["node_key"],
            ["vertex_id", "node_id", "label", "mode", "node_type", "is_seed",

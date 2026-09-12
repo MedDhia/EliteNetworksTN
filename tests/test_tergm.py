@@ -41,11 +41,19 @@ def node(nid, ntype, degree="1"):
 
 
 def run(panel, spells, seed_nodes=None, seed_edges=None, events=None,
-        resolution=None):
+        resolution=None, org_panel=None):
     return build(panel=panel, spells=spells,
                  seed_nodes=seed_nodes if seed_nodes is not None else [],
                  seed_edges=seed_edges or [], events=events or [],
-                 resolution=resolution or [])
+                 resolution=resolution or [], org_panel=org_panel or [])
+
+
+def org_panel_row(period, holder, target):
+    """A dated ownership tie as panel_org_ties_yearly.csv carries it."""
+    return {"panel_id": f"yearly:{period}", "from_node_id": holder,
+            "to_node_id": target, "relation": "shareholder_confirmed",
+            "is_ownership": "1", "layer": "ownership", "certainty": "certain",
+            "evidence_tier": "gazette_dated"}
 
 
 # --- the bipartite ordering -------------------------------------------------
@@ -190,12 +198,42 @@ def test_owner_of_follows_the_shareholder_direction():
     out = run([panel_row("2008", P1, O1), panel_row("2009", P1, O1),
                panel_row("2008", P2, O2)],
               [spell_row(P1, O1), spell_row(P2, O2)],
-              seed_edges=[SHAREHOLDING])
+              org_panel=[org_panel_row("2008", O1, O2)])
     rows = {(r["period"], r["tail"], r["head"]): r for r in out["dyads"]}
     o1 = next(r["vertex_id"] for r in out["node_key"] if r["node_id"] == O1)
     o2 = next(r["vertex_id"] for r in out["node_key"] if r["node_id"] == O2)
     assert rows[("2009", 1, o2)]["owner_of"] == 1
     assert rows.get(("2009", 1, o1), {}).get("owner_of", 0) == 0
+
+
+def test_owner_of_reads_the_lagged_period_not_the_current_one():
+    """The ownership layer is dated, so the covariate has to be too.
+
+    It used to project the undated seed sheet onto every period alike, which
+    asserted a 2020 shareholding in 1994.
+    """
+    out = run([panel_row("2008", P1, O1), panel_row("2009", P1, O1),
+               panel_row("2008", P2, O2)],
+              [spell_row(P1, O1), spell_row(P2, O2)],
+              org_panel=[org_panel_row("2011", O1, O2)])
+    o2 = next(r["vertex_id"] for r in out["node_key"] if r["node_id"] == O2)
+    rows = {(r["period"], r["tail"], r["head"]): r for r in out["dyads"]}
+    # The holding is only recorded in 2011, so 2009 must not see it.
+    assert rows.get(("2009", 1, o2), {}).get("owner_of", 0) == 0
+
+
+def test_the_undated_seed_shareholding_is_a_separate_covariate():
+    """It carries no date, so folding it into the dated series would smuggle a
+    time-invariant term into one that is meant to vary."""
+    out = run([panel_row("2008", P1, O1), panel_row("2009", P1, O1),
+               panel_row("2008", P2, O2)],
+              [spell_row(P1, O1), spell_row(P2, O2)],
+              seed_edges=[SHAREHOLDING])
+    o2 = next(r["vertex_id"] for r in out["node_key"] if r["node_id"] == O2)
+    row = next(r for r in out["dyads"]
+               if (r["period"], r["tail"], r["head"]) == ("2009", 1, o2))
+    assert row["owner_of_seed"] == 1
+    assert row["owner_of"] == 0, "no dated layer was supplied"
 
 
 def test_owner_of_cannot_point_at_a_firm_that_is_not_a_vertex():
@@ -357,8 +395,9 @@ def test_a_persons_stake_and_a_companys_stake_feed_different_covariates():
     o2 = next(r["vertex_id"] for r in out["node_key"] if r["node_id"] == O2)
     row = next(r for r in out["dyads"]
                if (r["period"], r["tail"], r["head"]) == ("2009", 1, o2))
-    assert row["is_shareholder"] == 1     # A holds the stake personally
-    assert row["owner_of"] == 1           # and sits in O1, which also holds one
+    assert row["is_shareholder"] == 1      # A holds the stake personally
+    assert row["owner_of_seed"] == 1       # and sits in O1, which also holds one
     # B sits in O2 but owns nothing and is in no company that does.
     b_rows = [r for r in out["dyads"] if r["tail"] == 2]
-    assert all(r["is_shareholder"] == 0 and r["owner_of"] == 0 for r in b_rows)
+    assert all(r["is_shareholder"] == 0 and r["owner_of_seed"] == 0
+               for r in b_rows)

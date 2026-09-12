@@ -73,6 +73,7 @@ BLOCKS = INTERIM / "blocks.jsonl"
 # The stage whose output each skippable input is, so the report says how to
 # make the check runnable rather than only that it was not run.
 _REBUILD_WITH = {"blocks.jsonl": "segment", "act_citations.csv": "extract"}
+_STAGE_FOR = {"node_key.csv": "tergm", "org_tie_spells.csv": "orgties"}
 
 
 def _skip(rep: Report, check: str, needs: Path) -> None:
@@ -87,9 +88,10 @@ def _skip(rep: Report, check: str, needs: Path) -> None:
 # their absence means the stage has not been run rather than that the input was
 # deliberately left out of the repository.
 def _skip_stage(rep: Report, check: str, needs: Path) -> None:
+    stage = _STAGE_FOR.get(needs.name, "all")
     rep.add("WARN", check,
             f"not checked: {needs.relative_to(ROOT)} is absent. "
-            f"Run `make tergm` to build it, then re-validate.")
+            f"Run `make {stage}` to build it, then re-validate.")
 
 
 def check_calendar(rep: Report) -> None:
@@ -306,6 +308,57 @@ def check_citations(rep: Report) -> None:
             f"{len(cits)} citations, {len(dated)} with a resolvable cited date")
 
 
+def check_org_ties(rep: Report) -> None:
+    """The organisation-to-organisation layer.
+
+    Its errors are the kind that read as findings. A self-tie inflates a firm's
+    ownership degree; a reversed direction asserts the opposite ownership
+    relation and looks entirely plausible; a confirmation promoted to an onset
+    invents the dating the layer is careful not to claim.
+    """
+    spells = _read(PROCESSED / "org_tie_spells.csv")
+    if not spells:
+        _skip_stage(rep, "org ties", PROCESSED / "org_tie_spells.csv")
+        return
+    dated = [s for s in spells if s["evidence_tier"] == "gazette_dated"]
+    seedy = [s for s in spells if s["evidence_tier"] == "seed_undated"]
+
+    rep.add("INFO", "org ties",
+            f"{len(dated)} dated, {len(seedy)} undated seed ties; "
+            f"{len({(s['holder_id'], s['target_id']) for s in dated})} dated dyads")
+    rep.add("INFO", "org tie relations",
+            ", ".join(f"{k}={v}" for k, v in
+                      Counter(s["relation"] for s in spells).most_common(8)))
+
+    loops = [s for s in spells if s["holder_id"] == s["target_id"]]
+    rep.add("ERROR" if loops else "INFO", "org ties are not self-loops",
+            f"{len(loops)} ties whose holder and target are the same organisation")
+
+    neg = [s for s in spells if s["onset"] and s["terminus"]
+           and s["terminus"] < s["onset"]]
+    rep.add("ERROR" if neg else "INFO", "org tie durations are not negative",
+            f"{len(neg)} org tie spells end before they begin")
+
+    # A confirmation bounds the onset from above and asserts nothing below it.
+    # An onset filled in from one would be a manufactured date.
+    bad_cens = [s for s in dated
+                if s["onset"] and s["left_censored"] == "True"]
+    rep.add("ERROR" if bad_cens else "INFO", "org tie censoring is consistent",
+            f"{len(bad_cens)} spells assert an onset while flagged left-censored")
+
+    known = {n["node_id"] for n in _read(PROCESSED / "seed_nodes.csv")}
+    unknown = [s for s in spells
+               if s["holder_id"] not in known or s["target_id"] not in known]
+    rep.add("ERROR" if unknown else "INFO", "org tie endpoints are seed nodes",
+            f"{len(unknown)} ties with an endpoint absent from seed_nodes.csv")
+
+    lc = sum(1 for s in dated if s["left_censored"] == "True")
+    rc = sum(1 for s in dated if s["right_censored"] == "True")
+    rep.add("INFO", "org tie censoring",
+            f"left_censored={lc} ({lc / max(1, len(dated)):.0%}), "
+            f"right_censored={rc} ({rc / max(1, len(dated)):.0%})")
+
+
 def check_tergm_panel(rep: Report) -> None:
     """The invariants R/build_tergm_panel.R relies on, at ERROR level.
 
@@ -389,6 +442,7 @@ def run(fail_on_error: bool = False) -> int:
     check_negative_control(rep)
     check_cabinets(rep)
     check_citations(rep)
+    check_org_ties(rep)
     check_tergm_panel(rep)
 
     DOCS.mkdir(parents=True, exist_ok=True)

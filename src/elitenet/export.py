@@ -56,6 +56,9 @@ TABLES = {
     "spell_observations": PROCESSED / "spell_observations.csv",
     "panel_edges_yearly": PROCESSED / "panel_edges_yearly.csv",
     "panel_edges_monthly": PROCESSED / "panel_edges_monthly.csv",
+    "org_ties": PROCESSED / "org_ties.csv",
+    "org_tie_spells": PROCESSED / "org_tie_spells.csv",
+    "panel_org_ties_yearly": PROCESSED / "panel_org_ties_yearly.csv",
 }
 
 VIEWS = {
@@ -74,6 +77,19 @@ VIEWS = {
         "'https://jort.tn/view/'||e.collection||'/fr/'||e.year||'/'||e.issue AS viewer_url, "
         "'https://lake.jort.tn/'||e.collection||'/fr/'||e.year||'/'||e.issue||'.pdf' AS pdf_url "
         "FROM events e LEFT JOIN issue_calendar c ON c.issue_uid=e.issue_uid",
+    # The organisation-to-organisation layer. Ownership is separated from the
+    # professional-service and structural relations carried alongside it,
+    # because an audit mandate and a shareholding mean very different things and
+    # an analysis that mixed them would be reporting neither.
+    "v_org_ties":
+        "SELECT holder_id, holder_label, target_id, target_label, relation, "
+        "onset, terminus, left_censored, right_censored, evidence_tier, "
+        "confidence FROM org_tie_spells WHERE is_ownership='1'",
+    "v_org_ties_dated":
+        "SELECT * FROM org_tie_spells WHERE evidence_tier='gazette_dated' "
+        "AND link_status='resolved'",
+    "v_org_panel_yearly":
+        "SELECT * FROM panel_org_ties_yearly WHERE is_ownership='1'",
     "v_person_year_degree":
         "SELECT panel_id, from_node_id AS person_id, COUNT(*) AS degree "
         "FROM panel_edges_yearly WHERE evidence_tier='gazette_dated' "
