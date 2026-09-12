@@ -104,13 +104,30 @@ _NOT_AN_ENTITY = (
     re.compile(r"\b(etage|immeuble|appartement|bureau\s+n|boite\s+postale)\b"),
     re.compile(r"^(rue|avenue|boulevard|impasse|route)\b"),
     re.compile(r"^[\d\s]+$"),                                    # bare numbers
+    # The tail of a postal address: a four-digit Tunisian postcode and the
+    # town. Registered offices are printed under the company name, and the
+    # last line of one is all that survives a row break.
+    re.compile(r"^\d{4}\s+[a-z][a-z\s'-]{2,24}$"),
+)
+
+# A four-digit number leading a name is a postcode in "1053 Tunis" and a year
+# or a brand in "2024 Holding". Anything carrying one of these is read as a
+# company however it begins.
+_CORPORATE_WORD = re.compile(
+    r"\b(holding|group|groupe|sa|sarl|spa|sicav|sicaf|sicar|bank|banque|"
+    r"societe|ste|compagnie|assurance\w*|immobiliere|invest\w*|finance\w*|"
+    r"leasing|factoring|industrie\w*|international\w*)\b"
 )
 
 
 def is_not_an_entity(name: str) -> bool:
     """True for cells that name a place or a period rather than an actor."""
     n = base_normalise(name)
-    return not n or any(p.search(n) for p in _NOT_AN_ENTITY)
+    if not n:
+        return True
+    if _CORPORATE_WORD.search(n):
+        return False
+    return any(p.search(n) for p in _NOT_AN_ENTITY)
 
 
 def has_representative(name: str) -> bool:

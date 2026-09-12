@@ -511,3 +511,30 @@ class TestExplodeStackedRow:
 
     def test_a_row_of_none_cells_survives(self):
         assert explode_row([None, None]) == [[None, None]]
+
+
+class TestPostalAddressTails:
+    """The last line of a registered office is not a shareholder.
+
+    Registered offices are printed under the company name in these filings, and
+    a row break can leave only the final line of one - "1053 Tunis" - standing
+    where a name should be.
+    """
+
+    @pytest.mark.parametrize("line", [
+        "1053 Tunis", "– 1053 Tunis", "2080 Ariana", "1002 Tunis Belvedere",
+    ])
+    def test_a_postcode_and_town_is_not_an_entity(self, line):
+        assert is_not_an_entity(line)
+
+    @pytest.mark.parametrize("name", [
+        "2024 Holding", "3S Invest", "Amen Bank", "Tunis Re", "SIMT",
+        "Poulina Group Holding", "Societe Tunisienne de Banque",
+    ])
+    def test_a_company_led_by_digits_survives(self, name):
+        assert not is_not_an_entity(name)
+
+    def test_the_corporate_guard_does_not_revive_a_date_range(self):
+        # "2024 - 2026" carries no corporate word, so the guard leaves the
+        # existing mandate-range rule to reject it.
+        assert is_not_an_entity("2024 – 2026")

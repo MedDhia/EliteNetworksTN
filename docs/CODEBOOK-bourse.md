@@ -125,24 +125,67 @@ These are properties of the sources, and should be stated in any write-up.
    a rise in observed ties can be a rise in filings.
 5. **Declared mandates are self-reported and "most significant".** The interlock
    layer is what directors chose to disclose, so it under-counts.
-6. **Extraction is automated.** Table classification and row parsing are rule-
-   based and validated against a sample, not hand-checked for every document.
-   `data/processed/bourse/records/failures.jsonl.gz` lists documents that could not be
-   parsed; `validation_report.md` reports anomalies that survived.
-7. **Known residual artefacts.** Two are worth naming, because they are visible
-   in the current build and will recur on rebuild:
-   * *Share counts can merge.* Where a borderless table prints two grouped
-     figures with only a narrow gap ("975 000 975 000"), column detection
-     occasionally reads them as one. The **percentage is unaffected** — it is
-     identified by its `%` sign — so `weight` is sound where `n_shares` looks
-     implausible. Prefer `pct_capital`/`weight` over `n_shares`.
+6. **Extraction is automated, and every record has been checked against its
+   page.** Table classification and row parsing are rule-based.
+   `make bourse-verify` re-opens each source PDF, accepts it only if the bytes
+   hash to the digest in `corpus/pdf_manifest.jsonl.gz`, and asks of every
+   record drawn from it whether the name and the figure appear on the page
+   cited. The current pass reads **7,593 records from 179 filings and confirms
+   100.0% of names and 99.9% of figures**; `source_verification.md` carries the
+   table and names every record that did not confirm.
+
+   This check is not redundant with `validation_report.md`. Those checks test
+   the dataset against itself — stakes that should not exceed 100%, endpoints
+   that should resolve — and a figure read off the wrong row passes all of
+   them, because a misread figure is still internally consistent. Running the
+   source check found four extraction defects that the internal checks could
+   not see, described in §6.1.
+
+   `records/failures.jsonl.gz` lists documents that could not be parsed at all.
+7. **Known residual artefacts.**
    * *Spelling variants survive.* "Mohamed FEKIH" and "Mohamed FKIH" appear as
      two entities, each with 18 firm ties. Whether they are one person is a
      substantive judgement the matcher will not make; resolve it in
      `config/bourse_entity_overrides.csv`.
-   Two firm-years still show declared stakes above 100% (see
-   `validation_report.md`). Both trace to inconsistencies in the filings
-   themselves rather than to parsing, and are left as reported.
+   * *Six records out of 7,593 are not confirmed on their page*, all of them
+     rows of tables that interleave a figure column with commentary. They are
+     named individually in `source_verification.md`.
+   * *Thin years.* 1994 and 2001 carry fewer than ten observed edges each. That
+     is a property of how many filings cover them, not a parsing failure.
+
+## 6.1 Defects the source check found, and what they mean for earlier builds
+
+Four extraction defects were found by checking records against their pages, and
+all four are fixed. They are recorded here because any analysis run against a
+build from before this fix carries them.
+
+* *Two adjacent figures read as one number.* On a short borderless row the
+  column threshold could exceed every gap on the line, leaving the row as a
+  single cell: `PIRECO 750 000 750 000 3,00%` became a holding of
+  750,000,750,000 shares.
+* *A figure split mid-number.* Where the extractor cut one token in two,
+  `2 666 921` arrived as `2`,`6`,`66`,`921` and was read as **2 shares**; a
+  stake printed `0,005%` was read as **5%**.
+* *Table footnote legends parsed as rows.* 61 records carried names such as
+  `*** Membre indépendant`.
+* *A whole table body read as one row.* Where a table's only ruling lines box
+  the body rather than each row, every cell held its column stacked with
+  newlines. Flattened, the six largest shareholders of Amen Bank became one
+  shareholder holding the concatenation of their six stakes. This one destroyed
+  data rather than merely mangling it, and unwinding it recovered the
+  controlling blocks of several of the largest firms in the corpus.
+
+The first two corrupted `n_shares` and `nominal_amount_tnd` but **not**
+`pct_capital`, which is identified by its `%` sign and was never ambiguous; the
+network layers weight on percentage, so their edge weights were not affected.
+The last two did change the node set.
+
+Note for anyone reading the merged history: the codebook previously described
+merged share counts as an artefact that "will recur on rebuild", and attributed
+two firm-years with stakes above 100% to "inconsistencies in the filings
+themselves rather than to parsing". Both statements were wrong. The first is
+fixed at source above. The second were entity-resolution double counts, and the
+arithmetic matched the double-counted excess exactly; they are now gone.
 
 ## 7. `layer_year_coverage.csv`
 
