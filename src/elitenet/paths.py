@@ -17,7 +17,13 @@ CONFIG = ROOT / "config"
 DATA = ROOT / "data"
 RAW = DATA / "raw"
 INTERIM = DATA / "interim"
-PROCESSED = DATA / "processed"
+
+# This build is namespaced under data/processed/. The repository already carries
+# a separate journal-officiel-only build of bureaucratic elites covering
+# 1957-2026; keeping the two output trees apart lets them coexist rather than
+# one overwriting the other's tables (both would otherwise write events.csv.gz).
+BUILD = "multiplex-2008-2012"
+PROCESSED = DATA / "processed" / BUILD
 GOLD = ROOT / "gold"
 DOCS = ROOT / "docs"
 

@@ -19,8 +19,8 @@ from pathlib import Path
 import networkx as nx
 
 ROOT = Path(__file__).resolve().parents[1]
-SNAPSHOTS = ROOT / "data" / "processed" / "exports" / "snapshots"
-SPELLS = ROOT / "data" / "processed" / "spells.csv"
+SNAPSHOTS = ROOT / "data" / "processed" / "multiplex-2008-2012" / "exports" / "snapshots"
+SPELLS = ROOT / "data" / "processed" / "multiplex-2008-2012" / "spells.csv"
 
 
 def available_periods(granularity: str = "yearly") -> list[str]:

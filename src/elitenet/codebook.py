@@ -206,7 +206,7 @@ def build() -> Path:
     lines += _vocab_section()
     lines += _observed_counts()
 
-    dest = ROOT / "CODEBOOK.md"
+    dest = ROOT / "docs" / "CODEBOOK-multiplex-2008-2012.md"
     dest.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return dest
 

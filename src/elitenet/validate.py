@@ -278,7 +278,7 @@ def run(fail_on_error: bool = False) -> int:
     check_citations(rep)
 
     DOCS.mkdir(parents=True, exist_ok=True)
-    (DOCS / "validation_report.md").write_text(rep.render(), encoding="utf-8")
+    (DOCS / "VALIDATION-multiplex-2008-2012.md").write_text(rep.render(), encoding="utf-8")
     print(rep.render())
     if fail_on_error and rep.errors:
         print(f"\nFAILED: {rep.errors} error-level checks")
