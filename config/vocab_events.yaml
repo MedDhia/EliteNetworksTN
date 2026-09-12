@@ -1,0 +1,50 @@
+# Controlled vocabulary for event_type, plus the rubric map that types blocks nearly free.
+
+event_types:
+  appointed:          "Person takes up a role (nomination, election, designation, est charge des fonctions)"
+  renewed:            "Existing mandate renewed or extended (renouvellement du mandat)"
+  resigned:           "Person leaves by own act (demission)"
+  revoked:            "Person removed by decision of another (revocation, il est mis fin aux fonctions)"
+  terminated:         "Functions cease without attribution of agency (cessation de fonctions)"
+  constituted:        "Organisation created; founding officers named"
+  shares_transferred: "Ownership moved between parties (cession/transfert de parts ou actions)"
+  capital_increased:  "Registered capital raised (augmentation de capital)"
+  capital_decreased:  "Registered capital reduced (reduction de capital)"
+  dissolved:          "Organisation dissolved"
+  liquidated:         "Organisation in or completing liquidation"
+  renamed:            "Legal name changed (changement de denomination)"
+  registered:         "Association, party or union legally registered"
+  represented_by:     "A legal person acts through a named natural person (representee par)"
+  headquarters_moved: "Registered seat transferred (transfert du siege social)"
+
+# Trailing announcement reference code: YYYY + series letter + sequence + 5-char rubric suffix.
+# e.g. 2010G02623SANB1 -> year 2010, series G, sequence 02623, rubric SANB1
+rubrics:
+  SANB1: {legal_form: SA,      section: constitution, domain: corporate}
+  SANB2: {legal_form: SA,      section: gestion,      domain: corporate}
+  SANB3: {legal_form: SA,      section: gestion,      domain: corporate}
+  SRLB1: {legal_form: SARL,    section: constitution, domain: corporate}
+  SRLB2: {legal_form: SARL,    section: gestion,      domain: corporate}
+  SRUB1: {legal_form: SUARL,   section: constitution, domain: corporate}
+  SRUB2: {legal_form: SUARL,   section: gestion,      domain: corporate}
+  SODB1: {legal_form: AUTRE,   section: constitution, domain: corporate}
+  SODB2: {legal_form: AUTRE,   section: gestion,      domain: corporate}
+  SODB3: {legal_form: AUTRE,   section: gestion,      domain: corporate}
+  COPB3: {legal_form: COOP,    section: gestion,      domain: corporate}
+  FCCB2: {legal_form: null,    section: fonds_commerce, domain: commercial}
+  FCCC2: {legal_form: null,    section: fonds_commerce, domain: commercial}
+  FCCC3: {legal_form: null,    section: fonds_commerce, domain: commercial}
+  APSF1: {legal_form: ASSOC,   section: registration, domain: association}
+  APSF2: {legal_form: ASSOC,   section: registration, domain: association}
+  VEPA1: {legal_form: null,    section: judicial,     domain: judicial}
+  VEPA2: {legal_form: null,    section: judicial,     domain: judicial}
+  DIVD2: {legal_form: null,    section: divers,       domain: other}
+  RECZ9: {legal_form: null,    section: rectificatif, domain: other}
+  MINA4: {legal_form: null,    section: bilan,        domain: financial}
+  BCFA5: {legal_form: null,    section: bilan,        domain: financial}
+
+# Domains whose blocks are worth extracting person-organisation ties from.
+relational_domains: [corporate, association]
+
+# Series letter appears to encode the filing greffe/region; recorded, not interpreted.
+series_note: "Series letter (T/G/S/R/numeric) recorded verbatim as `series`; its meaning is not documented upstream and is NOT interpreted."

@@ -1,14 +1,34 @@
 __pycache__/
 *.pyc
+*.py[cod]
 .venv/
+venv/
 .ipynb_checkpoints/
+.pytest_cache/
+*.egg-info/
 
-# Raw mirror of the JORT OCR corpus (~6.4k gzipped issues, re-downloadable
-# with `python -m eltn.cli harvest`). Never committed.
+# Raw mirror of the JORT OCR corpus. Never committed: re-downloadable, and
+# data/raw/manifest.csv carries a sha256 per file for verification.
 data/raw/
 data/interim/
+!data/raw/manifest.csv
 
 # Local tooling only (used to preview the explorer)
 node_modules/
 package.json
 package-lock.json
+
+# Scratch
+*.tmp
+.DS_Store
+
+# --- multiplex-2008-2012 build ---------------------------------------------
+# Large derived artifacts. Committed gzipped instead (see *.gz alongside), or
+# rebuilt from the committed CSVs with `make extract && make export`.
+data/processed/multiplex-2008-2012/events.csv
+data/processed/multiplex-2008-2012/blocks_index.csv
+data/processed/multiplex-2008-2012/resolution.csv
+data/processed/multiplex-2008-2012/panel_edges_monthly.csv
+data/processed/multiplex-2008-2012/gazette_only_persons.csv
+data/processed/multiplex-2008-2012/elitenet.sqlite
+data/processed/multiplex-2008-2012/exports/elite_network_full.gexf
