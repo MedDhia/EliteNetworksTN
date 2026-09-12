@@ -22,7 +22,7 @@ board_interlock,2010,198,59,0
 board_interlock,2011,365,119,0
 board_interlock,2012,186,109,0
 board_interlock,2013,249,84,0
-board_interlock,2014,292,125,0
+board_interlock,2014,295,126,0
 board_interlock,2015,178,91,0
 board_interlock,2016,274,105,0
 board_interlock,2017,317,107,0
@@ -34,7 +34,7 @@ board_interlock,2023,379,104,0
 board_interlock,2024,748,176,0
 board_interlock,2025,629,138,0
 board_interlock,2026,22,11,0
-board_seat,1994,40,35,6
+board_seat,1994,41,35,7
 board_seat,1997,19,15,2
 board_seat,2003,10,11,2
 board_seat,2004,2,3,1
@@ -47,8 +47,8 @@ board_seat,2010,103,108,15
 board_seat,2011,136,127,15
 board_seat,2012,227,168,21
 board_seat,2013,106,105,16
-board_seat,2014,140,111,13
-board_seat,2015,182,171,22
+board_seat,2014,196,160,21
+board_seat,2015,195,185,24
 board_seat,2016,229,215,32
 board_seat,2017,101,102,13
 board_seat,2018,81,75,6
@@ -60,7 +60,7 @@ board_seat,2023,99,66,7
 board_seat,2024,87,75,10
 board_seat,2025,89,79,6
 board_seat,2026,9,10,1
-board_seat_corporate,1994,52,48,7
+board_seat_corporate,1994,54,50,8
 board_seat_corporate,1998,1,2,1
 board_seat_corporate,2003,1,2,1
 board_seat_corporate,2004,7,9,2
@@ -73,8 +73,8 @@ board_seat_corporate,2010,146,154,18
 board_seat_corporate,2011,114,116,17
 board_seat_corporate,2012,125,127,22
 board_seat_corporate,2013,77,84,18
-board_seat_corporate,2014,78,69,13
-board_seat_corporate,2015,125,127,28
+board_seat_corporate,2014,127,123,24
+board_seat_corporate,2015,141,145,31
 board_seat_corporate,2016,243,249,36
 board_seat_corporate,2017,102,103,12
 board_seat_corporate,2018,37,34,5
@@ -105,6 +105,7 @@ coownership,2008,1,2,0
 coownership,2010,1,2,0
 coownership,2011,1,2,0
 coownership,2012,1,2,0
+coownership,2014,1,2,0
 coownership,2015,4,4,0
 coownership,2016,3,4,0
 coownership,2017,1,2,0
@@ -163,7 +164,7 @@ group_participation,2010,23,17,4
 group_participation,2011,124,107,10
 group_participation,2012,53,57,8
 group_participation,2013,100,93,6
-group_participation,2014,59,49,6
+group_participation,2014,75,66,7
 group_participation,2015,60,48,7
 group_participation,2016,95,78,7
 group_participation,2018,24,26,3
@@ -182,7 +183,7 @@ ownership,2010,42,47,5
 ownership,2011,28,33,7
 ownership,2012,45,45,10
 ownership,2013,20,25,5
-ownership,2014,49,49,9
+ownership,2014,66,71,14
 ownership,2015,78,80,12
 ownership,2016,60,52,12
 ownership,2017,52,60,11
