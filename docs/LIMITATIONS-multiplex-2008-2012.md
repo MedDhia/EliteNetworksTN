@@ -37,6 +37,16 @@ genuinely right-censored. Replacement inference on single-holder posts recovers
 interval-censored upward because the incumbent may have left before the
 successor arrived. **A missing terminus does not mean "still in post".**
 
+This has a sharp modelling consequence. 82.1% of dated spells are
+right-censored (3,519 of 4,287), and across the window the year-on-year
+dissolution rate *falls* from 11.1% to 5.8% while edge count grows 919 to
+3,685. No account of Tunisian elite careers makes ties steadily harder to lose
+across the 2011 revolution: what the falling rate measures is the probability
+that an exit has been printed by the end of the window. So a TERGM or STERGM
+dissolution parameter fitted here estimates gazette publication behaviour, not
+tie duration. Model formation only, or restrict to the 1,073 ties whose exit
+was actually observed. `docs/TERGM-multiplex-2008-2012.md` sets out both.
+
 **Undated seed ties carry no dates, deliberately.** 27,585 spells come from the
 seed sheet with `evidence_tier = 'seed_undated'` and no onset or terminus.
 Assigning them dates would manufacture the variation the dataset exists to

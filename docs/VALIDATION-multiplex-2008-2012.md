@@ -33,3 +33,8 @@ Generated 2026-09-12.
 - **ministerial appointments by year** — 2007=7, 2008=57, 2009=30, 2010=57, 2011=102, 2012=153
 - **seed cabinets** — 7 government nodes in the seed sheet: CHAHED GOVERNMENT, ESSID GOVERNMENT, FAKHFAKH GOVERNMENT, JEBALI GOVERNMENT, JOMAA GOVERNMENT, LAARAYEDH GOVERNMENT, MECHICHI GOVERNMENT
 - **act citation graph** — 48176 citations, 47843 with a resolvable cited date
+- **tergm vertex key is mode-blocked** — 2592 persons then 2915 organisations; bipartite = 2592; mode-blocked=True, ids contiguous from 1=True
+- **tergm edges respect the mode split** — 0 of 10997 ties do not run from mode 1 to mode 2
+- **tergm risk set is contiguous** — 0 vertices go inactive and then active again
+- **tergm ties lie inside the risk set** — 0 ties fall in a period where an endpoint is inactive
+- **tergm panel is rectangular** — 5 periods x 5507 vertices; 0 periods with a short attribute or activity table

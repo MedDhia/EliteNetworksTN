@@ -6,7 +6,7 @@ PY := PYTHONPATH=src python3
 
 .PHONY: all seed mirror calendar segment extract resolve spells export codebook validate test clean-derived
 
-all: seed mirror calendar segment extract resolve spells export codebook validate
+all: seed mirror calendar segment extract resolve spells export tergm codebook validate
 
 seed:      ## ingest and clean the curated seed edge list
 	$(PY) -m elitenet.seed
@@ -31,6 +31,9 @@ spells:    ## build tie spells and panel snapshots
 
 export:    ## write SQLite, dynamic GEXF, networkDynamic and snapshot files
 	$(PY) -m elitenet.export
+
+tergm:     ## re-index the yearly panel into TERGM-estimable inputs
+	$(PY) -m elitenet.tergm
 
 codebook:  ## regenerate CODEBOOK.md from the data and config
 	$(PY) -m elitenet.codebook

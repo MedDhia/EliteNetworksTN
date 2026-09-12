@@ -393,6 +393,98 @@ As above at monthly resolution, because the January 2011 rupture is invisible at
 | `evidence_tier` | `gazette_dated` for ties with gazette evidence; `seed_undated` for seed ties carried through with no dates. Exclude the latter from survival models. |
 | `spell_id` |  |
 
+## TERGM panel
+
+Written by `make tergm`. These are the yearly panel re-indexed for a temporal ERGM, not a separate measurement: the ties are the same ties. What they add is a declared bipartite split, a vertex set that does not move between periods, an explicit risk set, and covariates -- none of which an edge list can carry.
+
+**Before specifying a model, read `docs/TERGM-multiplex-2008-2012.md`.** 82.1% of dated spells are right-censored, so a dissolution parameter fitted to this panel estimates when the gazette prints an exit rather than when a tie ends.
+
+### `node_key.csv`
+
+5,507 rows.
+
+**Mode-blocked** vertex key for the TERGM panel: persons take ids 1..n1 and organisations n1+1..n, which is what makes `bipartite = n1` a true statement about the ordering. `label_suspect` marks a vertex whose name is not a firm name (an address, a role fragment, a clause) and which should probably be excluded.
+
+| column | note |
+| --- | --- |
+| `vertex_id` |  |
+| `node_id` |  |
+| `label` |  |
+| `mode` |  |
+| `node_type` |  |
+| `is_seed` |  |
+| `label_suspect` |  |
+
+### `edges_yearly.csv`
+
+10,997 rows.
+
+The yearly panel re-indexed to bipartite vertex ids and reduced to **binary** ties: two roles in one firm in one year is two panel rows and one tie, with the roles preserved pipe-joined. `dissolution_observed` marks the minority of ties actually seen to end, as opposed to right-censored.
+
+| column | note |
+| --- | --- |
+| `period` |  |
+| `tail` |  |
+| `head` |  |
+| `role_canonical` |  |
+| `certainty` | `certain` both endpoints dated; `probable` inside the certain core but an endpoint is censored; `possible` only inside the outer envelope; `undated` a seed tie with no time information. |
+| `link_status` | `resolved` (score >= 0.70), `ambiguous` (0.45-0.70, or a rival within 0.05), `unresolved` (< 0.45, retained as a candidate new person). |
+| `dissolution_observed` |  |
+
+### `vertex_activity_yearly.csv`
+
+27,535 rows.
+
+The risk set. An organisation is active between its constitution and dissolution, widened where needed to cover a period in which it demonstrably holds a tie, so activity is always one contiguous interval. `birth_known = 0` means left-censored and at risk from the window start. Persons are active throughout: the gazette records appointments, not births.
+
+| column | note |
+| --- | --- |
+| `period` |  |
+| `vertex_id` |  |
+| `active` |  |
+| `birth_known` |  |
+| `death_known` |  |
+| `risk_start` |  |
+| `risk_end` |  |
+
+### `node_attrs_yearly.csv`
+
+27,535 rows.
+
+Per-period nodal covariates, rectangular by construction (every vertex appears in every period, isolates included). Use `cum_degree_lag` rather than `cum_degree` in `nodecov`: degree measured at t is a function of the ties being modelled at t.
+
+| column | note |
+| --- | --- |
+| `period` |  |
+| `vertex_id` |  |
+| `node_id` |  |
+| `mode` |  |
+| `node_type` |  |
+| `is_seed` |  |
+| `seed_degree` | Number of seed ties on the node. |
+| `first_seen_year` |  |
+| `tenure_years` |  |
+| `cum_degree` |  |
+| `cum_degree_lag` |  |
+| `kin_degree` |  |
+| `pedagogic_degree` |  |
+
+### `dyad_cov_yearly.csv`
+
+11,102 rows.
+
+Dyadic covariates as **sparse triplets** -- dense would be 2,592 x 2,915 per covariate per period. Projected from the seed sheet's undated kinship and shareholding ties, which is what makes them exogenous. `kin_in_org`, `owner_of` and `prior_comembership` are lagged to t-1 and so are absent in the first period; `is_shareholder` needs no lag and is present in all of them.
+
+| column | note |
+| --- | --- |
+| `period` |  |
+| `tail` |  |
+| `head` |  |
+| `kin_in_org` |  |
+| `owner_of` |  |
+| `prior_comembership` |  |
+| `is_shareholder` |  |
+
 ## Controlled vocabularies
 
 ### `event_type`

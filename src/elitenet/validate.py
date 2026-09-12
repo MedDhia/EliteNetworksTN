@@ -82,6 +82,15 @@ def _skip(rep: Report, check: str, needs: Path) -> None:
             f"re-validate.")
 
 
+# Distinct from _skip above: these outputs are committed, not git-ignored, so
+# their absence means the stage has not been run rather than that the input was
+# deliberately left out of the repository.
+def _skip_stage(rep: Report, check: str, needs: Path) -> None:
+    rep.add("WARN", check,
+            f"not checked: {needs.relative_to(ROOT)} is absent. "
+            f"Run `make tergm` to build it, then re-validate.")
+
+
 def check_calendar(rep: Report) -> None:
     cal = _read(PROCESSED / "issue_calendar.csv")
     dated = [r for r in cal if r["pub_date"]]
@@ -296,6 +305,77 @@ def check_citations(rep: Report) -> None:
             f"{len(cits)} citations, {len(dated)} with a resolvable cited date")
 
 
+def check_tergm_panel(rep: Report) -> None:
+    """The invariants R/build_tergm_panel.R relies on, at ERROR level.
+
+    These are not stylistic. A bipartite network object is a claim about the
+    *ordering* of vertex ids -- mode 1 occupies 1..n1 -- and nothing in the
+    file format enforces it. Break the ordering and `network` still builds an
+    object, `btergm` still estimates, and every degree and star coefficient is
+    silently computed against a reference distribution containing dyads that
+    cannot exist. There is no error message for that, which is why it is
+    checked here instead.
+    """
+    d = PROCESSED / "exports" / "tergm"
+    key = _read(d / "node_key.csv")
+    if not key:
+        _skip_stage(rep, "tergm panel", d / "node_key.csv")
+        return
+    edges = _read(d / "edges_yearly.csv")
+    activity = _read(d / "vertex_activity_yearly.csv")
+    attrs = _read(d / "node_attrs_yearly.csv")
+
+    m1 = [int(r["vertex_id"]) for r in key if r["mode"] == "1"]
+    m2 = [int(r["vertex_id"]) for r in key if r["mode"] == "2"]
+    ids = sorted(m1 + m2)
+    ordered = bool(m1) and bool(m2) and max(m1) < min(m2)
+    contiguous = ids == list(range(1, len(ids) + 1))
+    rep.add("ERROR" if not (ordered and contiguous) else "INFO",
+            "tergm vertex key is mode-blocked",
+            f"{len(m1)} persons then {len(m2)} organisations; "
+            f"bipartite = {len(m1)}; "
+            f"mode-blocked={ordered}, ids contiguous from 1={contiguous}")
+
+    n1 = len(m1)
+    bad = [e for e in edges
+           if not (int(e["tail"]) <= n1 < int(e["head"]))]
+    rep.add("ERROR" if bad else "INFO", "tergm edges respect the mode split",
+            f"{len(bad)} of {len(edges)} ties do not run from mode 1 to mode 2")
+
+    # An organisation cannot blink out of existence and return: activity has to
+    # be one interval. A hole would be an artifact of a bad lifecycle date, and
+    # would make the risk set assert something the sources do not.
+    seq: dict[int, list[tuple[str, str]]] = defaultdict(list)
+    for r in activity:
+        seq[int(r["vertex_id"])].append((r["period"], r["active"]))
+    holes = 0
+    for rows in seq.values():
+        s = "".join(a for _p, a in sorted(rows))
+        if "1" in s and "0" in s.strip("0"):
+            holes += 1
+    rep.add("ERROR" if holes else "INFO", "tergm risk set is contiguous",
+            f"{holes} vertices go inactive and then active again")
+
+    # Every observed tie must lie inside the risk set, or the estimator is being
+    # handed a structural zero that is also an observed edge.
+    active = {(r["period"], int(r["vertex_id"])) for r in activity
+              if r["active"] == "1"}
+    outside = [e for e in edges
+               if (e["period"], int(e["tail"])) not in active
+               or (e["period"], int(e["head"])) not in active]
+    rep.add("ERROR" if outside else "INFO", "tergm ties lie inside the risk set",
+            f"{len(outside)} ties fall in a period where an endpoint is inactive")
+
+    # btergm reads one vertex set per period; a ragged panel silently drops rows.
+    per = sorted({r["period"] for r in edges})
+    ragged = [p for p in per
+              if sum(1 for r in attrs if r["period"] == p) != len(key)
+              or sum(1 for r in activity if r["period"] == p) != len(key)]
+    rep.add("ERROR" if ragged else "INFO", "tergm panel is rectangular",
+            f"{len(per)} periods x {len(key)} vertices; "
+            f"{len(ragged)} periods with a short attribute or activity table")
+
+
 def run(fail_on_error: bool = False) -> int:
     ensure_dirs()
     rep = Report()
@@ -308,6 +388,7 @@ def run(fail_on_error: bool = False) -> int:
     check_negative_control(rep)
     check_cabinets(rep)
     check_citations(rep)
+    check_tergm_panel(rep)
 
     DOCS.mkdir(parents=True, exist_ok=True)
     (DOCS / "VALIDATION-multiplex-2008-2012.md").write_text(rep.render(), encoding="utf-8")

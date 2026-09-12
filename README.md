@@ -232,7 +232,11 @@ French: **precision 0.982** (95% CI 0.937–0.995) with **no spurious events**,
 estimate — see `docs/GOLD-SCORE-multiplex-2008-2012.md` and the limitations.
 
 Read `docs/CODEBOOK-multiplex-2008-2012.md` for variable definitions and
-`docs/LIMITATIONS-multiplex-2008-2012.md` before using it.
+`docs/LIMITATIONS-multiplex-2008-2012.md` before using it. For temporal ERGMs,
+`make tergm` writes a bipartite network panel with an explicit risk set and
+lagged kinship, shareholding and co-membership covariates; read
+`docs/TERGM-multiplex-2008-2012.md` first, because right-censoring makes the
+dissolution side of such a model uninterpretable here.
 `docs/GOLD-FINDINGS-multiplex-2008-2012.md` records the twenty extraction
 defects the gold sample exposed, which is also why the figures above supersede
 those of the first release.

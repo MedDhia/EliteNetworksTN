@@ -49,3 +49,8 @@ data/processed/bourse/graphml/
 data/processed/bourse/graphml_panel/
 data/processed/bourse/muxviz/
 data/processed/bourse/muxviz_panel/
+
+# R objects built by R/build_networkdynamic.R and R/build_tergm_panel.R. Both
+# regenerate from the committed CSVs in seconds (the TERGM panel takes 8s), and
+# a serialised R workspace is not a portable archival format.
+data/processed/multiplex-2008-2012/exports/**/*.rds
