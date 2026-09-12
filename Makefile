@@ -55,11 +55,12 @@ clean-derived: ## remove everything derived, keeping the raw mirror
 BPY := PYTHONPATH=src python3
 
 .PHONY: bourse bourse-spine bourse-crawl bourse-resolve bourse-fetch \
-        bourse-extract bourse-movements bourse-build bourse-export \
-        bourse-validate bourse-test
+        bourse-extract bourse-movements bourse-resolutions bourse-build \
+        bourse-export bourse-validate bourse-test
 
 bourse: bourse-spine bourse-crawl bourse-resolve bourse-fetch bourse-extract \
-        bourse-movements bourse-build bourse-export bourse-validate
+        bourse-movements bourse-resolutions bourse-build bourse-export \
+        bourse-validate
 
 bourse-spine:    ## BVMT listed-securities roster (firm identity spine)
 	$(BPY) -m bourse.bvmt
@@ -74,12 +75,16 @@ bourse-fetch:    ## download registration documents and movement notices
 	$(BPY) -m bourse.fetch_docs --doc-types document_de_reference
 	$(BPY) -m bourse.fetch_docs --doc-types offre_publique \
 	        operation_sur_capital augmentation_de_capital
+	$(BPY) -m bourse.fetch_docs --doc-types resolutions_ag
 
 bourse-extract:  ## parse tables into typed records (slow; parallel)
 	$(BPY) -m bourse.pipeline --doc-types document_de_reference
 
 bourse-movements: ## parse dated operations out of CMF notices
 	$(BPY) -m bourse.movements_pipeline
+
+bourse-resolutions: ## parse dated board decisions out of AGM resolutions
+	$(BPY) -m bourse.resolutions_pipeline
 
 bourse-build:    ## assemble entities and multiplex edge lists
 	$(BPY) -m bourse.build_dataset

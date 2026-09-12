@@ -43,6 +43,10 @@ EVIDENCE_COLUMNS = [
     ("executives.jsonl.gz", "other_firm_name_raw", "firm"),
     ("subsidiaries.jsonl.gz", "subsidiary_name_raw", "firm"),
     ("movements.jsonl.gz", "target_name_raw", "firm"),
+    ("board_events.jsonl.gz", "person_name_raw", "person"),
+    ("board_events.jsonl.gz", "replaces_name_raw", "person"),
+    ("board_events.jsonl.gz", "firm_name_raw", "firm"),
+    ("board_events.jsonl.gz", "entity_name_raw", "firm"),
 ]
 
 
@@ -323,6 +327,98 @@ def build_movement_edges(res: Resolver) -> tuple[list[dict], list[dict], list[di
 
 
 # --------------------------------------------------------------------------
+# board events from AGM resolutions
+# --------------------------------------------------------------------------
+
+# Resolutions that seat someone. An expiry or termination closes a mandate
+# rather than opening one, so it is recorded in the events table but carries no
+# appointment edge.
+SEATING_EVENTS = {"appointment", "cooptation", "cooptation_ratified", "renewal"}
+
+
+def build_board_event_edges(res: Resolver) -> tuple[list[dict], list[dict]]:
+    """Return (edges, board-event rows) from the AGM resolutions.
+
+    Two layers:
+
+    ``board_appointment``
+        person -> firm, dated to the general meeting that seated them, with the
+        mandate's stated expiry. This is what gives a board tie a start date;
+        the board tables can only say that someone sat at the time of writing.
+    ``board_succession``
+        outgoing -> incoming, where a resolution appoints someone "en
+        remplacement de" a named person. The source states the handover, so it
+        is not inferred - the same relation the JORT build reads out of the
+        gazette.
+    """
+    events = read_jsonl(RECORDS / "board_events.jsonl.gz")
+    edges: list[dict] = []
+    rows: list[dict] = []
+    seen_edges: set[tuple] = set()
+
+    for ev in events:
+        firm, _ = res.resolve(ev.get("firm_name_raw") or "", hint="firm")
+        person, _ = res.resolve(ev.get("person_name_raw") or "", hint="person") \
+            if ev.get("person_name_raw") else (None, None)
+        predecessor, _ = res.resolve(ev.get("replaces_name_raw") or "", hint="person") \
+            if ev.get("replaces_name_raw") else (None, None)
+        represents, _ = res.resolve(ev.get("entity_name_raw") or "", hint="firm") \
+            if ev.get("entity_name_raw") else (None, None)
+        year = ev.get("meeting_year")
+
+        rows.append({
+            **ev,
+            "firm_id": firm,
+            "firm_name": res.canonical_name(firm) if firm else None,
+            "person_id": person,
+            "person_name": res.canonical_name(person) if person else None,
+            "replaces_id": predecessor,
+            "represents_id": represents,
+        })
+
+        prov = {
+            "doc_node_key": ev.get("doc_node_key"),
+            "doc_type": ev.get("doc_type"),
+            "doc_url": ev.get("doc_url"),
+            "page": None,
+            "doc_sha256": ev.get("doc_sha256"),
+        }
+        key = ("board_appointment", person, firm,
+               ev.get("doc_node_key"), ev.get("resolution_number"))
+        if (firm and person and year and ev["event_type"] in SEATING_EVENTS
+                and person != firm and key not in seen_edges):
+            seen_edges.add(key)
+            edges.append({
+                "layer": "board_appointment", "year": year,
+                "obs_date": ev.get("meeting_date"),
+                "source_id": person, "target_id": firm, "weight": 1.0,
+                "directed": 1, "role": ev.get("role"),
+                "event_type": ev["event_type"],
+                "mandate_end": ev.get("term_end_year"),
+                "represents": represents,
+                "seat_holder_type": ev.get("seat_holder_type"),
+                **prov,
+            })
+        # A resolution that seats several people but names one predecessor does
+        # not say which of them replaces that person. Pairing them all would
+        # invent handovers, so the succession tie is only drawn where the
+        # resolution names exactly one appointee.
+        if (person and predecessor and year and person != predecessor
+                and (ev.get("n_people_in_resolution") or 1) == 1):
+            edges.append({
+                "layer": "board_succession", "year": year,
+                "obs_date": ev.get("meeting_date"),
+                "source_id": predecessor, "target_id": person, "weight": 1.0,
+                "directed": 1, "role": ev.get("role"),
+                "event_type": ev["event_type"],
+                "at_firm": firm,
+                **prov,
+            })
+    rows.sort(key=lambda r: (r.get("meeting_date") or "", r.get("resolution_number") or 0))
+    return edges, rows
+
+
+# --------------------------------------------------------------------------
 # derived firm-firm layers
 # --------------------------------------------------------------------------
 
@@ -431,11 +527,23 @@ MOVEMENT_FIELDS = [
     "doc_sha256", "filing_date",
 ]
 
+BOARD_EVENT_FIELDS = [
+    "board_event_id", "meeting_date", "meeting_year", "meeting_kind",
+    "meeting_date_source", "resolution_number", "event_type", "role",
+    "firm_id", "firm_name", "firm_name_raw",
+    "person_id", "person_name", "person_name_raw", "seat_holder_type",
+    "entity_name_raw", "represents_id",
+    "replaces_id", "replaces_name_raw", "board_decision_date",
+    "term_years", "term_end_year", "adoption",
+    "doc_node_key", "doc_type", "doc_url", "doc_sha256", "excerpt",
+]
+
 EDGE_FIELDS = [
     "layer", "year", "obs_date", "source_id", "source_name", "source_type",
     "target_id", "target_name", "target_type", "weight", "directed", "role",
     "mandate_start", "mandate_end", "n_shares", "seat_holder_type", "represents",
     "shared_actors", "event_type", "pct_stated", "price_tnd",
+    "at_firm", "mandate_end",
     "doc_node_key", "doc_type", "doc_url", "page", "doc_sha256",
 ]
 
@@ -452,7 +560,8 @@ def main() -> None:
     log.info("pass 2: resolving entities and building edges")
     edges, listed = build_edges(res)
     movement_edges, movement_rows, listing_events = build_movement_edges(res)
-    edges += movement_edges
+    board_edges, board_rows = build_board_event_edges(res)
+    edges += movement_edges + board_edges
     derived = derive_firm_layers(edges)
     all_edges = edges + derived
 
@@ -491,8 +600,13 @@ def main() -> None:
               ["entity_id", "firm_name", "listing_event", "event_date", "event_year",
                "market", "isin", "ticker", "doc_node_key", "doc_url"])
 
-    panel = expand_panel([e for e in all_edges
-                          if e["layer"] not in ("tender_offer", "concert_party")],
+    write_csv(PROCESSED / "board_events.csv", board_rows, BOARD_EVENT_FIELDS)
+
+    # Event layers describe things that happened on a date, not states that
+    # persist, so they are excluded from the carry-forward panel.
+    EVENT_LAYERS = {"tender_offer", "concert_party",
+                    "board_appointment", "board_succession"}
+    panel = expand_panel([e for e in all_edges if e["layer"] not in EVENT_LAYERS],
                          max_carry=args.max_carry)
     panel.sort(key=lambda e: (e["layer"], e["panel_year"], e["source_id"], e["target_id"]))
     write_csv(PROCESSED / "multiplex_edges_panel.csv.gz", panel,

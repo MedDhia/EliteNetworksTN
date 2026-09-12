@@ -173,6 +173,65 @@ def run_checks() -> list[dict]:
             ", ".join(f"{k}={v}" for k, v in
                       Counter(r["listing_event"] for r in listings).most_common()))
 
+    # --- board events ------------------------------------------------------
+    board = _read(PROCESSED / "board_events.csv")
+    if board:
+        add("INFO", "board_events",
+            f"{len(board)} governance decisions from AGM resolutions")
+        add("INFO", "board_event_types",
+            ", ".join(f"{k}={v}" for k, v in
+                      Counter(b["event_type"] for b in board).most_common()))
+        unnamed = [b for b in board if not b.get("person_id")]
+        if unnamed:
+            add("WARN", "board_events_without_person",
+                "decisions where no name could be read; they carry no edge",
+                len(unnamed))
+        by_filing = sum(1 for b in board if b.get("meeting_date_source") == "filing_date")
+        if by_filing:
+            add("WARN", "board_events_dated_by_filing",
+                "decisions dated by the filing rather than by the meeting itself",
+                by_filing)
+        # A mandate that expires before the meeting that granted it is a
+        # misread term, not a real one.
+        backwards = [
+            b for b in board
+            if b.get("term_end_year") and b.get("meeting_year")
+            and b["term_end_year"].isdigit() and b["meeting_year"].isdigit()
+            and int(b["term_end_year"]) < int(b["meeting_year"])
+        ]
+        if backwards:
+            add("WARN", "mandate_ends_before_it_starts",
+                "mandates whose stated expiry precedes the meeting that granted "
+                "them; check the resolution", len(backwards))
+        # The resolutions corpus has a publication gap across 2012-2017. It is a
+        # property of the source, and reporting it every run is what keeps an
+        # empty post-2011 period from being read as board stability.
+        byr = Counter(int(b["meeting_year"]) for b in board
+                      if (b.get("meeting_year") or "").isdigit())
+        if byr:
+            span = range(min(byr), max(byr) + 1)
+            missing = [y for y in span if byr.get(y, 0) == 0]
+            if missing:
+                runs, start = [], missing[0]
+                for a, b2 in zip(missing, missing[1:] + [None]):
+                    if b2 != (a + 1):
+                        runs.append((start, a))
+                        start = b2
+                gaps = ", ".join(f"{a}" if a == b2 else f"{a}-{b2}" for a, b2 in runs)
+                add("WARN", "board_event_year_gaps",
+                    f"years inside the observed span with no board event at all: "
+                    f"{gaps}. This is a gap in the CMF's publication, not evidence "
+                    f"of board stability", len(missing))
+
+        selfsucc = [
+            b for b in board
+            if b.get("replaces_id") and b.get("person_id")
+            and b["replaces_id"] == b["person_id"]
+        ]
+        if selfsucc:
+            add("ERROR", "self_succession",
+                "a person recorded as replacing themselves", len(selfsucc))
+
     # --- temporal coverage -------------------------------------------------
     years = sorted({int(e["year"]) for e in edges if (e.get("year") or "").isdigit()})
     if years:

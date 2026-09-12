@@ -335,6 +335,98 @@ check("target trailing list number",
       "ADWYA")
 
 
+
+# ==========================================================================
+# AGM resolutions
+# ==========================================================================
+
+from bourse.extract.resolutions import (  # noqa: E402
+    classify_resolution,
+    is_plausible_entity,
+    meeting_info,
+    parse_resolution,
+    split_resolutions,
+    term_end_year,
+    trim_name,
+)
+
+# --- document structure ---------------------------------------------------
+DOC = (
+    "RESOLUTIONS ADOPTEES TUNISO-EMIRATIE SICAV "
+    "Résolutions adoptées par l'Assemblée Générale Ordinaire du 21 mai 2026 "
+    "Première résolution : approuve les états financiers. "
+    "Cette résolution mise aux voix est adoptée à l'unanimité "
+    "Cinquième résolution : l'Assemblée Générale Ordinaire ratifie la cooptation de "
+    "Monsieur Yacine FRIAA en qualité d'administrateur, décidée par le conseil "
+    "d’administration du 19 mai 2026, en remplacement de Monsieur Marouene Ben Slimene."
+)
+check("meeting kind and date", meeting_info(DOC), ("ordinaire", "2026-05-21"))
+check("resolutions split", [n for n, _ in split_resolutions(DOC)], [1, 5])
+
+# --- event typing ---------------------------------------------------------
+check("classify cooptation ratified",
+      classify_resolution("ratifie la cooptation de Monsieur X"), "cooptation_ratified")
+check("classify renewal",
+      classify_resolution("décide de renouveler le mandat de Monsieur X"), "renewal")
+check("classify appointment",
+      classify_resolution("décide de nommer les administrateurs suivants"), "appointment")
+# A quitus resolution is a decision but not a governance one, so it yields nothing.
+check("quitus is not governance",
+      parse_resolution(3, "donne quitus entier aux membres du conseil d'administration"),
+      None)
+
+# --- the co-optation resolution parses whole -------------------------------
+res = parse_resolution(5, split_resolutions(DOC)[1][1])
+check("cooptation event type", res["event_type"], "cooptation_ratified")
+check("cooptation role", res["role"], "administrateur")
+check("cooptation appointee", [p["person_name_raw"] for p in res["people"]],
+      ["Yacine FRIAA"])
+check("cooptation predecessor", res["replaces_name_raw"], "Marouene Ben Slimene")
+# The board's own decision date, written with a typographic apostrophe.
+check("board decision date", res["board_decision_date"], "2026-05-19")
+check("adoption status", res["adoption"], None)
+
+# --- the outgoing person is not the appointee -----------------------------
+# "prend acte du départ de M. X ... coopter M. Y en remplacement de M. X"
+res = parse_resolution(4, (
+    "L'Assemblée Générale prend acte du départ de M. Alain Dallard ayant la qualité "
+    "d'administrateur. L'Assemblée Générale décide de ratifier la décision du conseil "
+    "d’administration de coopter M. Hatem SAIGHI en remplacement de M. Alain Dallard."
+))
+check("departing person excluded from appointees",
+      [p["person_name_raw"] for p in res["people"]], ["Hatem SAIGHI"])
+check("departing person is the predecessor", res["replaces_name_raw"], "Alain Dallard")
+
+# --- terms ----------------------------------------------------------------
+check("term end year",
+      term_end_year("pour une durée de trois ans expirant lors de l'assemblée générale "
+                    "ordinaire qui statuera sur les états financiers de l'exercice 2023"),
+      2023)
+
+# --- legal-person seats ---------------------------------------------------
+res = parse_resolution(5, (
+    "L'Assemblée Générale Ordinaire décide de nommer les administrateurs suivants : "
+    "La Banque Tuniso-Koweitienne - BTK représentée par Madame Rim LAKHOUA"
+))
+check("representative read", [p["person_name_raw"] for p in res["people"]], ["Rim LAKHOUA"])
+check("seat held by a legal person", res["people"][0]["seat_holder_type"], "legal_person")
+
+# --- name trimming --------------------------------------------------------
+check("trim trailing connective", trim_name("Marouene Ben Slimene pour"),
+      "Marouene Ben Slimene")
+check("trim following clause", trim_name("Rim LAKHOUA La Société"), "Rim LAKHOUA")
+
+# --- entity plausibility --------------------------------------------------
+# A wrong entity becomes a node and a corporate board seat, so the test is strict.
+for good in ["AMEN BANK", "Banque Tuniso-Koweitienne", "CIL", "GAPCORP FNI- FZLLC"]:
+    if not is_plausible_entity(good):
+        failures.append(f"real entity rejected: {good!r}")
+for junk in ["décide", "de renouveler", "arrive à échéance", "Désigner",
+             "L'Assemblée Générale Ordinaire nomme", "Monsieur Adel GRAR 2023 -AMEN BANK"]:
+    if is_plausible_entity(junk):
+        failures.append(f"fragment accepted as entity: {junk!r}")
+
+
 if __name__ == "__main__":
     if failures:
         print(f"FAILED ({len(failures)}):")

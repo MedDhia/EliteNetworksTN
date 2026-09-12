@@ -128,6 +128,37 @@ This is the listing history the BVMT roster snapshot cannot give (see §6.3).
 It is incomplete: it covers only firms whose admission or withdrawal notice is
 in the corpus, so absence of a row is not evidence a firm was never listed.
 
+## 4d. `board_events.csv` — dated board decisions
+
+One row per (resolution, person) from the adopted-resolutions filings. A single
+resolution often seats several directors, and each is a separate event.
+
+| Variable | Description |
+|---|---|
+| `board_event_id` | Stable id, hashed from the filing plus resolution and person index. |
+| `meeting_date`, `meeting_year`, `meeting_kind` | The general meeting that took the decision. `meeting_kind` is `ordinaire`, `extraordinaire`, `mixte`, `elective` or `constitutive`. |
+| `meeting_date_source` | `document` where the filing states the meeting date, `filing_date` where it had to fall back. |
+| `resolution_number` | Position of the resolution in the filing. |
+| `n_people_in_resolution` | How many people the resolution names — see the succession caveat below. |
+| `event_type` | `appointment`, `cooptation`, `cooptation_ratified`, `renewal`, `non_renewal`, `termination`, `mandate_expiry`. |
+| `role` | `administrateur`, `administrateur_independant`, `administrateur_representant_etat`, `president_conseil`, `president_directeur_general`, `commissaire_aux_comptes`, … |
+| `firm_id`, `firm_name`, `firm_name_raw` | The company whose board it is. |
+| `person_id`, `person_name`, `person_name_raw` | The person seated or removed. Null where the resolution named no readable person. |
+| `seat_holder_type` | `person`, or `legal_person` where a company holds the seat. |
+| `entity_name_raw`, `represents_id` | The company holding the seat, where one does. |
+| `replaces_id`, `replaces_name_raw` | The outgoing director the resolution names ("en remplacement de"). |
+| `board_decision_date` | For a ratified co-optation, the date the board itself decided — earlier than the meeting that ratified it. |
+| `term_years`, `term_end_year` | Mandate length, and the financial year whose accounts the expiring meeting will rule on. |
+| `adoption` | `adopted_unanimously`, `adopted_by_majority`, `rejected`. |
+| `excerpt` | The first 400 characters of the resolution, so any coding can be checked. |
+
+**Auditors are included.** `commissaire_aux_comptes` appointments are governance
+decisions but not board seats; filter on `role` to separate them.
+
+**Roughly half the filings carry no governance decision at all** — they approve
+accounts and grant discharge. Those produce no rows, which is why the table is
+much smaller than the number of filings.
+
 ## 5. `multiplex_edges_panel.csv.gz` — the balanced panel
 
 Same columns as the observed edge list, plus:
@@ -137,9 +168,12 @@ Same columns as the observed edge list, plus:
 | `panel_year` | The year the row is asserted for. |
 | `observation_type` | `observed` — a filing describes this year. `carried_forward` — the last observation is being extended forward. |
 
-`tender_offer` and `concert_party` are **excluded from the panel**. They are
-dated events, not states: carrying an offer forward would assert an offer that
-was never made. They appear in the observed edge list only.
+`tender_offer`, `concert_party`, `board_appointment` and `board_succession` are
+**excluded from the panel**. They are dated events, not states: carrying an
+offer or an appointment forward would assert that it happened again. They appear
+in the observed edge list only. To build board *spells*, join
+`board_appointment` (the start) to `term_end_year` (the stated end) rather than
+carrying the tie forward blindly.
 
 Ties are carried forward until the dyad is next observed, capped at
 `--max-carry` years (default 3). **Filter to `observation_type == "observed"`
@@ -186,6 +220,36 @@ These are properties of the sources, and should be stated in any write-up.
      two entities, each with 18 firm ties. Whether they are one person is a
      substantive judgement the matcher will not make; resolve it in
      `config/bourse_entity_overrides.csv`.
+8. **Succession is only drawn where it is unambiguous.** A resolution that
+   seats several directors but names one departing person does not say which of
+   them replaced that person. Pairing them all would invent handovers, so a
+   `board_succession` edge is emitted only where the resolution names exactly
+   one appointee (`n_people_in_resolution == 1`). Multi-person resolutions keep
+   `replaces_name_raw` in `board_events.csv` for anyone who wants to code the
+   pairing by hand.
+9. **The resolution corpus has a hole across the revolution.** This is the most
+   consequential gap in the dataset and it is a property of the source, not of
+   the parser. The CMF's "Résolutions adoptées" section carries 116 filings for
+   meetings held in 2010, **one for 2011, and nothing at all for 2012–2017**,
+   resuming thinly from 2018:
+
+   | Meeting year | 2001 | 2005 | 2006 | 2007 | 2008 | 2009 | 2010 | 2011 | 2012–17 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2026 |
+   |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+   | Filings | 17 | 11 | 51 | 15 | 87 | 100 | 116 | 1 | **0** | 3 | 2 | 10 | 27 | 8 | 2 | 8 |
+
+   **Do not read the absence of board events in 2012–2017 as board stability.**
+   Any before/after design around January 2011 that uses `board_appointment` or
+   `board_succession` is comparing a dense pre-period against an empty
+   post-period. The `board_seat` layer, which comes from registration documents,
+   does cover those years and is the one to use there.
+
+   A further 71 of 529 filings state no readable meeting date and fall back to
+   the filing date (`meeting_date_source`).
+
+10. **Board coverage skews to investment funds.** SICAVs file diligently;
+    operating companies less so. 483 of 606 rows concern operating companies,
+    across 78 firms.
+
    Two firm-years still show declared stakes above 100% (see
    `validation_report.md`). Both trace to inconsistencies in the filings
    themselves rather than to parsing, and are left as reported.

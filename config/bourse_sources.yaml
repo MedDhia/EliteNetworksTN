@@ -48,7 +48,13 @@ sections:
     slug: "r-solutions-adopt-es-par-les-assembl-s-g-n-rales-des-soci-t-s-faisant-ape"
     doc_type: "resolutions_ag"
     priority: 1
-    note: Adopted AGM resolutions; dated board appointments and renewals.
+    note: >-
+      Adopted AGM resolutions. Each filing dates its general meeting to the day
+      and states the decisions taken: appointments, co-optations and their
+      ratification, renewals, terminations, and the mandate expiry. Co-optations
+      name the departing director, which gives a succession tie the source
+      states outright. Roughly half the filings are routine financial meetings
+      carrying no governance decision.
 
   - key: prospectus
     slug: "prospectus-vis-s-par-le-cmf"
