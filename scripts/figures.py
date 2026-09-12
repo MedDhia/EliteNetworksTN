@@ -606,7 +606,7 @@ def fig_institution_network(min_holders: int = 40, min_shared: int = 10) -> None
     g = g.subgraph(max(nx.connected_components(g), key=len)).copy()
     # The 2-core: drop pendant chains, which a force layout flings across the
     # frame and which say nothing about circulation anyway.
-    core = nx.k_core(giant, 2)
+    core = nx.k_core(g, 2)
     if len(core) > 20:
         g = core.copy()
 
@@ -732,8 +732,9 @@ def fig_revolution() -> None:
     ax.set_xticks(np.arange(2000, 2021, 5))
 
     # (c) churn: how often postholders are moved -----------------------
-    # A "still in post" curve cannot be read off this source: 47% of spells
-    # have no recorded end, so almost nobody ever registers as having left.
+    # A "still in post" curve cannot be read off this source: only 5% of
+    # spells are closed by an act that states the exit, and 42% are never
+    # closed at all, so almost nobody registers as having left on a date.
     # Movement into a new post is recorded, and is what the gazette can
     # actually measure.
     ax = axes[1, 0]
@@ -807,8 +808,9 @@ def fig_revolution() -> None:
              "only to 8%, below the 12% of Ben Ali's 1987 takeover and below most of "
              "the 1990s (c): the state published more appointments because it had grown, "
              "not because it turned over harder. Panels (c) and (d) measure movement "
-             "into posts rather than departure from them — 47% of spells have no "
-             "recorded end, so exit cannot be counted directly.")
+             "into posts rather than departure from them: only 5% of spells are "
+             "closed by an act that states the exit, so departure cannot be "
+             "counted directly.")
     fig.tight_layout(rect=(0, 0, 1, 0.845))
     save(fig, "fig08_revolution_and_the_apparatus", SOURCE)
 

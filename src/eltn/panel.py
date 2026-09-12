@@ -45,6 +45,63 @@ EXIT_TYPES = {"termination", "retirement", "resignation"}
 # Offices held alongside a main post rather than instead of it.
 CONCURRENT_RANKS = {"administrateur_ca"}
 
+# Ranks whose posts are singular: one person holds the office at a time, so
+# appointing someone to it is itself evidence that the incumbent has gone.
+#
+# The line is not arbitrary.  These are the tiers Tunisian administrative law
+# treats as *emplois fonctionnels* -- specific, numbered posts attached to a
+# named unit -- plus political office, which is singular for the same reason.
+# The ranks left out are grades or corps rather than posts (an attache, an
+# inspecteur, a magistrate, a professor: a ministry has many at once), or
+# collegial seats (a conseil d'administration has many administrateurs), or
+# too heterogeneous to trust (`autre`).  A ministry likewise has several
+# conseillers and charges de mission at any moment, so `conseiller_pol` is
+# excluded despite its seniority.
+SINGULAR_RANKS = {
+    "chef_etat", "chef_gouvernement", "ministre", "secretaire_etat",
+    "gouverneur", "chef_cabinet", "secretaire_general", "pdg",
+    "directeur_general", "president_juridiction", "inspecteur_general",
+    "directeur", "sous_directeur", "chef_service",
+}
+
+# Apex offices: one per institution by definition, so the bare title plus the
+# institution already names a unique post ("le secretaire general du ministere
+# de la sante").
+APEX_RANKS = {
+    "chef_etat", "chef_gouvernement", "ministre", "secretaire_etat",
+    "gouverneur", "chef_cabinet", "secretaire_general", "pdg",
+    "president_juridiction", "inspecteur_general",
+}
+
+# Institutions that are themselves the unit: an agency, a hospital, a bank has
+# one director.  A ministry does not -- it contains dozens of directions, so
+# there the title has to name which one.
+UNIT_LIKE_ORG_FORMS = {
+    "entreprise_publique", "etablissement_sante", "universite", "banque",
+    "juridiction", "instance_independante", "commune", "gouvernorat",
+}
+
+# Words that carry rank rather than identify a post.  A position built only
+# from these ("chef de service", "directeur d'administration centrale") names
+# a class of post, of which a ministry holds many at once.
+_RANK_WORDS = {
+    "chef", "cheffe", "service", "services", "division", "bureau",
+    "subdivision", "arrondissement", "directeur", "directrice", "direction",
+    "sous", "adjoint", "adjointe", "general", "generale", "generaux",
+    "administration", "centrale", "central", "secretaire", "secretariat",
+    "principal", "premier", "premiere", "emploi", "fonction", "fonctions",
+    "poste", "grade", "classe", "categorie", "regional", "regionale",
+}
+
+
+def _names_a_post(position_key: str) -> bool:
+    """True when the position says *which* post, not merely what rank."""
+    return any(t not in _RANK_WORDS for t in position_key.split())
+
+# Only these put someone into an office in a way that displaces an incumbent.
+# A board seat never does, and a renewal concerns the sitting holder.
+DISPLACING_TYPES = {"appointment", "transfer"}
+
 
 def _oid(prefix: str, value: str) -> str:
     if not value:
@@ -139,24 +196,52 @@ def normalise_events(raw: pd.DataFrame) -> pd.DataFrame:
 # --------------------------------------------------------------------------
 
 
-def build_spells(ev: pd.DataFrame, censor: dt.date = CENSOR_DATE) -> pd.DataFrame:
-    """Turn entry/exit events into dated office-holding spells."""
+def plural_offices(ev: pd.DataFrame) -> set[str]:
+    """Offices the corpus itself shows to be held by several people at once.
+
+    One act naming two different people to the same ``office_id`` settles the
+    question: either the post is collegial, or the normalisation collapsed two
+    genuinely different posts into one id.  Either way it is not safe to treat
+    an appointment there as evicting whoever was in place.
+    """
+    sub = ev[(ev.office_id != "") & ev.event_type.isin(ENTRY_TYPES)]
+    per_act = sub.groupby(["issue_key", "act_seq", "office_id"]).person_id.nunique()
+    return {idx[2] for idx, n in per_act.items() if n >= 2}
+
+
+def build_spells(ev: pd.DataFrame, censor: dt.date = CENSOR_DATE,
+                 infer_displacement: bool = True) -> pd.DataFrame:
+    """Turn entry/exit events into dated office-holding spells.
+
+    ``infer_displacement`` enables the strongest of the closure rules: for a
+    singular office, appointing someone is itself evidence that the incumbent
+    has left, whether or not the act says so.  Set it False to keep only the
+    closures the gazette states outright.
+    """
     ev = ev.sort_values(["event_date", "issue_key", "act_seq"]).reset_index(drop=True)
+    plural = plural_offices(ev) if infer_displacement else set()
 
     open_spells: dict[tuple[str, str], dict] = {}
+    # Indexes over the open set.  Without them every event scans every open
+    # spell, which is quadratic and, at this corpus size, the slowest thing in
+    # the build.
+    by_person: dict[str, set[str]] = defaultdict(set)
+    by_office: dict[str, set[str]] = defaultdict(set)
     closed: list[dict] = []
 
-    def close(key, end_date, reason, evidence):
-        sp = open_spells.pop(key, None)
+    def close(person: str, office: str, end_date, reason: str, evidence: str) -> None:
+        sp = open_spells.pop((person, office), None)
         if sp is None:
             return
+        by_person[person].discard(office)
+        by_office[office].discard(person)
         sp["end_date"] = max(end_date, sp["start_date"])
         sp["end_reason"] = reason
         sp["end_event_id"] = evidence
         closed.append(sp)
 
-    def match(person: str, office: str, org: str, rank: str) -> tuple | None:
-        """Find the open spell an event refers to.
+    def match(person: str, office: str, org: str, rank: str) -> str | None:
+        """The office of the open spell an event refers to, if any.
 
         Matching on ``office_id`` alone is too strict: the gazette rarely
         repeats a job title verbatim, so a cessation act and the appointment
@@ -166,21 +251,36 @@ def build_spells(ev: pd.DataFrame, censor: dt.date = CENSOR_DATE) -> pd.DataFram
         resort.
         """
         if (person, office) in open_spells:
-            return (person, office)
-        mine = [k for k in open_spells if k[0] == person]
+            return office
+        mine = by_person.get(person)
         if not mine:
             return None
-        same_org_rank = [k for k in mine
-                         if open_spells[k]["org_id"] == org
-                         and open_spells[k]["position_rank"] == rank]
+        same_org_rank = [o for o in mine
+                         if open_spells[(person, o)]["org_id"] == org
+                         and open_spells[(person, o)]["position_rank"] == rank]
         if len(same_org_rank) == 1:
             return same_org_rank[0]
-        same_org = [k for k in mine if open_spells[k]["org_id"] == org]
+        same_org = [o for o in mine if open_spells[(person, o)]["org_id"] == org]
         if len(same_org) == 1:
             return same_org[0]
         if len(mine) == 1:
-            return mine[0]
+            return next(iter(mine))
         return None
+
+    def is_singular(row) -> bool:
+        """Can appointing someone here be read as evicting the incumbent?"""
+        if not infer_displacement or row.position_rank not in SINGULAR_RANKS:
+            return False
+        if not row.org_id or not row.position_key:
+            return False        # a title with no institution is not a post
+        if row.office_id in plural:
+            return False        # the corpus has shown this one to be collegial
+        # An apex office, or one in a body that is itself the unit, is unique
+        # from its title alone.  Anywhere else the title has to name the unit,
+        # or it is a rank shared by many people at once.
+        return (row.position_rank in APEX_RANKS
+                or row.org_form in UNIT_LIKE_ORG_FORMS
+                or _names_a_post(row.position_key))
 
     for row in ev.itertuples(index=False):
         person, office = row.person_id, row.office_id
@@ -191,7 +291,7 @@ def build_spells(ev: pd.DataFrame, censor: dt.date = CENSOR_DATE) -> pd.DataFram
         if row.event_type in EXIT_TYPES:
             found = match(person, office, row.org_id, row.position_rank)
             if found:
-                close(found, row.event_date, row.event_type, row.event_id)
+                close(person, found, row.event_date, row.event_type, row.event_id)
             continue
 
         if row.event_type == "delegation":
@@ -203,14 +303,31 @@ def build_spells(ev: pd.DataFrame, censor: dt.date = CENSOR_DATE) -> pd.DataFram
         if row.event_type == "renewal":
             found = match(person, office, row.org_id, row.position_rank)
             if found:
-                open_spells[found]["renewals"] += 1
+                open_spells[(person, found)]["renewals"] += 1
                 continue
 
-        # The gazette's own statement that the previous holder is out.
+        # 1. The gazette's own statement that the previous holder is out.
         if row.replaces_id:
             found = match(row.replaces_id, office, row.org_id, row.position_rank)
             if found:
-                close(found, row.event_date, "succeeded", row.event_id)
+                close(row.replaces_id, found, row.event_date, "succeeded",
+                      row.event_id)
+
+        # 2. Inferred eviction.  Two people cannot hold one singular office at
+        #    the same time, so whoever is still open in it has left, even
+        #    though no act said so.  This is the rule that recovers most of
+        #    the exits the gazette never publishes -- but the date it gives is
+        #    an upper bound: the post may have stood vacant beforehand.
+        if row.event_type in DISPLACING_TYPES and is_singular(row):
+            for holder in list(by_office.get(office, ())):
+                if holder == person:
+                    continue
+                # Two people entering the same office on one day is not a
+                # handover, it is two posts the normalisation merged.  Leave
+                # both open rather than invent a zero-day tenure.
+                if open_spells[(holder, office)]["start_date"] == row.event_date:
+                    continue
+                close(holder, office, row.event_date, "displaced", row.event_id)
 
         # A restatement of a tenure already open in the same organisation at
         # the same rank is not a move -- the gazette simply worded the office
@@ -218,18 +335,17 @@ def build_spells(ev: pd.DataFrame, censor: dt.date = CENSOR_DATE) -> pd.DataFram
         # the previous spell.
         if key in open_spells:
             continue
-        continuation = [k for k in open_spells
-                        if k[0] == person
-                        and open_spells[k]["org_id"] == row.org_id
-                        and open_spells[k]["position_rank"] == row.position_rank]
-        if continuation:
+        if any(open_spells[(person, o)]["org_id"] == row.org_id
+               and open_spells[(person, o)]["position_rank"] == row.position_rank
+               for o in by_person.get(person, ())):
             continue
 
+        # 3. The person turning up in another substantive office.
         if row.position_rank not in CONCURRENT_RANKS:
-            for other in [k for k in open_spells
-                          if k[0] == person and k[1] != office
-                          and open_spells[k]["position_rank"] not in CONCURRENT_RANKS]:
-                close(other, row.event_date, "moved", row.event_id)
+            for other in list(by_person.get(person, ())):
+                if other != office and open_spells[(person, other)][
+                        "position_rank"] not in CONCURRENT_RANKS:
+                    close(person, other, row.event_date, "moved", row.event_id)
 
         open_spells[key] = {
             "person_id": person,
@@ -255,8 +371,10 @@ def build_spells(ev: pd.DataFrame, censor: dt.date = CENSOR_DATE) -> pd.DataFram
             "end_reason": "",
             "end_event_id": "",
         }
+        by_person[person].add(office)
+        by_office[office].add(person)
 
-    for key, sp in open_spells.items():
+    for sp in open_spells.values():
         sp["end_date"] = censor
         sp["end_reason"] = "censored"
         closed.append(sp)
@@ -267,6 +385,18 @@ def build_spells(ev: pd.DataFrame, censor: dt.date = CENSOR_DATE) -> pd.DataFram
     out["start_year"] = [d.year for d in out.start_date]
     out["end_year"] = [d.year for d in out.end_date]
     out["duration_days"] = [(e - s).days for s, e in zip(out.start_date, out.end_date)]
+    # How to read end_date, which is what a survival model needs to know.
+    # Only an act that states the exit dates it; the inferred closures date the
+    # latest moment the person can still have been in post, so the true exit
+    # lies somewhere in the spell -- interval-censored, not exact.
+    out["end_precision"] = out.end_reason.map({
+        "termination": "exact",
+        "retirement": "exact",
+        "succeeded": "exact",
+        "moved": "upper_bound",
+        "displaced": "upper_bound",
+        "censored": "censored",
+    }).fillna("upper_bound")
     out["spell_id"] = [
         _oid("S", f"{p}|{o}|{s}") for p, o, s in
         zip(out.person_id, out.office_id, out.start_date)

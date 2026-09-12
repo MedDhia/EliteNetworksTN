@@ -91,32 +91,68 @@ One row per continuous tenure of one person in one office.
 | `end_date`, `end_year` | see **End reasons** |
 | `duration_days` | `end_date - start_date` |
 | `end_reason` | how the spell was closed |
+| `end_precision` | `exact`, `upper_bound` or `censored` — how to read `end_date` |
 | `start_event_id`, `end_event_id`, `start_act`, `start_issue`, `pdf_url` | provenance |
 | `predecessor_id` | incumbent named as replaced, if any |
 | `renewals` | count of renewal acts observed during the spell |
 
 ### End reasons
 
-The gazette announces entries reliably and exits much less so. Three closure
+The gazette announces entries reliably and exits much less so. Four closure
 mechanisms are used, in descending order of evidential strength, and the one
 that fired is recorded:
 
-| `end_reason` | Meaning | Treat as |
-|---|---|---|
-| `termination` | an explicit cessation-of-functions act | observed exit |
-| `retirement` | an explicit retirement act | observed exit |
-| `succeeded` | a successor's act named this person as replaced | observed exit |
-| `moved` | the person took another substantive office | observed exit, imputed date |
-| `censored` | nothing closed it | **right-censored** |
+| `end_reason` | Meaning | `end_precision` | Share |
+|---|---|---|---|
+| `termination` | an explicit cessation-of-functions act | `exact` | 2.1% |
+| `retirement` | an explicit retirement act | `exact` | <0.1% |
+| `succeeded` | a successor's act named this person as replaced | `exact` | 3.2% |
+| `displaced` | someone else was appointed to the same singular office | `upper_bound` | 8.6% |
+| `moved` | the person took another substantive office | `upper_bound` | 44.4% |
+| `censored` | nothing closed it | `censored` | 41.7% |
 
-`moved` rests on an assumption — that the substantive offices in this dataset
-are mutually exclusive — which is right for line administration and wrong for
-some cabinet-level pluralism. Board seats (`position_rank == "administrateur_ca"`)
-are exempt and may run concurrently.
+**`displaced` is inferred, not stated.** Two people cannot hold one singular
+office at the same time, so appointing a successor is itself evidence that the
+incumbent has gone, whether or not the act says so. This recovers about 8,700
+exits the gazette never published. It is guarded, because the inference does
+damage wherever the office is not in fact singular:
 
-For survival analysis, `censored` and `moved` are different things: the first is
-a censoring indicator, the second is an exit with a date that is correct to the
-day the person surfaced elsewhere, not necessarily the day they left.
+- only ranks that are *emplois fonctionnels* or political office can displace —
+  a grade or corps (attaché, inspecteur, magistrate, professor) is held by many
+  people at once, and so is a collegial seat;
+- inside a ministry the title must name its unit. *"Chef de service"* is a rank
+  a ministry holds dozens of at once; *"chef de service du budget"* is a post.
+  In a body that is itself the unit — an agency, a hospital, a bank — the bare
+  title is enough, and at apex ranks (minister, secretary-general, PDG) it is
+  enough anywhere;
+- any office that a single act fills with two different people is marked
+  collegial for the whole run and never displaces;
+- two people entering one office on the same day are left alone, rather than
+  given a zero-day tenure.
+
+`normalize.build_spells(ev, infer_displacement=False)` turns the rule off and
+keeps only the closures the gazette states outright.
+
+### `end_precision` — how to read `end_date`
+
+This is the field a survival model needs.
+
+| Value | Meaning |
+|---|---|
+| `exact` | an act states the exit and dates it |
+| `upper_bound` | the person was certainly gone by `end_date`, but may have left well before it — the true exit lies inside the spell |
+| `censored` | nothing closed the spell; it is right-censored at the corpus end |
+
+Treating `upper_bound` rows as exact exits biases tenure **upward**, and the
+tail is where it bites: a `displaced` spell running thirty years does not mean
+a thirty-year tenure, it means nobody was recorded in that post for thirty
+years and the true exit is unknown within that window. Interval-censoring is
+the correct treatment; `end_precision` is there so you can apply it.
+
+`moved` additionally rests on an assumption — that substantive offices are
+mutually exclusive — which is right for line administration and wrong for some
+cabinet-level pluralism. Board seats
+(`position_rank == "administrateur_ca"`) are exempt and may run concurrently.
 
 ---
 

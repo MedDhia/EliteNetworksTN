@@ -4,9 +4,9 @@
 
 - issues catalogued: **6,378** (French *journal-officiel*, 1957–2026)
 - events: **117,508**
-- persons: **44,271**
+- persons: **45,634**
 - organisations: **8,803**
-- spells: **99,872**
+- spells: **100,582**
 
 ## Yield by decade
 
@@ -97,24 +97,25 @@ The share ending `censored` is a property of the gazette, not of the pipeline: e
 
 | end_reason   |     n |    % |
 |:-------------|------:|-----:|
-| moved        | 47802 | 47.9 |
-| censored     | 46575 | 46.6 |
-| succeeded    |  3299 |  3.3 |
-| termination  |  2189 |  2.2 |
-| retirement   |     7 |  0   |
+| moved        | 44655 | 44.4 |
+| censored     | 41923 | 41.7 |
+| displaced    |  8657 |  8.6 |
+| succeeded    |  3264 |  3.2 |
+| termination  |  2079 |  2.1 |
+| retirement   |     4 |  0   |
 
-Median observed tenure: **1201 days** (3.3 years); mean 1690 days.
+Median observed tenure: **1137 days** (3.1 years); mean 1612 days.
 
 ## Entity resolution
 
-- distinct name strings resolved: **64,637**
-- persons: **44,271**
-- persons with >1 surface spelling: **11,814**
-- **suspect ids** (career span > 45 years or > 12 organisations): **573** (1.29%) — likely homonym merges, screen these before analysis
+- distinct name strings resolved: **66,037**
+- persons: **45,634**
+- persons with >1 surface spelling: **11,850**
+- **suspect ids** (career span > 45 years or > 12 organisations): **596** (1.31%) — likely homonym merges, screen these before analysis
 
 | name             |   first_year |   last_year |   n_orgs |   n_events |
 |:-----------------|-------------:|------------:|---------:|-----------:|
-| Ali Larayedh     |         2013 |        2013 |       18 |         86 |
+| Ali Larayedh     |         1993 |        2013 |       18 |         86 |
 | Mohamed Saâd     |         1960 |        2024 |       35 |         65 |
 | Mohamed Trabelsi |         1973 |        2025 |       36 |         62 |
 | Ahmed Souibgui   |         1990 |        2025 |       25 |         60 |
