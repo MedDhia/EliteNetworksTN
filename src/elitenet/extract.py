@@ -23,6 +23,7 @@ from datetime import date
 from pathlib import Path
 
 from . import grammar as G
+from .names import parse_org
 from .paths import INTERIM, PROCESSED, ensure_dirs, load_config
 
 EVENT_FIELDS = [
@@ -229,6 +230,12 @@ def org_name(text: str) -> str:
     return _tidy_org(m.group("v")) if m else ""
 
 
+def _same_org(a: str, b: str) -> bool:
+    """Whether two mentions normalise to the same organisation."""
+    ka, kb = parse_org(a or "").match_key, parse_org(b or "").match_key
+    return bool(ka) and ka == kb
+
+
 def _tidy_org(raw: str) -> str:
     # The OCR layer leaves HTML entities in place, and an undecoded "&amp;"
     # survived into 2,654 organisation names, where it blocks resolution.
@@ -406,6 +413,60 @@ def extract_corporate(block: dict) -> list[dict]:
                  person_mention=rep, counterparty_mention=_tidy_org(m.group("org")),
                  role_canonical="representant", role_verbatim="représentée par",
                  extract_confidence=0.90, evidence_quote=_quote(m.group(0)))
+
+    # --- corporate parties: an organisation tied to another organisation - #
+    # Kept apart from the person-level and organisation-level cue lists for the
+    # same reason those are kept apart from each other: one clause routinely
+    # states several acts, and a single first-match-wins pass drops all but one.
+    #
+    # The holder goes in counterparty_mention, which already exists for exactly
+    # this -- an entity other than the subject firm -- and is already carried
+    # through events.csv. `relation` is recorded in role_canonical so the layer
+    # can be filtered without a schema change.
+    #
+    # Nothing is resolved here. Whether the holder and the subject are distinct
+    # seed organisations is a resolution question, and a self-match is dropped
+    # there, not guessed at here.
+    # For a transfer, the company being bought into is named in the clause; for
+    # a standing holding or an audit mandate it is the block's subject firm.
+    mt = G.RE_ORG_TARGET.search(text)
+    stated_target = _tidy_org(G.trim_org_party(mt.group("org"))) if mt else ""
+
+    def _ok(name: str) -> bool:
+        # A bare form marker with no name behind it ("la societe") resolves to
+        # nothing and would only add noise.
+        return len(name) >= 6 and bool(re.search(r"[A-Za-zÀ-ÿ]{3}", name))
+
+    # The stated target wins wherever the clause names one, for every relation:
+    # it is a targeted capture, while org_name() resolves on only 55% of these
+    # blocks and sometimes returns a clause. Where no target is stated -- a
+    # constitution listing its own associates, say -- the subject firm is right.
+    for rx, relation, conf in (
+        (G.RE_ORG_ACQUIRES,    "shares_acquired",       0.88),
+        (G.RE_ORG_CEDES,       "shares_ceded",          0.88),
+        (G.RE_ORG_SHAREHOLDER, "shareholder_confirmed", 0.80),
+        (G.RE_ORG_SUBSCRIBES,  "capital_subscribed",    0.88),
+        (G.RE_ORG_AUDITOR,     "auditor",               0.90),
+        (G.RE_ORG_BRANCH,      "branch",                0.90),
+    ):
+        for m in rx.finditer(text):
+            holder = _tidy_org(G.trim_org_party(m.group("org")))
+            if not _ok(holder):
+                continue
+            target = stated_target if _ok(stated_target) else org
+            # A self-tie compared on raw strings slips through: "la societe
+            # Alpha Holding" and "Societe Alpha Holding" are the same firm and
+            # differ only by an article. Compare on the normalised key that
+            # resolution uses for exact matching. Resolution drops self-matches
+            # again once both ends carry seed ids -- this only keeps the
+            # obvious ones out of events.csv.
+            if not _ok(target or "") or _same_org(target, holder):
+                continue
+            emit(event_type="org_tie", pattern_id=f"corp.org_{relation}",
+                 counterparty_mention=holder, org_mention=target,
+                 role_canonical=relation,
+                 role_verbatim=_tidy_org(m.group(0))[:90],
+                 extract_confidence=conf, evidence_quote=_quote(m.group(0)))
 
     # --- association bureau: "Role : Name" ------------------------------- #
     if block.get("domain") == "association":

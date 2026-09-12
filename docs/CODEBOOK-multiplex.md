@@ -4,7 +4,7 @@ Generated 2026-09-12 by `python -m elitenet.codebook`. Do not edit by hand: colu
 
 ## Scope
 
-- Window: **2008-01-01 to 2012-12-31**
+- Window: **1957-01-01 to 2026-12-31**
 - Collections: `journal-officiel`, `annonces-legales`
 - Language: `fr` (the upstream mirror OCRs French only)
 - Source: Journal Officiel de la République Tunisienne, via the public mirror at jort.tn. The gazette is public domain.
@@ -15,7 +15,7 @@ Every event can carry four different dates and they are never merged. The act da
 
 ## Time origin for networkDynamic
 
-`exports/rnd/*.csv` express time as **integer days since 2008-01-01**. Censored endpoints are `-Inf` and `Inf`, which `networkDynamic` accepts natively; the window boundary is deliberately *not* substituted for an unknown date, because 'still in post at the end of observation' is a different claim from 'left on 2012-12-31'.
+`exports/rnd/*.csv` express time as **integer days since 1957-01-01**. Censored endpoints are `-Inf` and `Inf`, which `networkDynamic` accepts natively; the window boundary is deliberately *not* substituted for an unknown date, because 'still in post at the end of observation' is a different claim from 'left on 2026-12-31'.
 
 ## Tables
 
@@ -73,7 +73,7 @@ Row-level accounting from the input sheet to the emitted tables, so every one of
 
 ### `issue_calendar.csv`
 
-1,276 rows.
+9,749 rows.
 
 One row per mirrored gazette issue with its publication date and the evidence behind it. `date_source` records which signal decided the date; `date_confidence` is lower where signals disagreed.
 
@@ -112,7 +112,7 @@ One row per mirrored gazette issue with its publication date and the evidence be
 
 ### `blocks_index.csv`
 
-207,369 rows.
+879,155 rows.
 
 One row per announcement block or state act, with its printed folio page for citation. `rubric` types an announcement from the reference code's suffix; `ministry` anchors a state act to the body that issued it.
 
@@ -150,7 +150,7 @@ One row per announcement block or state act, with its printed folio page for cit
 
 ### `events.csv`
 
-197,532 rows.
+659,013 rows.
 
 The core table: one row per dated relational assertion, with up to four separate dates, a controlled event type and role, a verbatim quote and a page citation. Person and organisation names here are **surface mentions**, not resolved identities; join to `resolution.csv` for those.
 
@@ -197,7 +197,7 @@ The core table: one row per dated relational assertion, with up to four separate
 
 ### `resolution.csv`
 
-113,178 rows.
+389,146 rows.
 
 One row per (person mention, organisation mention) dyad, with the score components behind its link. Nothing is dropped: `unresolved` dyads are retained so the dataset can be re-thresholded.
 
@@ -241,7 +241,7 @@ One row per (person mention, organisation mention) dyad, with the score componen
 
 ### `review_queue.csv`
 
-1,323 rows.
+4,504 rows.
 
 Ambiguous dyads ordered by how consequential they are (seed degree and event count), for hand coding. These are cases the matcher declines to decide, not cases it got wrong.
 
@@ -285,7 +285,7 @@ Ambiguous dyads ordered by how consequential they are (seed degree and event cou
 
 ### `gazette_only_persons.csv`
 
-84,724 rows.
+249,421 rows.
 
 People named in the gazette who match no seed person. The seed sheet is an elite snapshot while the gazette covers every registered company, so these are mostly non-elite — but they are also where new elite entrants would appear, which is why they are kept.
 
@@ -301,7 +301,7 @@ People named in the gazette who match no seed person. The seed sheet is an elite
 
 ### `spells.csv`
 
-31,872 rows.
+40,237 rows.
 
 Person-organisation-role ties as intervals. `onset`/`terminus` are point estimates; the `_lo`/`_hi` columns carry what is actually known. The certain core of a spell is [onset_hi, terminus_lo].
 
@@ -341,7 +341,7 @@ Person-organisation-role ties as intervals. `onset`/`terminus` are point estimat
 
 ### `spell_observations.csv`
 
-4,585 rows.
+15,193 rows.
 
 Every dated observation attached to a spell. An `obs_kind` of `confirmation` or `renewal` proves the tie existed at that moment without asserting when it began.
 
@@ -355,7 +355,7 @@ Every dated observation attached to a spell. An `obs_kind` of `confirmation` or 
 
 ### `panel_edges_yearly.csv`
 
-11,793 rows.
+139,785 rows.
 
 Ties active in each calendar year, with an explicit `certainty`.
 
@@ -375,7 +375,7 @@ Ties active in each calendar year, with an explicit `certainty`.
 
 ### `panel_edges_monthly.csv`
 
-115,886 rows.
+329,334 rows.
 
 As above at monthly resolution, because the January 2011 rupture is invisible at annual resolution.
 
@@ -401,7 +401,7 @@ Written by `make tergm`. These are the yearly panel re-indexed for a temporal ER
 
 ### `node_key.csv`
 
-5,507 rows.
+13,014 rows.
 
 **Mode-blocked** vertex key for the TERGM panel: persons take ids 1..n1 and organisations n1+1..n, which is what makes `bipartite = n1` a true statement about the ordering. `label_suspect` marks a vertex whose name is not a firm name (an address, a role fragment, a clause) and which should probably be excluded.
 
@@ -417,7 +417,7 @@ Written by `make tergm`. These are the yearly panel re-indexed for a temporal ER
 
 ### `edges_yearly.csv`
 
-10,997 rows.
+127,377 rows.
 
 The yearly panel re-indexed to bipartite vertex ids and reduced to **binary** ties: two roles in one firm in one year is two panel rows and one tie, with the roles preserved pipe-joined. `dissolution_observed` marks the minority of ties actually seen to end, as opposed to right-censored.
 
@@ -433,7 +433,7 @@ The yearly panel re-indexed to bipartite vertex ids and reduced to **binary** ti
 
 ### `vertex_activity_yearly.csv`
 
-27,535 rows.
+910,980 rows.
 
 The risk set. An organisation is active between its constitution and dissolution, widened where needed to cover a period in which it demonstrably holds a tie, so activity is always one contiguous interval. `birth_known = 0` means left-censored and at risk from the window start. Persons are active throughout: the gazette records appointments, not births.
 
@@ -449,7 +449,7 @@ The risk set. An organisation is active between its constitution and dissolution
 
 ### `node_attrs_yearly.csv`
 
-27,535 rows.
+910,980 rows.
 
 Per-period nodal covariates, rectangular by construction (every vertex appears in every period, isolates included). Use `cum_degree_lag` rather than `cum_degree` in `nodecov`: degree measured at t is a function of the ties being modelled at t.
 
@@ -471,7 +471,7 @@ Per-period nodal covariates, rectangular by construction (every vertex appears i
 
 ### `dyad_cov_yearly.csv`
 
-11,102 rows.
+396,053 rows.
 
 Dyadic covariates as **sparse triplets** -- dense would be 2,592 x 2,915 per covariate per period. Projected from the seed sheet's undated kinship and shareholding ties, which is what makes them exogenous. `kin_in_org`, `owner_of` and `prior_comembership` are lagged to t-1 and so are absent in the first period; `is_shareholder` needs no lag and is present in all of them.
 
@@ -610,45 +610,46 @@ The 5-character suffix of an announcement's reference code (`2010G02623`**`SANB1
 
 | event_type | n |
 | --- | --- |
-| `appointed` | 83,319 |
-| `constituted` | 51,766 |
-| `capital_increased` | 14,073 |
-| `shares_transferred` | 13,326 |
-| `charged_with_functions` | 8,572 |
-| `resigned` | 7,851 |
-| `headquarters_moved` | 6,158 |
-| `liquidated` | 3,646 |
-| `renewed` | 3,091 |
-| `dissolved` | 2,787 |
-| `renamed` | 1,021 |
-| `capital_decreased` | 730 |
-| `revoked` | 455 |
-| `represented_by` | 327 |
-| `delegated_to_body` | 285 |
-| `terminated` | 125 |
+| `appointed` | 275,924 |
+| `constituted` | 150,066 |
+| `charged_with_functions` | 62,783 |
+| `capital_increased` | 43,163 |
+| `shares_transferred` | 39,464 |
+| `resigned` | 25,972 |
+| `headquarters_moved` | 18,171 |
+| `liquidated` | 11,568 |
+| `renewed` | 11,274 |
+| `dissolved` | 8,704 |
+| `renamed` | 3,128 |
+| `capital_decreased` | 2,439 |
+| `terminated` | 1,895 |
+| `delegated_to_body` | 1,788 |
+| `revoked` | 1,518 |
+| `represented_by` | 1,137 |
+| `retired` | 19 |
 
 ### Events by role
 
 | role_canonical | n |
 | --- | --- |
-| `(none)` | 98,801 |
-| `gerant` | 56,971 |
-| `commissaire_aux_comptes` | 5,685 |
-| `cogerant` | 3,736 |
-| `secretaire_general` | 3,476 |
-| `association_president` | 3,451 |
-| `treasurer` | 3,261 |
-| `administrateur` | 2,876 |
-| `liquidateur` | 2,781 |
-| `chef_de_service` | 2,723 |
-| `pdg` | 2,394 |
-| `associe` | 1,966 |
-| `dg` | 1,878 |
-| `representant` | 1,875 |
-| `sous_directeur` | 1,429 |
-| `president_ca` | 1,158 |
-| `vice_president` | 829 |
-| `dga` | 695 |
-| `member` | 412 |
-| `minister` | 332 |
+| `(none)` | 315,232 |
+| `gerant` | 172,104 |
+| `chef_de_service` | 21,901 |
+| `commissaire_aux_comptes` | 18,802 |
+| `secretaire_general` | 14,277 |
+| `association_president` | 13,097 |
+| `administrateur` | 11,860 |
+| `treasurer` | 11,685 |
+| `cogerant` | 11,135 |
+| `sous_directeur` | 10,705 |
+| `liquidateur` | 9,185 |
+| `representant` | 9,155 |
+| `pdg` | 8,049 |
+| `dg` | 7,779 |
+| `associe` | 6,071 |
+| `president_ca` | 3,972 |
+| `vice_president` | 2,783 |
+| `minister` | 2,579 |
+| `dga` | 2,349 |
+| `member` | 1,951 |
 

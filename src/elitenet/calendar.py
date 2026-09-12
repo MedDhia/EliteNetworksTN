@@ -120,6 +120,19 @@ def _to_date(m: re.Match) -> date | None:
         return None
 
 
+# A date inside a street name is not a date. The Imprimerie Officielle's
+# masthead address reads "42, rue du 18 Janvier 1952 -- TUNIS" (the street is
+# named after a historical date), and it appears in 752 issues. Masthead and
+# header agreement protected all but five of them, which is exactly the kind of
+# margin not to rely on: those five were dated 1952 and produced 93 events
+# whose act postdates its own publication.
+RE_STREET_DATE = re.compile(
+    r"(?:rue|avenue|av\.|boulevard|bd\.|place|impasse|cit[eé]|passage)"
+    r"\s+(?:du|de\s+la|des|d[eu]?')?\s*$",
+    re.IGNORECASE,
+)
+
+
 def find_dates(text: str) -> list[date]:
     """Find every Gregorian date in `text`.
 
@@ -128,7 +141,11 @@ def find_dates(text: str) -> list[date]:
     diacritics.
     """
     out = []
-    for m in RE_DATE_TXT.finditer(_fold(text)):
+    folded = _fold(text)
+    for m in RE_DATE_TXT.finditer(folded):
+        # Skip a date that a street keyword introduces.
+        if RE_STREET_DATE.search(folded[max(0, m.start() - 28):m.start()]):
+            continue
         d = _to_date(m)
         if d:
             out.append(d)
@@ -328,9 +345,17 @@ def resolve_issue(collection: str, year_dir: int, issue: str, text: str,
             notes.append(f"hijri {hy} implausible for {chosen.year}")
 
     # --- directory-year sanity ---
+    # The directory year comes from the upstream archive's own filing and is
+    # the one signal not read out of OCR, so it wins. A year or two out is a
+    # turn-of-year issue; further out means the date was read off something
+    # that is not the masthead, and an assertively wrong publication date is
+    # worse than none -- it silently shifts every event in the issue and, used
+    # as an upper bound, drops acts as impossible. One 1963 issue was dated
+    # 1996 this way.
     if chosen and not (year_dir - 1 <= chosen.year <= year_dir + 1):
-        notes.append(f"date year {chosen.year} far from directory year {year_dir}")
-        conf = min(conf, 0.40)
+        notes.append(f"date year {chosen.year} far from directory year "
+                     f"{year_dir}; date rejected")
+        chosen, source, conf = None, "none", 0.0
 
     if chosen:
         row["pub_date"] = chosen.isoformat()

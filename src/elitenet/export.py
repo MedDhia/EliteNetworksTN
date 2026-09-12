@@ -352,7 +352,8 @@ def _csv(path: Path, rows: list[dict], fields: list[str]) -> None:
 # tens of megabytes, which does not belong in a git history, but they are the
 # substance of the dataset and should not merely be "rebuildable".
 GZIP_TABLES = ["events.csv", "blocks_index.csv", "resolution.csv",
-               "panel_edges_monthly.csv", "gazette_only_persons.csv"]
+               "panel_edges_monthly.csv", "panel_edges_yearly.csv",
+               "gazette_only_persons.csv", "spells.csv"]
 
 
 def gzip_large_tables() -> dict:

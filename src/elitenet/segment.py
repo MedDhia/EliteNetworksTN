@@ -230,6 +230,7 @@ def segment_annonces(pm: PageMap, meta: dict, table: dict) -> tuple[list[dict], 
     """Split an annonces issue on its trailing reference codes."""
     blocks: list[dict] = []
     orphans: list[dict] = []
+    seen_refs: dict[str, int] = {}
     prev_end = 0
     for m in RE_REF.finditer(pm.text):
         body_start, body_end = prev_end, m.start()
@@ -271,9 +272,20 @@ def segment_annonces(pm: PageMap, meta: dict, table: dict) -> tuple[list[dict], 
         info = table.get(rubric, {}) if rubric else {}
         heading = _first_heading(text)
 
+        # An announcement reference is not unique within an issue: 151 issues
+        # between 2004 and 2017 print the same reference twice, as a reprint or
+        # a correction, with slightly different OCR each time. Both texts are
+        # kept -- there is no way to tell which is authoritative -- but the uid
+        # has to distinguish them, or provenance points at two different texts
+        # and the verbatim-quote guard fails against whichever copy a reader's
+        # lookup happens to hold.
+        ref = m.group("ref")
+        n_seen = seen_refs[ref] = seen_refs.get(ref, 0) + 1
+        uid = f"{meta['issue_uid']}:{ref}" + (f"#{n_seen}" if n_seen > 1 else "")
+
         blocks.append({
             **meta,
-            "block_uid": f"{meta['issue_uid']}:{m.group('ref')}",
+            "block_uid": uid,
             "block_type": "annonce",
             "ref": m.group("ref"),
             "ref_series": m.group("series"),

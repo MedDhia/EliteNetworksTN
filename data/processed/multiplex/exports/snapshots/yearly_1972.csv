@@ -1,0 +1,3 @@
+from_node_id,to_node_id,role_canonical,layer,certainty,spell_id
+PERSON_GHARBI_AMEUR,CO_CONSERVES_MODERNES_CAP_BON_COMOCAP,gerant,corporate,certain,SP_db112bf1457c033283f1
+PERSON_BOUSBIA_MOHAMED,CO_BANQUE_CENTRALE_TUNISIE,dg,state,certain,SP_cf8b9bf8390f3248dd6f

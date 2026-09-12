@@ -130,3 +130,42 @@ def test_a_misprinted_series_ordinal_does_not_discredit_a_confirmed_date():
     assert row["pub_date"] == "1957-10-04"        # a Friday
     assert row["annee_consistent"] is False
     assert row["date_confidence"] >= 0.85, "a bad ordinal must not sink a confirmed date"
+
+
+def test_a_street_named_after_a_date_is_not_a_publication_date():
+    """"42, rue du 18 Janvier 1952" is the printer's address, in 752 issues.
+
+    Masthead/header agreement absorbed all but five of them, which is exactly
+    the kind of margin not to rely on: those five were dated 1952 and produced
+    93 events whose act postdated its own publication.
+    """
+    text = (
+        "<!-- page:1 -->\n"
+        "N° 42 — 115° Année\n"
+        "**IMPRIMERIE OFFICIELLE**\n"
+        "42, rue du 18 Janvier 1952 — TUNIS\n"
+        "## Sommaire\n"
+    )
+    row = resolve_issue("journal-officiel", 1971, "042", text, "fr")
+    assert row.get("pub_date") != "1952-01-18"
+    assert not row.get("pub_date"), "no masthead date should be found at all"
+
+
+def test_a_date_far_from_the_directory_year_is_rejected_not_merely_doubted():
+    """The directory year is the one signal not read out of OCR, so it wins.
+
+    A year or two out is a turn-of-year issue. Thirty years out means the date
+    came off something that is not the masthead, and an assertively wrong
+    publication date is worse than none: it shifts every event in the issue,
+    and as an upper bound it drops real acts as impossible.
+    """
+    text = (
+        "<!-- page:1 -->\n"
+        "N° 43\n"
+        "Mardi 17 septembre 1996\n"
+        "## Sommaire\n"
+    )
+    row = resolve_issue("journal-officiel", 1963, "043", text, "fr")
+    assert not row.get("pub_date")
+    assert row["needs_review"] is True
+    assert "rejected" in row["review_note"]

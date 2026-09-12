@@ -124,6 +124,100 @@ RE_REPRESENTED = re.compile(
     rf"(?P<org>(?:La\s+)?(?:Soci[ée]t[ée]|STE|Ste|SARL|SA)\s+[^,\n]{{2,80}}?)\s+"
     rf"repr[ée]sent[ée]e?\s+par\s+{TITLE}?\s*(?P<name>{NAME})", re.IGNORECASE)
 
+# --- corporate parties: an organisation acting in another firm's filing ---
+# The person formulas all require a title (Monsieur, Madame), so a corporate
+# party is invisible to them: "la societe X a cede ses parts" matches nothing,
+# and of 232,693 share-transfer, capital and constitution events only 13 ever
+# captured a company -- those misfiled as persons. These patterns read the
+# other side of the register.
+#
+# ORG_FORM is deliberately broader than names.org_legal_forms, which is used to
+# strip a form marker off a name. Here the marker is what identifies the string
+# as a company at all, so SICAR/SICAV/SICAF/HOLDING/GROUPE are wanted: in
+# Tunisian practice those are the corporate shareholders.
+ORG_FORM = (r"(?:soci[eé]t[eé]|ste\.?|sarl|s\.a\.r\.l|suarl|s\.a\b|s\.p\.a"
+            r"|sicar|sicav|sicaf|holding|groupe|banque|compagnie|entreprise"
+            r"|[eé]tablissements?)")
+# A company name as printed: the form marker, then the name, stopping at a
+# comma, semicolon, full stop or newline. Quotes are common and are kept for
+# _tidy_org to strip.
+ORG_NAMED = rf"(?:la\s+|le\s+)?{ORG_FORM}\s*[«\"']?\s*[^,.;:\n]{{2,70}}"
+
+# "la societe X a cede / a vendu ... parts"  -- X is giving shares up.
+RE_ORG_CEDES = re.compile(
+    rf"(?P<org>{ORG_NAMED}?)\s+a\s+(?:c[eé]d[eé]|vendu)\b", re.IGNORECASE)
+
+# "cede ... au profit de la societe Y" / "cede ... a la societe Y" -- Y acquires.
+# `au profit de` is the register's own formula and is tried first because the
+# bare preposition also introduces non-parties.
+RE_ORG_ACQUIRES = re.compile(
+    rf"(?:c[eé]d[eé]|vendu|transf[eé]r[eé])[^.;\n]{{0,80}}?"
+    rf"\s+(?:au\s+profit\s+de\s+|[aà]\s+)(?P<org>{ORG_NAMED})", re.IGNORECASE)
+
+# "actionnaires : la societe X" / "associes : la societe X" -- a standing
+# holding, confirmed at the filing date rather than opened by it.
+RE_ORG_SHAREHOLDER = re.compile(
+    rf"(?:actionnaires?|associ[eé]s?)\s*:?[^.;\n]{{0,30}}?(?P<org>{ORG_NAMED})",
+    re.IGNORECASE)
+
+# "la societe X a souscrit"
+RE_ORG_SUBSCRIBES = re.compile(
+    rf"(?P<org>{ORG_NAMED}?)\s+a\s+souscrit\b", re.IGNORECASE)
+
+# "commissaire aux comptes : la societe X" -- an audit firm designated inside
+# another firm's filing. This is the relation behind many of the 1,137
+# represented_by events.
+RE_ORG_AUDITOR = re.compile(
+    rf"commissaires?\s+aux\s+comptes?\s*:?[^.;\n]{{0,30}}?(?P<org>{ORG_NAMED})",
+    re.IGNORECASE)
+
+# "succursale de la societe X"
+RE_ORG_BRANCH = re.compile(
+    rf"succursale\s+(?:de\s+|d[eu]\s+)?(?P<org>{ORG_NAMED})", re.IGNORECASE)
+
+
+# In a transfer clause the company whose shares move is named explicitly --
+# "de sa participation au capital de la societe Mehari Beach" -- and that, not
+# the block's subject line, is the target of the tie. Taking it from here rather
+# than from org_name() matters twice over: org_name() resolves on only 55% of
+# these blocks and sometimes returns a clause, and in a transfer the subject
+# line often names the *seller* instead of the company being sold into.
+RE_ORG_TARGET = re.compile(
+    rf"(?:au\s+capital\s+d[eu]\s*|dans\s+|parts?\s+sociales?\s+d[eu]\s*"
+    rf"|actions\s+d[eu]\s*|participation\s+(?:au\s+capital\s+)?d[eu]\s*)"
+    rf"(?P<org>{ORG_NAMED})", re.IGNORECASE)
+
+
+# The name capture above is permissive by design -- a Tunisian company name can
+# run to sixty characters and contain almost anything -- so it is trimmed here
+# instead of being constrained in the pattern.
+#
+# The hard case is " et ". It separates two parties in "la societe SICAR INVEST
+# et Monsieur X", and it is part of the name in "la societe Commissariat Audit
+# et Organisation". So it only cuts when what follows is plainly another party:
+# a person title or a second company.
+_ORG_PARTY_STOP = re.compile(
+    r"\s+(?:repr[eé]sent[eé]e?s?\s+par"
+    r"|aux?\s+profits?\s+d[eu]|au\s+b[eé]n[eé]fice\s+d[eu]"
+    r"|a\s+(?:c[eé]d[eé]|vendu|souscrit|acquis)"
+    r"|ayant|dont|demeurant|sises?|sis|domicili[eé]e?s?"
+    r"|immatricul[eé]e?s?|inscrite?s?|au\s+capital"
+    r"|et\s+(?=(?:Monsieur|Madame|Mademoiselle|MM\.|M\.|Mme|Mlle"
+    r"|la\s+soci[eé]t[eé]|le\s+groupe|les\s+soci[eé]t[eé]s)))"
+    r"\b|\s+et\s+(?=(?:Monsieur|Madame|Mademoiselle|MM\.|M\.|Mme|Mlle))",
+    re.IGNORECASE,
+)
+
+
+def trim_org_party(raw: str) -> str:
+    """Cut a captured corporate-party name at the first clause boundary."""
+    s = (raw or "").strip()
+    m = _ORG_PARTY_STOP.search(s)
+    if m:
+        s = s[:m.start()]
+    return s.strip(" .,;:«»\"'-")
+
+
 # --- state appointment / departure formulas (journal-officiel) ---
 RE_CHARGE = re.compile(
     rf"{TITLE}\s+(?P<name>{NAME}){SPOUSE}\s*(?:,\s*(?P<grade>[^,\n]{{3,90}}))?,?\s+"
