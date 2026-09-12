@@ -27,6 +27,7 @@ supply 38, 11 and 4 movers across the three ruptures, too few to draw.
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -117,6 +118,34 @@ def ribbon(ax, x0, x1, y0a, y0b, y1a, y1b, colour, alpha=0.62):
                            edgecolor="none", zorder=2))
 
 
+def _label_positions(ax, tops, texts, fontsize: float) -> list[float]:
+    """Node-midpoint label centres, pushed apart where they would collide.
+
+    A node's label sits at the node's midpoint, which is right until two thin
+    nodes sit next to each other: the senior tiers of the interior apparatus
+    are a tenth of the column each, and a three-line name centred on one of
+    them runs into the name below. So the midpoints are treated as preferences
+    rather than as positions, and a single bottom-up sweep opens a gap wherever
+    two labels would otherwise meet.
+
+    Line height is taken from the axes' own size in points rather than measured
+    from a rendered text: the subplot grid is fixed before drawing, so this is
+    known in advance and does not need a draw to resolve.
+    """
+    span = ax.get_ylim()[1] - ax.get_ylim()[0]
+    ax_pts = ax.get_position().height * ax.figure.get_figheight() * 72.0
+    line = (fontsize * 1.45 / ax_pts) * span if ax_pts else 0.0
+    half = [len(t.split("\n")) / 2 * line for t in texts]
+
+    ys = [(ytop + ybot) / 2 for ytop, ybot in tops]
+    # Tiers run top to bottom, so sweep from the last upward and lift each
+    # label clear of the one beneath it.
+    for i in range(len(ys) - 2, -1, -1):
+        floor = ys[i + 1] + half[i + 1] + half[i] + line * 0.25
+        ys[i] = max(ys[i], floor)
+    return ys
+
+
 def draw_sankey(ax, m: pd.DataFrame, *, tier_names: bool = True,
                 column_headers: bool = True, fontsize: float = 7.6) -> None:
     n = len(TIER_LABELS)
@@ -140,6 +169,12 @@ def draw_sankey(ax, m: pd.DataFrame, *, tier_names: bool = True,
 
     left, right = stack(left_tot), stack(right_tot)
 
+    # Set before anything is placed: _label_positions reads the y span to
+    # convert a type size in points into the axes' own units.
+    ax.set_xlim(-0.42 if tier_names else -0.16, 1.16)
+    ax.set_ylim(-0.06, 1.06)
+    ax.axis("off")
+
     lcur = [t for t, _ in left]
     rcur = [t for t, _ in right]
     # Within a node, flows are laid out in tier order so the bands do not cross
@@ -162,30 +197,166 @@ def draw_sankey(ax, m: pd.DataFrame, *, tier_names: bool = True,
         ("left", left, left_tot, x0, "right"),
         ("right", right, right_tot, x1, "left"),
     ):
-        for i, ((ytop, ybot), t) in enumerate(zip(tops, totals)):
+        # Tier names go on the left column only when asked for: the right
+        # column repeats the same tiers in the same order, and spelling them
+        # out twice crowds the thin nodes at the top.
+        named = tier_names and side == "left"
+        texts = [f"{TIER_LABELS[i]}\n{int(t):,}" if named else f"{int(t):,}"
+                 for i, t in enumerate(totals)]
+        ys = _label_positions(ax, tops, texts, fontsize)
+        for i, ((ytop, ybot), y) in enumerate(zip(tops, ys)):
             ax.add_patch(plt.Rectangle(
                 (xx - node_w if side == "right" else xx, ybot),
                 node_w, ytop - ybot, facecolor=INK, edgecolor="none", zorder=4))
-            # Tier names go on the left column only when asked for: the right
-            # column repeats the same four in the same order, and spelling them
-            # out twice crowds the thin nodes at the top.
-            text = (f"{TIER_LABELS[i]}\n{int(t):,}"
-                    if tier_names and side == "left" else f"{int(t):,}")
             ax.annotate(
-                text,
+                texts[i],
                 xy=(xx - node_w * 1.6 if side == "left" else xx + node_w * 1.6,
-                    (ytop + ybot) / 2),
+                    y),
                 ha=ha, va="center", fontsize=fontsize, color=INK,
                 linespacing=1.45, zorder=5)
 
-    ax.set_xlim(-0.42 if tier_names else -0.16, 1.16)
-    ax.set_ylim(-0.06, 1.06)
-    ax.axis("off")
     if column_headers:
         ax.annotate("rank held at the rupture", xy=(x0, 1.075), ha="center",
                     va="bottom", fontsize=8.4, color=MUTED, fontweight="bold")
         ax.annotate("rank of the next post taken", xy=(x1, 1.075), ha="center",
                     va="bottom", fontsize=8.4, color=MUTED, fontweight="bold")
+
+
+
+# ---------------------------------------------------------------------------
+# figure 23 - the interior apparatus
+# ---------------------------------------------------------------------------
+# The interior ministry on its own cannot carry a diagram of this kind. Over
+# three years it supplies 63, 157 and 81 movers, of whom 24, 34 and 21 stand
+# above the bottom tier - a dozen or so people spread over nine upper cells,
+# which would draw as authoritatively as anything else here and mean nothing.
+#
+# Three changes make it drawable, and each widens what is being described:
+# the unit becomes the ministry *and its territorial administration*, which is
+# what the interior ministry is in Tunisia; the window runs five years rather
+# than three; and the four rank tiers collapse to three. Together these give
+# 198, 642 and 644 movers with every cell populated.
+_INTERIOR_CORE = re.compile(
+    r"minist[eè]re de l'int[ée]rieur|secr[ée]tariat d'etat [aà] l'int[ée]rieur|"
+    r"s[uû]ret[ée] nationale|garde nationale|protection civile", re.I)
+
+IA_TIERS = [
+    (60, 999, "Secretary-general,\ngovernor and above"),
+    (40, 60, "Director and\ndeputy director"),
+    (0, 40, "Head of service\nand below"),
+]
+IA_LABELS = [t[2] for t in IA_TIERS]
+
+
+def _portfolio_domains(label: str) -> tuple[str, ...]:
+    if not isinstance(label, str) or not label:
+        return ()
+    if label.startswith("min_"):
+        return tuple(d for d in label[4:].split("+") if d)
+    return (label,)
+
+
+def in_interior_apparatus(portfolio, org: str, form: str) -> bool:
+    return ("interieur" in _portfolio_domains(portfolio)
+            or bool(_INTERIOR_CORE.search(org))
+            or form in ("gouvernorat", "commune"))
+
+
+def ia_tier_of(score: float) -> str | None:
+    for lo, hi, label in IA_TIERS:
+        if lo <= score < hi:
+            return label
+    return None
+
+
+def interior_transitions(spells: pd.DataFrame, t0: pd.Timestamp, years: int = 5):
+    """Rank flows for people whose pre-rupture post was in the interior apparatus."""
+    t1 = min(t0 + pd.DateOffset(years=years), RECORD_ENDS)
+    inpost = spells[(spells.start < t0) & (spells.end.isna() | (spells.end > t0))]
+    top = inpost.loc[inpost.groupby("person_id").rank_score.idxmax()]
+    top = top[[in_interior_apparatus(p, o, f) for p, o, f in
+               zip(top.org_portfolio, top.org_name.fillna(""), top.org_form.fillna(""))]]
+    after = (spells[(spells.start >= t0) & (spells.start < t1)]
+             .groupby("person_id").rank_score.max())
+    j = top.merge(after.rename("a"), left_on="person_id", right_index=True, how="inner")
+    if j.empty:
+        return None, 0, 0
+    m = (pd.crosstab(j.rank_score.map(ia_tier_of), j.a.map(ia_tier_of))
+         .reindex(index=IA_LABELS, columns=IA_LABELS).fillna(0).astype(int))
+    return m, len(j), len(top)
+
+
+def fig_interior(spells: pd.DataFrame) -> None:
+    global TIER_LABELS
+    saved = TIER_LABELS
+    TIER_LABELS = IA_LABELS               # draw_sankey reads the module-level list
+    try:
+        fig, axes = plt.subplots(2, 3, figsize=(14.6, 8.2))
+        fig.subplots_adjust(top=0.72, bottom=0.10, left=0.15, right=0.985,
+                            wspace=0.26, hspace=0.30)
+        for col, (key, t0, datestr, gloss) in enumerate(RUPTURES):
+            m, n, cohort = interior_transitions(spells, t0)
+            plc = [interior_transitions(spells, t0 - pd.DateOffset(years=k))
+                   for k in PLACEBO_LAGS]
+            pm = sum(p[0] for p in plc if p[0] is not None)
+            pn = sum(p[1] for p in plc)
+
+            def fell(mat, tot):
+                return sum(mat.iat[i, j] for i in range(3) for j in range(3)
+                           if j > i) / tot * 100
+
+            for row, (mm, nn, lbl) in enumerate((
+                (m, n, f"after {key}"),
+                (pm, pn, "ordinary times"),
+            )):
+                ax = axes[row, col]
+                # Named once, top left. The ordinary-times panel below has a
+                # thinner senior node, and repeating the names there ran them
+                # into the tier beneath.
+                draw_sankey(ax, mm, tier_names=(col == 0 and row == 0),
+                            column_headers=False, fontsize=6.8)
+                ax.set_title(f"{lbl}   ·   {nn:,} movers   ·   "
+                             f"{fell(mm, nn):.1f}% fell a tier",
+                             color=INK, fontsize=8.6)
+            axes[0, col].annotate(
+                f"{key}  ·  {datestr}\n{gloss}", xy=(0.5, 1.30),
+                xycoords="axes fraction", ha="center", va="bottom",
+                fontsize=9.6, color=INK, fontweight="bold", linespacing=1.5)
+
+        axes[1, 1].legend(handles=[
+            Patch(facecolor=MOVE_COLOUR["up"], alpha=0.62, label="moved up a tier"),
+            Patch(facecolor=MOVE_COLOUR["lateral"], alpha=0.62, label="stayed in tier"),
+            Patch(facecolor=MOVE_COLOUR["down"], alpha=0.62, label="moved down a tier"),
+        ], loc="upper center", bbox_to_anchor=(0.5, -0.06), ncol=3)
+
+        headline(
+            fig,
+            "The interior apparatus, against itself in ordinary times",
+            "The ministry of the interior together with the governorates and "
+            "municipalities it administers: rank held on the eve of each rupture "
+            "against the rank of the next post taken within five years. Each panel "
+            "is scaled to its own total. The row beneath every rupture is the same "
+            "cohort drawn from five ordinary years of the same era, which is the "
+            "only thing that makes the row above it readable. On this measure the "
+            "three ruptures move little: +3.8, -4.2 and +2.2 points of tier-crossing "
+            "demotion against their own eras.",
+            width=150,
+        )
+        save(fig, "fig23_interior_apparatus_flow",
+             SOURCE + "  The interior ministry alone cannot carry this figure: over "
+                      "three years it supplies 63, 157 and 81 movers, of whom 24, 34 "
+                      "and 21 stand above the bottom tier. The unit is therefore the "
+                      "ministry with its territorial administration, the window is "
+                      "five years rather than three, and the ranks collapse to three "
+                      "tiers. Each of those widens the measure, and the result is not "
+                      "the +21.0 points the ministry-level demotion figure reports "
+                      "for the interior in 2021: that figure counts any fall in rank "
+                      "over three years for the ministry proper, where this counts "
+                      "only falls that cross one of two boundaries, over five years, "
+                      "across a body several times larger. Both are true of what they "
+                      "measure; neither is a check on the other.")
+    finally:
+        TIER_LABELS = saved
 
 
 def main() -> None:
@@ -310,6 +481,7 @@ def main() -> None:
                   "makes that unreadable as removal from the state. Falls here "
                   "cross a tier boundary, a higher bar than the any-rank-fall "
                   "measure in the demotion figure.")
+    fig_interior(spells)
     print("done")
 
 
