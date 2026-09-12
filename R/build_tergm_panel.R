@@ -9,26 +9,38 @@
 #
 #     --sample N   build on the N highest-degree persons and the organisations
 #                  they touch, for a fast structural smoke test
+#     --R N        bootstrap replications (default 200)
 #     --all-ties   include ambiguous and probable/possible ties (default is
 #                  resolved + certain only; see the certainty sensitivity in
 #                  docs/TERGM-multiplex-2008-2012.md)
 #
 # Three design decisions are worth knowing before reading the code.
 #
-# 1. The vertex set is CONSTANT across periods and the risk set is expressed as
-#    a structural-zero offset, rather than by deleting inactive vertices. The
-#    `network` package does adjust the bipartite count when vertices are
-#    deleted, so deletion is safe in that narrow sense -- but it makes the
-#    vertex set differ between periods, and `memory()` then depends on how
-#    btergm matches vertices across unequal networks. An offset states the same
-#    claim with no such dependency: a dyad involving an organisation that did
-#    not yet exist is impossible, not merely unobserved.
+# 1. The risk set is expressed by REMOVING each period's inactive
+#    organisations from that period's network and estimating with
+#    `offset = TRUE`. This is btergm's own mechanism, and it is worth being
+#    explicit that it is the opposite of what it sounds like: `offset = TRUE`
+#    does not mean "I supplied an offset term". It means btergm builds the
+#    structural-zero matrices itself from the nodes that are *absent* in a
+#    period, inflates every object to the largest, and drops those dyads
+#    before the pseudolikelihood GLM.
+#
+#    An earlier version of this script kept the vertex set constant and passed
+#    `offset(edgecov(risk))` in the formula, reasoning that a moving vertex set
+#    makes `memory()` depend on how btergm matches vertices. That reasoning was
+#    sound and the code did not work: tergmprepare() rejects it. Trimming is
+#    the supported path, and `network` does correctly adjust the bipartite
+#    count when mode-2 vertices are deleted, so the mode split survives.
 #
 # 2. Dyadic covariates are stored on disk as sparse triplets and densified
 #    here, one matrix per covariate per period. At the full universe that is
-#    2592 x 2915 integers, about 30 MB each: three covariates over four lagged
-#    periods plus the offsets comes to roughly half a gigabyte of R memory.
-#    That is the honest cost of the full risk set. Use --sample to work smaller.
+#    2592 x 2915 integers, about 30 MB each; four covariates over five periods
+#    is roughly 600 MB of R memory. Use --sample to work smaller.
+#
+#    Every covariate matrix carries dimnames -- person node_ids by organisation
+#    node_ids. This is not cosmetic. Because the networks are trimmed per
+#    period while the covariates span the full universe, btergm aligns them by
+#    name; strip the dimnames and tergmprepare() fails.
 #
 # 3. Only bipartite-valid terms appear in the worked model. `triangle` and
 #    `gwesp` count structures that cannot exist in a two-mode network; the
@@ -41,6 +53,7 @@ sample_n <- if ("--sample" %in% args) {
   as.integer(args[which(args == "--sample") + 1L])
 } else NA_integer_
 all_ties <- "--all-ties" %in% args
+R_boot <- if ("--R" %in% args) as.integer(args[which(args == "--R") + 1L]) else 200L
 
 base <- file.path("data", "processed", "multiplex-2008-2012", "exports", "tergm")
 rd <- function(f) read.csv(file.path(base, f), stringsAsFactors = FALSE,
@@ -125,18 +138,23 @@ for (p in periods) {
   nets[[as.character(p)]] <- net
 }
 
-# --- structural zeros: the risk set -----------------------------------------
+# --- the risk set: trim each period to its active vertices -------------------
 # Every person is at risk in every period (the gazette records appointments,
-# not births), so the impossible dyads are exactly the columns of organisations
-# outside their own lifecycle. Built column-wise for that reason.
-offsets <- list()
-for (p in periods) {
-  act <- activity[activity$period == p, ]
-  act <- act[match(node_key$vertex_id, act$vertex_id), ]
-  inactive_org <- which(act$active == 0L & node_key$mode == 2L) - n1
-  m <- matrix(0L, nrow = n1, ncol = n2)
-  if (length(inactive_org)) m[, inactive_org] <- 1L
-  offsets[[as.character(p)]] <- m
+# not births), so what gets removed is exactly the organisations outside their
+# own lifecycle. Deleting mode-2 vertices leaves the bipartite count correct,
+# which is asserted below rather than assumed.
+nets_full <- nets
+trimmed <- list()
+dropped <- integer(0)
+for (i in seq_along(periods)) {
+  p <- periods[i]
+  net <- nets[[as.character(p)]]
+  a <- activity[activity$period == p, ]
+  a <- a[match(node_key$vertex_id, a$vertex_id), ]
+  drop <- which(a$active == 0L)
+  if (length(drop)) delete.vertices(net, drop)
+  dropped[as.character(p)] <- length(drop)
+  trimmed[[as.character(p)]] <- net
 }
 
 # --- dyadic covariates ------------------------------------------------------
@@ -145,8 +163,13 @@ for (p in periods) {
 # they are all zero in period 1, which has no lag. is_shareholder is read from
 # the undated seed sheet, so it is exogenous without a lag and is populated in
 # every period, period 1 included.
+#
+# Built on the FULL universe and carrying dimnames, so btergm can align them
+# against the trimmed networks by name.
+pnames <- node_key$node_id[node_key$mode == 1L]
+onames <- node_key$node_id[node_key$mode == 2L]
 densify <- function(field, p) {
-  m <- matrix(0L, nrow = n1, ncol = n2)
+  m <- matrix(0L, nrow = n1, ncol = n2, dimnames = list(pnames, onames))
   d <- dyads[dyads$period == p & dyads[[field]] == 1L, ]
   if (nrow(d)) {
     ti <- remap(d$tail); hi <- remap(d$head)
@@ -164,25 +187,28 @@ for (p in periods) {
 }
 
 # --- structural report ------------------------------------------------------
-cat("\nper-period structure:\n")
+cat("\nper-period structure (full universe -> trimmed to the risk set):\n")
 for (p in periods) {
-  net <- nets[[as.character(p)]]
-  cat(sprintf("  %s  size %d  bipartite %s  edges %5d  impossible dyads %7d\n",
-              p, network.size(net),
-              ifelse(is.bipartite(net), as.character(net %n% "bipartite"), "NO"),
-              network.edgecount(net), sum(offsets[[as.character(p)]])))
+  f <- nets_full[[as.character(p)]]; tn <- trimmed[[as.character(p)]]
+  cat(sprintf("  %s  size %4d -> %4d  (%4d organisations not yet or no longer "
+              , p, network.size(f), network.size(tn), dropped[[as.character(p)]]))
+  cat(sprintf("extant)  bipartite %s  edges %5d\n",
+              ifelse(is.bipartite(tn), as.character(tn %n% "bipartite"), "NO"),
+              network.edgecount(tn)))
 }
-stopifnot(all(vapply(nets, is.bipartite, logical(1))))
-stopifnot(all(vapply(nets, network.size, numeric(1)) == n))
+stopifnot(all(vapply(trimmed, is.bipartite, logical(1))))
+# Only mode-2 vertices are ever removed, so the person block is untouched.
+stopifnot(all(vapply(trimmed, function(x) x %n% "bipartite", numeric(1)) == n1))
+stopifnot(all(vapply(nets_full, network.size, numeric(1)) == n))
 
-# A smoke subset is not the dataset, so it must not be saved over it.
 out <- file.path(base, if (is.na(sample_n) && !all_ties) "tergm_panel.rds"
                        else sprintf("tergm_panel_%s%s.rds",
                                     if (is.na(sample_n)) "full" else
                                       paste0("sample", sample_n),
                                     if (all_ties) "_allties" else ""))
-saveRDS(list(networks = nets, offsets = offsets, dyad_cov = dyad_cov,
-             node_key = node_key, n1 = n1, n2 = n2, periods = periods),
+saveRDS(list(networks = trimmed, networks_full = nets_full,
+             dyad_cov = dyad_cov, node_key = node_key, activity = activity,
+             n1 = n1, n2 = n2, periods = periods),
         out)
 cat("\nsaved", out, "\n")
 
@@ -191,27 +217,40 @@ cat("\nsaved", out, "\n")
 # arrivals far more reliably than departures. A dissolution or persistence
 # parameter fitted here would describe when an exit gets *printed*, not when a
 # tie ends, so this specification models formation and does not interpret the
-# other side. Read docs/TERGM-multiplex-2008-2012.md before changing that.
+# other side. memory("stability") is a nuisance control, not a finding. Read
+# docs/TERGM-multiplex-2008-2012.md before changing that.
+#
+# Period 1 is consumed by the lag, so estimation runs on periods 2..T.
 if (!requireNamespace("btergm", quietly = TRUE)) {
-  cat("\nbtergm is not installed; the panel above is built and saved.\n")
-  cat("install.packages(\"btergm\") to estimate, then:\n\n")
+  cat("\nbtergm is not installed; the panel above is built and saved.\n",
+      "install.packages(\"btergm\") and re-run to estimate.\n", sep = "")
 } else {
-  cat("\nestimating (formation only, bipartite terms)\n")
+  suppressPackageStartupMessages(library(btergm))
+  # ALL periods are handed over, not periods 2..T. memory() takes its lag from
+  # the previous element of the list it is given, so slicing the first period
+  # off here would cost a transition: 2008 is consumed as the lag for 2009
+  # rather than being modelled. The covariate list is sliced the same way by
+  # btergm, and each period's matrices are already lagged to t-1, so outcome
+  # year t is paired with covariates measured at t-1 as intended.
+  ix <- seq_along(trimmed)
+  dc <- dyad_cov[ix]
+  kin <- lapply(dc, `[[`, "kin_in_org")
+  own <- lapply(dc, `[[`, "owner_of")
+  com <- lapply(dc, `[[`, "prior_comembership")
+  shr <- lapply(dc, `[[`, "is_shareholder")
+
+  # length(ix) periods, one of which is consumed as memory()'s lag.
+  cat("\nestimating formation-only TERGM:", length(ix) - 1, "transitions,",
+      R_boot, "bootstrap replications\n")
+  fit <- btergm(trimmed[ix] ~ edges +
+                  gwb1degree(0.5, fixed = TRUE) +
+                  gwb2degree(0.5, fixed = TRUE) +
+                  b1star(2) + b2star(2) +
+                  nodecov("cum_degree_lag") + nodecov("kin_degree") +
+                  edgecov(kin) + edgecov(own) + edgecov(com) + edgecov(shr) +
+                  memory(type = "stability"),
+                offset = TRUE, R = R_boot, verbose = FALSE)
+  print(summary(fit))
+  saveRDS(fit, sub("\\.rds$", "_fit.rds", out))
+  cat("\nsaved", sub("\\.rds$", "_fit.rds", out), "\n")
 }
-cat("  library(btergm)\n",
-    "  p  <- readRDS(\"", out, "\")\n",
-    "  ns <- p$networks; off <- p$offsets; dc <- p$dyad_cov\n",
-    "  ix <- 2:length(ns)   # period 1 carries no lag\n",
-    "  m <- btergm(ns[ix] ~ edges +\n",
-    "        gwb1degree(0.5, fixed = TRUE) + gwb2degree(0.5, fixed = TRUE) +\n",
-    "        b1star(2) + b2star(2) + cycle(4) +\n",
-    "        nodefactor(\"node_type\") + nodecov(\"cum_degree_lag\") +\n",
-    "        nodecov(\"kin_degree\") +\n",
-    "        edgecov(lapply(dc, `[[`, \"kin_in_org\")) +\n",
-    "        edgecov(lapply(dc, `[[`, \"owner_of\")) +\n",
-    "        edgecov(lapply(dc, `[[`, \"prior_comembership\")) +\n",
-    "        edgecov(lapply(dc, `[[`, \"is_shareholder\")) +\n",
-    "        memory(type = \"stability\") +\n",
-    "        offset(edgecov(off[ix])),\n",
-    "      offset = TRUE, R = 500)\n",
-    "  summary(m)\n", sep = "")

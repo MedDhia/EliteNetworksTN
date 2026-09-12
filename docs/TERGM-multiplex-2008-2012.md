@@ -53,8 +53,12 @@ choice is yours rather than baked into the data.
 
 ## Two further limits
 
-**Five periods is the floor.** Memory terms consume the first, leaving four
-transitions. `timecov` on four points is not worth specifying. Widening the
+**Five periods is the floor.** `memory()` takes its lag from the previous
+element of the network list, so the first period is consumed as a lag rather
+than modelled: five periods give **four** estimated transitions. (Slicing the
+list before handing it to btergm costs another one — an earlier version of the
+script passed periods 2..T and got three.) `timecov` on four points is not
+worth specifying. Widening the
 window is mechanical — the pipeline is parameterised by `config/scope.yaml` —
 but costs a full re-mirror and re-extract, and would put the gold-sample
 accuracy figures back in question on the new years.
@@ -125,13 +129,26 @@ company still has a liquidator appointed, and that appointment is a real tie
 postdating the death. Widening past a *constitution* date generally is one, so
 the two are counted separately.
 
-**Implementation.** The vertex set is constant across periods and the risk set
-is expressed as a structural-zero offset matrix, not by deleting inactive
-vertices. `network` does correctly adjust the bipartite count when vertices are
-deleted, so deletion is safe in that narrow sense — but it makes the vertex set
-differ between periods, and `memory()` then depends on how `btergm` matches
-vertices across unequal networks. The offset states the same claim with no such
-dependency, via `offset(edgecov(off))` with the coefficient fixed at `-Inf`.
+**Implementation.** Each period's network is trimmed to its active vertices and
+estimation runs with `offset = TRUE`. That flag is worth reading carefully,
+because it means close to the opposite of what it sounds like: it does *not*
+mean "an offset term was supplied". It means btergm builds the structural-zero
+matrices itself from the nodes **absent** in a period, inflates every object to
+the largest, and drops those dyads before the pseudolikelihood GLM.
+
+An earlier version of `R/build_tergm_panel.R` kept the vertex set constant and
+passed `offset(edgecov(risk))` in the formula instead, on the reasoning that a
+moving vertex set makes `memory()` depend on how btergm matches vertices across
+unequal networks. The reasoning was plausible and the code did not work:
+`tergmprepare()` rejects that formula. Trimming is the supported path, and
+`network` does correctly adjust the bipartite count when mode-2 vertices are
+deleted, so the mode split survives — asserted in the script rather than
+assumed. Trimming removes 1,354 organisations in 2008 falling to 94 in 2012.
+
+**Covariate matrices must carry dimnames.** They span the full universe while
+the networks are trimmed, so btergm aligns them by name. Strip the dimnames and
+`tergmprepare()` fails — this is not cosmetic, and it is why `densify()` sets
+`dimnames = list(pnames, onames)`.
 
 ## Covariates
 
@@ -216,17 +233,22 @@ this stage only re-indexes it. Consider excluding them.
 
 ```bash
 make tergm                                   # writes exports/tergm/ (~10 s)
-Rscript R/build_tergm_panel.R                # builds the network list (~8 s)
-Rscript R/build_tergm_panel.R --sample 40    # fast structural smoke test
-Rscript R/build_tergm_panel.R --all-ties     # the wider sensitivity sample
+Rscript R/build_tergm_panel.R --sample 40 --R 20   # fast smoke test, ~1 min
+Rscript R/build_tergm_panel.R --R 50               # full panel, see cost below
+Rscript R/build_tergm_panel.R --all-ties           # wider sensitivity sample
 ```
 
 A smoke or `--all-ties` run writes to its own `.rds`, never over the default.
 
-Memory: the full universe densifies to 2,592 × 2,915 integer matrices, about
-30 MB each. Four dyadic covariates over five periods plus the offsets comes to
-roughly half a gigabyte of R memory. That is the cost of carrying the full risk
-set; `--sample` works smaller.
+**Cost.** Building the panel takes about 8 seconds. *Estimating* on the full
+universe does not: the bipartite MPLE covers roughly 7 million dyads per
+period, so about 27 million rows of change statistics over four transitions,
+refitted once per bootstrap replication. Expect tens of minutes and several
+gigabytes of RAM, and note that `R` (bootstrap replications) multiplies the
+GLM refits directly — hence the modest `--R` defaults here rather than the
+`R = 500` one would want for publication. Installing `speedglm` helps; btergm
+warns when it is missing. Use `--sample` while developing a specification and
+only then pay for the full run.
 
 `R/build_networkdynamic.R` is unchanged and remains the descriptive path for
 `tsna`. A `networkDynamic` is a continuous-time object and is not a TERGM input.
