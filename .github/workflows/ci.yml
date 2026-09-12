@@ -59,7 +59,7 @@ jobs:
         run: pytest tests/ -q
 
   multiplex-consistency:
-    name: 2008-2012 multiplex dataset is self-consistent
+    name: multiplex dataset is self-consistent
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
