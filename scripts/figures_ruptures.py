@@ -30,6 +30,7 @@ read is the gap between the two curves, not the height of either.
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -43,6 +44,7 @@ from figstyle import (  # noqa: E402
     SOURCE, headline, plt, save,
 )
 from matplotlib.lines import Line2D  # noqa: E402
+from matplotlib.patches import Patch  # noqa: E402
 from matplotlib.ticker import (  # noqa: E402
     FixedFormatter, FixedLocator, NullLocator,
 )
@@ -80,6 +82,39 @@ ENTRY_TYPES = ("appointment", "transfer")
 RECORD_ENDS = pd.Timestamp("2026-05-31")
 
 
+# The security apparatus is not a portfolio in this data: the interior ministry
+# carries one, but its field administration is filed by organisational form and
+# defence bodies by name. It is therefore assembled from the organisation's own
+# name and form.
+#
+# "commerce interieur" - domestic trade - is the trap here, and the interior
+# pattern is anchored on the ministry's full title to avoid it.
+_INTERIOR = re.compile(
+    r"minist[eè]re de l'int[ée]rieur|secr[ée]tariat d'etat [aà] l'int[ée]rieur|"
+    r"s[uû]ret[ée] nationale|garde nationale|protection civile", re.I)
+_DEFENCE = re.compile(r"d[ée]fense nationale|tribunal militaire|arm[ée]e", re.I)
+
+SECURITY_BRANCHES = [
+    ("interior", "Interior ministry\nand its directorates"),
+    ("territorial", "Governorates\n(the prefectoral corps)"),
+    ("municipal", "Municipalities"),
+    ("defence", "Defence and\nmilitary justice"),
+]
+
+
+def security_branch(org: str, form: str) -> str | None:
+    if _INTERIOR.search(org):
+        return "interior"
+    if _DEFENCE.search(org):
+        return "defence"
+    if form == "gouvernorat":
+        return "territorial"
+    if form == "commune":
+        return "municipal"
+    return None
+
+
+
 # ---------------------------------------------------------------------------
 # data
 # ---------------------------------------------------------------------------
@@ -94,6 +129,10 @@ events["month"] = events.date.values.astype("datetime64[M]")
 spells["start"] = pd.to_datetime(spells.start_date, errors="coerce")
 spells["end"] = pd.to_datetime(spells.end_date, errors="coerce")
 spells = spells.dropna(subset=["start"])
+spells["is_security"] = [
+    security_branch(o, f) in ("interior", "territorial", "defence")
+    for o, f in zip(spells.org_name.fillna(""), spells.org_form.fillna(""))
+]
 
 entries = events[events.event_type.isin(ENTRY_TYPES)]
 
@@ -664,6 +703,244 @@ def fig_ministries() -> None:
                   "form, so its reach is understated.")
 
 
+
+# ---------------------------------------------------------------------------
+# figures 16 and 17 - the security apparatus, and demotion
+# ---------------------------------------------------------------------------
+def _branch_series(frame):
+    org = frame.org_name.fillna("")
+    form = frame.org_form.fillna("")
+    return [security_branch(o, f) for o, f in zip(org, form)]
+
+
+def fig_security() -> None:
+    ent = entries.copy()
+    ent["branch"] = _branch_series(ent)
+
+    rows = []
+    for key, t0, _, _ in RUPTURES:
+        pre_a, pre_b = t0 - pd.DateOffset(years=4), t0
+        pre_all = ((ent.date >= pre_a) & (ent.date < pre_b)).sum() / 4
+        for wname, (qa, qb) in {
+            "early": (t0, t0 + pd.DateOffset(years=3)),
+            "late": (t0 + pd.DateOffset(years=3),
+                     min(t0 + pd.DateOffset(years=5), RECORD_ENDS)),
+        }.items():
+            years = (qb - qa).days / 365.25
+            whole = (((ent.date >= qa) & (ent.date < qb)).sum() / years
+                     ) / max(pre_all, 1e-9)
+            for br, _label in SECURITY_BRANCHES:
+                sel = ent.branch == br
+                pre = (sel & (ent.date >= pre_a) & (ent.date < pre_b)).sum() / 4
+                post = (sel & (ent.date >= qa) & (ent.date < qb)).sum() / years
+                rows.append({"rupture": key, "window": wname, "category": br,
+                             "index": (post / pre) / whole if pre >= 8 else np.nan})
+    table = pd.DataFrame(rows)
+
+    order = [b for b, _ in SECURITY_BRANCHES]
+    labels = [l for _, l in SECURITY_BRANCHES]
+    n = len(order)
+
+    fig, axes = plt.subplots(1, 3, figsize=(12.4, 4.3), sharey=True)
+    fig.subplots_adjust(top=0.63, left=0.20, bottom=0.20, wspace=0.08)
+
+    for ax, (key, t0, datestr, gloss) in zip(axes, RUPTURES):
+        colour = RUPTURE_COLOUR[key]
+        ax.axvline(1.0, color=INK, lw=1.1, zorder=3)
+        sub = table[table.rupture == key]
+        for i, cat in enumerate(order):
+            y = n - 1 - i
+            ax.axhline(y, color=RULE, lw=0.6, zorder=0)
+            row = sub[sub.category == cat]
+            e = row[row.window == "early"]["index"]
+            l = row[row.window == "late"]["index"]
+            e = float(e.iloc[0]) if len(e) and np.isfinite(e.iloc[0]) else np.nan
+            l = float(l.iloc[0]) if len(l) and np.isfinite(l.iloc[0]) else np.nan
+            if np.isfinite(e) and np.isfinite(l):
+                ax.annotate("", xy=(l, y), xytext=(e, y),
+                            arrowprops=dict(arrowstyle="-|>", color=colour, lw=1.6,
+                                            alpha=0.75, shrinkA=5, shrinkB=0,
+                                            mutation_scale=10), zorder=4)
+            if np.isfinite(e):
+                ax.scatter([e], [y], s=52, facecolor=PAPER, edgecolor=colour,
+                           linewidth=1.6, zorder=5)
+            if np.isfinite(l):
+                ax.scatter([l], [y], s=38, color=colour, zorder=6,
+                           edgecolor=PAPER, linewidth=0.8)
+        ax.set_title(f"{key}  ·  {datestr}\n{gloss}", color=INK, fontsize=9.5,
+                     linespacing=1.5)
+        ax.set_xscale("log")
+        ax.set_xlim(0.3, 3.4)
+        ax.xaxis.set_major_locator(FixedLocator([0.5, 1, 2]))
+        ax.xaxis.set_major_formatter(FixedFormatter(["½×", "same", "2×"]))
+        ax.xaxis.set_minor_locator(NullLocator())
+        ax.set_ylim(-0.6, n - 0.4)
+        ax.grid(axis="x", zorder=0)
+        ax.set_axisbelow(True)
+        ax.spines["left"].set_visible(False)
+        ax.tick_params(axis="y", length=0)
+
+    axes[0].set_yticks(range(n))
+    axes[0].set_yticklabels(labels[::-1], color=INK, linespacing=1.4)
+    axes[1].set_xlabel("churn relative to the state apparatus as a whole  (log scale)",
+                       labelpad=10)
+    axes[1].legend(handles=[
+        Line2D([], [], marker="o", ls="", markersize=7.5, markerfacecolor=PAPER,
+               markeredgecolor=INK, markeredgewidth=1.6, label="years 0–3 after"),
+        Line2D([], [], marker="o", ls="", markersize=6.5, markerfacecolor=INK,
+               markeredgecolor=PAPER, label="years 3–5 after (arrow points here)"),
+    ], loc="lower center", bbox_to_anchor=(0.5, 1.24), ncol=2)
+
+    headline(
+        fig,
+        "Only one of the three ruptures went on reshaping the interior ministry",
+        "The coercive and territorial administration, on the same measure as the "
+        "ministry figure. 1987 fell on the governorates, the prefectoral corps a "
+        "ruler appoints to hold the country, and barely touched the interior "
+        "ministry itself. 2011 reached the ministry and then let go. 2021 is the "
+        "only case that is still above twice the state's rate three to five years "
+        "on.",
+    )
+    save(fig, "fig16_security_apparatus",
+         SOURCE + "  Branches are identified from the organisation's own name and "
+                  "form, since the interior ministry's field administration is not "
+                  "filed under its portfolio. Customs is excluded: at one to six "
+                  "appointments a year it cannot carry a ratio. Governorates and "
+                  "municipalities include their secretaries-general and delegates, "
+                  "not only the governor or mayor.")
+
+
+
+# Promotion, a sideways move and demotion are an ordered, two-sided quantity, so
+# they take a diverging treatment: two hues with a neutral grey between them,
+# never three unrelated colours. The poles are validated against each other
+# (dE 27.9 normal, 23.6 protan) and each against the paper.
+MOVE_COLOUR = {"up": "#1B5FC1", "lateral": "#B9B5A8", "down": "#A03B2C"}
+
+
+def move_outcomes(t0: pd.Timestamp, years: int = 3, security: bool = False) -> dict | None:
+    """What became of the people holding office on a given day.
+
+    A person's standing is the highest rank they hold at ``t0``; their next
+    standing is the highest rank of any post they take in the window after it.
+    The comparison is therefore between the top of their position before and
+    after, which is what "demoted" has to mean for someone holding several
+    posts at once.
+
+    Two quantities come out, and they must be read separately. The share who
+    take *any* recorded post afterwards mixes real departure with the gazette's
+    poor recording of exits. The split of that group into up, sideways and down
+    does not: everyone in it was observed twice, so nothing about it depends on
+    whether departures are gazetted.
+    """
+    t1 = min(t0 + pd.DateOffset(years=years), RECORD_ENDS)
+    if t1 <= t0:
+        return None
+    frame = spells[spells.is_security] if security else spells
+    inpost = frame[(frame.start < t0) & (frame.end.isna() | (frame.end > t0))]
+    if inpost.empty:
+        return None
+    before = inpost.groupby("person_id").rank_score.max()
+    after = spells[(spells.start >= t0) & (spells.start < t1)] \
+        .groupby("person_id").rank_score.max()
+    j = before.to_frame("b").join(after.rename("a"), how="left")
+    moved = j.dropna()
+    if len(moved) < 30:
+        return None
+    return {"n": len(j), "seen": len(moved) / len(j), "n_seen": len(moved),
+            "up": float((moved.a > moved.b).mean()),
+            "lateral": float((moved.a == moved.b).mean()),
+            "down": float((moved.a < moved.b).mean())}
+
+
+def fig_demotion() -> None:
+    scopes = [(False, "The state as a whole"),
+              (True, "The security apparatus alone")]
+    fig, axes = plt.subplots(1, 2, figsize=(11.6, 4.6), sharex=True)
+    fig.subplots_adjust(top=0.58, bottom=0.20, left=0.16, wspace=0.07)
+
+    for ax, (sec, scope_label) in zip(axes, scopes):
+        ypos, ylabels = [], []
+        y = 0.0
+        for key, t0, _, _ in reversed(RUPTURES):
+            rup = move_outcomes(t0, security=sec)
+            plc = [move_outcomes(t0 - pd.DateOffset(years=k), security=sec)
+                   for k in PLACEBO_LAGS]
+            plc = [p for p in plc if p]
+            if not rup or not plc:
+                continue
+            base = {k: float(np.mean([p[k] for p in plc]))
+                    for k in ("up", "lateral", "down", "seen")}
+            for row, res, label in ((0, base, "ordinary times"),
+                                    (1, rup, f"after {key}")):
+                yy = y + row * 0.62
+                left = 0.0
+                for part in ("up", "lateral", "down"):
+                    ax.barh(yy, res[part] * 100, left=left * 100, height=0.52,
+                            color=MOVE_COLOUR[part], zorder=3,
+                            edgecolor=PAPER, linewidth=1.2)
+                    left += res[part]
+                ypos.append(yy)
+                ylabels.append(label)
+                # The demotion share is the quantity the figure exists for, so
+                # it is written on the bar rather than left to the axis.
+                ax.annotate(f"{res['down'] * 100:.0f}%",
+                            xy=(100 - res["down"] * 100 / 2, yy),
+                            ha="center", va="center", fontsize=7.8,
+                            color=PAPER, fontweight="bold", zorder=6)
+            # The difference goes in the group's own heading rather than beyond
+            # the axis, where it landed on the next panel's labels.
+            gap = (rup["down"] - base["down"]) * 100
+            ax.annotate(f"{key}   ·   {rup['n_seen']:,} of {rup['n']:,} took a further post",
+                        xy=(0, y + 1.02), ha="left", va="bottom",
+                        fontsize=7.4, color=MUTED)
+            ax.annotate(f"{gap:+.1f} pp demoted",
+                        xy=(100, y + 1.02), ha="right", va="bottom",
+                        fontsize=8.2, fontweight="bold",
+                        color=MOVE_COLOUR["down"] if gap > 0 else MUTED)
+            y += 2.0
+
+        ax.set_yticks(ypos)
+        # Both panels carry the same rows, so only the left one is labelled.
+        ax.set_yticklabels(ylabels if ax is axes[0] else [""] * len(ypos),
+                           color=INK)
+        ax.set_xlim(0, 100)
+        ax.set_ylim(-0.5, y - 0.5)
+        ax.set_title(scope_label, color=INK, fontsize=9.5)
+        ax.set_xlabel("share of those who took a further post (%)")
+        ax.grid(axis="x", zorder=0)
+        ax.set_axisbelow(True)
+        ax.spines["left"].set_visible(False)
+        ax.tick_params(axis="y", length=0)
+
+    axes[0].legend(handles=[
+        Patch(facecolor=MOVE_COLOUR["up"], label="moved up"),
+        Patch(facecolor=MOVE_COLOUR["lateral"], label="same rank"),
+        Patch(facecolor=MOVE_COLOUR["down"], label="moved down"),
+    ], loc="lower left", bbox_to_anchor=(0.0, -0.34), ncol=3)
+
+    headline(
+        fig,
+        "After 2021 officials were not removed so much as moved down",
+        "Of those holding office on the eve of each rupture who took a further "
+        "post within three years, the share whose new post ranked above, level "
+        "with, or below the one they held. Each rupture is set against the "
+        "average of five cohorts from the same era. 1987 and 2011 promoted their "
+        "survivors; 2021 demoted them, and did so across the state rather than "
+        "only in the security apparatus.",
+    )
+    save(fig, "fig17_demotion_or_exclusion",
+         SOURCE + "  Rank is the ordinal scale documented in the codebook, from "
+                  "head of service through director to minister; a person holding "
+                  "several posts is placed at the highest. The figure deliberately "
+                  "reports only those observed twice. The share taking any further "
+                  "post at all fell after 2021 as well (8.5% against 13.1% in "
+                  "ordinary times), but that quantity mixes genuine departure with "
+                  "the gazette's patchy recording of exits and cannot be read as a "
+                  "purge rate. Board memberships are included; excluding them "
+                  "leaves the 2021 gap at +7.0 pp rather than +9.9.")
+
+
 # ---------------------------------------------------------------------------
 # figure 14 - elite renewal
 # ---------------------------------------------------------------------------
@@ -739,5 +1016,7 @@ if __name__ == "__main__":
     fig_where()
     fig_depth()
     fig_ministries()
+    fig_security()
+    fig_demotion()
     fig_renewal()
     print("done")
