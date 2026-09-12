@@ -7,3 +7,8 @@ __pycache__/
 # with `python -m eltn.cli harvest`). Never committed.
 data/raw/
 data/interim/
+
+# Local tooling only (used to preview the explorer)
+node_modules/
+package.json
+package-lock.json

@@ -1,0 +1,1169 @@
+<title>Gazette of Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+:root {
+  /* Archival gazette: picked olive-grey neutrals, warm sequential rank ramp. */
+  --paper:    #E9E7E0;
+  --surface:  #F5F4EF;
+  --sunken:   #DFDDD4;
+  --ink:      #1A1917;
+  --muted:    #6C6D64;
+  --rule:     #C8C5BA;
+  --rule-soft:#D8D5CB;
+
+  --r1: #6E0B14;   /* chief of state, head of government */
+  --r2: #B8342A;   /* minister, secretary of state       */
+  --r3: #CF7A3C;   /* governor, cabinet chief, adviser   */
+  --r4: #C2A45F;   /* secretary-general, PDG             */
+  --r5: #8A8B80;   /* below the cut                      */
+  --org: #40626E;  /* organisations read as another kind of thing */
+  --org-soft: #8AA6AF;
+
+  --edge: rgba(26, 25, 23, 0.18);
+  --edge-hot: #6E0B14;
+
+  --shadow: 0 1px 2px rgba(26,25,23,.07), 0 8px 24px -12px rgba(26,25,23,.22);
+
+  --f-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:    #121310;
+    --surface:  #1C1E19;
+    --sunken:   #0C0D0B;
+    --ink:      #E9E8E0;
+    --muted:    #8D8F84;
+    --rule:     #33362D;
+    --rule-soft:#282B24;
+    --r1: #E0524F;
+    --r2: #D9705F;
+    --r3: #DD9B5C;
+    --r4: #CFB679;
+    --r5: #7E8076;
+    --org: #7FA3AE;
+    --org-soft: #4E6A74;
+    --edge: rgba(233, 232, 224, 0.16);
+    --edge-hot: #E0524F;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper:    #121310;
+  --surface:  #1C1E19;
+  --sunken:   #0C0D0B;
+  --ink:      #E9E8E0;
+  --muted:    #8D8F84;
+  --rule:     #33362D;
+  --rule-soft:#282B24;
+  --r1: #E0524F;
+  --r2: #D9705F;
+  --r3: #DD9B5C;
+  --r4: #CFB679;
+  --r5: #7E8076;
+  --org: #7FA3AE;
+  --org-soft: #4E6A74;
+  --edge: rgba(233, 232, 224, 0.16);
+  --edge-hot: #E0524F;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 15px/1.5 var(--f-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+/* ---------- masthead ---------- */
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 28px;
+  padding-block: 14px 12px;
+  padding-inline: 20px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+.brand h1 {
+  margin: 0;
+  font: 600 25px/1.05 var(--f-display);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.brand p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  max-width: 62ch;
+}
+
+.figures {
+  display: flex;
+  gap: 22px;
+  margin-inline-start: auto;
+  flex-wrap: wrap;
+}
+
+.fig { display: flex; flex-direction: column; gap: 1px; }
+
+.fig b {
+  font: 500 17px/1 var(--f-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.fig span {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  color: var(--muted);
+}
+
+/* ---------- working surface ---------- */
+
+.surface {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr) 320px;
+  min-height: 0;
+}
+
+.rail, .dossier {
+  background: var(--surface);
+  padding: 16px 16px 22px;
+  overflow-y: auto;
+  max-height: calc(100vh - 208px);
+}
+
+.rail { border-right: 1px solid var(--rule); }
+.dossier { border-left: 1px solid var(--rule); }
+
+.stage {
+  position: relative;
+  min-width: 0;
+  background: var(--paper);
+}
+
+canvas#net { display: block; width: 100%; height: 100%; touch-action: none; }
+
+.stage-note {
+  position: absolute;
+  left: 14px;
+  bottom: 10px;
+  font: 400 11px/1.4 var(--f-mono);
+  color: var(--muted);
+  pointer-events: none;
+  max-width: 46ch;
+}
+
+/* ---------- rail controls ---------- */
+
+.group { margin-bottom: 20px; }
+
+.group > h2 {
+  margin: 0 0 8px;
+  font: 500 10px/1 var(--f-ui);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+}
+
+.search {
+  width: 100%;
+  padding: 7px 9px;
+  font: 400 13px var(--f-ui);
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+}
+
+.search:focus-visible { outline: 2px solid var(--r2); outline-offset: 1px; }
+
+.hits { margin-top: 6px; display: flex; flex-direction: column; }
+
+.hit {
+  text-align: left;
+  padding: 5px 7px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: 400 13px var(--f-ui);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.hit:hover, .hit:focus-visible { background: var(--sunken); outline: none; }
+.hit em { color: var(--muted); font-style: normal; font-size: 11px; }
+
+.seg { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.seg button {
+  flex: 1 1 auto;
+  padding: 5px 8px;
+  font: 500 11px var(--f-mono);
+  color: var(--muted);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.seg button[aria-pressed="true"] {
+  color: var(--surface);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.seg button:focus-visible { outline: 2px solid var(--r2); outline-offset: 1px; }
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--ink);
+  padding: 3px 0;
+  cursor: pointer;
+}
+
+.check input { accent-color: var(--r2); }
+
+.legend { display: flex; flex-direction: column; gap: 5px; }
+
+.legend div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.sq { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+
+/* ---------- dossier ---------- */
+
+.dossier h2.name {
+  margin: 0 0 2px;
+  font: 600 21px/1.15 var(--f-display);
+  text-wrap: balance;
+}
+
+.dossier .kicker {
+  font: 500 10px/1 var(--f-ui);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.dossier .meta {
+  font: 400 12px/1.5 var(--f-mono);
+  color: var(--muted);
+  margin: 0 0 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.cite {
+  padding: 10px 0 11px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.cite:last-child { border-bottom: 0; }
+
+.cite .office {
+  font-size: 13px;
+  line-height: 1.35;
+  margin-bottom: 3px;
+}
+
+.cite .where { color: var(--muted); font-size: 12px; line-height: 1.35; }
+
+.cite .ref {
+  margin-top: 5px;
+  font: 400 11px/1.5 var(--f-mono);
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+}
+
+.cite .ref a { color: var(--r2); text-decoration: none; border-bottom: 1px solid currentColor; }
+.cite .ref a:hover { color: var(--ink); }
+
+.tenure {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: var(--sunken);
+  color: var(--ink);
+  font: 500 10.5px var(--f-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.tenure.open { background: transparent; border: 1px dashed var(--rule); color: var(--muted); }
+
+.empty { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.empty strong { color: var(--ink); font-weight: 600; }
+
+/* ---------- timeline ---------- */
+
+.timeline {
+  border-top: 1px solid var(--rule);
+  background: var(--surface);
+  padding: 10px 20px 14px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0 18px;
+  align-items: center;
+}
+
+.transport { display: flex; align-items: center; gap: 12px; }
+
+.play {
+  width: 38px; height: 38px;
+  display: grid; place-items: center;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.play:hover { border-color: var(--ink); }
+.play:focus-visible { outline: 2px solid var(--r2); outline-offset: 2px; }
+
+.yearbox { line-height: 1; }
+
+.yearbox b {
+  font: 500 30px/1 var(--f-mono);
+  font-variant-numeric: tabular-nums;
+  display: block;
+}
+
+.yearbox span {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  color: var(--muted);
+}
+
+.scrub { position: relative; }
+
+canvas#spark { display: block; width: 100%; height: 46px; }
+
+input#year {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 20px;
+  margin: 2px 0 0;
+  background: none;
+  cursor: pointer;
+}
+
+input#year::-webkit-slider-runnable-track {
+  height: 2px; background: var(--rule);
+}
+input#year::-moz-range-track { height: 2px; background: var(--rule); }
+
+input#year::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 13px; height: 13px; margin-top: -5.5px;
+  border-radius: 50%;
+  background: var(--r1);
+  border: 2px solid var(--surface);
+}
+input#year::-moz-range-thumb {
+  width: 13px; height: 13px;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  background: var(--r1);
+}
+input#year:focus-visible { outline: 2px solid var(--r2); outline-offset: 3px; }
+
+.ticks {
+  display: flex;
+  justify-content: space-between;
+  font: 400 10px var(--f-mono);
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 1080px) {
+  .surface { grid-template-columns: 200px minmax(0, 1fr); }
+  .dossier {
+    grid-column: 1 / -1;
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+    max-height: 46vh;
+  }
+}
+
+@media (max-width: 720px) {
+  .surface { grid-template-columns: 1fr; }
+  .rail {
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+    max-height: none;
+  }
+  .stage { min-height: 58vh; }
+  .figures { margin-inline-start: 0; gap: 16px; }
+  .timeline { grid-template-columns: 1fr; gap: 8px; }
+  .brand h1 { font-size: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="brand">
+      <h1>Gazette of Office</h1>
+      <p>Senior office-holding in the Tunisian state, read out of the
+        <i>Journal Officiel de la République Tunisienne</i>. Every tie below is
+        an appointment the gazette printed, with its decree and its date.</p>
+    </div>
+    <div class="figures">
+      <div class="fig"><b id="f-issues">6 378</b><span>issues read</span></div>
+      <div class="fig"><b id="f-events">—</b><span>appointments</span></div>
+      <div class="fig"><b id="f-people">—</b><span>senior figures</span></div>
+      <div class="fig"><b>1957–2026</b><span>period</span></div>
+    </div>
+  </header>
+
+  <main class="surface">
+    <aside class="rail">
+      <div class="group">
+        <h2>Find a figure</h2>
+        <input class="search" id="q" type="search" placeholder="Ghannouchi, Karoui…"
+               autocomplete="off" aria-label="Search for a person">
+        <div class="hits" id="hits"></div>
+      </div>
+
+      <div class="group">
+        <h2>Seniority floor</h2>
+        <div class="seg" id="rankseg" role="group" aria-label="Minimum rank shown">
+          <button data-cut="90" aria-pressed="false">Cabinet</button>
+          <button data-cut="80" aria-pressed="true">Governor+</button>
+          <button data-cut="72" aria-pressed="false">All senior</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <h2>Overlay</h2>
+        <label class="check"><input type="checkbox" id="ov-succ"> Succession handovers</label>
+        <label class="check"><input type="checkbox" id="ov-sig"> Who signed the decree</label>
+        <label class="check"><input type="checkbox" id="ov-labels" checked> Institution labels</label>
+      </div>
+
+      <div class="group">
+        <h2>Reading the map</h2>
+        <div class="legend">
+          <div><i class="sq" style="background:var(--org)"></i> institution</div>
+          <div><i class="dot" style="background:var(--r1)"></i> head of state or government</div>
+          <div><i class="dot" style="background:var(--r2)"></i> minister, secretary of state</div>
+          <div><i class="dot" style="background:var(--r3)"></i> governor, cabinet chief, adviser</div>
+          <div><i class="dot" style="background:var(--r4)"></i> secretary-general, chief executive</div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="stage">
+      <canvas id="net"></canvas>
+      <p class="stage-note" id="note">—</p>
+    </div>
+
+    <aside class="dossier" id="dossier">
+      <p class="empty"><strong>Click a figure</strong> to open their file:
+        every office they held, the decree that put them there, and a link to
+        the page of the gazette it was printed on.</p>
+    </aside>
+  </main>
+
+  <footer class="timeline">
+    <div class="transport">
+      <button class="play" id="play" aria-label="Play through the years">
+        <svg width="13" height="14" viewBox="0 0 13 14" aria-hidden="true">
+          <path id="play-icon" d="M1 1l11 6-11 6z" fill="currentColor"></path>
+        </svg>
+      </button>
+      <div class="yearbox"><b id="y-label">1987</b><span>in office</span></div>
+    </div>
+    <div class="scrub">
+      <canvas id="spark" aria-hidden="true"></canvas>
+      <input id="year" type="range" min="1957" max="2026" step="1" value="1987"
+             aria-label="Year">
+      <div class="ticks"><span>1957</span><span>1975</span><span>1990</span><span>2005</span><span>2026</span></div>
+    </div>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="data.js"></script>
+<script>
+(function () {
+  "use strict";
+  var D = window.__JORT;
+  if (!D) return;
+
+  var Y0 = D.meta.years[0], Y1 = D.meta.years[1];
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---- indexes ----------------------------------------------------------
+  // spell = [person, org, rank, startYear, endYear, position, act, date, issue, endReason]
+  var spellsByPerson = new Map();
+  D.spells.forEach(function (s) {
+    var a = spellsByPerson.get(s[0]);
+    if (!a) spellsByPerson.set(s[0], (a = []));
+    a.push(s);
+  });
+  spellsByPerson.forEach(function (a) { a.sort(function (x, y) { return x[3] - y[3]; }); });
+
+  function rankScore(rankIdx) { return D.rankScore[rankIdx] || 0; }
+
+  function rankColour(score) {
+    if (score >= 95) return "var(--r1)";
+    if (score >= 85) return "var(--r2)";
+    if (score >= 72) return "var(--r3)";
+    if (score >= 65) return "var(--r4)";
+    return "var(--r5)";
+  }
+
+  var css = getComputedStyle(document.documentElement);
+  function tok(name) { return css.getPropertyValue(name).trim(); }
+  var C = {};
+  function refreshTokens() {
+    css = getComputedStyle(document.documentElement);
+    C = {
+      r1: tok("--r1"), r2: tok("--r2"), r3: tok("--r3"),
+      r4: tok("--r4"), r5: tok("--r5"),
+      org: tok("--org"), orgSoft: tok("--org-soft"),
+      ink: tok("--ink"), muted: tok("--muted"),
+      paper: tok("--paper"), surface: tok("--surface"),
+      edge: tok("--edge"), hot: tok("--edge-hot"), rule: tok("--rule")
+    };
+  }
+  refreshTokens();
+
+  function colourFor(score) {
+    if (score >= 95) return C.r1;
+    if (score >= 85) return C.r2;
+    if (score >= 72) return C.r3;
+    if (score >= 65) return C.r4;
+    return C.r5;
+  }
+
+  // ---- state ------------------------------------------------------------
+  var state = {
+    year: 1987,
+    cut: 80,
+    succ: false,
+    sig: false,
+    labels: true,
+    selected: null,
+    hover: null
+  };
+
+  var canvas = document.getElementById("net");
+  var ctx = canvas.getContext("2d");
+  var W = 800, H = 600, DPR = 1;
+  var sim = null, nodes = [], links = [], overlays = [];
+  var nodeById = new Map();
+
+  function sizeCanvas() {
+    var r = canvas.parentNode.getBoundingClientRect();
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = Math.max(320, r.width);
+    H = Math.max(320, r.height);
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+
+  // ---- graph for the current year ---------------------------------------
+  function buildGraph() {
+    var y = state.year, cut = state.cut;
+    var people = new Map(), orgs = new Map();
+    var ls = [];
+
+    for (var i = 0; i < D.spells.length; i++) {
+      var s = D.spells[i];
+      if (s[3] > y || s[4] < y) continue;
+      var sc = rankScore(s[2]);
+      if (sc < cut) continue;
+
+      var pk = "p" + s[0];
+      var p = people.get(pk);
+      if (!p) {
+        p = { id: pk, kind: "p", ref: s[0], score: sc, deg: 0,
+              label: D.people[s[0]][0] };
+        people.set(pk, p);
+      } else if (sc > p.score) { p.score = sc; }
+
+      var ok = "o" + s[1];
+      var o = orgs.get(ok);
+      if (!o) {
+        o = { id: ok, kind: "o", ref: s[1], deg: 0, label: D.orgs[s[1]] };
+        orgs.set(ok, o);
+      }
+      p.deg++; o.deg++;
+      ls.push({ source: pk, target: ok });
+    }
+
+    nodes = Array.from(people.values()).concat(Array.from(orgs.values()));
+    nodeById = new Map(nodes.map(function (n) { return [n.id, n]; }));
+    links = ls;
+
+    // Directed overlays: succession handovers and signature ties whose two
+    // ends are both on the map this year.
+    overlays = [];
+    function addOverlay(rows, kind) {
+      for (var i = 0; i < rows.length; i++) {
+        var e = rows[i];
+        if (e[2] !== state.year) continue;
+        var a = nodeById.get("p" + e[0]), b = nodeById.get("p" + e[1]);
+        if (a && b) overlays.push({ a: a, b: b, kind: kind });
+      }
+    }
+    if (state.succ) addOverlay(D.succession, "succ");
+    if (state.sig) addOverlay(D.signature, "sig");
+  }
+
+  function radius(n) {
+    if (n.kind === "o") return Math.min(16, 4 + Math.sqrt(n.deg) * 2.1);
+    return n.score >= 95 ? 7.5 : n.score >= 85 ? 5.6 : n.score >= 72 ? 4.4 : 3.6;
+  }
+
+  function restart() {
+    var prev = new Map(nodes.map(function (n) { return [n.id, n]; }));
+    buildGraph();
+    // Carry positions across a year change so the map evolves rather than
+    // reshuffling: continuity is the point of a dynamic network.
+    nodes.forEach(function (n) {
+      var old = prev.get(n.id);
+      if (old && old.x != null) { n.x = old.x; n.y = old.y; n.vx = 0; n.vy = 0; }
+      else { n.x = W / 2 + (Math.random() - .5) * 220; n.y = H / 2 + (Math.random() - .5) * 220; }
+    });
+
+    if (sim) sim.stop();
+    var big = nodes.length > 900;
+    sim = d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(links).id(function (d) { return d.id; })
+        .distance(function (l) { return 26 + Math.min(28, l.target.deg * .5); })
+        .strength(.55))
+      .force("charge", d3.forceManyBody()
+        .strength(function (d) { return d.kind === "o" ? -90 : -26; })
+        .distanceMax(340))
+      .force("collide", d3.forceCollide().radius(function (d) { return radius(d) + 2.4; }).iterations(1))
+      .force("x", d3.forceX(W / 2).strength(.045))
+      .force("y", d3.forceY(H / 2).strength(.055))
+      .alpha(.9)
+      .alphaDecay(big ? .045 : .028)
+      .on("tick", draw);
+
+    if (reduce) { sim.tick(60); sim.stop(); draw(); }
+    updateNote();
+  }
+
+  // ---- drawing ----------------------------------------------------------
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    var sel = state.selected, hov = state.hover;
+    var focus = sel || hov;
+    var near = null;
+    if (focus) {
+      near = new Set([focus.id]);
+      links.forEach(function (l) {
+        if (l.source.id === focus.id) near.add(l.target.id);
+        else if (l.target.id === focus.id) near.add(l.source.id);
+      });
+    }
+
+    // affiliation edges
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = C.edge;
+    ctx.beginPath();
+    for (var i = 0; i < links.length; i++) {
+      var l = links[i];
+      if (near && !(near.has(l.source.id) && near.has(l.target.id))) continue;
+      ctx.moveTo(l.source.x, l.source.y);
+      ctx.lineTo(l.target.x, l.target.y);
+    }
+    ctx.stroke();
+
+    if (near) {
+      ctx.globalAlpha = .13;
+      ctx.strokeStyle = C.edge;
+      ctx.beginPath();
+      for (var j = 0; j < links.length; j++) {
+        var m = links[j];
+        if (near.has(m.source.id) && near.has(m.target.id)) continue;
+        ctx.moveTo(m.source.x, m.source.y);
+        ctx.lineTo(m.target.x, m.target.y);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    // directed overlays, drawn as arcs so direction is visible
+    overlays.forEach(function (o) {
+      var dx = o.b.x - o.a.x, dy = o.b.y - o.a.y;
+      var d = Math.hypot(dx, dy) || 1;
+      ctx.strokeStyle = o.kind === "succ" ? C.hot : C.org;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(o.a.x, o.a.y);
+      ctx.quadraticCurveTo(
+        (o.a.x + o.b.x) / 2 - dy * .16,
+        (o.a.y + o.b.y) / 2 + dx * .16,
+        o.b.x, o.b.y
+      );
+      ctx.stroke();
+      // arrowhead
+      var ang = Math.atan2(dy, dx);
+      var r = radius(o.b) + 3;
+      var hx = o.b.x - Math.cos(ang) * r, hy = o.b.y - Math.sin(ang) * r;
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.beginPath();
+      ctx.moveTo(hx, hy);
+      ctx.lineTo(hx - Math.cos(ang - .42) * 7, hy - Math.sin(ang - .42) * 7);
+      ctx.lineTo(hx - Math.cos(ang + .42) * 7, hy - Math.sin(ang + .42) * 7);
+      ctx.closePath();
+      ctx.fill();
+    });
+
+    // nodes
+    for (var k = 0; k < nodes.length; k++) {
+      var n = nodes[k];
+      var dim = near && !near.has(n.id);
+      ctx.globalAlpha = dim ? .22 : 1;
+      var r2 = radius(n);
+      if (n.kind === "o") {
+        ctx.fillStyle = C.org;
+        var s = r2 * 1.7;
+        roundRect(n.x - s / 2, n.y - s / 2, s, s, 2.5);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = colourFor(n.score);
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, r2, 0, 6.2832);
+        ctx.fill();
+      }
+      if (sel && sel.id === n.id) {
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = C.ink;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, r2 + 4, 0, 6.2832);
+        ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // labels: institutions, plus whoever is in focus
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    var placed = [];
+    if (state.labels) {
+      var labelled = nodes.filter(function (n) { return n.kind === "o"; })
+        .sort(function (a, b) { return b.deg - a.deg; })
+        .slice(0, nodes.length > 700 ? 18 : 30);
+      labelled.forEach(function (n) {
+        if (near && !near.has(n.id)) return;
+        drawLabel(shorten(n.label, 26), n.x, n.y - radius(n) - 8, C.muted, false, placed);
+      });
+    }
+    if (focus) {
+      var txt = focus.kind === "p" ? focus.label : shorten(focus.label, 40);
+      drawLabel(txt, focus.x, focus.y - radius(focus) - 9, C.ink, true, null);
+    }
+  }
+
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function drawLabel(text, x, y, colour, strong, placed) {
+    ctx.font = strong
+      ? '600 12px "IBM Plex Sans", sans-serif'
+      : '500 10.5px "IBM Plex Mono", monospace';
+    var w = ctx.measureText(text).width;
+    // Drop a label rather than let it collide: an overlapping stack of
+    // ministry names is worse than naming fewer of them.
+    if (placed) {
+      var box = { x0: x - w / 2 - 4, x1: x + w / 2 + 4, y0: y - 8, y1: y + 8 };
+      for (var i = 0; i < placed.length; i++) {
+        var q = placed[i];
+        if (box.x0 < q.x1 && box.x1 > q.x0 && box.y0 < q.y1 && box.y1 > q.y0) return;
+      }
+      placed.push(box);
+    }
+    ctx.fillStyle = C.paper;
+    ctx.globalAlpha = .82;
+    ctx.fillRect(x - w / 2 - 3, y - 7, w + 6, 14);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = colour;
+    ctx.fillText(text, x, y);
+  }
+
+  function shorten(s, n) {
+    s = String(s || "");
+    return s.length > n ? s.slice(0, n - 1) + "…" : s;
+  }
+
+  // ---- hit testing ------------------------------------------------------
+  function pick(mx, my) {
+    var best = null, bd = 15 * 15;
+    for (var i = 0; i < nodes.length; i++) {
+      var n = nodes[i];
+      var dx = n.x - mx, dy = n.y - my, d = dx * dx + dy * dy;
+      var rr = radius(n) + 5;
+      if (d < Math.max(bd, rr * rr) && d < (rr + 8) * (rr + 8)) {
+        if (best === null || d < bd) { best = n; bd = d; }
+      }
+    }
+    return best;
+  }
+
+  canvas.addEventListener("mousemove", function (e) {
+    var r = canvas.getBoundingClientRect();
+    var n = pick(e.clientX - r.left, e.clientY - r.top);
+    if (n !== state.hover) {
+      state.hover = n;
+      canvas.style.cursor = n ? "pointer" : "default";
+      draw();
+    }
+  });
+
+  canvas.addEventListener("mouseleave", function () {
+    if (state.hover) { state.hover = null; draw(); }
+  });
+
+  canvas.addEventListener("click", function (e) {
+    var r = canvas.getBoundingClientRect();
+    var n = pick(e.clientX - r.left, e.clientY - r.top);
+    select(n);
+  });
+
+  function select(n) {
+    state.selected = n && n.kind === "p" ? n : (n && n.kind === "o" ? n : null);
+    renderDossier();
+    draw();
+  }
+
+  // ---- dossier ----------------------------------------------------------
+  var dossier = document.getElementById("dossier");
+
+  function pdfLink(issueRef) {
+    if (!issueRef) return null;
+    var url = "https://lake.jort.tn/journal-officiel/fr/" + issueRef + ".pdf";
+    return "https://jort.tn/pdfjs/web/viewer?file=" + encodeURIComponent(url);
+  }
+
+  function fmtDate(iso) {
+    if (!iso || iso.length < 10) return "";
+    var m = ["January", "February", "March", "April", "May", "June", "July",
+             "August", "September", "October", "November", "December"];
+    var p = iso.split("-");
+    return Number(p[2]) + " " + m[Number(p[1]) - 1] + " " + p[0];
+  }
+
+  function renderDossier() {
+    var n = state.selected;
+    if (!n) {
+      dossier.innerHTML = '<p class="empty"><strong>Click a figure</strong> to open ' +
+        'their file: every office they held, the decree that put them there, and ' +
+        'a link to the page of the gazette it was printed on.</p>';
+      return;
+    }
+
+    if (n.kind === "o") {
+      var here = D.spells.filter(function (s) {
+        return s[1] === n.ref && s[3] <= state.year && s[4] >= state.year
+          && rankScore(s[2]) >= state.cut;
+      }).sort(function (a, b) { return rankScore(b[2]) - rankScore(a[2]); });
+      var rows = here.map(function (s) {
+        return '<div class="cite"><div class="office">' + esc(D.people[s[0]][0]) +
+          '</div><div class="where">' + esc(s[5] || D.ranks[s[2]]) + '</div>' +
+          '<div class="ref"><span class="tenure">' + s[3] + "–" +
+          (s[9] === "censored" ? "…" : s[4]) + "</span></div></div>";
+      }).join("");
+      dossier.innerHTML =
+        '<span class="kicker">Institution</span>' +
+        '<h2 class="name">' + esc(n.label) + "</h2>" +
+        '<p class="meta">' + here.length + " senior post" + (here.length === 1 ? "" : "s") +
+        " occupied in " + state.year + "</p>" + (rows || '<p class="empty">No senior post recorded here this year.</p>');
+      return;
+    }
+
+    var person = D.people[n.ref];
+    var mine = spellsByPerson.get(n.ref) || [];
+    var peak = mine.reduce(function (a, s) { return Math.max(a, rankScore(s[2])); }, 0);
+
+    var cites = mine.map(function (s) {
+      var open = s[9] === "censored";
+      var link = pdfLink(s[8]);
+      var current = s[3] <= state.year && s[4] >= state.year;
+      return '<div class="cite"' + (current ? ' style="border-left:2px solid ' +
+          rankColour(rankScore(s[2])) + ';padding-left:9px;margin-left:-11px"' : "") + ">" +
+        '<div class="office">' + esc(s[5] || D.ranks[s[2]]) + "</div>" +
+        '<div class="where">' + esc(D.orgs[s[1]]) + "</div>" +
+        '<div class="ref">' +
+          '<span class="tenure' + (open ? " open" : "") + '">' + s[3] + "–" +
+            (open ? "open" : s[4]) + "</span>" +
+          (s[6] ? "<span>" + esc(s[6]) + "</span>" : "") +
+          (s[7] ? "<span>" + esc(fmtDate(s[7])) + "</span>" : "") +
+          (link ? '<a href="' + link + '" target="_blank" rel="noopener">gazette n° ' +
+            esc(s[8].split("/")[1]) + "</a>" : "") +
+        "</div></div>";
+    }).join("");
+
+    dossier.innerHTML =
+      '<span class="kicker">' + esc(prettyRank(peak)) + "</span>" +
+      '<h2 class="name">' + esc(person[0]) + "</h2>" +
+      '<p class="meta">' + mine.length + " recorded post" + (mine.length === 1 ? "" : "s") +
+      " · first seen " + person[2] + " · last seen " + person[3] + "</p>" + cites;
+  }
+
+  function prettyRank(score) {
+    if (score >= 95) return "Head of state or government";
+    if (score >= 90) return "Minister";
+    if (score >= 85) return "Secretary of state";
+    if (score >= 80) return "Governor";
+    if (score >= 72) return "Cabinet chief or adviser";
+    if (score >= 65) return "Director-general";
+    return "Senior official";
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  // ---- note under the map ----------------------------------------------
+  function updateNote() {
+    var np = nodes.filter(function (n) { return n.kind === "p"; }).length;
+    var no = nodes.length - np;
+    document.getElementById("note").textContent =
+      np + " figures · " + no + " institutions · " + links.length +
+      " appointments in force" +
+      (state.year >= 2020 ? "  ·  tenures with no recorded end run to the present" : "");
+  }
+
+  // ---- timeline spark ---------------------------------------------------
+  var spark = document.getElementById("spark");
+  var sctx = spark.getContext("2d");
+
+  function drawSpark() {
+    var r = spark.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.max(120, r.width), h = 46;
+    spark.width = Math.round(w * dpr);
+    spark.height = Math.round(h * dpr);
+    sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    sctx.clearRect(0, 0, w, h);
+
+    var s = D.eventsPerYear, max = Math.max.apply(null, s) || 1;
+    var n = s.length;
+    function px(i) { return (i / (n - 1)) * w; }
+    function py(v) { return h - 3 - (v / max) * (h - 8); }
+
+    sctx.beginPath();
+    sctx.moveTo(0, h);
+    for (var i = 0; i < n; i++) sctx.lineTo(px(i), py(s[i]));
+    sctx.lineTo(w, h);
+    sctx.closePath();
+    sctx.fillStyle = C.rule;
+    sctx.globalAlpha = .55;
+    sctx.fill();
+    sctx.globalAlpha = 1;
+
+    sctx.beginPath();
+    for (var j = 0; j < n; j++) {
+      if (j === 0) sctx.moveTo(px(j), py(s[j])); else sctx.lineTo(px(j), py(s[j]));
+    }
+    sctx.strokeStyle = C.muted;
+    sctx.lineWidth = 1;
+    sctx.stroke();
+
+    var k = state.year - Y0;
+    sctx.strokeStyle = C.r1 || "#6E0B14";
+    sctx.lineWidth = 1.5;
+    sctx.beginPath();
+    sctx.moveTo(px(k), 2);
+    sctx.lineTo(px(k), h);
+    sctx.stroke();
+    sctx.fillStyle = C.r1;
+    sctx.beginPath();
+    sctx.arc(px(k), py(s[k]), 3, 0, 6.2832);
+    sctx.fill();
+  }
+
+  // ---- controls ---------------------------------------------------------
+  var yearInput = document.getElementById("year");
+  var yLabel = document.getElementById("y-label");
+
+  function setYear(y, rebuild) {
+    state.year = Math.max(Y0, Math.min(Y1, y));
+    yearInput.value = state.year;
+    yLabel.textContent = state.year;
+    drawSpark();
+    if (rebuild !== false) restart();
+    renderDossier();
+  }
+
+  yearInput.addEventListener("input", function () {
+    setYear(Number(yearInput.value));
+  });
+
+  document.getElementById("rankseg").addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b) return;
+    state.cut = Number(b.dataset.cut);
+    Array.prototype.forEach.call(this.querySelectorAll("button"), function (x) {
+      x.setAttribute("aria-pressed", String(x === b));
+    });
+    state.selected = null;
+    restart();
+    renderDossier();
+  });
+
+  function bindToggle(id, key) {
+    document.getElementById(id).addEventListener("change", function () {
+      state[key] = this.checked;
+      if (key === "labels") draw(); else { buildGraph(); draw(); }
+    });
+  }
+  bindToggle("ov-succ", "succ");
+  bindToggle("ov-sig", "sig");
+  bindToggle("ov-labels", "labels");
+
+  // search
+  var q = document.getElementById("q"), hits = document.getElementById("hits");
+  q.addEventListener("input", function () {
+    var term = q.value.trim().toLowerCase();
+    hits.innerHTML = "";
+    if (term.length < 2) return;
+    var found = [];
+    for (var i = 0; i < D.people.length && found.length < 8; i++) {
+      if (D.people[i][0].toLowerCase().indexOf(term) !== -1) found.push(i);
+    }
+    found.forEach(function (i) {
+      var b = document.createElement("button");
+      b.className = "hit";
+      b.innerHTML = esc(D.people[i][0]) + " <em>" + D.people[i][2] + "–" + D.people[i][3] + "</em>";
+      b.addEventListener("click", function () { jumpTo(i); });
+      hits.appendChild(b);
+    });
+  });
+
+  function jumpTo(personIdx) {
+    var mine = spellsByPerson.get(personIdx) || [];
+    if (!mine.length) return;
+    // Move to a year in which they actually held the office, and drop the
+    // seniority floor if their rank sits below it.
+    var s = mine[0];
+    var sc = rankScore(s[2]);
+    if (sc < state.cut) {
+      state.cut = sc >= 80 ? 80 : 72;
+      Array.prototype.forEach.call(
+        document.querySelectorAll("#rankseg button"),
+        function (x) { x.setAttribute("aria-pressed", String(Number(x.dataset.cut) === state.cut)); }
+      );
+    }
+    setYear(s[3]);
+    var n = nodeById.get("p" + personIdx);
+    if (n) select(n);
+  }
+
+  // play
+  var playing = false, timer = null;
+  var playBtn = document.getElementById("play");
+  var playIcon = document.getElementById("play-icon");
+
+  playBtn.addEventListener("click", function () {
+    playing = !playing;
+    playIcon.setAttribute("d", playing ? "M1 1h4v12H1zM8 1h4v12H8z" : "M1 1l11 6-11 6z");
+    playBtn.setAttribute("aria-label", playing ? "Pause" : "Play through the years");
+    if (playing) step(); else clearTimeout(timer);
+  });
+
+  function step() {
+    if (!playing) return;
+    var next = state.year >= Y1 ? Y0 : state.year + 1;
+    setYear(next);
+    timer = setTimeout(step, reduce ? 1400 : 750);
+  }
+
+  window.addEventListener("keydown", function (e) {
+    if (document.activeElement === q) return;
+    if (e.key === "ArrowRight") { setYear(state.year + 1); e.preventDefault(); }
+    if (e.key === "ArrowLeft") { setYear(state.year - 1); e.preventDefault(); }
+  });
+
+  // ---- boot -------------------------------------------------------------
+  document.getElementById("f-events").textContent =
+    D.meta.n_events.toLocaleString("en-GB").replace(/,/g, " ");
+  document.getElementById("f-people").textContent =
+    D.people.length.toLocaleString("en-GB").replace(/,/g, " ");
+  document.getElementById("f-issues").textContent =
+    D.meta.n_issues.toLocaleString("en-GB").replace(/,/g, " ");
+
+  var ro = new ResizeObserver(function () {
+    sizeCanvas();
+    drawSpark();
+    if (sim) { sim.force("x", d3.forceX(W / 2).strength(.045))
+                  .force("y", d3.forceY(H / 2).strength(.055))
+                  .alpha(.3).restart(); }
+    draw();
+  });
+  ro.observe(canvas.parentNode);
+
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () {
+    refreshTokens(); drawSpark(); draw();
+  });
+
+  sizeCanvas();
+  setYear(1987);
+  drawSpark();
+})();
+</script>
