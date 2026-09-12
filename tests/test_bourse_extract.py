@@ -26,7 +26,7 @@ from bourse.extract.records import (
     strip_title,
 )
 from bourse.extract.tables import (
-    _cell_gap_threshold, classify_table, find_as_of_date, to_number,
+    _cell_gap_threshold, _is_glue, classify_table, find_as_of_date, to_number,
 )
 
 failures: list[str] = []
@@ -314,7 +314,7 @@ def cells(words_and_gaps, threshold, glue_gap=0.6):
             out.append(cur)
             cur = w
         else:
-            cur += ("" if g <= glue_gap else " ") + w
+            cur += ("" if _is_glue(cur, w, g, glue_gap) else " ") + w
     out.append(cur)
     return out
 
@@ -424,3 +424,43 @@ class TestZeroWidthGapsAreNotWordBreaks:
     def test_an_ordinary_word_space_still_separates(self):
         # The name keeps its space: 2.3pt is spacing, not a split glyph run.
         assert split_line(self.ENNAKL)[0] == "ENNAKL Automobiles"
+
+
+class TestGlueNeedsDigitsOnBothSides:
+    """Gap width alone cannot decide whether a hairline gap is a space.
+
+    Measured from UNIFACTOR 2015 p.20, whose font sets a word space narrower
+    than the space inside a figure: "SPDIT SICAF" is separated by 0.40pt and
+    "COTIF SICAR" by -0.06pt, while "150 000" is separated by 0.93pt. An
+    absolute threshold that rejoins split figures on this page also welds
+    company names into COTIFSICAR. Requiring digits either side separates them.
+    """
+
+    SPDIT = [("SPDIT", 0.0), ("SICAF", 0.40), ("150", 228.65), ("000", 0.93),
+             ("750", 28.53), ("000", 0.93), ("5,0%", 41.43)]
+    COTIF = [("COTIF", 0.0), ("SICAR", -0.06), ("100", 227.12), ("000", 0.93),
+             ("500", 28.53), ("000", 0.93), ("3,3%", 41.43)]
+
+    def test_a_name_split_across_a_hairline_gap_keeps_its_space(self):
+        assert split_line(self.SPDIT)[0] == "SPDIT SICAF"
+
+    def test_a_name_split_across_an_overlapping_gap_keeps_its_space(self):
+        assert split_line(self.COTIF)[0] == "COTIF SICAR"
+
+    def test_the_figures_on_that_line_are_still_read_whole(self):
+        assert split_line(self.COTIF)[1:] == ["100 000", "500 000", "3,3%"]
+
+    @pytest.mark.parametrize("left,right,glued", [
+        ("6", "66", True),        # a figure cut in two
+        ("0,00", "5%", True),     # a percentage cut in two
+        ("COTIF", "SICAR", False),
+        ("SPDIT", "SICAF", False),
+        ("Amen", "Bank", False),
+        ("2", "SICAF", False),    # digit meeting letters is not one token
+        ("CURAT", "5", False),
+    ])
+    def test_only_a_break_inside_a_figure_is_glue(self, left, right, glued):
+        assert _is_glue(left, right, 0.0, 0.6) is glued
+
+    def test_a_wide_gap_is_never_glue(self):
+        assert not _is_glue("150", "000", 0.93, 0.6)

@@ -307,6 +307,18 @@ def _cell_gap_threshold(
     return fallback
 
 
+def _is_glue(left: str, right: str, gap: float, glue_gap: float) -> bool:
+    """True when two words are one token that the extractor split in two.
+
+    Requires digits on both sides of the gap as well as a gap too narrow to be a
+    space. Restricting it to figures is what keeps the rule from welding company
+    names together: a name split across a hairline gap still reads correctly
+    with the space left in, whereas a figure does not.
+    """
+    return bool(gap <= glue_gap and left and right
+                and left[-1].isdigit() and right[0].isdigit())
+
+
 def _page_cell_lines(
     page, gap_factor: float = 2.2, min_gap: float = 4.0, glue_gap: float = 0.6
 ):
@@ -324,6 +336,15 @@ def _page_cell_lines(
     zero-width gap between the "6" and the "66"). Joining those without a space
     is what keeps such a figure from being read as 2. Anything between the two
     is an ordinary word space.
+
+    Gap width alone cannot carry that last decision, which is why ``_is_glue``
+    also looks at what sits either side of it. Spacing is set per font, not per
+    corpus: on one filing's shareholder table a word space measures 0.40pt and a
+    space *inside* a figure measures 0.93pt - the word space is the narrower of
+    the two, and one pair of glyphs in a company name overlaps outright at
+    -0.06pt. No absolute width separates "COTIF SICAR" from a split figure
+    there. What does separate them is that a figure broken in two has digits on
+    both sides of the break.
     """
     try:
         words = page.extract_words(use_text_flow=False)
@@ -349,7 +370,8 @@ def _page_cell_lines(
                 cells.append(cur)
                 cur = b["text"]
             else:
-                cur += ("" if gap <= glue_gap else " ") + b["text"]
+                glued = _is_glue(cur, b["text"], gap, glue_gap)
+                cur += ("" if glued else " ") + b["text"]
         cells.append(cur)
         out.append((min(w["top"] for w in ws), cells))
     return out

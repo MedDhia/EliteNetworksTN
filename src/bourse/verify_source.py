@@ -35,7 +35,7 @@ import random
 import re
 import unicodedata
 import urllib.request
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -180,19 +180,23 @@ def page_texts(pdf_path: Path, wanted: set[int]) -> dict[int, str]:
 
 
 def _check_doc(args: tuple) -> tuple[dict, list[dict], int, int]:
-    """Verify every record drawn from one filing. Runs in a worker process."""
+    """Verify every record drawn from one filing. Runs in a worker process.
+
+    Counters are plain dicts, not defaultdicts over a lambda: the result is
+    pickled back to the parent, and a lambda factory cannot cross that boundary.
+    """
     meta, rows = args
     sha = meta["sha256"]
-    stats: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    stats: dict[str, Counter] = defaultdict(Counter)
     path = fetch(meta["pdf_url"], sha, meta.get("local_path"))
     if path is None:
-        return stats, [], 0, 1
+        return dict(stats), [], 0, 1
     pages = {int(r["page"]) for _, r in rows if str(r.get("page", "")).isdigit()}
     try:
         texts = page_texts(path, pages)
     except Exception as exc:  # noqa: BLE001
         LOG.warning("unreadable %s: %s", path.name, exc)
-        return stats, [], 0, 1
+        return dict(stats), [], 0, 1
 
     failures: list[dict] = []
     for kind, r in rows:
@@ -225,7 +229,7 @@ def _check_doc(args: tuple) -> tuple[dict, list[dict], int, int]:
                 "name_ok": ok_name, "number_ok": ok_num,
                 "doc": (meta.get("title") or "")[:60],
             })
-    return stats, failures, 1, 0
+    return dict(stats), failures, 1, 0
 
 
 def verify(sample: int | None, seed: int, workers: int = 1) -> dict:
@@ -254,7 +258,7 @@ def verify(sample: int | None, seed: int, workers: int = 1) -> dict:
     else:
         results = [_check_doc(j) for j in jobs]
 
-    stats: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    stats: dict[str, Counter] = defaultdict(Counter)
     failures: list[dict] = []
     docs_ok = docs_failed = 0
     for st, fl, ok, bad in results:
