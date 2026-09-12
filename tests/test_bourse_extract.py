@@ -26,7 +26,8 @@ from bourse.extract.records import (
     strip_title,
 )
 from bourse.extract.tables import (
-    _cell_gap_threshold, _is_glue, classify_table, find_as_of_date, to_number,
+    _cell_gap_threshold, _is_glue, classify_table, explode_row, find_as_of_date,
+    to_number,
 )
 
 failures: list[str] = []
@@ -464,3 +465,49 @@ class TestGlueNeedsDigitsOnBothSides:
 
     def test_a_wide_gap_is_never_glue(self):
         assert not _is_glue("150", "000", 0.93, 0.6)
+
+
+class TestExplodeStackedRow:
+    """One ruled row that is really six rows seen column by column.
+
+    Measured from AMEN BANK 2025 p.27, where the table's only ruling lines box
+    the whole body. pdfplumber returns a single row whose every cell holds the
+    column stacked with newlines, which flattens to one shareholder named
+    "STE ASSURANCES COMAR STE PGI HOLDING ..." holding all six stakes at once.
+    """
+
+    STACKED = [
+        "STE ASSURANCES COMAR\nSTE PGI HOLDING\nSTE ENNAKL AUTOMOBILES",
+        "10 041 827\n7 123 168\n2 770 695",
+        "50 209 135\n35 615 840\n13 853 475",
+        "28,76%\n20,40%\n7,93%",
+    ]
+
+    def test_the_stack_becomes_one_row_per_shareholder(self):
+        assert explode_row(self.STACKED) == [
+            ["STE ASSURANCES COMAR", "10 041 827", "50 209 135", "28,76%"],
+            ["STE PGI HOLDING", "7 123 168", "35 615 840", "20,40%"],
+            ["STE ENNAKL AUTOMOBILES", "2 770 695", "13 853 475", "7,93%"],
+        ]
+
+    def test_each_holder_keeps_its_own_stake(self):
+        rows = explode_row(self.STACKED)
+        assert [to_number(r[3]) for r in rows] == [28.76, 20.40, 7.93]
+        assert to_number(rows[1][1]) == 7_123_168
+
+    def test_an_empty_cell_stays_empty_across_the_split(self):
+        rows = explode_row(["A\nB", "", "1\n2"])
+        assert rows == [["A", "", "1"], ["B", "", "2"]]
+
+    def test_a_ragged_row_is_left_alone(self):
+        # A wrapped header: two lines in one cell, one in another. Splitting
+        # here would invent a row, so the row is returned untouched.
+        row = ["Actionnaires", "Nombre d'actions et de\ndroits de vote"]
+        assert explode_row(row) == [row]
+
+    def test_an_ordinary_row_is_left_alone(self):
+        row = ["PIRECO", "750 000", "750 000", "3,00%"]
+        assert explode_row(row) == [row]
+
+    def test_a_row_of_none_cells_survives(self):
+        assert explode_row([None, None]) == [[None, None]]

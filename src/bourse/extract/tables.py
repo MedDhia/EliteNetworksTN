@@ -377,6 +377,30 @@ def _page_cell_lines(
     return out
 
 
+def explode_row(row: list) -> list[list]:
+    """Split one ruled row that actually holds several stacked rows.
+
+    Where a table's only ruling lines box the whole body, pdfplumber reports it
+    as a single row whose every cell carries the column's values stacked with
+    newlines. Flattening that gives one shareholder named "STE ASSURANCES COMAR
+    STE PGI HOLDING STE ENNAKL AUTOMOBILES ..." holding the concatenation of
+    their six stakes.
+
+    The stacking is only unwound where it is unambiguous: every cell that holds
+    anything must hold the *same* number of lines, which is what says they are
+    the same rows seen column by column. Ragged counts mean something else is
+    going on - a wrapped header, a spanning label - and the row is left alone.
+    """
+    parts = [[ln for ln in (c or "").split("\n") if ln.strip()] for c in row]
+    counts = {len(p) for p in parts if p}
+    if len(counts) != 1:
+        return [row]
+    (n,) = counts
+    if n < 2:
+        return [row]
+    return [[(p[i] if p else "") for p in parts] for i in range(n)]
+
+
 def synth_rows_from_text(page, top: float, bottom: float) -> list[list[str]]:
     """Recover table rows from text when a table has no ruling lines.
 
@@ -498,7 +522,8 @@ def extract_tables(pdf, max_pages: int | None = None) -> list[FoundTable]:
                 continue
             if _is_noise(tbl):
                 continue
-            rows = [[_clean_cell(c) for c in row] for row in tbl]
+            rows = [[_clean_cell(c) for c in r]
+                    for row in tbl for r in explode_row(row)]
             header = rows[0]
             body = rows[1:]
 
