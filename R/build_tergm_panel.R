@@ -242,6 +242,11 @@ if (!requireNamespace("btergm", quietly = TRUE)) {
   # length(ix) periods, one of which is consumed as memory()'s lag.
   cat("\nestimating formation-only TERGM:", length(ix) - 1, "transitions,",
       R_boot, "bootstrap replications\n")
+  if (!requireNamespace("speedglm", quietly = TRUE))
+    cat("  NOTE: speedglm is absent, so btergm falls back to glm(). At the\n",
+        "  full universe that is the difference between minutes and hours --\n",
+        "  install.packages(\"speedglm\") before running this unsampled.\n",
+        sep = "")
   fit <- btergm(trimmed[ix] ~ edges +
                   gwb1degree(0.5, fixed = TRUE) +
                   gwb2degree(0.5, fixed = TRUE) +
@@ -249,7 +254,9 @@ if (!requireNamespace("btergm", quietly = TRUE)) {
                   nodecov("cum_degree_lag") + nodecov("kin_degree") +
                   edgecov(kin) + edgecov(own) + edgecov(com) + edgecov(shr) +
                   memory(type = "stability"),
-                offset = TRUE, R = R_boot, verbose = FALSE)
+                # verbose: a run at this scale takes tens of minutes, and a
+                # silent one is indistinguishable from a hung one.
+                offset = TRUE, R = R_boot, verbose = TRUE)
   print(summary(fit))
   saveRDS(fit, sub("\\.rds$", "_fit.rds", out))
   cat("\nsaved", sub("\\.rds$", "_fit.rds", out), "\n")
