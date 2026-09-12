@@ -112,7 +112,7 @@ One row per mirrored gazette issue with its publication date and the evidence be
 
 ### `blocks_index.csv`
 
-205,755 rows.
+207,369 rows.
 
 One row per announcement block or state act, with its printed folio page for citation. `rubric` types an announcement from the reference code's suffix; `ministry` anchors a state act to the body that issued it.
 
@@ -150,7 +150,7 @@ One row per announcement block or state act, with its printed folio page for cit
 
 ### `events.csv`
 
-168,789 rows.
+197,532 rows.
 
 The core table: one row per dated relational assertion, with up to four separate dates, a controlled event type and role, a verbatim quote and a page citation. Person and organisation names here are **surface mentions**, not resolved identities; join to `resolution.csv` for those.
 
@@ -197,7 +197,7 @@ The core table: one row per dated relational assertion, with up to four separate
 
 ### `resolution.csv`
 
-89,230 rows.
+113,178 rows.
 
 One row per (person mention, organisation mention) dyad, with the score components behind its link. Nothing is dropped: `unresolved` dyads are retained so the dataset can be re-thresholded.
 
@@ -221,6 +221,9 @@ One row per (person mention, organisation mention) dyad, with the score componen
 | `n_candidates` |  |
 | `margin_to_runner_up` | Score gap to the second-best candidate. A small margin forces review regardless of the top score. |
 | `runner_up_person_id` |  |
+| `runner_up_label` |  |
+| `runner_up_score` |  |
+| `rival_candidates` |  |
 | `n_events` |  |
 | `first_event_date` |  |
 | `last_event_date` |  |
@@ -228,10 +231,17 @@ One row per (person mention, organisation mention) dyad, with the score componen
 | `name_ambiguity` | How many distinct seed persons share the matched person's name key. |
 | `mention_cluster_id` |  |
 | `evidence_quote` | Verbatim text supporting the record. Validation asserts it occurs in the block. |
+| `role_observed` |  |
+| `issue_uid` |  |
+| `folio_page` | Printed page number, as cited in scholarship. Not the OCR page index. |
+| `source_url` |  |
+| `pdf_url` |  |
+| `candidate_orgs` |  |
+| `decided_by` |  |
 
 ### `review_queue.csv`
 
-1,068 rows.
+1,323 rows.
 
 Ambiguous dyads ordered by how consequential they are (seed degree and event count), for hand coding. These are cases the matcher declines to decide, not cases it got wrong.
 
@@ -255,6 +265,9 @@ Ambiguous dyads ordered by how consequential they are (seed degree and event cou
 | `n_candidates` |  |
 | `margin_to_runner_up` | Score gap to the second-best candidate. A small margin forces review regardless of the top score. |
 | `runner_up_person_id` |  |
+| `runner_up_label` |  |
+| `runner_up_score` |  |
+| `rival_candidates` |  |
 | `n_events` |  |
 | `first_event_date` |  |
 | `last_event_date` |  |
@@ -262,10 +275,17 @@ Ambiguous dyads ordered by how consequential they are (seed degree and event cou
 | `name_ambiguity` | How many distinct seed persons share the matched person's name key. |
 | `mention_cluster_id` |  |
 | `evidence_quote` | Verbatim text supporting the record. Validation asserts it occurs in the block. |
+| `role_observed` |  |
+| `issue_uid` |  |
+| `folio_page` | Printed page number, as cited in scholarship. Not the OCR page index. |
+| `source_url` |  |
+| `pdf_url` |  |
+| `candidate_orgs` |  |
+| `decided_by` |  |
 
 ### `gazette_only_persons.csv`
 
-66,941 rows.
+84,724 rows.
 
 People named in the gazette who match no seed person. The seed sheet is an elite snapshot while the gazette covers every registered company, so these are mostly non-elite — but they are also where new elite entrants would appear, which is why they are kept.
 
@@ -281,7 +301,7 @@ People named in the gazette who match no seed person. The seed sheet is an elite
 
 ### `spells.csv`
 
-30,671 rows.
+31,872 rows.
 
 Person-organisation-role ties as intervals. `onset`/`terminus` are point estimates; the `_lo`/`_hi` columns carry what is actually known. The certain core of a spell is [onset_hi, terminus_lo].
 
@@ -321,7 +341,7 @@ Person-organisation-role ties as intervals. `onset`/`terminus` are point estimat
 
 ### `spell_observations.csv`
 
-3,265 rows.
+4,585 rows.
 
 Every dated observation attached to a spell. An `obs_kind` of `confirmation` or `renewal` proves the tie existed at that moment without asserting when it began.
 
@@ -335,7 +355,7 @@ Every dated observation attached to a spell. An `obs_kind` of `confirmation` or 
 
 ### `panel_edges_yearly.csv`
 
-8,527 rows.
+11,793 rows.
 
 Ties active in each calendar year, with an explicit `certainty`.
 
@@ -355,7 +375,7 @@ Ties active in each calendar year, with an explicit `certainty`.
 
 ### `panel_edges_monthly.csv`
 
-84,016 rows.
+115,886 rows.
 
 As above at monthly resolution, because the January 2011 rupture is invisible at annual resolution.
 
@@ -446,6 +466,9 @@ As above at monthly resolution, because the January 2011 rupture is invisible at
 | `student_of` | Pedagogic lineage: was a student of |
 | `association_president` | President of an association, party or union |
 | `association_officer` | Other named officer of an association |
+| `vice_president` | Vice-president |
+| `treasurer` | Tresorier / tresorerie |
+| `secretaire_general_adj` | Secretaire general adjoint |
 
 Roles only one person can hold at a time, used to detect overlapping incumbency and to infer replacement: `gerant`, `pdg`, `president_ca`, `dg`, `chef_du_gouvernement`.
 
@@ -474,7 +497,8 @@ The 5-character suffix of an announcement's reference code (`2010G02623`**`SANB1
 | `RECZ9` |  | rectificatif | other |
 | `SANB1` | SA | constitution | corporate |
 | `SANB2` | SA | gestion | corporate |
-| `SANB3` | SA | gestion | corporate |
+| `SANB3` | SA | convocation | convocation |
+| `SANB4` | SA | convocation | convocation |
 | `SODB1` | AUTRE | constitution | corporate |
 | `SODB2` | AUTRE | gestion | corporate |
 | `SODB3` | AUTRE | gestion | corporate |
@@ -494,45 +518,45 @@ The 5-character suffix of an announcement's reference code (`2010G02623`**`SANB1
 
 | event_type | n |
 | --- | --- |
-| `appointed` | 60,893 |
-| `constituted` | 51,285 |
-| `capital_increased` | 13,538 |
-| `shares_transferred` | 12,281 |
+| `appointed` | 83,319 |
+| `constituted` | 51,766 |
+| `capital_increased` | 14,073 |
+| `shares_transferred` | 13,326 |
 | `charged_with_functions` | 8,572 |
-| `resigned` | 7,356 |
-| `liquidated` | 3,812 |
-| `headquarters_moved` | 3,661 |
-| `renewed` | 2,888 |
-| `dissolved` | 1,872 |
-| `renamed` | 829 |
-| `capital_decreased` | 688 |
-| `revoked` | 420 |
-| `represented_by` | 297 |
+| `resigned` | 7,851 |
+| `headquarters_moved` | 6,158 |
+| `liquidated` | 3,646 |
+| `renewed` | 3,091 |
+| `dissolved` | 2,787 |
+| `renamed` | 1,021 |
+| `capital_decreased` | 730 |
+| `revoked` | 455 |
+| `represented_by` | 327 |
 | `delegated_to_body` | 285 |
-| `terminated` | 112 |
+| `terminated` | 125 |
 
 ### Events by role
 
 | role_canonical | n |
 | --- | --- |
-| `(none)` | 95,218 |
-| `gerant` | 44,505 |
-| `commissaire_aux_comptes` | 4,436 |
-| `cogerant` | 3,412 |
-| `associe` | 2,904 |
+| `(none)` | 98,801 |
+| `gerant` | 56,971 |
+| `commissaire_aux_comptes` | 5,685 |
+| `cogerant` | 3,736 |
+| `secretaire_general` | 3,476 |
+| `association_president` | 3,451 |
+| `treasurer` | 3,261 |
+| `administrateur` | 2,876 |
+| `liquidateur` | 2,781 |
 | `chef_de_service` | 2,723 |
-| `administrateur` | 2,437 |
-| `pdg` | 2,174 |
-| `liquidateur` | 2,142 |
-| `representant` | 1,785 |
-| `dg` | 1,495 |
+| `pdg` | 2,394 |
+| `associe` | 1,966 |
+| `dg` | 1,878 |
+| `representant` | 1,875 |
 | `sous_directeur` | 1,429 |
-| `association_president` | 1,170 |
-| `president_ca` | 1,167 |
-| `secretaire_general` | 503 |
-| `dga` | 495 |
-| `minister` | 333 |
-| `fondateur` | 112 |
-| `conseiller` | 92 |
-| `gouverneur` | 73 |
+| `president_ca` | 1,158 |
+| `vice_president` | 829 |
+| `dga` | 695 |
+| `member` | 412 |
+| `minister` | 332 |
 

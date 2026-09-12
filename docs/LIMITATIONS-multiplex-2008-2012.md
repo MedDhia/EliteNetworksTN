@@ -89,14 +89,32 @@ also where new elite entrants would appear. They have not been vetted.
 
 ## Extraction
 
-**No precision or recall estimate has been made yet.** The parsers pass unit
-tests on hand-checked fixtures, every event carries a verbatim quote that
-validation confirms occurs in its source block, and a negative control on 27,274
-auction and fonds-de-commerce notices yields zero officer events as intended.
-None of that is a precision estimate. A stratified hand-coded sample — on the
-order of 400 blocks across year, rubric and collection — is needed before any
-precision or recall figure can be quoted. **Until then, treat event counts as
-lower bounds of unknown tightness.**
+**Precision 0.982, recall 0.967 — measured, but by a self-audit.** A stratified
+sample of 402 blocks was drawn with a fixed seed (`gold/`, seed `20260912`);
+112 extracted events and 75 blocks were coded against the printed French.
+
+| | estimate | 95% CI | basis |
+| --- | --- | --- | --- |
+| Precision | **0.982** | 0.937–0.995 | 112 events judged; 110 correct |
+| Recall | **0.967** | 0.886–0.991 | 60 ties stated in 43 relational blocks; 2 missed |
+
+Two properties of the error profile matter more than the headline numbers.
+**No event was spurious**: not one of the 112 asserted a tie the text does not
+state. Both errors were misattributions — one name that the source itself runs
+together without a separator (`Messieurs Russo Francesco Chiapparone Carmine`
+is two people), and one empty organisation name. Errors of that kind degrade a
+variable; they do not invent a relationship. And the two recall misses are of a
+single structural kind: the action cue fires on a heading that names no person
+while the parties appear in a later clause, so nothing links them.
+
+**These figures are a self-audit and must not be published as independent.**
+They were produced by the same agent that wrote the extraction rules. That is a
+real check on a rule-based parser — every judgement was made against the
+printed French, not against the code, and it found and fixed twenty defects
+(see `docs/GOLD-FINDINGS-multiplex-2008-2012.md`) — but it is not independent,
+and it is a small sample. The seed is fixed, so any stratum can be re-coded by
+someone else and compared on exactly the same blocks. Do that before quoting a
+number in a paper.
 
 **Roles are unmapped in some events.** Where a role phrase falls outside the
 controlled vocabulary the verbatim form is kept and the event flagged

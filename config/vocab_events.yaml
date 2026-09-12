@@ -25,7 +25,12 @@ event_types:
 rubrics:
   SANB1: {legal_form: SA,      section: constitution, domain: corporate}
   SANB2: {legal_form: SA,      section: gestion,      domain: corporate}
-  SANB3: {legal_form: SA,      section: gestion,      domain: corporate}
+  # SANB3 is the Convocations rubric (10,422 blocks, overwhelmingly
+  # "Convocation a l'assemblee generale ..."). A convocation announces a
+  # future meeting and lists its agenda, so nothing in it has happened
+  # yet; treating the agenda as acts produced 2,303 false events,
+  # including 1,414 capital increases that were merely proposed.
+  SANB3: {legal_form: SA,      section: convocation,  domain: convocation}
   SRLB1: {legal_form: SARL,    section: constitution, domain: corporate}
   SRLB2: {legal_form: SARL,    section: gestion,      domain: corporate}
   SRUB1: {legal_form: SUARL,   section: constitution, domain: corporate}
@@ -54,6 +59,7 @@ rubrics:
   DIVD1: {legal_form: null,    section: divers,       domain: other}
   DIVD3: {legal_form: null,    section: divers,       domain: other}
   VEPA3: {legal_form: null,    section: judicial,     domain: judicial}
+  SANB4: {legal_form: SA,      section: convocation,  domain: convocation}
   CFA5:  {legal_form: null,    section: bilan,        domain: financial}
   RCFA5: {legal_form: null,    section: bilan,        domain: financial}
 
