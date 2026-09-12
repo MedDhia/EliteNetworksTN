@@ -10,8 +10,8 @@ the Tunisian administration is published there, dated, numbered, and signed.
 This repository turns seventy years of that record into tables you can put in
 a regression, and into networks you can watch change year by year.
 
-**Current build:** 6,378 issues → 123,387 personnel events → 43,406 persons →
-office-holding spells and five dated relational structures. See
+**Current build:** 6,378 issues → 117,508 personnel events → 44,271 persons →
+99,872 office-holding spells and six dated relational structures. See
 [`docs/CODEBOOK.md`](docs/CODEBOOK.md) for variable definitions and
 [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) before you use it in a paper.
 
@@ -80,15 +80,15 @@ directly, no unpacking step.
 
 | File | Grain | Rows |
 |---|---|---|
-| `events.csv.gz` | one person–office transition | 115,980 |
-| `spells.csv.gz` | one office-holding spell, with start, end and end reason | 104,077 |
-| `person_year.csv.gz` | person × year panel | 1,317,827 |
-| `persons.csv.gz` | person register with career summary | 43,406 |
-| `organisations.csv.gz` | organisation register | 8,474 |
+| `events.csv.gz` | one person–office transition | 117,508 |
+| `spells.csv.gz` | one office-holding spell, with start, end and end reason | 99,872 |
+| `person_year.csv.gz` | person × year panel | 1,301,001 |
+| `persons.csv.gz` | person register with career summary | 44,271 |
+| `organisations.csv.gz` | organisation register | 8,803 |
 | `edges/*.csv.gz` | six relations, each with validity intervals | see below |
 | `graphs/affiliation_senior_dynamic.gexf` | dynamic bipartite graph for Gephi, senior offices | |
 
-### The five relations
+### The six relations
 
 Each edge carries the interval over which it is valid, so the network can be
 replayed rather than collapsed:
@@ -126,6 +126,23 @@ g = nx.from_pandas_edgelist(active, "source", "target", edge_attr="overlap_days"
 For Gephi, open `graphs/affiliation_senior_dynamic.gexf` and enable the timeline; edge
 spells are stored as `start`/`end` years.
 
+## The explorer
+
+`explorer/` is a self-contained page that replays the senior network year by
+year: a bipartite map of officeholders and the institutions they served,
+scrubbed across 1957–2026, with succession and signature ties as overlays and
+a dossier panel that cites the decree behind every post and links to the page
+of the gazette it was printed on.
+
+Rebuild its payload from the processed tables with:
+
+```bash
+python scripts/export_explorer.py   # writes explorer/data.js
+```
+
+It covers offices at `rank_score >= 72` (cabinet adviser and above) so the
+graph stays legible; change `RANK_CUT` in the script to widen it.
+
 ## Repository layout
 
 ```
@@ -136,8 +153,9 @@ src/eltn/
   extract.py    act segmentation and personnel-event extraction
   normalize.py  person / organisation / position resolution
   panel.py      spells, person-year panel, registers
-  network.py    the five relations, snapshots, GEXF export
-scripts/        one runnable stage each, plus diagnostics
+  network.py    the six relations, snapshots, GEXF export
+scripts/        one runnable stage each, plus diagnostics and the explorer export
+explorer/       self-contained year-by-year network explorer (index.html + data.js)
 tests/          gold-standard acts transcribed by hand from the gazette
 docs/           codebook and limitations
 ```
