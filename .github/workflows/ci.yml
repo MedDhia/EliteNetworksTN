@@ -13,9 +13,13 @@ name: CI
 # says they drifted.
 
 on:
-  push:
-    branches: ["**"]
   pull_request:
+  push:
+    # Only the default branch. A PR branch is already covered by the
+    # pull_request trigger, and listening to both runs every job twice on
+    # every push. `main` is listed too so this keeps working if the default
+    # branch is later renamed to the conventional one.
+    branches: [claude/laughing-bohr-10y8iy, main]
   workflow_dispatch:
 
 # A new push supersedes an in-flight run on the same ref.
