@@ -7,19 +7,27 @@ Run with:  pytest tests/ -q                       (the whole suite, as CI does)
 from __future__ import annotations
 
 import sys
+
+import pytest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from bourse.entities import Resolver, classify, org_key, person_key
+from bourse.entities import (
+    Resolver, base_normalise, classify, demote_person_hint,
+    has_representative, is_not_an_entity, org_key, person_key,
+)
 from bourse.extract.records import (
     is_category_row,
+    is_footnote_legend,
     parse_mandate,
     parse_role_blob,
     split_pct,
     strip_title,
 )
-from bourse.extract.tables import classify_table, find_as_of_date, to_number
+from bourse.extract.tables import (
+    _cell_gap_threshold, classify_table, find_as_of_date, to_number,
+)
 
 failures: list[str] = []
 
@@ -199,3 +207,220 @@ if __name__ == "__main__":
             print("  -", f)
         raise SystemExit(1)
     print("all extraction/entity tests passed")
+
+
+# --------------------------------------------------------------------------
+# Name cleaning upstream of entity resolution.
+#
+# Each of these was a live double-count or a phantom node in the first build:
+# the same holder resolved to two ids and its stake was added twice, or a cell
+# that named a place or a period became an actor with holdings attached.
+# --------------------------------------------------------------------------
+
+
+class TestRepresentedByParenthetical:
+    """"<institution> (représenté par <person>)" is the institution."""
+
+    def test_state_merges_with_its_represented_form(self):
+        a = "Etat Tunisien (représenté par Monsieur Monsieur Abdessatar BEN SAAD)"
+        assert org_key(a) == org_key("État Tunisien")
+
+    def test_institution_merges_across_representative_and_acronym(self):
+        a = "Kuwaït Investment Authority - KIA (représenté par Mohamed Saad AL MUNAIFI)"
+        assert org_key(a) == org_key("Kuwaït Investment Authority")
+
+    def test_accented_representative_is_detected(self):
+        # The pattern is written unaccented; the filings write "représenté".
+        assert has_representative("Amen Bank (représenté par M. Ben Ali)")
+        assert not has_representative("Amen Bank")
+
+    def test_person_hint_is_demoted_for_a_represented_institution(self):
+        name = "Kuwaït Investment Authority - KIA (représenté par M. Al Munaifi)"
+        assert demote_person_hint(name, "person") is None
+        assert classify(name, hint="person") != "person"
+
+    def test_person_hint_survives_for_an_ordinary_person(self):
+        assert demote_person_hint("Hichem ELLOUMI", "person") == "person"
+
+
+class TestDottedInitialism:
+    """"S.A" and "SA" are one legal form, not two tokens."""
+
+    @pytest.mark.parametrize("a,b", [
+        ("Investment Trust Tunisia S.A", "Investment Trust Tunisia SA"),
+        ("Financière Tunisienne S.A", "Financière Tunisienne"),
+        ("Poulina Group Holding S.A.R.L", "Poulina Group Holding SARL"),
+    ])
+    def test_dotted_and_undotted_forms_match(self, a, b):
+        assert org_key(a) == org_key(b)
+
+    def test_distinct_firms_stay_distinct(self):
+        assert org_key("COTIF SICAR") != org_key("COTIF SICAF")
+
+
+class TestFootnoteMarkers:
+    def test_trailing_footnote_digit_is_stripped(self):
+        assert person_key("Moncef CHAFFAR1") == person_key("Moncef CHAFFAR")
+
+    def test_trailing_asterisk_is_stripped(self):
+        assert org_key("CTAMA*") == org_key("CTAMA")
+
+    def test_a_short_token_keeps_its_digits(self):
+        # Guard against eating real name content such as "SOTUVER 2".
+        assert "2" in base_normalise("Usine 2")
+
+
+class TestNotAnEntity:
+    @pytest.mark.parametrize("cell", [
+        "Zénith, 2eme étage",
+        "2024 – 2026**",
+        "Immeuble Carthage, 3ème étage",
+        "12 345",
+        "",
+    ])
+    def test_non_actors_are_rejected(self, cell):
+        assert is_not_an_entity(cell)
+
+    @pytest.mark.parametrize("name", [
+        "BTK", "Amen Bank", "SOTUVER", "Mohamed Ali Elloumi",
+        "Société Tunisienne de Banque", "Al Mal Investment Company",
+        "Kuwaït Investment Authority", "UBCI",
+    ])
+    def test_real_actors_are_kept(self, name):
+        assert not is_not_an_entity(name)
+
+    def test_the_resolver_declines_a_non_entity(self):
+        r = Resolver()
+        assert r.resolve("Zénith, 2eme étage") == (None, None)
+        assert r.resolve("2024 – 2026**") == (None, None)
+
+    def test_an_override_still_wins_over_rejection(self):
+        r = Resolver()
+        r.overrides[base_normalise("2024 – 2026**")] = {
+            "entity_id": "F0000000000", "entity_type": "firm",
+            "canonical_name": "Kept by hand",
+        }
+        eid, etype = r.resolve("2024 – 2026**")
+        assert (eid, etype) == ("F0000000000", "firm")
+
+
+def cells(words_and_gaps, threshold, glue_gap=0.6):
+    """Assemble a line into cells the way _page_cell_lines does."""
+    words = [w for w, _ in words_and_gaps]
+    gaps = [g for _, g in words_and_gaps[1:]]
+    out, cur = [], words[0]
+    for w, g in zip(words[1:], gaps):
+        if g > threshold:
+            out.append(cur)
+            cur = w
+        else:
+            cur += ("" if g <= glue_gap else " ") + w
+    out.append(cur)
+    return out
+
+
+def split_line(words_and_gaps):
+    gaps = [g for _, g in words_and_gaps[1:]]
+    return cells(words_and_gaps, _cell_gap_threshold(gaps))
+
+
+class TestColumnGapThreshold:
+    """Where a borderless table row is cut into cells.
+
+    The regression these pin down: on a short row the median word gap lands on
+    a *column* gap, the threshold derived from it exceeds every gap on the
+    line, and the row survives as one cell. Two adjacent figures then read as
+    one number, so "PIRECO 750 000 750 000 3,00%" became a holding of
+    750,000,750,000 shares.
+    """
+
+    # ATL 2016 p.21, measured from the PDF: a two-word name flanked by three
+    # column breaks, so more than half the gaps are column gaps.
+    PIRECO = [("PIRECO", 0.0), ("750", 155.2), ("000", 2.3),
+              ("750", 82.2), ("000", 2.3), ("3,00%", 80.8)]
+    # Same table, a row whose longer name gives the median a word gap to land
+    # on; this one parsed correctly before the fix and must keep doing so.
+    BNA = [("BNA", 0.0), ("2", 163.8), ("500", 2.3), ("000", 2.3),
+           ("2", 75.0), ("500", 2.3), ("000", 2.3), ("10,00%", 74.5)]
+
+    def test_the_short_row_splits_into_its_columns(self):
+        assert split_line(self.PIRECO) == ["PIRECO", "750 000", "750 000", "3,00%"]
+
+    def test_the_two_figures_are_not_glued_into_one_number(self):
+        assert to_number(split_line(self.PIRECO)[1]) == 750_000
+
+    def test_the_long_row_is_unchanged(self):
+        assert split_line(self.BNA) == ["BNA", "2 500 000", "2 500 000", "10,00%"]
+
+    def test_prose_spacing_is_not_a_column_break(self):
+        # Justified body text: gaps vary, but never bimodally.
+        gaps = [2.1, 2.8, 2.4, 3.3, 2.2, 2.9, 3.6, 2.5]
+        assert all(g <= _cell_gap_threshold(gaps) for g in gaps)
+
+    def test_a_jump_between_hairline_gaps_is_not_trusted(self):
+        # 0.8 -> 3.2 is a fourfold step, but 3.2pt is kerning, not a column.
+        assert _cell_gap_threshold([0.8, 0.9, 3.2]) >= 3.2
+
+    def test_a_single_gap_falls_back_to_the_median_rule(self):
+        assert _cell_gap_threshold([40.0]) == 40.0 * 2.2
+
+
+class TestFootnoteLegends:
+    """The explanatory lines printed beneath a table are not rows of it."""
+
+    @pytest.mark.parametrize("line", [
+        "* Nomme par l'AGO du 30 avril 2021",
+        "** Mandats renouveles par l'AGO du 30 avril 2021",
+        "*** Membre representant les petits actionnaires",
+        "**** Membre independant",
+        "*: Mandat renouvele par l'AGO du 20/06/2018",
+        "(2) Renouvellement du mandat par l'AGO du 30 avril 2019",
+        "* Personnes Morales :",
+    ])
+    def test_a_legend_is_not_a_row(self, line):
+        assert is_footnote_legend(line)
+        assert is_category_row(line)
+
+    @pytest.mark.parametrize("name", [
+        "M. Hakim DOGHRI(1)", "Meninx Holding (2)", "Amen Bank",
+        "Societe Tunisienne de l'Air", "Groupe Atef BEN SLIMANE",
+    ])
+    def test_a_real_row_survives(self, name):
+        assert not is_footnote_legend(name)
+        assert not is_category_row(name)
+
+    def test_a_bare_marker_is_not_a_legend(self):
+        # Nothing follows the asterisks, so there is no sentence to reject;
+        # the emptiness check in is_table_noise handles it instead.
+        assert not is_footnote_legend("***")
+        assert is_category_row("***")
+
+
+class TestZeroWidthGapsAreNotWordBreaks:
+    """A gap of zero means pdfplumber cut one token in two.
+
+    Both rows are measured from ATL 2016 p.21. Treating the zero-width gaps as
+    word spaces turned a holding of 2,666,921 shares into 2, and a stake of
+    0.005% into 5%.
+    """
+
+    ENNAKL = [("ENNAKL", 0.0), ("Automobiles", 2.3), ("2", 94.6), ("6", 2.3),
+              ("66", 0.0), ("921", 2.3), ("2", 75.0), ("666", 2.3),
+              ("921", 2.3), ("10,67%", 74.5)]
+    TANBOURA = [("Zouheir", 0.0), ("TANBOURA", 2.3), ("1", 241.3), ("3", 2.3),
+                ("42", 0.0), ("1", 51.1), ("3", 2.3), ("42", 0.0),
+                ("0,00", 41.2), ("5%", 0.0)]
+
+    def test_a_figure_split_mid_number_is_rejoined(self):
+        assert split_line(self.ENNAKL) == [
+            "ENNAKL Automobiles", "2 666 921", "2 666 921", "10,67%"]
+        assert to_number(split_line(self.ENNAKL)[1]) == 2_666_921
+
+    def test_a_percentage_split_mid_number_is_rejoined(self):
+        assert split_line(self.TANBOURA) == [
+            "Zouheir TANBOURA", "1 342", "1 342", "0,005%"]
+        assert to_number(split_line(self.TANBOURA)[3]) == 0.005
+
+    def test_an_ordinary_word_space_still_separates(self):
+        # The name keeps its space: 2.3pt is spacing, not a split glyph run.
+        assert split_line(self.ENNAKL)[0] == "ENNAKL Automobiles"

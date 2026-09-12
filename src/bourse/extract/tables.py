@@ -268,13 +268,62 @@ def split_label_and_figures(line: str) -> tuple[str, list[str]] | None:
     return (label, figures) if label else None
 
 
-def _page_cell_lines(page, gap_factor: float = 2.2, min_gap: float = 4.0):
+def _cell_gap_threshold(
+    gaps: list[float],
+    gap_factor: float = 2.2,
+    min_gap: float = 4.0,
+    jump_ratio: float = 3.0,
+) -> float:
+    """Inter-word gap above which a break separates two *columns*, not words.
+
+    Scaling the line's median gap is stable while a line has many words, but a
+    short table row does not: ``PIRECO 750 000 750 000 3,00%`` contributes five
+    gaps, three of which are column breaks, so the median lands on a column gap
+    and the threshold it yields exceeds every gap on the line. The row then
+    survives as a single cell, and the two adjacent figures are read as one
+    number - a share count of 750,000,750,000.
+
+    Column gaps are sharply bimodal against word gaps, so look for that split
+    first: sort the gaps and cut at the largest ratio step. The step must be a
+    real jump rather than the ordinary variation of justified spacing, which is
+    what ``jump_ratio`` tests; prose lines fail it and fall back to the median
+    rule.
+    """
+    pos = sorted(g for g in gaps if g > 0)
+    if not pos:
+        return min_gap
+    median = pos[len(pos) // 2]
+    fallback = max(min_gap, median * gap_factor)
+
+    best_lo = best_hi = best_ratio = 0.0
+    for lo, hi in zip(pos, pos[1:]):
+        ratio = hi / lo
+        if ratio > best_ratio:
+            best_ratio, best_lo, best_hi = ratio, lo, hi
+    if best_ratio >= jump_ratio and best_hi >= min_gap:
+        # Cut strictly above the widest word gap, so every gap in the upper
+        # cluster splits and none in the lower one does.
+        return best_lo
+    return fallback
+
+
+def _page_cell_lines(
+    page, gap_factor: float = 2.2, min_gap: float = 4.0, glue_gap: float = 0.6
+):
     """Reconstruct lines as *cells*, splitting on inter-word gaps.
 
     Flattening a line to a single string loses the column structure, and that
     loss is not recoverable by regex: "975 000 975 000" is equally readable as
     one figure or as two. Word coordinates settle it - a column break is a gap
     much wider than the line's ordinary word spacing.
+
+    Three gap sizes, therefore, not two. Beyond the column threshold a new cell
+    begins. Below ``glue_gap`` the two words are not separated on the page at
+    all: pdfplumber has cut one token in two, which it does inside figures often
+    enough to matter ("2 666 921" arriving as "2", "6", "66", "921" with a
+    zero-width gap between the "6" and the "66"). Joining those without a space
+    is what keeps such a figure from being read as 2. Anything between the two
+    is an ordinary word space.
     """
     try:
         words = page.extract_words(use_text_flow=False)
@@ -291,19 +340,17 @@ def _page_cell_lines(page, gap_factor: float = 2.2, min_gap: float = 4.0):
             continue
         gaps = [b["x0"] - a["x1"] for a, b in zip(ws, ws[1:])]
         if gaps:
-            ordinary = sorted(g for g in gaps if g > 0)
-            median = ordinary[len(ordinary) // 2] if ordinary else 0.0
-            threshold = max(min_gap, median * gap_factor)
+            threshold = _cell_gap_threshold(gaps, gap_factor, min_gap)
         else:
             threshold = min_gap
-        cells, cur = [], [ws[0]["text"]]
-        for (a, b), gap in zip(zip(ws, ws[1:]), gaps):
+        cells, cur = [], ws[0]["text"]
+        for b, gap in zip(ws[1:], gaps):
             if gap > threshold:
-                cells.append(" ".join(cur))
-                cur = [b["text"]]
+                cells.append(cur)
+                cur = b["text"]
             else:
-                cur.append(b["text"])
-        cells.append(" ".join(cur))
+                cur += ("" if gap <= glue_gap else " ") + b["text"]
+        cells.append(cur)
         out.append((min(w["top"] for w in ws), cells))
     return out
 
