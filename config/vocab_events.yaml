@@ -42,6 +42,17 @@ rubrics:
   RECZ9: {legal_form: null,    section: rectificatif, domain: other}
   MINA4: {legal_form: null,    section: bilan,        domain: financial}
   BCFA5: {legal_form: null,    section: bilan,        domain: financial}
+  SRLB3: {legal_form: SARL,    section: gestion,      domain: corporate}
+  # SODB3 already listed above; duplicate key removed
+  SODB3_: {legal_form: AUTRE,  section: gestion,      domain: corporate}
+  COPB1: {legal_form: COOP,    section: constitution, domain: corporate}
+  COPB2: {legal_form: COOP,    section: gestion,      domain: corporate}
+  APSF3: {legal_form: ASSOC,   section: registration, domain: association}
+  DIVD1: {legal_form: null,    section: divers,       domain: other}
+  DIVD3: {legal_form: null,    section: divers,       domain: other}
+  VEPA3: {legal_form: null,    section: judicial,     domain: judicial}
+  CFA5:  {legal_form: null,    section: bilan,        domain: financial}
+  RCFA5: {legal_form: null,    section: bilan,        domain: financial}
 
 # Domains whose blocks are worth extracting person-organisation ties from.
 relational_domains: [corporate, association]
