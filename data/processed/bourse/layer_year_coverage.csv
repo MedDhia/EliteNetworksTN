@@ -32,7 +32,7 @@ board_interlock,2020,257,69,0
 board_interlock,2021,416,127,0
 board_interlock,2023,379,104,0
 board_interlock,2024,748,176,0
-board_interlock,2025,629,138,0
+board_interlock,2025,630,139,0
 board_interlock,2026,22,11,0
 board_seat,1994,41,35,7
 board_seat,1997,19,15,2
@@ -49,7 +49,7 @@ board_seat,2012,235,178,23
 board_seat,2013,111,112,18
 board_seat,2014,251,216,31
 board_seat,2015,195,185,24
-board_seat,2016,229,215,32
+board_seat,2016,232,219,33
 board_seat,2017,101,102,13
 board_seat,2018,81,75,6
 board_seat,2019,35,39,5
@@ -57,8 +57,8 @@ board_seat,2020,53,50,6
 board_seat,2021,99,81,9
 board_seat,2022,41,37,9
 board_seat,2023,99,66,7
-board_seat,2024,87,75,10
-board_seat,2025,89,79,6
+board_seat,2024,143,130,18
+board_seat,2025,152,139,10
 board_seat,2026,9,10,1
 board_seat_corporate,1994,55,52,9
 board_seat_corporate,1998,1,2,1
@@ -70,7 +70,7 @@ board_seat_corporate,2007,39,40,10
 board_seat_corporate,2008,57,63,10
 board_seat_corporate,2009,92,96,19
 board_seat_corporate,2010,146,154,18
-board_seat_corporate,2011,114,116,17
+board_seat_corporate,2011,121,124,18
 board_seat_corporate,2012,135,139,24
 board_seat_corporate,2013,89,99,21
 board_seat_corporate,2014,169,172,34
@@ -83,8 +83,8 @@ board_seat_corporate,2020,25,22,3
 board_seat_corporate,2021,44,42,10
 board_seat_corporate,2022,15,18,4
 board_seat_corporate,2023,41,27,6
-board_seat_corporate,2024,37,31,9
-board_seat_corporate,2025,33,33,6
+board_seat_corporate,2024,59,56,15
+board_seat_corporate,2025,53,55,10
 board_succession,2006,2,4,2
 board_succession,2007,4,8,4
 board_succession,2008,4,8,3
@@ -112,7 +112,8 @@ coownership,2017,1,2,0
 coownership,2018,1,2,0
 coownership,2020,2,3,0
 coownership,2021,3,3,0
-coownership,2025,1,2,0
+coownership,2024,1,2,0
+coownership,2025,5,5,0
 declared_executive,1997,13,17,2
 declared_executive,2005,1,2,1
 declared_executive,2006,10,17,1
@@ -154,8 +155,9 @@ declared_mandate,2020,48,43,2
 declared_mandate,2021,86,105,5
 declared_mandate,2023,154,145,4
 declared_mandate,2024,145,154,4
-declared_mandate,2025,183,165,5
+declared_mandate,2025,187,173,6
 declared_mandate,2026,10,14,1
+group_participation,1996,9,10,1
 group_participation,2001,1,2,1
 group_participation,2007,18,19,1
 group_participation,2008,24,23,4
@@ -173,7 +175,7 @@ group_participation,2020,50,44,4
 group_participation,2021,43,32,1
 group_participation,2022,34,37,3
 group_participation,2023,12,10,3
-group_participation,2024,35,39,4
+group_participation,2024,41,47,6
 group_participation,2026,16,17,1
 ownership,2006,2,4,2
 ownership,2007,5,7,2
@@ -193,8 +195,8 @@ ownership,2020,39,30,5
 ownership,2021,33,31,7
 ownership,2022,20,23,3
 ownership,2023,24,21,4
-ownership,2024,32,37,6
-ownership,2025,27,26,6
+ownership,2024,43,49,8
+ownership,2025,48,44,8
 ownership_director,2008,15,17,2
 ownership_director,2009,9,10,1
 ownership_director,2010,19,22,3
