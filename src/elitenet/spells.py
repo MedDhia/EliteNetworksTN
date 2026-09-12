@@ -27,10 +27,9 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
-from .paths import INTERIM, PROCESSED, ensure_dirs, load_config
+from .paths import INTERIM, PROCESSED, ensure_dirs, load_config, window
 
-WINDOW_START = date(2008, 1, 1)
-WINDOW_END = date(2012, 12, 31)
+WINDOW_START, WINDOW_END = window()
 
 OPENING = {"appointed", "constituted", "charged_with_functions", "delegated_to_body"}
 CONFIRMING = {"renewed"}
@@ -368,14 +367,24 @@ def finalise(sp: Spell) -> dict:
 
 
 def periods(granularity: str) -> list[tuple[str, date, date]]:
+    """Panel periods. Yearly spans the whole window; monthly only its
+    `panel.monthly_window` sub-range, because 840 monthly periods over the full
+    window would be mostly reporting noise (a month is shorter than the
+    gazette's publication lag) on networks too sparse to read."""
     out = []
     if granularity == "yearly":
         for y in range(WINDOW_START.year, WINDOW_END.year + 1):
             out.append((str(y), date(y, 1, 1), date(y, 12, 31)))
     else:
-        for y in range(WINDOW_START.year, WINDOW_END.year + 1):
+        mw = (load_config("scope").get("panel") or {}).get("monthly_window") or {}
+        lo = date.fromisoformat(mw["start"]) if mw.get("start") else WINDOW_START
+        hi = date.fromisoformat(mw["end"]) if mw.get("end") else WINDOW_END
+        lo, hi = max(lo, WINDOW_START), min(hi, WINDOW_END)
+        for y in range(lo.year, hi.year + 1):
             for m in range(1, 13):
                 end = date(y + (m == 12), (m % 12) + 1, 1) - timedelta(days=1)
+                if end < lo or date(y, m, 1) > hi:
+                    continue
                 out.append((f"{y}-{m:02d}", date(y, m, 1), end))
     return out
 

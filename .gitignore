@@ -13,7 +13,7 @@ node_modules/
 package.json
 package-lock.json
 
-# --- multiplex-2008-2012 build ---------------------------------------------
+# --- multiplex build ---------------------------------------------
 # The manifest is kept: it carries a sha256 per mirrored issue, which is what
 # makes the raw layer verifiable without redistributing it.
 !data/raw/manifest.csv
@@ -27,13 +27,13 @@ package-lock.json
 
 # Large derived artifacts. Committed gzipped instead (see *.gz alongside), or
 # rebuilt from the committed CSVs with `make extract && make export`.
-data/processed/multiplex-2008-2012/events.csv
-data/processed/multiplex-2008-2012/blocks_index.csv
-data/processed/multiplex-2008-2012/resolution.csv
-data/processed/multiplex-2008-2012/panel_edges_monthly.csv
-data/processed/multiplex-2008-2012/gazette_only_persons.csv
-data/processed/multiplex-2008-2012/elitenet.sqlite
-data/processed/multiplex-2008-2012/exports/elite_network_full.gexf
+data/processed/multiplex/events.csv
+data/processed/multiplex/blocks_index.csv
+data/processed/multiplex/resolution.csv
+data/processed/multiplex/panel_edges_monthly.csv
+data/processed/multiplex/gazette_only_persons.csv
+data/processed/multiplex/elitenet.sqlite
+data/processed/multiplex/exports/elite_network_full.gexf
 
 # --- bourse component -------------------------------------------------------
 # Source PDFs from the CMF (~1.9 GB). data/raw/ is already ignored above; this
@@ -53,4 +53,4 @@ data/processed/bourse/muxviz_panel/
 # R objects built by R/build_networkdynamic.R and R/build_tergm_panel.R. Both
 # regenerate from the committed CSVs in seconds (the TERGM panel takes 8s), and
 # a serialised R workspace is not a portable archival format.
-data/processed/multiplex-2008-2012/exports/**/*.rds
+data/processed/multiplex/exports/**/*.rds

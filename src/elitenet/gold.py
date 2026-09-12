@@ -192,7 +192,7 @@ not equally bad.
 
     python -m elitenet.gold score
 
-writes `docs/GOLD-SCORE-multiplex-2008-2012.md` with precision and recall by
+writes `docs/GOLD-SCORE-multiplex.md` with precision and recall by
 event type and by stratum, with intervals.
 """
 
@@ -317,7 +317,7 @@ def score() -> dict:
                   "be estimated.", ""]
 
     lines += ["## Caveat on provenance of these figures", "",
-              "Read `docs/LIMITATIONS-multiplex-2008-2012.md` for who coded this "
+              "Read `docs/LIMITATIONS-multiplex.md` for who coded this "
               "sample. A figure produced by the same agent that wrote the "
               "extractors is a self-audit: it is a real check on a rule-based "
               "parser, since the judgement is made against the printed French "
@@ -330,7 +330,7 @@ def score() -> dict:
 
 
 def _emit(lines: list[str]) -> None:
-    dest = Path("docs") / "GOLD-SCORE-multiplex-2008-2012.md"
+    dest = Path("docs") / "GOLD-SCORE-multiplex.md"
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"wrote {dest}")

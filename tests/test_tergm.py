@@ -6,7 +6,15 @@ happily build one from a key that violates it; a covariate measured at t
 instead of t-1 is still a number; a risk set with a hole still estimates. None
 of those produce an error, which is why they are pinned here.
 """
+from elitenet.spells import periods
 from elitenet.tergm import build
+
+# The number of panel periods follows config/scope.yaml, so no test may assume
+# it. These assertions are about shape and lag structure, not about how wide
+# the window happens to be configured.
+PERIODS = [p for p, _s, _e in periods("yearly")]
+NP = len(PERIODS)
+FIRST, LAST = PERIODS[0], PERIODS[-1]
 
 P1, P2 = "PERSON_A", "PERSON_B"
 O1, O2 = "CO_ONE", "CO_TWO"
@@ -109,10 +117,16 @@ def test_risk_window_widens_to_cover_an_observed_tie_and_stays_contiguous():
     events, resolution = _birth(O1, "2011-01-01")
     out = run([panel_row("2008", P1, O1), panel_row("2012", P1, O1)],
               [spell_row(P1, O1)], events=events, resolution=resolution)
-    act = [r["active"] for r in sorted(
-        (r for r in out["activity"] if r["vertex_id"] == 2),
-        key=lambda r: r["period"])]
-    assert act == [1, 1, 1, 1, 1], "widened to the observed tie, no hole"
+    rows = sorted((r for r in out["activity"] if r["vertex_id"] == 2),
+                  key=lambda r: r["period"])
+    act = "".join(str(r["active"]) for r in rows)
+    # One contiguous run of 1s: no hole anywhere in it.
+    assert "0" not in act.strip("0"), f"activity has a hole: {act}"
+    # It starts at the earliest observed tie, not at the constitution date the
+    # gazette gives, because the tie is the harder evidence of the two.
+    first_active = next(r["period"] for r in rows if r["active"] == 1)
+    assert first_active == "2008"
+    assert all(r["active"] == 1 for r in rows if r["period"] in ("2008", "2012"))
     assert out["diag"]["risk_widened_start"] == 1
 
 
@@ -122,7 +136,7 @@ def test_persons_are_at_risk_throughout_and_say_so():
     # it were the person's existence.
     out = run([panel_row("2012", P1, O1)], [spell_row(P1, O1)])
     act = [r["active"] for r in out["activity"] if r["vertex_id"] == 1]
-    assert act == [1, 1, 1, 1, 1]
+    assert act == [1] * NP
 
 
 def test_an_ambiguous_org_mention_dates_nothing():
@@ -229,9 +243,9 @@ def test_a_person_with_no_tie_in_a_period_is_still_a_vertex_that_period():
 def test_node_attrs_and_activity_are_rectangular():
     out = run([panel_row("2008", P1, O1), panel_row("2011", P2, O2)],
               [spell_row(P1, O1), spell_row(P2, O2)])
-    n, periods = len(out["node_key"]), 5
-    assert len(out["node_attrs"]) == n * periods
-    assert len(out["activity"]) == n * periods
+    n = len(out["node_key"])
+    assert len(out["node_attrs"]) == n * NP
+    assert len(out["activity"]) == n * NP
 
 
 # --- ties -------------------------------------------------------------------
@@ -320,8 +334,8 @@ def test_personal_shareholding_is_exogenous_so_needs_no_lag():
                            "tie_class": "ownership",
                            "edge_label_raw": "SHAREHOLDER"}])
     rows = {(r["period"], r["tail"], r["head"]): r for r in out["dyads"]}
-    assert rows[("2008", 1, 2)]["is_shareholder"] == 1
-    assert len(rows) == 5, "one row per period, including the first"
+    assert rows[(FIRST, 1, 2)]["is_shareholder"] == 1
+    assert len(rows) == NP, "one row per period, including the first"
 
 
 def test_a_persons_stake_and_a_companys_stake_feed_different_covariates():

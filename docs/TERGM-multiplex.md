@@ -221,7 +221,7 @@ vertex, and `gwb1degree` is estimated directly off the person-side degree
 distribution — so these do not merely add a wrong edge, they distort the term
 most likely to carry your structural argument. 35 overlapping single-holder
 posts are the same defect seen from the other side. Both are open WARNs in
-`docs/VALIDATION-multiplex-2008-2012.md`.
+`docs/VALIDATION-multiplex.md`.
 
 **Non-firm organisation vertices.** `org_name()` occasionally returns an
 address, a role fragment, or a whole clause. 16 such vertices are flagged

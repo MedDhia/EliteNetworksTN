@@ -397,7 +397,7 @@ As above at monthly resolution, because the January 2011 rupture is invisible at
 
 Written by `make tergm`. These are the yearly panel re-indexed for a temporal ERGM, not a separate measurement: the ties are the same ties. What they add is a declared bipartite split, a vertex set that does not move between periods, an explicit risk set, and covariates -- none of which an edge list can carry.
 
-**Before specifying a model, read `docs/TERGM-multiplex-2008-2012.md`.** 82.1% of dated spells are right-censored, so a dissolution parameter fitted to this panel estimates when the gazette prints an exit rather than when a tie ends.
+**Before specifying a model, read `docs/TERGM-multiplex.md`.** 82.1% of dated spells are right-censored, so a dissolution parameter fitted to this panel estimates when the gazette prints an exit rather than when a tie ends.
 
 ### `node_key.csv`
 

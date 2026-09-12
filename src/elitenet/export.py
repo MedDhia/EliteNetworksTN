@@ -25,7 +25,7 @@ from datetime import date, datetime
 from pathlib import Path
 from xml.sax.saxutils import escape as _xml_escape
 
-from .paths import INTERIM, PROCESSED, ensure_dirs, load_config
+from .paths import INTERIM, PROCESSED, ensure_dirs, load_config, window
 
 def escape(text: str) -> str:
     """Escape a string for use inside an XML attribute.
@@ -38,7 +38,9 @@ def escape(text: str) -> str:
 
 
 EXPORTS = PROCESSED / "exports"
-T0 = date(2008, 1, 1)          # networkDynamic time origin; documented in the codebook
+# networkDynamic time origin: the first day of the window, documented in the
+# codebook. Read from config so it cannot drift from the data it indexes.
+T0 = window()[0]
 
 TABLES = {
     "seed_nodes": PROCESSED / "seed_nodes.csv",
@@ -188,7 +190,8 @@ def write_gexf(dated_only: bool, filename: str) -> dict:
              '<gexf xmlns="http://www.gexf.net/1.3" version="1.3">',
              '  <meta lastmodifieddate="%s">' % date.today().isoformat(),
              '    <creator>EliteNetworksTN</creator>',
-             '    <description>Tunisian elite network 2008-2012, '
+             f'    <description>Tunisian elite network '
+             f'{T0.isoformat()} to {window()[1].isoformat()}, '
              'dated from the Journal Officiel</description>',
              '  </meta>',
              '  <graph mode="dynamic" timeformat="date" defaultedgetype="directed">',

@@ -18,7 +18,7 @@ Adjudications of ambiguous identities, read by `src/elitenet/resolve.py`.
 
 A row here sets `link_status` to `manual` and pins `resolved_person_id`, ahead
 of any score the matcher computes. Work from
-`data/processed/multiplex-2008-2012/review_queue.csv`, which is ordered so the
+`data/processed/multiplex/review_queue.csv`, which is ordered so the
 most consequential ambiguities come first and carries the gazette URL, the
 folio page, and the rival candidates needed to decide without rerunning
 anything.

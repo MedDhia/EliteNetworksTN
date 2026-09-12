@@ -29,7 +29,7 @@ from pathlib import Path
 
 import httpx
 
-from .paths import MANIFEST, RAW, ensure_dirs, issue_md_path, load_config
+from .paths import MANIFEST, RAW, ensure_dirs, issue_md_path, load_config, window_years
 
 MANIFEST_FIELDS = [
     "issue_uid", "collection", "language", "year", "issue",
@@ -78,7 +78,10 @@ def arabic_fraction(text: str) -> float:
 
 def load_targets(catalog: dict, scope: dict) -> list[Target]:
     lang = scope["language"]
-    years = {int(y) for y in scope["window"]["years"]}
+    # Derived from the window, not read from a parallel list that could
+    # disagree with it: mirroring one range and analysing another is the
+    # kind of error that produces a quietly incomplete dataset.
+    years = set(window_years())
     wanted = set(scope["collections"])
     ep = scope["endpoints"]
     out: list[Target] = []

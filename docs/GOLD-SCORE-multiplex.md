@@ -45,5 +45,5 @@ Strictly spurious events — a tie asserted that the text does not state — are
 
 ## Caveat on provenance of these figures
 
-Read `docs/LIMITATIONS-multiplex-2008-2012.md` for who coded this sample. A figure produced by the same agent that wrote the extractors is a self-audit: it is a real check on a rule-based parser, since the judgement is made against the printed French rather than against the code, but it is not independent. Any published figure should rest on coding by someone who did not write the rules.
+Read `docs/LIMITATIONS-multiplex.md` for who coded this sample. A figure produced by the same agent that wrote the extractors is a self-audit: it is a real check on a rule-based parser, since the judgement is made against the printed French rather than against the code, but it is not independent. Any published figure should rest on coding by someone who did not write the rules.
 

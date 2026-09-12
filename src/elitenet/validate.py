@@ -22,9 +22,10 @@ from collections import Counter, defaultdict
 from datetime import date
 from pathlib import Path
 
-from .paths import DOCS, INTERIM, PROCESSED, ROOT, ensure_dirs, load_config
+from .paths import (DOCS, INTERIM, PROCESSED, ROOT, ensure_dirs,
+                    load_config, window)
 
-WINDOW = (date(2008, 1, 1), date(2012, 12, 31))
+WINDOW = window()
 
 
 class Report:
@@ -391,7 +392,7 @@ def run(fail_on_error: bool = False) -> int:
     check_tergm_panel(rep)
 
     DOCS.mkdir(parents=True, exist_ok=True)
-    (DOCS / "VALIDATION-multiplex-2008-2012.md").write_text(rep.render(), encoding="utf-8")
+    (DOCS / "VALIDATION-multiplex.md").write_text(rep.render(), encoding="utf-8")
     print(rep.render())
     if fail_on_error and rep.errors:
         print(f"\nFAILED: {rep.errors} error-level checks")

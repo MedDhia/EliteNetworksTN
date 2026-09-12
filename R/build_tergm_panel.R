@@ -12,7 +12,7 @@
 #     --R N        bootstrap replications (default 200)
 #     --all-ties   include ambiguous and probable/possible ties (default is
 #                  resolved + certain only; see the certainty sensitivity in
-#                  docs/TERGM-multiplex-2008-2012.md)
+#                  docs/TERGM-multiplex.md)
 #
 # Three design decisions are worth knowing before reading the code.
 #
@@ -55,7 +55,7 @@ sample_n <- if ("--sample" %in% args) {
 all_ties <- "--all-ties" %in% args
 R_boot <- if ("--R" %in% args) as.integer(args[which(args == "--R") + 1L]) else 200L
 
-base <- file.path("data", "processed", "multiplex-2008-2012", "exports", "tergm")
+base <- file.path("data", "processed", "multiplex", "exports", "tergm")
 rd <- function(f) read.csv(file.path(base, f), stringsAsFactors = FALSE,
                            encoding = "UTF-8")
 
@@ -218,7 +218,7 @@ cat("\nsaved", out, "\n")
 # parameter fitted here would describe when an exit gets *printed*, not when a
 # tie ends, so this specification models formation and does not interpret the
 # other side. memory("stability") is a nuisance control, not a finding. Read
-# docs/TERGM-multiplex-2008-2012.md before changing that.
+# docs/TERGM-multiplex.md before changing that.
 #
 # Period 1 is consumed by the lag, so estimation runs on periods 2..T.
 if (!requireNamespace("btergm", quietly = TRUE)) {

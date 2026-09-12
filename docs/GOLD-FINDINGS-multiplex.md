@@ -50,7 +50,7 @@ a verb-to-object gap too narrow for an interposed identity-card number).
 
 Precision **0.982** (95% CI 0.937–0.995) on 112 coded events, with **no
 spurious events**; recall **0.967** (0.886–0.991) on 60 ties in 43 relational
-blocks. See `docs/GOLD-SCORE-multiplex-2008-2012.md`. These are self-audit
+blocks. See `docs/GOLD-SCORE-multiplex.md`. These are self-audit
 figures and are not independent.
 
 ## Bearing on the earlier release

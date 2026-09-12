@@ -208,7 +208,7 @@ than this repository when quoting the source.
 
 The build described above works from the *Journal Officiel* proper and covers
 the bureaucratic state across 1957–2026. A second, separate build sits
-alongside it under `data/processed/multiplex-2008-2012/`. It answers a
+alongside it under `data/processed/multiplex/`. It answers a
 different question and draws on sources the first build does not touch:
 
 - it starts from a **curated multiplex elite network** of 32,741 ties over
@@ -229,15 +229,15 @@ dated tie spells plus 27,585 undated seed ties, and 48,176 act citations.
 Extraction accuracy on a seeded stratified sample, coded against the printed
 French: **precision 0.982** (95% CI 0.937–0.995) with **no spurious events**,
 **recall 0.967** (0.886–0.991). This is a self-audit, not an independent
-estimate — see `docs/GOLD-SCORE-multiplex-2008-2012.md` and the limitations.
+estimate — see `docs/GOLD-SCORE-multiplex.md` and the limitations.
 
-Read `docs/CODEBOOK-multiplex-2008-2012.md` for variable definitions and
-`docs/LIMITATIONS-multiplex-2008-2012.md` before using it. For temporal ERGMs,
+Read `docs/CODEBOOK-multiplex.md` for variable definitions and
+`docs/LIMITATIONS-multiplex.md` before using it. For temporal ERGMs,
 `make tergm` writes a bipartite network panel with an explicit risk set and
 lagged kinship, shareholding and co-membership covariates; read
-`docs/TERGM-multiplex-2008-2012.md` first, because right-censoring makes the
+`docs/TERGM-multiplex.md` first, because right-censoring makes the
 dissolution side of such a model uninterpretable here.
-`docs/GOLD-FINDINGS-multiplex-2008-2012.md` records the twenty extraction
+`docs/GOLD-FINDINGS-multiplex.md` records the twenty extraction
 defects the gold sample exposed, which is also why the figures above supersede
 those of the first release.
 

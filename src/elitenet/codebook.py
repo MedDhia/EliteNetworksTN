@@ -232,11 +232,12 @@ def build() -> Path:
         "bound asserted.",
         "",
         "## Time origin for networkDynamic", "",
-        "`exports/rnd/*.csv` express time as **integer days since 2008-01-01**. "
+        f"`exports/rnd/*.csv` express time as **integer days since "
+        f"{scope['window']['start']}**. "
         "Censored endpoints are `-Inf` and `Inf`, which `networkDynamic` accepts "
         "natively; the window boundary is deliberately *not* substituted for an "
         "unknown date, because 'still in post at the end of observation' is a "
-        "different claim from 'left on 2012-12-31'.",
+        f"different claim from 'left on {scope['window']['end']}'.",
         "",
         "## Tables", "",
     ]
@@ -256,7 +257,7 @@ def build() -> Path:
             "covariates -- none of which an edge list can carry.",
             "",
             "**Before specifying a model, read "
-            "`docs/TERGM-multiplex-2008-2012.md`.** 82.1% of dated spells are "
+            "`docs/TERGM-multiplex.md`.** 82.1% of dated spells are "
             "right-censored, so a dissolution parameter fitted to this panel "
             "estimates when the gazette prints an exit rather than when a tie "
             "ends.",
@@ -270,7 +271,7 @@ def build() -> Path:
     lines += _vocab_section()
     lines += _observed_counts()
 
-    dest = ROOT / "docs" / "CODEBOOK-multiplex-2008-2012.md"
+    dest = ROOT / "docs" / "CODEBOOK-multiplex.md"
     dest.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return dest
 

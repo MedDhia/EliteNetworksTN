@@ -27,7 +27,7 @@ things an edge list cannot carry:
 What this stage cannot fix is the censoring: 82% of dated spells are
 right-censored, because the gazette publishes arrivals far more reliably than
 departures. A dissolution model fitted here would estimate when an exit gets
-*printed*. See docs/TERGM-multiplex-2008-2012.md before specifying one.
+*printed*. See docs/TERGM-multiplex.md before specifying one.
 """
 from __future__ import annotations
 

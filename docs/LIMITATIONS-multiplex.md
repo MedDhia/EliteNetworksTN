@@ -1,7 +1,7 @@
 # Limitations
 
 What this dataset cannot support, stated plainly. Everything here is measured,
-not assumed; the figures come from `docs/VALIDATION-multiplex-2008-2012.md`.
+not assumed; the figures come from `docs/VALIDATION-multiplex.md`.
 
 ## Coverage
 
@@ -45,7 +45,7 @@ across the 2011 revolution: what the falling rate measures is the probability
 that an exit has been printed by the end of the window. So a TERGM or STERGM
 dissolution parameter fitted here estimates gazette publication behaviour, not
 tie duration. Model formation only, or restrict to the 1,073 ties whose exit
-was actually observed. `docs/TERGM-multiplex-2008-2012.md` sets out both.
+was actually observed. `docs/TERGM-multiplex.md` sets out both.
 
 **Undated seed ties carry no dates, deliberately.** 27,585 spells come from the
 seed sheet with `evidence_tier = 'seed_undated'` and no onset or terminus.
@@ -122,7 +122,7 @@ while the parties appear in a later clause, so nothing links them.
 They were produced by the same agent that wrote the extraction rules. That is a
 real check on a rule-based parser — every judgement was made against the
 printed French, not against the code, and it found and fixed twenty defects
-(see `docs/GOLD-FINDINGS-multiplex-2008-2012.md`) — but it is not independent,
+(see `docs/GOLD-FINDINGS-multiplex.md`) — but it is not independent,
 and it is a small sample. The seed is fixed, so any stratum can be re-coded by
 someone else and compared on exactly the same blocks. Do that before quoting a
 number in a paper.
