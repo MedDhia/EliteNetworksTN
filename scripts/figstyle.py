@@ -111,11 +111,19 @@ def headline(fig, title: str, subtitle: str, *, top: float = 0.99,
 
 
 def save(fig, name: str, note: str | None = None) -> None:
-    """Write a 300-dpi PNG for drafts and a vector PDF for typesetting."""
+    """Write a 300-dpi PNG for drafts and a vector PDF for typesetting.
+
+    The PDF is written without a creation date. Matplotlib stamps the current
+    time into one by default, so an unchanged figure produced a byte-different
+    file on every run and showed up as a modification with nothing in it. The
+    repository already pins the gzip timestamp on its data tables for the same
+    reason: a rebuild that changes no content should change no bytes.
+    """
     if note:
         fig.text(0.012, -0.012, textwrap.fill(note, 150), fontsize=6.6,
                  color=MUTED, ha="left", va="top", linespacing=1.5)
-    for ext, kw in (("png", {"dpi": 300}), ("pdf", {})):
+    for ext, kw in (("png", {"dpi": 300}),
+                    ("pdf", {"metadata": {"CreationDate": None}})):
         path = FIGS / f"{name}.{ext}"
         fig.savefig(path, bbox_inches="tight", pad_inches=0.24, **kw)
         print(f"  {path.relative_to(ROOT)}  {path.stat().st_size / 1024:.0f} KB")
