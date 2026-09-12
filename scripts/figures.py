@@ -606,7 +606,7 @@ def fig_institution_network(min_holders: int = 40, min_shared: int = 10) -> None
     g = g.subgraph(max(nx.connected_components(g), key=len)).copy()
     # The 2-core: drop pendant chains, which a force layout flings across the
     # frame and which say nothing about circulation anyway.
-    core = nx.k_core(g, 2)
+    core = nx.k_core(giant, 2)
     if len(core) > 20:
         g = core.copy()
 
@@ -814,6 +814,124 @@ def fig_revolution() -> None:
 
 
 
+# =========================================================================
+# Figure 9 - the two-mode network itself
+# =========================================================================
+def fig_bipartite_elite(cut: int = 90) -> None:
+    """Individuals and organisations as one two-mode graph, cumulative.
+
+    Panel (a) is the whole cabinet-rank network; panel (b) is its 2-core,
+    drawn with the two modes in separate columns so the bipartite structure
+    is literal rather than implied. The 2-core keeps only people who served
+    in more than one body and the bodies that link them -- the circulating
+    elite, which is what a two-mode graph is for.
+    """
+    print("fig09 bipartite elite network")
+    sub = spells[(spells.rank_score >= cut) & (spells.org_id != "")]
+
+    g = nx.Graph()
+    for r in sub.itertuples(index=False):
+        pn, on = "p" + r.person_id, "o" + r.org_id
+        if pn not in g:
+            g.add_node(pn, kind="p", score=r.rank_score, ref=r.person_id)
+        else:
+            g.nodes[pn]["score"] = max(g.nodes[pn]["score"], r.rank_score)
+        g.add_node(on, kind="o", label=r.org_name, ref=r.org_id)
+        g.add_edge(pn, on)
+
+    fig = plt.figure(figsize=(10.4, 13.2))
+    gs = fig.add_gridspec(2, 1, height_ratios=[0.92, 1.0], hspace=0.10)
+
+    # --- (a) the whole two-mode network ---------------------------------
+    # The giant component: a handful of bodies appointed one person each and
+    # nobody else, and a force layout throws those dyads to the corners,
+    # squeezing everything that matters into the middle.
+    ax = fig.add_subplot(gs[0])
+    giant = g.subgraph(max(nx.connected_components(g), key=len)).copy()
+    pos = nx.spring_layout(giant, k=2.7 / np.sqrt(len(giant)), seed=23,
+                           iterations=400)
+    nx.draw_networkx_edges(giant, pos, ax=ax, edge_color=RULE, width=0.5, alpha=.9)
+
+    ppl = [n for n, d in giant.nodes(data=True) if d["kind"] == "p"]
+    org = [n for n, d in giant.nodes(data=True) if d["kind"] == "o"]
+    nx.draw_networkx_nodes(
+        giant, pos, nodelist=ppl, ax=ax,
+        node_color=[tier_colour(giant.nodes[n]["score"]) for n in ppl],
+        node_size=[14 + giant.degree(n) * 9 for n in ppl],
+        edgecolors=PAPER, linewidths=.4,
+    )
+    nx.draw_networkx_nodes(
+        giant, pos, nodelist=org, ax=ax, node_color=ORG, node_shape="s",
+        node_size=[26 + giant.degree(n) * 3.2 for n in org],
+        edgecolors=PAPER, linewidths=.7,
+    )
+    ax.set_axis_off()
+    ax.margins(.06)
+    place_labels(ax, [(org_label(giant.nodes[n]["label"], 26), pos[n])
+                      for n in sorted(org, key=lambda x: -giant.degree(x))[:15]],
+                 fontsize=6.5)
+    ax.set_title(f"(a)  The connected two-mode network — {len(ppl)} people, "
+                 f"{len(org)} organisations, {giant.number_of_edges()} posts",
+                 fontsize=9.4)
+    ax.legend(handles=[
+        Line2D([], [], marker="s", color="none", markerfacecolor=ORG,
+               markersize=7, label="Organisation"),
+        Line2D([], [], marker="o", color="none", markerfacecolor=RANK_RAMP[3],
+               markersize=7, label="Officeholder"),
+    ], loc="upper left", ncol=1)
+
+    # --- (b) the 2-core, as an explicit two-mode layout -----------------
+    ax2 = fig.add_subplot(gs[1])
+    core = nx.k_core(giant, 2)
+    core = core.subgraph(max(nx.connected_components(core), key=len)).copy()
+    cp = [n for n, d in core.nodes(data=True) if d["kind"] == "p"]
+    co = [n for n, d in core.nodes(data=True) if d["kind"] == "o"]
+    # Order each column by the other column's layout so edges cross less.
+    co.sort(key=lambda n: -core.degree(n))
+    org_rank = {n: i for i, n in enumerate(co)}
+    cp.sort(key=lambda n: np.mean([org_rank[m] for m in core.neighbors(n)]))
+
+    pos2 = {}
+    for i, n in enumerate(cp):
+        pos2[n] = (0.0, 1.0 - (i / max(len(cp) - 1, 1)))
+    for i, n in enumerate(co):
+        pos2[n] = (1.0, 1.0 - (i / max(len(co) - 1, 1)))
+
+    nx.draw_networkx_edges(core, pos2, ax=ax2, edge_color=RULE, width=0.55, alpha=.95)
+    nx.draw_networkx_nodes(
+        core, pos2, nodelist=cp, ax=ax2,
+        node_color=[tier_colour(core.nodes[n]["score"]) for n in cp],
+        node_size=26, edgecolors=PAPER, linewidths=.4,
+    )
+    nx.draw_networkx_nodes(
+        core, pos2, nodelist=co, ax=ax2, node_color=ORG, node_shape="s",
+        node_size=[24 + core.degree(n) * 2.4 for n in co],
+        edgecolors=PAPER, linewidths=.7,
+    )
+    for n in cp:
+        ax2.annotate(name_of.get(core.nodes[n]["ref"], ""), pos2[n],
+                     xytext=(-6, 0), textcoords="offset points",
+                     ha="right", va="center", fontsize=5.0, color=INK)
+    for n in co:
+        ax2.annotate(org_label(core.nodes[n]["label"], 34), pos2[n],
+                     xytext=(7, 0), textcoords="offset points",
+                     ha="left", va="center", fontsize=5.4, color=INK)
+    ax2.set_xlim(-0.42, 1.52)
+    ax2.set_ylim(-0.04, 1.04)
+    ax2.set_axis_off()
+    ax2.set_title(f"(b)  Its 2-core: the {len(cp)} people who served in more than one "
+                  f"body, and the {len(co)} bodies that link them",
+                  fontsize=9.4)
+
+    headline(fig, "Individuals and organisations as one two-mode network",
+             "Cumulative, 1957–2026, at minister rank and above. Circles are people, "
+             "squares are organisations, and every edge is one published appointment; "
+             "there are no person–person or body–body edges, because the gazette "
+             "records only the two-mode tie.", top=0.995)
+    fig.subplots_adjust(top=0.902, bottom=0.015, left=0.02, right=0.98)
+    save(fig, "fig09_bipartite_elite_network", SOURCE)
+
+
 if __name__ == "__main__":
     fig_affiliation_snapshots()
     fig_signature_network()
@@ -823,4 +941,5 @@ if __name__ == "__main__":
     fig_rank_composition()
     fig_institution_network()
     fig_revolution()
+    fig_bipartite_elite()
     print(f"\ndone — {len(list(FIGS.glob('*')))} files in {FIGS.relative_to(ROOT)}/")

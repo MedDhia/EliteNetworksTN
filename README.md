@@ -128,7 +128,7 @@ spells are stored as `start`/`end` years.
 
 ## Figures
 
-`figures/` holds eight publication figures, each written as a 300 dpi PNG and a
+`figures/` holds nine publication figures, each written as a 300 dpi PNG and a
 vector PDF by `python scripts/figures.py`:
 
 | Figure | What it shows |
@@ -141,6 +141,7 @@ vector PDF by `python scripts/figures.py`:
 | `fig06_appointments_by_rank` | seventy years of appointments by seniority |
 | `fig07_cumulative_institution_network` | the whole period at once: institutions tied by shared personnel |
 | `fig08_revolution_and_the_apparatus` | what 2011 did, and did not, do to personnel |
+| `fig09_bipartite_elite_network` | the two-mode graph itself: people and bodies, and its 2-core |
 
 Colour follows the job it does: a two-slot categorical palette for
 person-vs-institution identity, single-hue sequential ramps for seniority and
@@ -175,7 +176,7 @@ src/eltn/
   panel.py      spells, person-year panel, registers
   network.py    the six relations, snapshots, GEXF export
 scripts/        one runnable stage each, plus diagnostics, figures and the explorer export
-figures/        eight publication figures, PNG (300 dpi) + vector PDF
+figures/        nine publication figures, PNG (300 dpi) + vector PDF
 explorer/       self-contained year-by-year network explorer (index.html + data.js)
 tests/          gold-standard acts transcribed by hand from the gazette
 docs/           codebook and limitations
