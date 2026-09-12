@@ -941,6 +941,152 @@ def fig_demotion() -> None:
                   "leaves the 2021 gap at +7.0 pp rather than +9.9.")
 
 
+
+# ---------------------------------------------------------------------------
+# figure 22 - which ministries were demoted out of
+# ---------------------------------------------------------------------------
+# Cells here are small - 40 to 250 movers - so this is the one figure in the set
+# that draws its uncertainty. A difference of two proportions on n = 60 carries a
+# 95% interval of roughly +/- 12 points, and without that drawn a reader would
+# rank ministries that are not distinguishable from one another.
+MINISTRY_ENGLISH = {
+    "presidence_gouvernement": "Prime Minister's Office",
+    "presidence_republique": "Presidency of the Republic",
+    "interieur": "Interior", "justice": "Justice",
+    "affaires_etrangeres": "Foreign Affairs", "defense": "Defence",
+    "finances": "Finance", "domaines_etat": "State Property",
+    "equipement": "Public Works", "transport": "Transport",
+    "agriculture": "Agriculture", "commerce": "Trade",
+    "industrie": "Industry", "energie": "Energy", "tourisme": "Tourism",
+    "developpement": "Development", "environnement": "Environment",
+    "sante": "Health", "education": "Education",
+    "enseignement_superieur": "Higher Education",
+    "affaires_sociales": "Social Affairs", "culture": "Culture",
+    "jeunesse_sport": "Youth and Sport", "information": "Information",
+    "affaires_religieuses": "Religious Affairs",
+}
+
+
+def demotion_by_ministry(t0: pd.Timestamp, years: int = 3):
+    """Demotion counts per domain of the post a person held before the rupture.
+
+    A person is placed by the portfolio of their *highest* pre-rupture post,
+    which is the same post that sets the standing they are later compared
+    against. Merged ministries count toward each domain they merge, as
+    everywhere else in this script.
+    """
+    t1 = min(t0 + pd.DateOffset(years=years), RECORD_ENDS)
+    inpost = spells[(spells.start < t0) & (spells.end.isna() | (spells.end > t0))]
+    top = inpost.loc[inpost.groupby("person_id").rank_score.idxmax(),
+                     ["person_id", "rank_score", "org_portfolio"]]
+    after = (spells[(spells.start >= t0) & (spells.start < t1)]
+             .groupby("person_id").rank_score.max())
+    top = top.merge(after.rename("after"), left_on="person_id",
+                    right_index=True, how="inner")
+    rows = [(d, af < rs) for _, rs, pf, af in top.itertuples(index=False)
+            for d in portfolio_domains(pf if isinstance(pf, str) else "")]
+    overall = float((top.after < top.rank_score).mean()) if len(top) else np.nan
+    if not rows:
+        return {}, overall
+    g = pd.DataFrame(rows, columns=["d", "down"]).groupby("d").down.agg(["size", "sum"])
+    return {d: (int(r["size"]), int(r["sum"])) for d, r in g.iterrows()}, overall
+
+
+def fig_demotion_ministries(min_n: int = 40, min_placebo: int = 60) -> None:
+    per_rupture, shifts = {}, {}
+    for key, t0, _, _ in RUPTURES:
+        cur, overall = demotion_by_ministry(t0)
+        plc = [demotion_by_ministry(t0 - pd.DateOffset(years=k)) for k in PLACEBO_LAGS]
+        shifts[key] = overall - float(np.mean([o for _, o in plc]))
+        rows = {}
+        for dom, (n, k_) in cur.items():
+            pn = sum(p[dom][0] for p, _ in plc if dom in p)
+            pk = sum(p[dom][1] for p, _ in plc if dom in p)
+            if n < min_n or pn < min_placebo:
+                continue
+            p1, p0 = k_ / n, pk / pn
+            se = np.sqrt(p1 * (1 - p1) / n + p0 * (1 - p0) / pn)
+            rows[dom] = {"n": n, "diff": (p1 - p0) * 100, "ci": 1.96 * se * 100}
+        per_rupture[key] = rows
+
+    # Ordered by the 2021 shift, which is the rupture the figure is about.
+    order = sorted({d for r in per_rupture.values() for d in r},
+                   key=lambda d: -per_rupture["2021"].get(d, {}).get("diff", -99))
+    n = len(order)
+
+    fig, axes = plt.subplots(1, 3, figsize=(13.0, 6.4), sharey=True)
+    fig.subplots_adjust(top=0.68, left=0.19, bottom=0.14, wspace=0.08)
+
+    for ax, (key, t0, datestr, gloss) in zip(axes, RUPTURES):
+        colour = RUPTURE_COLOUR[key]
+        rows = per_rupture[key]
+        ax.axvline(0, color=INK, lw=1.1, zorder=3)
+        ax.axvline(shifts[key] * 100, color=MUTED, lw=1.0, ls=(0, (4, 3)), zorder=3)
+        for i, dom in enumerate(order):
+            y = n - 1 - i
+            ax.axhline(y, color=RULE, lw=0.6, zorder=0)
+            r = rows.get(dom)
+            if not r:
+                continue
+            clear = abs(r["diff"]) > r["ci"]
+            ax.plot([r["diff"] - r["ci"], r["diff"] + r["ci"]], [y, y],
+                    color=colour, lw=1.3, alpha=0.45 if clear else 0.3, zorder=4)
+            # A filled marker is one whose interval clears zero; hollow is one
+            # that does not. Size is not used for this: it would read as weight.
+            ax.scatter([r["diff"]], [y], s=44, zorder=5, linewidth=1.4,
+                       facecolor=colour if clear else PAPER, edgecolor=colour)
+        ax.set_title(f"{key}  ·  {datestr}\n{gloss}", color=INK, fontsize=9.4,
+                     linespacing=1.5)
+        ax.set_xlim(-42, 45)
+        ax.set_xticks([-30, -15, 0, 15, 30])
+        ax.set_ylim(-0.7, n - 0.3)
+        ax.grid(axis="x", zorder=0)
+        ax.set_axisbelow(True)
+        ax.spines["left"].set_visible(False)
+        ax.tick_params(axis="y", length=0)
+        ax.annotate(f"whole state {shifts[key] * 100:+.1f}",
+                    xy=(shifts[key] * 100, n - 0.45), ha="center", va="bottom",
+                    fontsize=7.0, color=MUTED)
+
+    axes[0].set_yticks(range(n))
+    axes[0].set_yticklabels([MINISTRY_ENGLISH.get(d, d) for d in order][::-1],
+                            color=INK)
+    axes[1].set_xlabel("demotion among movers, against the same ministry in ordinary "
+                       "times (percentage points)", labelpad=10)
+    axes[1].legend(handles=[
+        Line2D([], [], marker="o", ls="", markersize=7, markerfacecolor=INK,
+               markeredgecolor=INK, label="interval excludes zero"),
+        Line2D([], [], marker="o", ls="", markersize=7, markerfacecolor=PAPER,
+               markeredgecolor=INK, markeredgewidth=1.4,
+               label="interval includes zero"),
+        Line2D([], [], color=MUTED, lw=1.0, ls=(0, (4, 3)),
+               label="the whole state's shift"),
+    ], loc="lower center", bbox_to_anchor=(0.5, 1.13), ncol=3)
+
+    headline(
+        fig,
+        "After 2021 the demotions fell hardest on the prime minister's office and the interior",
+        "For those holding office on the eve of each rupture who took a further "
+        "post within three years, how much more often their next post ranked below "
+        "the last than it did for the same ministry in ordinary times. Bars are 95% "
+        "intervals. The dashed line is the shift for the state as a whole, so a "
+        "point to its right marks a ministry demoted harder than the rest of the "
+        "administration and not merely along with it.",
+    )
+    save(fig, "fig22_demotion_by_ministry",
+         SOURCE + "  A person is placed by the portfolio of the highest-ranked post "
+                  "they held before the rupture; merged ministries count toward "
+                  "each domain they merge. Ministries with fewer than 40 movers at "
+                  "a rupture, or 60 across the five placebo cohorts, are not "
+                  "plotted for it. Cells are small and the intervals are wide: at "
+                  "n = 60 a difference must exceed roughly 12 points to clear zero. "
+                  "With fourteen to twenty-one ministries tested per rupture, "
+                  "roughly one apparent result per rupture is expected by chance, "
+                  "so the two that clear zero in 1987 and in 2011 should be read as "
+                  "no more than that. The seven in 2021, all in the same direction, "
+                  "are not that kind of result.")
+
+
 # ---------------------------------------------------------------------------
 # figure 14 - elite renewal
 # ---------------------------------------------------------------------------
@@ -1018,5 +1164,6 @@ if __name__ == "__main__":
     fig_ministries()
     fig_security()
     fig_demotion()
+    fig_demotion_ministries()
     fig_renewal()
     print("done")
