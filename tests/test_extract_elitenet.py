@@ -328,3 +328,34 @@ def test_org_level_cue_gaps_are_closed(clause, expect):
     from elitenet.extract import ORG_CUES
     fired = [t for _p, c, t in ORG_CUES if _re.search(c, clause, _re.I)]
     assert fired and fired[0] == expect
+
+
+def test_a_state_act_cannot_postdate_its_own_publication():
+    """The rule used to live only in the corporate path.
+
+    That left 87 state acts asserting an act date after the issue that printed
+    them -- an act printed "1976-01-31" in a 1974 issue, where the day and
+    month match the issue to within a week, so 1974 was read as 1976. Both
+    extractors now share one implementation of the rule.
+    """
+    from elitenet.extract import drop_impossible_dates
+    out = drop_impossible_dates(
+        {"act_date": "1976-01-31", "pub_date": "1974-02-05"}, "1974-02-05")
+    assert out["act_date"] == "", "an impossible act date must be dropped"
+
+
+def test_an_effective_date_may_lawfully_postdate_publication():
+    """Unlike an act date. A decree published in 1974 can take effect in 1975,
+    and 1,629 acts in this corpus take effect before their own date, which is
+    equally lawful -- so effective_date is not subject to the rule."""
+    from elitenet.extract import drop_impossible_dates
+    out = drop_impossible_dates(
+        {"effective_date": "1975-01-01", "pub_date": "1974-02-05"}, "1974-02-05")
+    assert out["effective_date"] == "1975-01-01"
+
+
+def test_a_plausible_act_date_survives():
+    from elitenet.extract import drop_impossible_dates
+    out = drop_impossible_dates(
+        {"act_date": "1974-01-31", "pub_date": "1974-02-05"}, "1974-02-05")
+    assert out["act_date"] == "1974-01-31"

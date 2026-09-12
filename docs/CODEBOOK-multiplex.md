@@ -112,7 +112,7 @@ One row per mirrored gazette issue with its publication date and the evidence be
 
 ### `blocks_index.csv`
 
-879,155 rows.
+879,131 rows.
 
 One row per announcement block or state act, with its printed folio page for citation. `rubric` types an announcement from the reference code's suffix; `ministry` anchors a state act to the body that issued it.
 
@@ -150,7 +150,7 @@ One row per announcement block or state act, with its printed folio page for cit
 
 ### `events.csv`
 
-659,013 rows.
+687,799 rows.
 
 The core table: one row per dated relational assertion, with up to four separate dates, a controlled event type and role, a verbatim quote and a page citation. Person and organisation names here are **surface mentions**, not resolved identities; join to `resolution.csv` for those.
 
@@ -197,7 +197,7 @@ The core table: one row per dated relational assertion, with up to four separate
 
 ### `resolution.csv`
 
-389,146 rows.
+389,141 rows.
 
 One row per (person mention, organisation mention) dyad, with the score components behind its link. Nothing is dropped: `unresolved` dyads are retained so the dataset can be re-thresholded.
 
@@ -241,7 +241,7 @@ One row per (person mention, organisation mention) dyad, with the score componen
 
 ### `review_queue.csv`
 
-4,504 rows.
+4,530 rows.
 
 Ambiguous dyads ordered by how consequential they are (seed degree and event count), for hand coding. These are cases the matcher declines to decide, not cases it got wrong.
 
@@ -285,7 +285,7 @@ Ambiguous dyads ordered by how consequential they are (seed degree and event cou
 
 ### `gazette_only_persons.csv`
 
-249,421 rows.
+249,408 rows.
 
 People named in the gazette who match no seed person. The seed sheet is an elite snapshot while the gazette covers every registered company, so these are mostly non-elite — but they are also where new elite entrants would appear, which is why they are kept.
 
@@ -301,7 +301,7 @@ People named in the gazette who match no seed person. The seed sheet is an elite
 
 ### `spells.csv`
 
-40,237 rows.
+40,298 rows.
 
 Person-organisation-role ties as intervals. `onset`/`terminus` are point estimates; the `_lo`/`_hi` columns carry what is actually known. The certain core of a spell is [onset_hi, terminus_lo].
 
@@ -341,7 +341,7 @@ Person-organisation-role ties as intervals. `onset`/`terminus` are point estimat
 
 ### `spell_observations.csv`
 
-15,193 rows.
+15,255 rows.
 
 Every dated observation attached to a spell. An `obs_kind` of `confirmation` or `renewal` proves the tie existed at that moment without asserting when it began.
 
@@ -355,7 +355,7 @@ Every dated observation attached to a spell. An `obs_kind` of `confirmation` or 
 
 ### `panel_edges_yearly.csv`
 
-139,785 rows.
+140,212 rows.
 
 Ties active in each calendar year, with an explicit `certainty`.
 
@@ -375,7 +375,7 @@ Ties active in each calendar year, with an explicit `certainty`.
 
 ### `panel_edges_monthly.csv`
 
-329,334 rows.
+329,304 rows.
 
 As above at monthly resolution, because the January 2011 rupture is invisible at annual resolution.
 
@@ -401,7 +401,7 @@ Written by `make tergm`. These are the yearly panel re-indexed for a temporal ER
 
 ### `node_key.csv`
 
-13,014 rows.
+13,013 rows.
 
 **Mode-blocked** vertex key for the TERGM panel: persons take ids 1..n1 and organisations n1+1..n, which is what makes `bipartite = n1` a true statement about the ordering. `label_suspect` marks a vertex whose name is not a firm name (an address, a role fragment, a clause) and which should probably be excluded.
 
@@ -417,7 +417,7 @@ Written by `make tergm`. These are the yearly panel re-indexed for a temporal ER
 
 ### `edges_yearly.csv`
 
-127,377 rows.
+127,550 rows.
 
 The yearly panel re-indexed to bipartite vertex ids and reduced to **binary** ties: two roles in one firm in one year is two panel rows and one tie, with the roles preserved pipe-joined. `dissolution_observed` marks the minority of ties actually seen to end, as opposed to right-censored.
 
@@ -433,7 +433,7 @@ The yearly panel re-indexed to bipartite vertex ids and reduced to **binary** ti
 
 ### `vertex_activity_yearly.csv`
 
-910,980 rows.
+910,910 rows.
 
 The risk set. An organisation is active between its constitution and dissolution, widened where needed to cover a period in which it demonstrably holds a tie, so activity is always one contiguous interval. `birth_known = 0` means left-censored and at risk from the window start. Persons are active throughout: the gazette records appointments, not births.
 
@@ -449,7 +449,7 @@ The risk set. An organisation is active between its constitution and dissolution
 
 ### `node_attrs_yearly.csv`
 
-910,980 rows.
+910,910 rows.
 
 Per-period nodal covariates, rectangular by construction (every vertex appears in every period, isolates included). Use `cum_degree_lag` rather than `cum_degree` in `nodecov`: degree measured at t is a function of the ties being modelled at t.
 
@@ -471,7 +471,7 @@ Per-period nodal covariates, rectangular by construction (every vertex appears i
 
 ### `dyad_cov_yearly.csv`
 
-396,053 rows.
+407,772 rows.
 
 Dyadic covariates as **sparse triplets** -- dense would be 2,592 x 2,915 per covariate per period. Projected from the seed sheet's undated kinship and shareholding ties, which is what makes them exogenous. `kin_in_org`, `owner_of` and `prior_comembership` are lagged to t-1 and so are absent in the first period; `is_shareholder` needs no lag and is present in all of them.
 
@@ -482,6 +482,7 @@ Dyadic covariates as **sparse triplets** -- dense would be 2,592 x 2,915 per cov
 | `head` |  |
 | `kin_in_org` |  |
 | `owner_of` |  |
+| `owner_of_seed` |  |
 | `prior_comembership` |  |
 | `is_shareholder` |  |
 
@@ -610,11 +611,12 @@ The 5-character suffix of an announcement's reference code (`2010G02623`**`SANB1
 
 | event_type | n |
 | --- | --- |
-| `appointed` | 275,924 |
+| `appointed` | 275,919 |
 | `constituted` | 150,066 |
 | `charged_with_functions` | 62,783 |
 | `capital_increased` | 43,163 |
 | `shares_transferred` | 39,464 |
+| `org_tie` | 28,791 |
 | `resigned` | 25,972 |
 | `headquarters_moved` | 18,171 |
 | `liquidated` | 11,568 |
@@ -633,23 +635,23 @@ The 5-character suffix of an announcement's reference code (`2010G02623`**`SANB1
 | role_canonical | n |
 | --- | --- |
 | `(none)` | 315,232 |
-| `gerant` | 172,104 |
+| `gerant` | 172,102 |
 | `chef_de_service` | 21,901 |
-| `commissaire_aux_comptes` | 18,802 |
+| `commissaire_aux_comptes` | 18,801 |
 | `secretaire_general` | 14,277 |
+| `shareholder_confirmed` | 13,311 |
 | `association_president` | 13,097 |
+| `auditor` | 12,703 |
 | `administrateur` | 11,860 |
 | `treasurer` | 11,685 |
 | `cogerant` | 11,135 |
 | `sous_directeur` | 10,705 |
 | `liquidateur` | 9,185 |
 | `representant` | 9,155 |
-| `pdg` | 8,049 |
+| `pdg` | 8,048 |
 | `dg` | 7,779 |
 | `associe` | 6,071 |
 | `president_ca` | 3,972 |
 | `vice_president` | 2,783 |
 | `minister` | 2,579 |
-| `dga` | 2,349 |
-| `member` | 1,951 |
 

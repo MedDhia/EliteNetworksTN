@@ -273,6 +273,34 @@ def _quote(clause: str, limit: int = 200) -> str:
     return re.sub(r"\s+", " ", clause).strip()[:limit]
 
 
+# Dates an act cannot legitimately carry later than its own publication.
+# `effective_date` is deliberately absent: an act published in 1974 may
+# lawfully take effect in 1975, and 1,629 acts in this corpus take effect
+# before their own date, which is equally lawful.
+_CANNOT_POSTDATE_PUBLICATION = ("act_date", "registration_date", "filing_date")
+
+
+def drop_impossible_dates(dates: dict, pub_date: str) -> dict:
+    """An act cannot be published before it happens.
+
+    Where a parsed date postdates the issue, the reading is wrong -- usually an
+    OCR-damaged numeral, and the corpus shows the shape of it: an act printed
+    "1976-01-31" in a 1974 issue whose day and month match the issue to within
+    a week, so 1974 was read as 1976. The date is dropped rather than repaired
+    by guessing, and the event falls back to the next available date.
+
+    Shared by both extractors. It used to live only in the corporate path,
+    which left 87 state acts asserting an act date after their own publication
+    -- the kind of divergence that appears the moment two copies of a rule
+    exist.
+    """
+    if not pub_date:
+        return dates
+    return {k: ("" if k in _CANNOT_POSTDATE_PUBLICATION and v and v > pub_date
+                else v)
+            for k, v in dates.items()}
+
+
 def _dates_for_block(text: str, pub_date: str) -> dict:
     """Pull the several distinct dates a block can carry."""
     out: dict[str, str] = {}
@@ -293,14 +321,7 @@ def _dates_for_block(text: str, pub_date: str) -> dict:
             d = G.parse_date_string(m.group("date"))
             if d:
                 out["act_date"] = d.isoformat()
-    # An act cannot be published before it happens. Where a parsed date
-    # postdates the issue, the reading is wrong -- usually a transposed or
-    # OCR-damaged numeral -- so it is dropped rather than repaired by guessing,
-    # and the event falls back to the next available date.
-    if pub_date:
-        for key in ("act_date", "registration_date", "filing_date"):
-            if out.get(key) and out[key] > pub_date:
-                out.pop(key)
+    out = {k: v for k, v in drop_impossible_dates(out, pub_date).items() if v}
     out["pub_date"] = pub_date
     return out
 
@@ -633,7 +654,10 @@ def extract_state(block: dict) -> tuple[list[dict], list[dict]]:
         if d:
             eff = d.isoformat()
 
-    dates = {"act_date": act_date, "effective_date": eff, "pub_date": block["pub_date"]}
+    dates = drop_impossible_dates(
+        {"act_date": act_date, "effective_date": eff,
+         "pub_date": block["pub_date"]}, block["pub_date"])
+    act_date = dates["act_date"]
     ev_date, ev_src, ev_lo, ev_hi, precision = _resolve_event_date(dates, block["pub_date"])
 
     base = {

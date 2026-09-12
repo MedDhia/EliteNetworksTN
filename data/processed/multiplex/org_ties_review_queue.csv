@@ -1,0 +1,1 @@
+org_tie_obs_id,holder_id,holder_label,target_id,target_label,relation,is_ownership,obs_kind,obs_date,date_precision,holder_mention,target_mention,holder_match,target_match,score,link_status,evidence_quote,event_id,block_uid,issue_uid,folio_page,extract_confidence
