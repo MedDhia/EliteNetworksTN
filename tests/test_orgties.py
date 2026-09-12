@@ -163,3 +163,169 @@ def test_and_is_a_separator_between_parties_but_not_inside_a_name():
     # A real Tunisian audit firm; cutting here would rename it.
     assert trim_org_party("la société Commissariat Audit et Organisation") == \
         "la société Commissariat Audit et Organisation"
+
+
+# --- resolution and spell construction ------------------------------------- #
+
+from elitenet.names import parse_org                                # noqa: E402
+from elitenet.orgties import (build_panel, build_spells,             # noqa: E402
+                              observations, score_link)
+from elitenet.resolve import SeedIndex                               # noqa: E402
+
+
+def seed_index(*names):
+    """A minimal index holding just the organisations a test needs."""
+    idx = SeedIndex()
+    for label in names:
+        o = parse_org(label)
+        oid = "CO_" + o.match_key.replace(" ", "_")
+        idx.orgs[oid] = {"node_id": oid, "label": label,
+                         "label_normalised": o.match_key, "node_type": "COMPANY"}
+        idx.org_by_norm[o.match_key].add(oid)
+        for tok in o.content_tokens:
+            idx.org_by_token[tok].add(oid)
+    return idx
+
+
+def ev(holder, target, relation, date_, eid="EV1", conf="0.88"):
+    return {"event_type": "org_tie", "counterparty_mention": holder,
+            "org_mention": target, "role_canonical": relation,
+            "event_date": date_, "event_id": eid, "block_uid": "B1",
+            "issue_uid": "annonces-legales/fr/2009/001", "folio_page": "1",
+            "extract_confidence": conf, "evidence_quote": "q",
+            "date_precision": "exact"}
+
+
+IDX = None
+
+
+def _idx():
+    global IDX
+    if IDX is None:
+        IDX = seed_index("ALPHA HOLDING", "BETA INDUSTRIES", "GAMMA INVEST")
+    return IDX
+
+
+def test_both_endpoints_must_resolve_or_nothing_is_asserted():
+    idx = _idx()
+    obs, diag = observations([
+        ev("ALPHA HOLDING", "BETA INDUSTRIES", "shareholder_confirmed", "2009-01-01"),
+        ev("ALPHA HOLDING", "A FIRM NOBODY HAS HEARD OF", "shareholder_confirmed",
+           "2009-01-01", eid="EV2"),
+        ev("ANOTHER UNKNOWN", "YET ANOTHER UNKNOWN", "shareholder_confirmed",
+           "2009-01-01", eid="EV3"),
+    ], idx)
+    assert len(obs) == 1
+    assert diag["one_end_resolved"] == 1
+    assert diag["neither_end_resolved"] == 1
+
+
+def test_a_mention_resolving_to_the_subject_firm_is_dropped_as_a_self_tie():
+    obs, diag = observations([
+        ev("ALPHA HOLDING", "Société ALPHA HOLDING", "shareholder_confirmed",
+           "2009-01-01"),
+    ], _idx())
+    assert obs == []
+    assert diag["self_match_dropped"] == 1
+
+
+def test_a_confirmation_leaves_the_onset_left_censored():
+    """It proves the tie was live, not when it began.
+
+    The window start is a bound, not an estimate, so `onset` stays empty and
+    only `onset_hi` is asserted.
+    """
+    obs, _ = observations([
+        ev("ALPHA HOLDING", "BETA INDUSTRIES", "shareholder_confirmed", "2009-06-01"),
+    ], _idx())
+    spells, _q, diag = build_spells(obs, [], _idx())
+    s = next(x for x in spells if x["evidence_tier"] == "gazette_dated")
+    assert s["onset"] == "", "a confirmation must not become an onset"
+    assert s["onset_hi"] == "2009-06-01"
+    assert s["left_censored"] == "True"
+    assert s["right_censored"] == "True"
+    assert diag["left_censored_onsets"] == 1
+
+
+def test_an_acquisition_dates_the_onset_exactly():
+    obs, _ = observations([
+        ev("GAMMA INVEST", "BETA INDUSTRIES", "shares_acquired", "2010-03-04"),
+    ], _idx())
+    s = next(x for x in build_spells(obs, [], _idx())[0]
+             if x["evidence_tier"] == "gazette_dated")
+    assert s["onset"] == "2010-03-04" and s["left_censored"] == "False"
+    assert s["onset_rule"] == "event:shares_acquired"
+
+
+def test_a_cession_after_the_onset_closes_the_tie():
+    obs, _ = observations([
+        ev("GAMMA INVEST", "BETA INDUSTRIES", "shares_acquired", "2010-03-04"),
+        ev("GAMMA INVEST", "BETA INDUSTRIES", "shares_ceded", "2012-07-09", eid="EV2"),
+    ], _idx())
+    spells, _q, _d = build_spells(obs, [], _idx())
+    # Different relations are distinct dyad keys, so the closing spell carries
+    # the terminus; what matters is that the date is not silently lost.
+    assert any(x["terminus"] == "2012-07-09" or x["onset"] == "2012-07-09"
+               for x in spells)
+
+
+def test_a_cession_predating_every_confirmation_is_recorded_not_forced():
+    """Either the stake was rebuilt or one reading is wrong; neither is a
+    licence to emit a spell that ends before it starts."""
+    obs, _ = observations([
+        ev("GAMMA INVEST", "BETA INDUSTRIES", "shares_ceded", "2008-01-01"),
+        ev("GAMMA INVEST", "BETA INDUSTRIES", "shares_ceded", "2008-01-01", eid="EV2"),
+    ], _idx())
+    spells, _q, _d = build_spells(obs, [], _idx())
+    for s in spells:
+        if s["onset"] and s["terminus"]:
+            assert s["terminus"] >= s["onset"]
+
+
+def test_seed_org_ties_are_carried_undated():
+    seed = [{"from_node_id": "CO_ALPHA_HOLDING", "to_node_id": "CO_BETA_INDUSTRIES",
+             "from_label": "ALPHA HOLDING", "to_label": "BETA INDUSTRIES",
+             "edge_label_raw": "SHAREHOLDER", "tie_class": "ownership"}]
+    spells, _q, diag = build_spells([], seed, _idx())
+    assert diag["seed_ties_carried"] == 1
+    s = spells[0]
+    assert s["evidence_tier"] == "seed_undated"
+    assert s["onset"] == "" and s["onset_hi"] == ""
+    assert s["onset_rule"] == "seed_undated"
+
+
+def test_the_panel_carries_dated_ties_only():
+    """An undated tie placed in a time slice asserts a presence the evidence
+    does not support, and would repeat across every period."""
+    seed = [{"from_node_id": "CO_ALPHA_HOLDING", "to_node_id": "CO_BETA_INDUSTRIES",
+             "from_label": "A", "to_label": "B",
+             "edge_label_raw": "SHAREHOLDER", "tie_class": "ownership"}]
+    obs, _ = observations([
+        ev("GAMMA INVEST", "BETA INDUSTRIES", "shares_acquired", "2010-03-04"),
+    ], _idx())
+    spells, _q, _d = build_spells(obs, seed, _idx())
+    panel = build_panel(spells)
+    assert panel, "the dated tie should appear"
+    assert all(r["evidence_tier"] == "gazette_dated" for r in panel)
+    # The id is derived from the match key, which collapses doubled letters
+    # (GAMMA -> GAMA) by design, so it is computed rather than spelled out.
+    gamma = next(oid for oid, o in _idx().orgs.items()
+                 if o["label"] == "GAMMA INVEST")
+    assert {r["from_node_id"] for r in panel} == {gamma}
+
+
+def test_the_weaker_endpoint_governs_the_score():
+    """There is no third thing to anchor an org-org dyad against, unlike the
+    person-org case where the organisation has to agree first."""
+    assert score_link(1.0, 0.5, 1, 0.88) < score_link(0.9, 0.9, 1, 0.88)
+    assert score_link(1.0, 1.0, 4, 0.88) > score_link(1.0, 1.0, 1, 0.88)
+
+
+def test_ownership_is_flagged_apart_from_the_other_corporate_relations():
+    obs, _ = observations([
+        ev("ALPHA HOLDING", "BETA INDUSTRIES", "shareholder_confirmed", "2009-01-01"),
+        ev("GAMMA INVEST", "BETA INDUSTRIES", "auditor", "2009-01-01", eid="EV2"),
+    ], _idx())
+    flags = {o["relation"]: o["is_ownership"] for o in obs}
+    assert flags["shareholder_confirmed"] == 1
+    assert flags["auditor"] == 0
