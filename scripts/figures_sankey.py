@@ -117,7 +117,8 @@ def ribbon(ax, x0, x1, y0a, y0b, y1a, y1b, colour, alpha=0.62):
                            edgecolor="none", zorder=2))
 
 
-def draw_sankey(ax, m: pd.DataFrame) -> None:
+def draw_sankey(ax, m: pd.DataFrame, *, tier_names: bool = True,
+                column_headers: bool = True, fontsize: float = 7.6) -> None:
     n = len(TIER_LABELS)
     left_tot = m.sum(axis=1).values.astype(float)
     right_tot = m.sum(axis=0).values.astype(float)
@@ -165,20 +166,26 @@ def draw_sankey(ax, m: pd.DataFrame) -> None:
             ax.add_patch(plt.Rectangle(
                 (xx - node_w if side == "right" else xx, ybot),
                 node_w, ytop - ybot, facecolor=INK, edgecolor="none", zorder=4))
+            # Tier names go on the left column only when asked for: the right
+            # column repeats the same four in the same order, and spelling them
+            # out twice crowds the thin nodes at the top.
+            text = (f"{TIER_LABELS[i]}\n{int(t):,}"
+                    if tier_names and side == "left" else f"{int(t):,}")
             ax.annotate(
-                f"{TIER_LABELS[i]}\n{int(t):,}",
+                text,
                 xy=(xx - node_w * 1.6 if side == "left" else xx + node_w * 1.6,
                     (ytop + ybot) / 2),
-                ha=ha, va="center", fontsize=7.6, color=INK, linespacing=1.45,
-                zorder=5)
+                ha=ha, va="center", fontsize=fontsize, color=INK,
+                linespacing=1.45, zorder=5)
 
-    ax.set_xlim(-0.42, 1.42)
+    ax.set_xlim(-0.42 if tier_names else -0.16, 1.16)
     ax.set_ylim(-0.06, 1.06)
     ax.axis("off")
-    ax.annotate("rank held at the rupture", xy=(x0, 1.075), ha="center",
-                va="bottom", fontsize=8.4, color=MUTED, fontweight="bold")
-    ax.annotate("rank of the next post taken", xy=(x1, 1.075), ha="center",
-                va="bottom", fontsize=8.4, color=MUTED, fontweight="bold")
+    if column_headers:
+        ax.annotate("rank held at the rupture", xy=(x0, 1.075), ha="center",
+                    va="bottom", fontsize=8.4, color=MUTED, fontweight="bold")
+        ax.annotate("rank of the next post taken", xy=(x1, 1.075), ha="center",
+                    va="bottom", fontsize=8.4, color=MUTED, fontweight="bold")
 
 
 def main() -> None:
@@ -251,6 +258,58 @@ def main() -> None:
                       "than the rupture: across the whole matrix the ruptures "
                       "differ from each other by 5.6 to 6.5 points on average, "
                       "and each from its own ordinary times by 3.1 to 7.0.")
+    # --- the three side by side ------------------------------------------
+    fig, axes = plt.subplots(1, 3, figsize=(15.0, 5.4))
+    fig.subplots_adjust(top=0.64, bottom=0.16, left=0.13, right=0.985, wspace=0.26)
+    for ax, (key, t0, datestr, gloss) in zip(axes, RUPTURES):
+        m, n_cohort, n_moved = transitions(spells, t0)
+        # Every panel is scaled to its own total, so a node's height is the
+        # share of that cohort's movers and not a count. The three cohorts run
+        # from 1,179 to 4,050, and drawing them at a common scale would leave
+        # 1987 a third the size of 2011 and compare nothing.
+        # Tier names on the first panel only. The vertical order is identical
+        # everywhere, but the heights are not - each panel is scaled to its own
+        # cohort - so a single shared label column would sit beside the right
+        # tier in one panel and the wrong one in the other two.
+        draw_sankey(ax, m, tier_names=ax is axes[0], column_headers=False,
+                    fontsize=7.0)
+        ax.set_title(f"{key}  ·  {datestr}\n{gloss}\n{n_moved:,} movers of "
+                     f"{n_cohort:,} in post",
+                     color=INK, fontsize=9.2, linespacing=1.6)
+
+    axes[1].legend(handles=[
+        Patch(facecolor=MOVE_COLOUR["up"], alpha=0.62, label="moved up a tier"),
+        Patch(facecolor=MOVE_COLOUR["lateral"], alpha=0.62, label="stayed in tier"),
+        Patch(facecolor=MOVE_COLOUR["down"], alpha=0.62, label="moved down a tier"),
+    ], loc="upper center", bbox_to_anchor=(0.5, -0.02), ncol=3)
+
+    headline(
+        fig,
+        "The three ruptures side by side: mostly the same bureaucracy",
+        "In each panel the left column is the rank held on the eve of the "
+        "rupture and the right column the rank of the next post taken within "
+        "three years, for the people who took one. The diagrams "
+        "resemble each other because most of what they show is the standing "
+        "mobility of the Tunisian administration rather than the rupture: across "
+        "the whole matrix the three differ from one another by 5.6 to 6.5 points "
+        "on average, and each from its own era's ordinary times by 3.1 to 7.0. "
+        "Only 2021 departs from its own era - 44% of its senior tier reappears at "
+        "head of service or below, against 33% in ordinary times, where 1987 and "
+        "2011 both fall slightly short of theirs.",
+        width=150,
+    )
+    save(fig, "fig21_flow_all_three",
+         SOURCE + "  Each panel is scaled to its own total, so a node's height is "
+                  "the share of that cohort's movers, not a count: the cohorts run "
+                  "from 1,179 to 4,050 and a common scale would compare nothing. "
+                  "Node figures are people. Rank is the ordinal scale in the "
+                  "codebook, a person holding several posts placed at the highest. "
+                  "Only people observed in a post before and after appear, which "
+                  "is a tenth or so of each cohort; the rest have no further post "
+                  "in the record, and the gazette's patchy treatment of departures "
+                  "makes that unreadable as removal from the state. Falls here "
+                  "cross a tier boundary, a higher bar than the any-rank-fall "
+                  "measure in the demotion figure.")
     print("done")
 
 
