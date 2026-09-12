@@ -27,10 +27,11 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import json
 from collections import defaultdict
 from datetime import date, datetime
 
-from .paths import PROCESSED, ensure_dirs, window
+from .paths import INTERIM, PROCESSED, ensure_dirs, window
 from .resolve import (THRESHOLD_AMBIGUOUS, THRESHOLD_RESOLVED, SeedIndex,
                       load_seed, resolve_org)
 from .spells import periods
@@ -89,6 +90,27 @@ def _read(name: str) -> list[dict]:
         return []
     with path.open(encoding="utf-8", newline="") as fh:
         return list(csv.DictReader(fh))
+
+
+def read_events() -> list[dict]:
+    """Extraction output, from the interim jsonl where it exists.
+
+    `resolve` and `spells` both read events_raw.jsonl directly, and this stage
+    consumes the same thing, so it reads from the same place rather than
+    depending on `export` having flattened it first -- which would have made
+    the stage order in the Makefile wrong. From a clone, where data/interim is
+    git-ignored, the committed events.csv is the fallback.
+    """
+    raw = INTERIM / "events_raw.jsonl"
+    if raw.exists():
+        out = []
+        with raw.open(encoding="utf-8") as fh:
+            for line in fh:
+                e = json.loads(line)
+                if e.get("event_type") == "org_tie":
+                    out.append(e)
+        return out
+    return [e for e in _read("events.csv") if e.get("event_type") == "org_tie"]
 
 
 def _write(name: str, rows: list[dict], fields: list[str]) -> None:
@@ -348,8 +370,7 @@ def build_panel(spells: list[dict]) -> list[dict]:
 def run() -> dict:
     ensure_dirs()
     idx = load_seed()
-    events = _read("events.csv")
-    obs, d1 = observations(events, idx)
+    obs, d1 = observations(read_events(), idx)
     spells, queue, d2 = build_spells(obs, _read("seed_edges.csv"), idx)
     panel = build_panel(spells)
 
