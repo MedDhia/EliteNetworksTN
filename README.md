@@ -10,7 +10,7 @@ the Tunisian administration is published there, dated, numbered, and signed.
 This repository turns seventy years of that record into tables you can put in
 a regression, and into networks you can watch change year by year.
 
-**Current build:** 6,378 issues → 117,508 personnel events → 44,271 persons →
+**Current build:** 6,378 issues → 117,508 personnel events → 45,634 persons →
 99,872 office-holding spells and six dated relational structures. See
 [`docs/CODEBOOK.md`](docs/CODEBOOK.md) for variable definitions and
 [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) before you use it in a paper.
@@ -83,7 +83,7 @@ directly, no unpacking step.
 | `events.csv.gz` | one person–office transition | 117,508 |
 | `spells.csv.gz` | one office-holding spell, with start, end and end reason | 99,872 |
 | `person_year.csv.gz` | person × year panel | 1,301,001 |
-| `persons.csv.gz` | person register with career summary | 44,271 |
+| `persons.csv.gz` | person register with career summary | 45,634 |
 | `organisations.csv.gz` | organisation register | 8,803 |
 | `edges/*.csv.gz` | six relations, each with validity intervals | see below |
 | `graphs/affiliation_senior_dynamic.gexf` | dynamic bipartite graph for Gephi, senior offices | |
@@ -126,6 +126,27 @@ g = nx.from_pandas_edgelist(active, "source", "target", edge_attr="overlap_days"
 For Gephi, open `graphs/affiliation_senior_dynamic.gexf` and enable the timeline; edge
 spells are stored as `start`/`end` years.
 
+## Figures
+
+`figures/` holds nine publication figures, each written as a 300 dpi PNG and a
+vector PDF by `python scripts/figures.py`:
+
+| Figure | What it shows |
+|---|---|
+| `fig01_affiliation_snapshots` | who served where, at four moments |
+| `fig02_signature_network` | who signed whose appointment — the patronage structure |
+| `fig03_succession_chains` | the six offices with the longest sequence of holders |
+| `fig04_coservice_backbone_2011` | the senior co-service network, with its brokers named |
+| `fig05_structure_over_time` | size and connectivity of the senior network by year |
+| `fig06_appointments_by_rank` | seventy years of appointments by seniority |
+| `fig07_cumulative_institution_network` | the whole period at once: institutions tied by shared personnel |
+| `fig08_revolution_and_the_apparatus` | what 2011 did, and did not, do to personnel |
+| `fig09_bipartite_elite_network` | the two-mode graph itself: people and bodies, and its 2-core |
+
+Colour follows the job it does: a two-slot categorical palette for
+person-vs-institution identity, single-hue sequential ramps for seniority and
+era, all validated for colour-vision deficiency, chroma and contrast.
+
 ## The explorer
 
 `explorer/` is a self-contained page that replays the senior network year by
@@ -154,7 +175,8 @@ src/eltn/
   normalize.py  person / organisation / position resolution
   panel.py      spells, person-year panel, registers
   network.py    the six relations, snapshots, GEXF export
-scripts/        one runnable stage each, plus diagnostics and the explorer export
+scripts/        one runnable stage each, plus diagnostics, figures and the explorer export
+figures/        nine publication figures, PNG (300 dpi) + vector PDF
 explorer/       self-contained year-by-year network explorer (index.html + data.js)
 tests/          gold-standard acts transcribed by hand from the gazette
 docs/           codebook and limitations
