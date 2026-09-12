@@ -168,6 +168,29 @@ for frame in (succ, sig):
     frame["org_name"] = frame.org_name.fillna("").astype(str)
 
 
+def stable(g):
+    """A copy whose node and edge order does not depend on the process.
+
+    Python hashes strings with a per-process seed, so iterating a set of node
+    ids yields a different order on every run.  A force layout starts from
+    positions that follow node order, so without this the same data drew a
+    visibly different graph each time it was rendered -- about 6% of pixels,
+    enough to move labels and re-arrange clusters.  Sorting pins the drawing.
+    """
+    h = g.__class__()
+    for n in sorted(g.nodes()):
+        h.add_node(n, **g.nodes[n])
+    for u, v in sorted(g.edges()):
+        h.add_edge(u, v, **g.edges[u, v])
+    return h
+
+
+def largest_component(g):
+    """The biggest connected component, ties broken deterministically."""
+    best = max(nx.connected_components(g), key=lambda c: (len(c), min(c)))
+    return stable(g.subgraph(best))
+
+
 def org_label(name: str, n: int = 30) -> str:
     s = str(name or "")
     s = s[0].upper() + s[1:] if s and s.isupper() else s
@@ -212,7 +235,7 @@ def fig_affiliation_snapshots(years=(1970, 1987, 2005, 2024), cut: int = 72,
         for comp in nx.connected_components(g):
             if len(comp) >= min_component:
                 keep |= comp
-        g = g.subgraph(keep).copy()
+        g = stable(g.subgraph(keep))
         if not len(g):
             ax.set_axis_off()
             continue
@@ -282,6 +305,7 @@ def fig_signature_network(top_n: int = 9) -> None:
         g.add_node("A" + r.target, kind="a")
         g.add_edge("S" + r.source, "A" + r.target)
 
+    g = stable(g)
     pos = nx.spring_layout(g, k=2.1 / np.sqrt(len(g)), seed=11, iterations=150)
 
     fig, ax = plt.subplots(figsize=(9.8, 7.0))
@@ -335,7 +359,7 @@ def fig_succession_chains(n_panels: int = 6) -> None:
         g = nx.DiGraph()
         for r in rows.itertuples(index=False):
             g.add_edge(r.source, r.target, year=r.year)
-        offices.append((len(g), office_id, g, rows))
+        offices.append((len(g), office_id, stable(g), rows))
     offices.sort(key=lambda t: -t[0])
     offices = offices[:n_panels]
 
@@ -397,7 +421,7 @@ def fig_colleague_backbone(year: int = 2011, cut: int = 72) -> None:
     if not len(g):
         print("   (no edges)")
         return
-    giant = g.subgraph(max(nx.connected_components(g), key=len)).copy()
+    giant = largest_component(g)
 
     fig, ax = plt.subplots(figsize=(9.8, 7.6))
     pos = nx.spring_layout(giant, k=2.1 / np.sqrt(len(giant)), seed=5, iterations=170)
@@ -603,12 +627,12 @@ def fig_institution_network(min_holders: int = 40, min_shared: int = 10) -> None
     if not len(g):
         print("   (no edges)")
         return
-    g = g.subgraph(max(nx.connected_components(g), key=len)).copy()
+    g = largest_component(g)
     # The 2-core: drop pendant chains, which a force layout flings across the
     # frame and which say nothing about circulation anyway.
     core = nx.k_core(g, 2)
     if len(core) > 20:
-        g = core.copy()
+        g = stable(core)
 
     label_of = (sub.groupby("org_id").org_name
                 .agg(lambda s: s.mode().iloc[0] if len(s.mode()) else "").to_dict())
@@ -849,7 +873,7 @@ def fig_bipartite_elite(cut: int = 90) -> None:
     # nobody else, and a force layout throws those dyads to the corners,
     # squeezing everything that matters into the middle.
     ax = fig.add_subplot(gs[0])
-    giant = g.subgraph(max(nx.connected_components(g), key=len)).copy()
+    giant = largest_component(g)
     pos = nx.spring_layout(giant, k=2.7 / np.sqrt(len(giant)), seed=23,
                            iterations=400)
     nx.draw_networkx_edges(giant, pos, ax=ax, edge_color=RULE, width=0.5, alpha=.9)
@@ -884,8 +908,7 @@ def fig_bipartite_elite(cut: int = 90) -> None:
 
     # --- (b) the 2-core, as an explicit two-mode layout -----------------
     ax2 = fig.add_subplot(gs[1])
-    core = nx.k_core(giant, 2)
-    core = core.subgraph(max(nx.connected_components(core), key=len)).copy()
+    core = largest_component(nx.k_core(giant, 2))
     cp = [n for n, d in core.nodes(data=True) if d["kind"] == "p"]
     co = [n for n, d in core.nodes(data=True) if d["kind"] == "o"]
     # Order each column by the other column's layout so edges cross less.
