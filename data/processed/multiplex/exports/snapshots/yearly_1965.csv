@@ -1,3 +1,2 @@
 from_node_id,to_node_id,role_canonical,layer,certainty,spell_id
 PERSON_GHARBI_AMEUR,CO_CONSERVES_MODERNES_CAP_BON_COMOCAP,gerant,corporate,certain,SP_db112bf1457c033283f1
-PERSON_FAKHFAKH_MOHAMED_MONCEF,CO_CIVILE_AGRICOLE_SALMA,commissaire_aux_comptes,state,certain,SP_e051672f862e5c4e8aba

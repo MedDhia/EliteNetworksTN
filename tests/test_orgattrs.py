@@ -118,8 +118,9 @@ def test_one_character_apart_reads_as_ocr_and_wholly_different_as_a_merge():
     assert cons["CO_ALPHA"]["likely"] == "ocr"
     assert cons["CO_ALPHA"]["min_distance"] == 1
     assert cons["CO_BETA"]["likely"] == "merge"
-    # Closest first: a reader scanning down crosses from OCR into merges.
-    assert conflicts(rows)[0]["likely"] == "ocr"
+    # Merges first: they are the actionable rows, since a merged node
+    # fabricates a hub rather than degrading one value.
+    assert conflicts(rows)[0]["likely"] == "merge"
 
 
 def test_a_consistent_organisation_reports_no_conflict():
@@ -231,3 +232,53 @@ def test_normalise_address_folds_accents_and_street_abbreviations():
     a = normalise_address("42, Av. Habib Bourguiba - Z.I. Sfax")
     b = normalise_address("42 avenue habib bourguiba zi sfax")
     assert a == b, (a, b)
+
+
+# --- what a conflict actually means ---------------------------------------- #
+# Classifying conflicts on the distance between the two closest values
+# inverted the signal on the cases that matter. `SOCIETE LE CONSEIL` carries
+# 377 distinct matricules -- it is a name fragment every firm beginning with
+# those words resolves onto -- and among 377 numbers some pair is always one
+# character apart, so the worst merge in the corpus was labelled OCR damage.
+
+def test_many_unrelated_values_read_as_a_merge_even_with_a_near_pair():
+    """The regression that matters: one near pair must not excuse the rest."""
+    m2o, labels = mention_to_org([res("HUB", "CO_HUB", "SOCIETE LE CONSEIL")])
+    events = []
+    # A wide spread of unrelated identifiers...
+    for i, v in enumerate(["503855N", "1022914N", "245588W", "836132G",
+                           "930463E", "582651R", "1247106H", "610213G"]):
+        events += [ev("HUB", org_mf=v)] * (3 if i == 0 else 1)
+    # ...plus one value a single character from the modal one, which is what
+    # made min_distance report 1 and call the whole node OCR damage.
+    events.append(ev("HUB", org_mf="503855M"))
+    rows, _d = identifiers(events, m2o, labels)
+    c = conflicts(rows)[0]
+    assert c["min_distance"] == 1, "the near pair is still there"
+    assert c["likely"] == "merge", c
+    assert c["n_values"] == 9
+
+
+def test_a_clustered_pair_still_reads_as_ocr():
+    m2o, labels = mention_to_org([res("ALPHA", "CO_ALPHA", "ALPHA SA")])
+    rows, _d = identifiers(
+        [ev("ALPHA", org_mf="1518656S")] * 9 + [ev("ALPHA", org_mf="1518456S")],
+        m2o, labels)
+    c = conflicts(rows)[0]
+    assert c["likely"] == "ocr", c
+    assert c["near_modal_share"] == 1.0
+
+
+def test_merges_are_ordered_before_ocr_and_worst_merge_first():
+    """The actionable rows belong on the first screen, not five hundred lines
+    down: a node carrying hundreds of identifiers poisons every tie on it."""
+    m2o, labels = mention_to_org([
+        res("HUB", "CO_HUB", "HUB"), res("SMALL", "CO_SMALL", "SMALL"),
+        res("OK", "CO_OK", "OK")])
+    events = [ev("HUB", org_mf=f"{900000 + i}X") for i in range(12)]
+    events += [ev("SMALL", org_mf="111111A"), ev("SMALL", org_mf="777777Z")]
+    events += [ev("OK", org_mf="222222B")] * 9 + [ev("OK", org_mf="222222C")]
+    rows, _d = identifiers(events, m2o, labels)
+    cons = conflicts(rows)
+    assert [c["org_id"] for c in cons] == ["CO_HUB", "CO_SMALL", "CO_OK"]
+    assert cons[-1]["likely"] == "ocr"

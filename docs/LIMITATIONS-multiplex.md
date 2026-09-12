@@ -7,8 +7,8 @@ not assumed; the figures come from `docs/VALIDATION-multiplex.md`.
 
 **The gazette and the seed sheet cover different populations.** The gazette
 publishes acts for every registered Tunisian company; the seed sheet is a
-curated elite. So only 16.9% of the 13,630 seed persons acquire a dated event,
-while 90% of the hundred highest-degree do, and 67% of the highest-degree five
+curated elite. So only 39.4% of the 13,630 seed persons acquire a dated event,
+while 94% of the hundred highest-degree do, and 87% of the highest-degree five
 hundred. Coverage is therefore strongly
 correlated with prominence. Any comparison between well-covered and
 poorly-covered actors is confounded by that, and descriptive statistics over
@@ -79,12 +79,12 @@ same day.
 organisation) dyad, and every resolved link has organisation agreement — a
 name-only link is never treated as an identification. Even so:
 
-- 1,064 dyads are `ambiguous` and queued for hand coding. These are cases the
+- 4,832 dyads are `ambiguous` and queued for hand coding. These are cases the
   matcher declines to decide, not cases it decided wrongly.
-- Six resolved persons hold more than 12 dyads, which usually indicates several
-  people merged into one. `PERSON_TRABELSI_MOHAMED` is the worst case and should
-  be treated as unreliable until hand-checked.
-- 55 overlaps remain on posts only one person can hold at a time, which is a
+- 62 resolved persons hold more than 12 dyads, which usually indicates several
+  people merged into one. `PERSON_TRABELSI_MOHAMED` is the worst case at 89 and
+  should be treated as unreliable until hand-checked.
+- 161 overlaps remain on posts only one person can hold at a time, which is a
   further pointer to merged identities.
 - Precision will be worse for common names than rare ones. That bias is
   correlated with how ordinary a person's name is, which is not random with
@@ -97,7 +97,7 @@ the shorter name is a given-name pair (`Mohamed Khalil` → `Mohamed Khalil Ben
 Ammar`). Both have the same shape, and distinguishing them needs knowledge of
 whether a token is a given name or a surname. These land in review.
 
-**66,951 gazette-only candidate persons are retained, unclustered beyond an
+**249,333 gazette-only candidate persons are retained, unclustered beyond an
 identity key.** They are mostly non-elite officers of small firms, but they are
 also where new elite entrants would appear. They have not been vetted.
 
@@ -154,6 +154,20 @@ number in a paper.
 **Roles are unmapped in some events.** Where a role phrase falls outside the
 controlled vocabulary the verbatim form is kept and the event flagged
 `needs_review`, rather than being forced into the nearest category.
+
+**The dominant organisation-resolution failure is the generic-name merge, and
+it is large.** 383 organisation nodes carry ten or more values of a single hard
+identifier; the worst, `LA CONSULTING`, carries **1,606 distinct matricules
+fiscaux** over 3,739 observations. These are not fuzzy-match noise. They are
+short, generic name fragments — `SOCIETE GENERALE` (647 values), `BATIMENT +`
+(635), `SA CONFECTION` (532) — that every firm beginning with those words has
+resolved onto. Such a node does not degrade a variable; it **fabricates a hub**,
+and any degree, centrality or closure statistic computed over it is
+meaningless. `exports/tergm/node_key.csv` carries `merge_suspect` and
+`org_identifiers.csv` carries `n_values_for_org`: treat those as a blocklist
+and exclude or split the nodes before using organisation-level structure.
+Of 4,248 identifier conflicts, 3,638 read as merges and only 610 as OCR
+damage — so this is the rule in the conflicting set, not the exception.
 
 **Organisation resolution is the weaker half, and it now has an independent
 check.** A matricule fiscal and a registre-de-commerce number are hard

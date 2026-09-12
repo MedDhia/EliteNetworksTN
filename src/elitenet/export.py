@@ -374,7 +374,12 @@ def _csv(path: Path, rows: list[dict], fields: list[str]) -> None:
 # substance of the dataset and should not merely be "rebuildable".
 GZIP_TABLES = ["events.csv", "blocks_index.csv", "resolution.csv",
                "panel_edges_monthly.csv", "panel_edges_yearly.csv",
-               "gazette_only_persons.csv", "spells.csv"]
+               "gazette_only_persons.csv", "spells.csv",
+               # The organisation attribute tables reach the same scale: an
+               # address per observation over 10,528 firms is 17 MB, and the
+               # org-tie queue carries 10,586 rows with their evidence quotes.
+               "org_addresses.csv", "org_identifiers.csv",
+               "org_ties_review_queue.csv"]
 
 
 def gzip_large_tables() -> dict:

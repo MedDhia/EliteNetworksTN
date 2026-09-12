@@ -235,7 +235,23 @@ def _digit_distance(a: str, b: str) -> int:
 
 
 def conflicts(rows: list[dict]) -> list[dict]:
-    """Organisations carrying more than one value of the same identifier."""
+    """Organisations carrying more than one value of the same identifier.
+
+    Classifying these on the distance between the two closest values was
+    wrong, and wrong in the worst direction. `SOCIETE LE CONSEIL` carries some
+    380 distinct matricules -- it is a name fragment that every firm beginning
+    "Societe Le Conseil" resolves onto -- and among 380 numbers there is
+    always a pair one character apart, so the most damaging merge in the
+    dataset was labelled OCR damage.
+
+    The statistic that separates the two is whether the values *cluster*. OCR
+    damage produces a few variants of one number, so nearly every observation
+    sits within a character of the modal value. A merge produces values with
+    nothing in common, and the modal value accounts for a minority of them. So
+    the test is the share of observations near the mode, and a node with many
+    distinct values is a merge whatever that share looks like: a firm does not
+    have five tax IDs.
+    """
     by_org: dict[tuple[str, str], list[dict]] = defaultdict(list)
     for r in rows:
         if r["is_conflicting"]:
@@ -244,40 +260,58 @@ def conflicts(rows: list[dict]) -> list[dict]:
     for (oid, id_type), group in by_org.items():
         group = sorted(group, key=lambda r: -r["n_observations"])
         vals = [g["value_normalised"] for g in group]
-        dist = min((_digit_distance(vals[0], v) for v in vals[1:]),
-                   default=0)
+        counts = [g["n_observations"] for g in group]
+        total = sum(counts)
+        modal = vals[0]
+        near = sum(n for v, n in zip(vals, counts)
+                   if _digit_distance(modal, v) <= 1)
+        near_share = near / total if total else 0.0
+        dist = min((_digit_distance(modal, v) for v in vals[1:]), default=0)
+        likely = ("ocr" if len(vals) <= 4 and near_share >= 0.8 else "merge")
         out.append({
             "org_id": oid, "org_label": group[0]["org_label"],
             "id_type": id_type, "n_values": len(group),
-            "values": vals, "counts": [g["n_observations"] for g in group],
+            "values": vals, "counts": counts,
+            "n_observations": total,
+            "modal_value": modal, "near_modal_share": round(near_share, 3),
             "min_distance": dist,
-            "likely": "ocr" if dist <= 1 else "merge",
+            "likely": likely,
             "issues": [g["issue_uid"] for g in group],
         })
-    # Closest first: those are the OCR cases, and a reader scanning down the
-    # list crosses into the merge errors, which are the actionable ones.
-    out.sort(key=lambda c: (c["min_distance"], -c["n_values"], c["org_label"]))
+    # Worst merges first. A node carrying hundreds of identifiers is hundreds
+    # of firms collapsed into one, and every tie on it is wrong; an OCR pair
+    # costs one value. Ordering by severity puts the actionable rows on the
+    # first screen rather than five hundred lines down.
+    out.sort(key=lambda c: (c["likely"] != "merge", -c["n_values"],
+                            c["org_label"]))
     return out
 
 
 def write_conflict_doc(cons: list[dict], diag: dict) -> None:
     merges = [c for c in cons if c["likely"] == "merge"]
+    ocr = [c for c in cons if c["likely"] == "ocr"]
+    worst = merges[:1]
     lines = [
         "# Organisation identifier conflicts", "",
         f"Generated {date.today().isoformat()} by `make orgattrs`.", "",
         "A matricule fiscal and a registre-de-commerce number are hard",
         "identifiers: a firm has one of each. An organisation node carrying two",
-        "is therefore a defect, and which defect depends on how far apart the",
-        "values are.", "",
-        "* **One character apart** — OCR damage. This corpus confuses 4 and 6",
-        "  routinely, so `1518656` and `1518456` are one registration read",
-        "  twice. The node is fine; the value needs a vote.",
-        "* **Wholly different** — an organisation-resolution **merge error**.",
-        "  Two firms with similar names have been collapsed into one node, and",
-        "  every tie on that node is suspect.", "",
-        "This is the independent check on organisation-resolution quality that",
-        "the dataset otherwise lacks: nothing else in the pipeline can detect a",
-        "merge, because a merge looks like a well-corroborated match.", "",
+        "is therefore a defect, and there are two quite different defects here.",
+        "",
+        "* **A few values clustered around one** — OCR damage. This corpus",
+        "  confuses 4 and 6 routinely, so `1518656` and `1518456` are one",
+        "  registration read twice. The node is fine; the value needs a vote.",
+        "* **Many values with nothing in common** — an organisation-resolution",
+        "  **merge**. Two or more firms have been collapsed into one node, and",
+        "  every tie on that node is suspect.",
+        "",
+        "Nothing else in the pipeline can detect the second kind, because a",
+        "merge looks exactly like a well-corroborated match: both names really",
+        "do appear beside the same kind of clause. That is what makes a hard",
+        "identifier worth recording even when it is never used as a variable.",
+        "",
+        "## What this found",
+        "",
         f"| kind | organisations affected |", "| --- | --- |",
     ]
     for id_type in ID_TYPES:
@@ -285,19 +319,48 @@ def write_conflict_doc(cons: list[dict], diag: dict) -> None:
         tot = diag.get(f"orgs_with_{id_type}", 0)
         share = f"{n / tot:.0%}" if tot else "—"
         lines.append(f"| {id_type} | {n} of {tot} carrying one ({share}) |")
-    lines += ["", f"Of those, {len(merges)} are more than one character apart "
-              f"and so read as merges rather than OCR.", "",
-              "## Conflicts, closest values first", "",
-              "| organisation | identifier | values (observations) | distance | reads as |",
-              "| --- | --- | --- | --- | --- |"]
+    lines += ["",
+              f"Of {len(cons)} conflicts, **{len(merges)} read as merges** and "
+              f"{len(ocr)} as OCR damage.", ""]
+    if worst:
+        w = worst[0]
+        lines += [
+            "The distribution is not what a metadata problem looks like. The "
+            f"worst node, **{w['org_label'] or w['org_id']}**, carries "
+            f"**{w['n_values']} distinct {w['id_type'].replace('_', ' ')} "
+            f"values** over {w['n_observations']} observations, with its modal "
+            f"value accounting for only {w['near_modal_share']:.0%} of them. "
+            "That is not one registration misread; it is a generic name "
+            "fragment that every firm beginning with those words resolves "
+            "onto.", "",
+            "**So the dominant failure in organisation resolution is the "
+            "generic-name merge, not fuzzy-match noise.** A node like that "
+            "does not degrade a variable — it fabricates a hub, and any "
+            "centrality computed over it is meaningless. Treat the merge rows "
+            "below as a blocklist: exclude those nodes, or split them, before "
+            "using organisation-level structure.", "",
+            "Classifying these on the distance between the two closest values "
+            "was the first attempt and it inverted the signal: among hundreds "
+            "of numbers some pair is always one character apart, so the worst "
+            "merges were labelled OCR. The test is instead whether the values "
+            "cluster around the modal one.", "",
+        ]
+    lines += ["## Conflicts, worst merges first", "",
+              "| organisation | identifier | values | modal share | reads as | "
+              "most-observed values |",
+              "| --- | --- | --- | --- | --- | --- |"]
     for c in cons[:400]:
-        vals = ", ".join(f"`{v}` ({n})" for v, n in zip(c["values"], c["counts"]))
+        shown = ", ".join(f"`{v}` ({n})"
+                          for v, n in list(zip(c["values"], c["counts"]))[:5])
+        if c["n_values"] > 5:
+            shown += f", … +{c['n_values'] - 5} more"
         lines.append(f"| {c['org_label'] or c['org_id']} | {c['id_type']} | "
-                     f"{vals} | {c['min_distance']} | {c['likely']} |")
+                     f"{c['n_values']} | {c['near_modal_share']:.0%} | "
+                     f"{c['likely']} | {shown} |")
     if len(cons) > 400:
-        lines.append("")
-        lines.append(f"_{len(cons) - 400} further conflicts are in "
-                     "`org_identifiers.csv`, where `is_conflicting = 1`._")
+        lines += ["",
+                  f"_{len(cons) - 400} further conflicts are in "
+                  "`org_identifiers.csv`, where `is_conflicting = 1`._"]
     (DOCS / "ORG-IDENTIFIER-CONFLICTS-multiplex.md").write_text(
         "\n".join(lines) + "\n", encoding="utf-8")
 

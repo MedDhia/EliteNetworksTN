@@ -371,10 +371,31 @@ def check_org_attrs(rep: Report) -> None:
         rep.add("WARN" if clashing else "INFO",
                 f"conflicting {id_type}",
                 f"{len(clashing)} of {len(orgs)} organisations carrying one "
-                f"hold two or more values ({share}); a one-character "
-                f"difference is OCR, a wholly different value is an "
+                f"hold two or more values ({share}); a few values clustered "
+                f"around one is OCR, many with nothing in common is an "
                 f"organisation-resolution merge. See "
                 f"docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md")
+
+    # The severity, not just the count. A node holding two values of an
+    # identifier has a bad value; a node holding hundreds is hundreds of firms
+    # collapsed into one, which does not degrade a variable but fabricates a
+    # hub, and any centrality computed over it is meaningless. This is reported
+    # separately because the two are different findings with the same shape.
+    per_org: Counter = Counter()
+    for r in ids:
+        if r["is_conflicting"] == "1":
+            per_org[(r["org_id"], r["org_label"], r["id_type"])] += 1
+    severe = [(k, n) for k, n in per_org.items() if n >= 10]
+    if per_org:
+        worst = max(per_org.items(), key=lambda kv: kv[1])
+        rep.add("WARN" if severe else "INFO", "organisation merge hubs",
+                f"{len(severe)} nodes carry 10 or more values of one hard "
+                f"identifier and are near-certainly several firms merged into "
+                f"one; worst is {worst[0][1] or worst[0][0]} with "
+                f"{worst[1]} distinct {worst[0][2].replace('_', ' ')} values. "
+                f"Exclude these before computing organisation-level structure "
+                f"— `org_identifiers.csv` carries `n_values_for_org`, and "
+                f"`exports/tergm/node_key.csv` carries `merge_suspect`.")
 
     # An identifier is per-organisation, so a value shared by two nodes is the
     # same defect seen from the other side: either one firm split across two

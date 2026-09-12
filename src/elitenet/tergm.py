@@ -146,7 +146,8 @@ def org_lifecycle(events: list[dict], resolution: list[dict]) -> tuple[dict, dic
 def build(panel: list[dict], spells: list[dict], seed_nodes: list[dict],
           seed_edges: list[dict], events: list[dict],
           resolution: list[dict],
-          org_panel: list[dict] | None = None) -> dict:
+          org_panel: list[dict] | None = None,
+          org_identifiers: list[dict] | None = None) -> dict:
     """Re-index the yearly panel. Returns the five tables plus a diagnostics dict."""
     pers = periods("yearly")
     period_ids = [p for p, _s, _e in pers]
@@ -172,8 +173,27 @@ def build(panel: list[dict], spells: list[dict], seed_nodes: list[dict],
             if lbl:
                 from_spells.setdefault(key, lbl)
 
+    # How many values of a hard identifier each organisation carries. A firm
+    # has one matricule fiscal and one registration number, so a node holding
+    # several is several firms merged into one -- and unlike a bad label, which
+    # is visible on inspection, a merge is invisible: it looks exactly like a
+    # well-corroborated match. The count travels onto the vertex key because
+    # that is where a model specification can act on it; a merged node does not
+    # degrade a covariate, it fabricates a hub, and every degree term is
+    # estimated against the distribution it distorts.
+    id_values: dict[str, int] = {}
+    for r in (org_identifiers or []):
+        oid = r.get("org_id")
+        try:
+            n_vals = int(r.get("n_values_for_org") or 0)
+        except ValueError:
+            continue
+        if oid:
+            id_values[oid] = max(id_values.get(oid, 0), n_vals)
+
     node_key = []
     suspect = 0
+    merge_suspect = 0
     for i, n in enumerate(persons + orgs):
         label = (seed.get(n) or {}).get("label") or from_spells.get(n, "")
         label = LABEL_PREFIX.sub("", label).strip()
@@ -186,6 +206,13 @@ def build(panel: list[dict], spells: list[dict], seed_nodes: list[dict],
         # trusted and never flagged.
         bad = n not in seed and bool(NOT_A_FIRM_NAME.search(label or " "))
         suspect += bad
+        # Two is a bad value; ten or more is a name fragment that every firm
+        # beginning with those words has resolved onto. The threshold is set
+        # where OCR variation cannot plausibly reach: the worst node in the
+        # corpus carries over 1,600.
+        n_ids = id_values.get(n, 0)
+        merged = n_ids >= 10
+        merge_suspect += merged
         node_key.append({
             "vertex_id": vid[n],
             "node_id": n,
@@ -195,6 +222,8 @@ def build(panel: list[dict], spells: list[dict], seed_nodes: list[dict],
                 "node_type", "PERSON" if i < n1 else "ORG"),
             "is_seed": int(n in seed),
             "label_suspect": int(bad),
+            "merge_suspect": int(merged),
+            "n_identifier_values": n_ids,
         })
 
     # --- edges, deduplicated to binary ties ------------------------------
@@ -456,6 +485,7 @@ def build(panel: list[dict], spells: list[dict], seed_nodes: list[dict],
                  "orgs_with_death": len(set(orgs) & set(death)),
                  "dyad_cov_rows": len(dyads),
                  "label_suspect": suspect,
+                 "merge_suspect": merge_suspect,
                  "unlabelled": sum(1 for r in node_key if not r["label"])},
     }
 
@@ -470,10 +500,11 @@ def run() -> dict:
         events=_read("events.csv"),
         resolution=_read("resolution.csv"),
         org_panel=_read("panel_org_ties_yearly.csv"),
+        org_identifiers=_read("org_identifiers.csv"),
     )
     _write(OUT / "node_key.csv", tables["node_key"],
            ["vertex_id", "node_id", "label", "mode", "node_type", "is_seed",
-            "label_suspect"])
+            "label_suspect", "merge_suspect", "n_identifier_values"])
     _write(OUT / "edges_yearly.csv", tables["edges"],
            ["period", "tail", "head", "role_canonical", "certainty",
             "link_status", "dissolution_observed"])
@@ -498,6 +529,8 @@ def run() -> dict:
           f"{d['risk_widened_start']} before a constitution date, "
           f"{d['risk_widened_end']} after a dissolution date")
     print(f"  dyad covariate rows: {d['dyad_cov_rows']}")
+    print(f"  vertices flagged merge_suspect: {d['merge_suspect']} "
+          f"(several firms on one node; exclude before modelling)")
     print(f"  vertices flagged label_suspect: {d['label_suspect']} "
           f"(still unlabelled: {d['unlabelled']})")
     return d

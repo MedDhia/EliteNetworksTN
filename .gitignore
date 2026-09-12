@@ -34,6 +34,9 @@ data/processed/multiplex/panel_edges_monthly.csv
 data/processed/multiplex/gazette_only_persons.csv
 data/processed/multiplex/panel_edges_yearly.csv
 data/processed/multiplex/spells.csv
+data/processed/multiplex/org_addresses.csv
+data/processed/multiplex/org_identifiers.csv
+data/processed/multiplex/org_ties_review_queue.csv
 data/processed/multiplex/elitenet.sqlite
 data/processed/multiplex/exports/elite_network_full.gexf
 

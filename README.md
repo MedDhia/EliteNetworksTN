@@ -216,7 +216,7 @@ different question and draws on sources the first build does not touch:
   parliamentary blocs, civil-society bodies, kinship and pedagogical lineage —
   which has no time dimension of its own, and dates it against the gazette;
 - it adds the ***annonces légales*** series, the corporate register, which the
-  first build does not use at all: 172,054 announcement blocks yielding
+  first build does not use at all: 411,940 announcement blocks yielding
   company formations, officer appointments and resignations, share transfers,
   capital changes, dissolutions, and association registrations;
 - it is scoped to the **full range the sources support, 1957–2026**, at yearly
@@ -226,9 +226,19 @@ different question and draws on sources the first build does not touch:
   governments postdate 2012**, which is why the narrow window could date only
   12.5% of seed ties.
 
-Current build: 1,271 issues → 207,369 blocks → 197,532 dated events → 4,287
-dated tie spells plus 27,585 undated seed ties, and 48,176 act citations.
-90% of the hundred highest-degree seed elites acquire at least one dated event.
+Current build: 9,749 issues → 879,131 blocks → **689,169 dated events** →
+13,031 dated person–organisation spells plus 27,585 undated seed ties, 2,314
+dated organisation–organisation spells over 2,255 dyads, 37,600 organisation
+identifier records and 420,593 act citations. 94% of the hundred
+highest-degree seed elites acquire at least one dated event, 81% of the
+highest-degree thousand, and 39.4% of all 13,630.
+
+Two of those numbers are worth reading together. Coverage is strongly
+correlated with prominence — that is a property of the sources, since the
+gazette publishes acts for every registered company while the seed sheet is a
+curated elite — and the corporate half of the record does not exist before
+2004, so 1957–2003 contributes state appointments and almost no company
+filings.
 
 Extraction accuracy on a seeded stratified sample, coded against the printed
 French: **precision 0.982** (95% CI 0.937–0.995) with **no spurious events**,

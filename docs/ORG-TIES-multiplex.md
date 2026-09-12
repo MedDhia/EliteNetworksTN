@@ -58,10 +58,30 @@ at a filing date and assert nothing about when it began, so they bound the
 onset from above and leave it censored below. That is not a limitation of the
 extractor; it is what the notice says.
 
-The consequence is a distribution nothing downstream can fix:
-`shareholder_confirmed` outnumbers the transfer clauses by more than an order
-of magnitude, so most spells in this layer have a known upper bound on their
-onset and no lower bound at all.
+The consequence is a distribution nothing downstream can fix. In the current
+build:
+
+| | |
+| --- | --- |
+| `shareholder_confirmed` | 5,016 |
+| `auditor` | 1,108 |
+| `shares_ceded` | 253 |
+| `shares_acquired` | 195 |
+| `branch` | 42 |
+| **dated spells** | **2,314** over **2,255 dyads** |
+| **left-censored onsets** | **1,865 (81%)** |
+| **right-censored** | **2,061 (89%)** |
+
+Confirmations outnumber the transfer clauses by more than an order of
+magnitude, so four spells in five have a known upper bound on their onset and
+no lower bound at all. The 4,614 undated seed ties carried alongside them are
+additional to these counts and are not evidence about any particular year.
+
+The layer is also small relative to the person-organisation panel — 2,255
+dyads against 13,031 dated person-organisation spells — for a reason worth
+stating: an org-org tie needs **both** endpoints to be seed organisations,
+and most counterparties named in an ownership clause are firms outside a
+curated elite sheet.
 
 ## How endpoints are resolved
 
@@ -90,7 +110,20 @@ Two failure modes are handled rather than hidden:
   a counter; they now go to `org_ties_review_queue.csv` with the failing
   mention, the seed organisation it came closest to, and that near-miss score.
   This is the adjudicable material in the layer: the resolved end anchors the
-  dyad, so a coder has only one name to judge.
+  dyad, so a coder has only one name to judge. There are **10,586** of them —
+  more than four times the number of resolved observations — and **8,189**
+  carry a named near-miss, at a median similarity of 0.63. The queue was
+  empty before this, not because there was nothing to adjudicate but because
+  it was fed only from a score band that `resolve_org`'s 0.88 floor makes
+  unreachable.
+
+* **Both candidate targets.** Where the clause names the company whose shares
+  move, that reading and the block's subject firm both go forward sharing an
+  `alt_group`, and this stage keeps whichever resolves — the stated target
+  first, since it is the targeted capture. Letting it override
+  unconditionally was measured and is net negative. Of 1,280 such groups,
+  318 resolve at both ends; **119 of those resolve only through the subject
+  firm**, and those are exactly the resolutions the old override discarded.
 
 ## Modelling it
 
@@ -128,3 +161,13 @@ many periods carry any edges at all before reading a coefficient.
   in this corpus effectively begins in 2004; earlier issues carry state acts,
   not company filings. A rise in ownership ties over time is mostly a rise in
   what the gazette printed.
+
+* **Exclude the merged organisation nodes first.** `make orgattrs` finds 383
+  organisation nodes carrying ten or more values of a single hard identifier —
+  the worst, `LA CONSULTING`, carries 1,606 distinct matricules. Those are
+  generic name fragments that every firm beginning with those words has
+  resolved onto, and they are not degraded vertices but *fabricated hubs*.
+  This layer is directed and one-mode, so a fabricated hub is exactly the
+  vertex a closure or degree term will pick up. `node_key.csv` carries
+  `merge_suspect`; `docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md` lists them
+  worst first.
