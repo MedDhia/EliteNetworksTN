@@ -67,6 +67,18 @@ PLACEBO_LAGS = (3, 4, 5, 6, 7)
 # the series partly a measure of record-keeping.
 ENTRY_TYPES = ("appointment", "transfer")
 
+# The mirror runs out during 2026. An act dated in one month is published in an
+# issue that may appear months later, so the final months of the record are
+# missing acts that simply have not been gazetted yet. Everything after this is
+# dropped rather than plotted as a fall.
+#
+# The cut is not cosmetic. Read to the last month held, the 2021 series peaks at
+# 1.37x baseline at +60 months; read to three months earlier, at 1.15x at +31.
+# A statistic that moves that much with the cut is an artefact of the cut. The
+# yearly means below shift by at most 0.05 between the two, which is why they
+# are what the figure reports.
+RECORD_ENDS = pd.Timestamp("2026-05-31")
+
 
 # ---------------------------------------------------------------------------
 # data
@@ -103,96 +115,98 @@ def entry_rate(months: pd.DatetimeIndex) -> pd.Series:
 
     A month in which nothing at all was published is left missing rather than
     set to zero: no issues means no observation, not an observation of none.
+    Months past the end of the record are dropped for the same reason.
     """
     num = entries_per_month.reindex(months)
     den = issues_per_month.reindex(months)
-    return (num / den.where(den > 0)).astype(float)
+    out = (num / den.where(den > 0)).astype(float)
+    return out.where(pd.Series(months <= RECORD_ENDS, index=months))
 
 
 # ---------------------------------------------------------------------------
 # figure 10 - appointment intensity in event time
 # ---------------------------------------------------------------------------
 def fig_intensity() -> None:
-    lo, hi = -30, 30
+    lo, hi = -24, 60
     n_base = -13 - lo + 1                 # baseline ends a year before the event
 
-    fig, axes = plt.subplots(1, 3, figsize=(11.4, 4.0), sharey=True)
-    fig.subplots_adjust(top=0.60, wspace=0.12, bottom=0.16)
+    fig, axes = plt.subplots(1, 3, figsize=(12.2, 4.2), sharey=True)
+    fig.subplots_adjust(top=0.60, wspace=0.10, bottom=0.16)
 
     for ax, (key, t0, datestr, gloss) in zip(axes, RUPTURES):
         months = month_index(t0, lo, hi)
         rate = entry_rate(months)
         x = np.arange(lo, hi + 1)
         base = rate.iloc[:n_base].mean()
-        # A quarterly mean carries the trend; the monthly series is noisy
-        # enough that a reader would otherwise be following sampling error.
         smooth = rate.rolling(3, center=True, min_periods=2).mean()
         colour = RUPTURE_COLOUR[key]
 
         ax.axhline(base, color=MUTED, lw=0.9, ls=(0, (4, 3)), zorder=2)
         ax.axvline(0, color=INK, lw=1.1, zorder=3)
-        ax.plot(x, rate.values, color=colour, lw=0.7, alpha=0.32, zorder=4)
-        ax.plot(x, smooth.values, color=colour, lw=2.1, zorder=5,
-                solid_joinstyle="round")
+        ax.plot(x, smooth.values, color=colour, lw=1.3, alpha=0.45, zorder=4)
 
-        # Two moments are marked, because the shape after every one of these
-        # ruptures is the same: the gazette stops, and then it either resumes
-        # in a burst of replacement or it does not. A single summary number
-        # over the first year averages those two phases into nothing.
-        post = smooth.iloc[(0 - lo):]
-        trough_at = int(np.nanargmin(post.iloc[:13].values))
-        peak_at = int(np.nanargmax(post.values))
-        # Labels go in two corners that are empty in all three panels and are
-        # tied to their points by leader lines. Offsetting them from the points
-        # instead puts them on the series, which is what a reader is trying to
-        # follow.
-        for off, val, lab, xy_text, ha, va in (
-            (trough_at, post.iloc[trough_at], "freeze", (0.035, 0.04), "left", "bottom"),
-            (peak_at, post.iloc[peak_at], "replacement", (0.975, 0.98), "right", "top"),
-        ):
-            ax.scatter([off], [val], s=32, color=colour, zorder=7,
-                       edgecolor=PAPER, linewidth=1.0)
-            ax.annotate(f"{lab}\n{val / base:.2f}× baseline\n+{off} months",
-                        xy=(off, val), xycoords="data",
-                        xytext=xy_text, textcoords="axes fraction",
-                        ha=ha, va=va, fontsize=7.4, color=colour,
-                        fontweight="bold", linespacing=1.35, zorder=8,
-                        arrowprops=dict(arrowstyle="-", color=colour,
-                                        lw=0.7, alpha=0.55,
-                                        shrinkA=3, shrinkB=4))
+        # The yearly mean, drawn as a step. A peak is one observation sitting
+        # wherever the record happens to stop; the mean of a year either side of
+        # it barely moves when the cut does, so that is what carries the reading.
+        for y in range(5):
+            seg = rate.iloc[(12 * y - lo):(12 * (y + 1) - lo)]
+            if seg.notna().sum() < 6:
+                continue
+            m = seg.mean()
+            ax.plot([12 * y, 12 * (y + 1)], [m, m], color=colour, lw=3.0,
+                    solid_capstyle="butt", zorder=6)
+            ax.annotate(f"{m / base:.2f}", xy=(12 * y + 6, m), xytext=(0, 6),
+                        textcoords="offset points", ha="center", va="bottom",
+                        fontsize=7.6, color=colour, fontweight="bold", zorder=8)
+
+        # Where the record itself stops, rather than the state.
+        last = rate.last_valid_index()
+        if last is not None:
+            edge = int(round((last - months[0]).days / 30.44)) + lo
+            if edge < hi:
+                ax.axvspan(edge, hi, color=RULE, alpha=0.55, lw=0, zorder=1)
+                ax.annotate("beyond\nthe record", xy=((edge + hi) / 2, 15.4),
+                            ha="center", va="top", fontsize=6.8, color=MUTED,
+                            linespacing=1.3, zorder=8)
 
         ax.set_title(f"{key}  ·  {datestr}\n{gloss}", color=INK, fontsize=9.5,
                      linespacing=1.5)
         ax.set_xlim(lo, hi)
-        ax.set_ylim(0, 18.6)
-        ax.set_xticks([-24, -12, 0, 12, 24])
+        ax.set_ylim(0, 16.5)
+        ax.set_xticks([-12, 0, 12, 24, 36, 48, 60])
         ax.set_xlabel("months from the rupture")
         ax.grid(axis="y", zorder=0)
         ax.set_axisbelow(True)
 
     axes[0].set_ylabel("appointments per gazette issue")
-    # Named in the top-left of the first panel, which is empty in all three,
-    # rather than beside the rule itself, where it sat on the series.
-    axes[0].annotate("- -  pre-rupture baseline", xy=(0.035, 0.96),
-                     xycoords="axes fraction", fontsize=7.2, color=MUTED,
-                     ha="left", va="top")
+    axes[0].annotate("- -  pre-rupture baseline\nbars: mean of each year after,\n"
+                     "labelled as a multiple of baseline",
+                     xy=(0.025, 0.985), xycoords="axes fraction", fontsize=7.0,
+                     color=MUTED, ha="left", va="top", linespacing=1.5)
 
     headline(
         fig,
-        "Every rupture froze the state; only two of them then replaced its personnel",
-        "Personnel acts per issue of the Journal Officiel, by month, around three "
-        "changes of regime. Dividing by issues published removes the fourfold growth "
-        "of the gazette between 1987 and 2011, so the panels are comparable. All "
-        "three ruptures are followed within two months by a collapse in appointments. "
-        "1987 and 2011 then recover into a burst of replacement; 2021 never does.",
+        "Ben Ali replaced the apparatus slowly; the revolution did it at once; Saïed has not",
+        "Personnel acts per issue of the Journal Officiel around three changes of "
+        "regime, over the five years after each. Dividing by issues published "
+        "removes the fourfold growth of the gazette between 1987 and 2011. All three "
+        "begin with a freeze, and then diverge. 1987 climbs year on year to half "
+        "again above its baseline by year five. 2011 spends its replacement in one "
+        "burst at nine months and subsides below baseline. 2021 returns to its "
+        "baseline and stops there: no year of the five reaches 1.02 times it.",
     )
     save(fig, "fig10_rupture_appointment_intensity",
-         SOURCE + "  Baseline is the mean rate over months \u221230 to \u221213. "
-                  "Freeze and replacement are the lowest point of the three-month "
-                  "mean within twelve months of the rupture, and its highest point "
-                  "within thirty. Appointment and transfer acts only. In 1987 the "
-                  "sharpest single month precedes the rupture: Ben Ali was interior "
-                  "minister from April and prime minister from October of that year.")
+         SOURCE + "  Baseline is the mean rate over months \u221224 to \u221213. The "
+                  "record is cut at May 2026: an act dated in one month appears in "
+                  "an issue published later, so the last months held are missing "
+                  "acts not yet gazetted. The cut matters - read to the final month "
+                  "held, the 2021 series peaks at 1.37\u00d7 baseline at +60 months, "
+                  "and read three months earlier at 1.15\u00d7 at +31. The yearly "
+                  "means move by at most 0.05 between those two readings, which is "
+                  "why they, and not a peak, are what the figure states. In 1987 "
+                  "the sharpest single month precedes the rupture: Ben Ali was "
+                  "interior minister from April and prime minister from October of "
+                  "that year.")
 
 
 # ---------------------------------------------------------------------------
