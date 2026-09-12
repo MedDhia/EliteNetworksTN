@@ -192,6 +192,149 @@ def test_parsing_and_entity_rules():
     )
 
 
+
+
+# ==========================================================================
+# movement notices
+# ==========================================================================
+
+from bourse.extract.movements import (  # noqa: E402
+    classify_event,
+    find_target,
+    is_plausible_party,
+    parse_date,
+    parse_movement,
+)
+
+# --- event typing ---------------------------------------------------------
+check("classify OPA obligatoire",
+      classify_event("Avis d'ouverture d'une Offre Publique d'Achat Obligatoire", "")[0],
+      "opa_obligatoire")
+check("classify OPR", classify_event("Offre Publique de Retrait sur les actions", "")[0],
+      "opr_retrait")
+check("classify augmentation",
+      classify_event("Augmentation de capital par incorporation de réserves : PGH", "")[0],
+      "augmentation_capital")
+# A result notice states outcomes, not intentions, and must be distinguishable.
+check("result flagged",
+      classify_event("Résultat de l'Offre Publique d'Achat Obligatoire", "")[1], True)
+check("announcement not flagged",
+      classify_event("Avis d'ouverture d'une Offre Publique d'Achat", "")[1], False)
+
+# --- dates ----------------------------------------------------------------
+check("date textual", parse_date("ouverte du 05 août 2026"), "2026-08-05")
+check("date 1er", parse_date("à compter du 1er janvier 2026"), "2026-01-01")
+check("date numeric", parse_date("par décision du 31/07/2026"), "2026-07-31")
+check("date implausible year", parse_date("la loi de 1887"), None)
+
+# --- capital changes, across the phrasings the corpus actually uses -------
+for label, text, before, after in [
+    ("dinars",
+     "a décidé d'augmenter le capital social de la société de 180 003 600 dinars "
+     "à 189 003 780 dinars",
+     180003600.0, 189003780.0),
+    ("DT abbreviation",
+     "augmentation de capital social de la SOPAT de 21.941.250 DT à 25.000.000 DT",
+     21941250.0, 25000000.0),
+    ("filler words",
+     "l'augmentation en numéraire du capital social de la société de 5 218 750 dinars "
+     "à 6 000 000 dinars",
+     5218750.0, 6000000.0),
+]:
+    r = parse_movement("Augmentation de capital", text)
+    check(f"capital {label}", (r.get("capital_before_tnd"), r.get("capital_after_tnd")),
+          (before, after))
+
+# A share-attribution ratio must never be read as a capital amount.
+r = parse_movement(
+    "Augmentation de capital",
+    "augmentation de capital à attribuer gratuitement à raison d'une (1) action "
+    "nouvelle pour vingt (20) actions anciennes",
+)
+check("ratio is not capital", r.get("capital_before_tnd"), None)
+
+# --- offer figures --------------------------------------------------------
+r = parse_movement(
+    "Résultat de l'Offre Publique d'Achat Obligatoire",
+    "L'opération d'Offre Publique d'Achat Obligatoire sur les actions de la société "
+    "SOTUVER, au prix unitaire de 13,390 dinars, ouverte du 05 août 2026 au 26 août 2026 "
+    "a été clôturée. L'initiatrice vise l'acquisition de 6 843 844 actions SOTUVER "
+    "représentant 17,43% du capital de la société.",
+)
+check("offer price", r.get("price_tnd"), 13.39)
+check("offer open", r.get("open_date"), "2026-08-05")
+check("offer close", r.get("close_date"), "2026-08-26")
+check("offer shares sought", r.get("shares_sought"), 6843844.0)
+check("offer pct", r.get("pct_stated"), 17.43)
+check("offer is result", r.get("is_result"), True)
+
+# Six-decimal percentages occur verbatim in these notices.
+r = parse_movement(
+    "Résultat de l'OPA",
+    "a porté sur l'acquisition de 16 204 636 actions représentant 41,280990% du capital",
+)
+check("six-decimal pct", r.get("pct_stated"), 41.28099)
+
+# "aucun dépôt" is a zero result, not a missing one.
+r = parse_movement("Résultat de l'OPA obligatoire",
+                   "il n'y a eu aucun dépôt de pli à la Bourse en réponse à la présente OPA")
+check("no deposits means zero", r.get("shares_acquired"), 0.0)
+
+# --- parties --------------------------------------------------------------
+r = parse_movement(
+    "Avis d'ouverture d'une Offre Publique d'Achat Obligatoire",
+    "I- Identité de l'initiateur : La société « B.A GLASS B.V » (société à "
+    "responsabilité limitée de droit néerlandais) est l'initiateur de l'OPA obligatoire. "
+    "II- Titres : La société « B.A GLASS B.V » a déclaré agir de concert avec le Groupe "
+    "BAYAHI qui détient 16 205 315 actions représentant 41,28% du capital.",
+)
+check("initiator from identity section", r.get("initiators"), ["B.A GLASS B.V"])
+check("concert party", r.get("concert_parties"), ["Groupe BAYAHI"])
+
+# Fragments a greedy capture leaves behind must never become parties.
+for junk in ["morales", "des personnes physiques", "30 décembre 2020",
+             "durant les quatre-vingt-dix (90) jours de bourse",
+             "sis à l'immeuble Yasmine Tower Bloc C", "un groupe d'actionnaires"]:
+    if is_plausible_party(junk):
+        failures.append(f"implausible party accepted: {junk!r}")
+for real in ["B.A GLASS B.V", "Groupe BAYAHI", "BELHASSEN TRABELSI", "MEDIGRAIN"]:
+    if not is_plausible_party(real):
+        failures.append(f"real party rejected: {real!r}")
+
+# --- target naming --------------------------------------------------------
+check("target from quoted title",
+      find_target('Résultat de l\'OPA sur les actions de la société « SOTUVER »', ""),
+      "SOTUVER")
+check("target from body formula",
+      find_target("Résultat de l'OPA",
+                  "sur les actions de la société Tunisienne de Verreries -SOTUVER-"),
+      "Tunisienne de Verreries")
+# The issuer's name precedes its registered office in company notices.
+check("target before siege social",
+      find_target("HANNIBAL LEASE",
+                  "AVIS DES SOCIETES AUGMENTATION DE CAPITAL REALISEE Hannibal Lease "
+                  "Siège Social : Rue du Lac Malaren"),
+      "Hannibal Lease")
+# The title names the target first and the initiator after; the initiator must
+# not be mistaken for the company being bid for.
+check("target not the initiator",
+      find_target("Avis d'ouverture d'une Offre Publique d'Achat Obligatoire sur les "
+                  "actions de la Société Tunisienne de Verreries -SOTUVER- initiée par "
+                  "la société « B.A GLASS B.V »",
+                  "Le Conseil du Marché Financier a fixé les conditions de l'Offre "
+                  "Publique d'Achat obligatoire visant les actions de la Société "
+                  "Tunisienne de Verreries -SOTUVER-."),
+      "Tunisienne de Verreries")
+
+# A trailing list number is layout, not part of the name. The notices run their
+# numbered body straight on from the company name.
+check("target trailing list number",
+      find_target("Résultat de l'offre",
+                  "Résultat de l'offre sur les actions de la société ADWYA 1- A partir "
+                  "du mercredi 28 décembre 2022, les 20 000 000 actions sont introduites"),
+      "ADWYA")
+
+
 if __name__ == "__main__":
     if failures:
         print(f"FAILED ({len(failures)}):")

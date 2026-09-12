@@ -32,8 +32,11 @@ sections:
     doc_type: "operation_sur_capital"
     priority: 1
     note: >-
-      Other capital operations, including threshold-crossing declarations
-      (franchissements de seuil) - the cleanest dated record of stake changes.
+      Other capital operations: completed and announced capital increases,
+      reductions, mergers. Note that this section does NOT carry
+      threshold-crossing declarations (franchissements de seuil); the CMF does
+      not publish those here, so stake changes have to be read from tender
+      offers and their result notices instead.
 
   - key: augmentation_capital
     slug: "augmentations-de-capital-r-alis-es"

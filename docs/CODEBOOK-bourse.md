@@ -86,6 +86,48 @@ modelling decision. `R/load_bourse_multiplex.R::collapse_year()` takes explicit
 other layers, not independent evidence. Including them *and* their constituent
 layers in one model double-counts. Use one or the other.
 
+## 4b. `movements.csv` — dated operations
+
+One row per CMF notice describing an operation on a company's capital or its
+shares. Where the ownership layers give annual *snapshots*, these give dated
+*changes*.
+
+| Variable | Description |
+|---|---|
+| `movement_id` | Stable id, hashed from the filing and its PDF URL. |
+| `event_type` | `opa_obligatoire`, `opa_simplifiee`, `opr_retrait`, `opf_prix_ferme`, `opv_prix_ouvert`, `ope_echange`, `maintien_de_cours`, `augmentation_capital`, `reduction_capital`, `fusion`, `admission`. |
+| `is_result` | `True` where the notice reports an operation's **outcome** rather than announcing it. An announcement and its result are separate rows describing one operation: the first states what was sought, the second what was acquired. **Filter on this before counting operations.** |
+| `event_date`, `event_year` | When the operation is dated. |
+| `event_date_source` | Which field supplied `event_date`: `close_date`, `open_date`, `decision_date`, `delisting_date`, or `filing_date`. **`filing_date` is only an upper bound** — the notice was filed on that day, the operation happened on or before it. |
+| `target_id`, `target_name`, `target_name_raw` | The company whose capital or shares the operation concerns. |
+| `price_tnd` | Offer price per share. |
+| `pct_stated`, `pct_max_stated` | Percentages of capital the notice states; `pct_max_stated` is the largest, which is normally the concert total. |
+| `shares_sought`, `shares_acquired`, `shares_stated` | Share counts. `shares_acquired = 0` is a real outcome (an offer that drew no deposits), not a missing value. |
+| `capital_before_tnd`, `capital_after_tnd` | Capital either side of an increase or reduction. |
+| `capital_stated_tnd` | Capital as given in the notice header, where the before/after pair is not restated. |
+| `capital_method` | `incorporation de réserves`, `souscription en numéraire`, … |
+| `new_shares` | Shares created. |
+| `open_date`, `close_date`, `decision_date`, `delisting_date` | The underlying dates, where stated. |
+| `listing_event`, `market`, `isin`, `ticker` | Admission or radiation details. |
+| `doc_*` | Provenance, as elsewhere. |
+
+**A capital increase creates no tie.** It dilutes every existing holder, so it
+changes the ownership *weights* rather than adding an edge. It is recorded here
+and deliberately not in the edge list.
+
+## 4c. `firm_listing_events.csv` — entry to and exit from the cote
+
+| Variable | Description |
+|---|---|
+| `entity_id`, `firm_name` | The company. |
+| `listing_event` | `admission` (arrival on the cote) or `radiation` (removal). |
+| `event_date`, `event_year` | When. |
+| `market`, `isin`, `ticker` | As stated in the notice. |
+
+This is the listing history the BVMT roster snapshot cannot give (see §6.3).
+It is incomplete: it covers only firms whose admission or withdrawal notice is
+in the corpus, so absence of a row is not evidence a firm was never listed.
+
 ## 5. `multiplex_edges_panel.csv.gz` — the balanced panel
 
 Same columns as the observed edge list, plus:
@@ -94,6 +136,10 @@ Same columns as the observed edge list, plus:
 |---|---|
 | `panel_year` | The year the row is asserted for. |
 | `observation_type` | `observed` — a filing describes this year. `carried_forward` — the last observation is being extended forward. |
+
+`tender_offer` and `concert_party` are **excluded from the panel**. They are
+dated events, not states: carrying an offer forward would assert an offer that
+was never made. They appear in the observed edge list only.
 
 Ties are carried forward until the dyad is next observed, capped at
 `--max-carry` years (default 3). **Filter to `observation_type == "observed"`

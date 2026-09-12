@@ -68,6 +68,13 @@ board_seat_corporate,2022,16,19,4
 board_seat_corporate,2023,41,27,6
 board_seat_corporate,2024,37,31,9
 board_seat_corporate,2025,33,33,6
+concert_party,2009,3,3,1
+concert_party,2016,1,2,1
+concert_party,2020,2,4,2
+concert_party,2021,7,4,2
+concert_party,2022,6,8,4
+concert_party,2023,56,12,3
+concert_party,2026,1,2,1
 coownership,2008,1,2,0
 coownership,2010,1,2,0
 coownership,2011,1,2,0
@@ -178,3 +185,12 @@ ownership_director,2022,6,7,1
 ownership_director,2023,8,9,1
 ownership_director,2024,14,16,2
 ownership_director,2025,16,12,3
+tender_offer,2008,1,2,1
+tender_offer,2009,5,8,3
+tender_offer,2016,4,6,3
+tender_offer,2020,6,10,4
+tender_offer,2021,6,6,2
+tender_offer,2022,10,13,5
+tender_offer,2023,20,18,5
+tender_offer,2025,1,2,1
+tender_offer,2026,3,4,2

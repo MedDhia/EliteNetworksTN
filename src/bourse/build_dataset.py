@@ -42,6 +42,7 @@ EVIDENCE_COLUMNS = [
     ("interlocks.jsonl.gz", "other_firm_name_raw", "firm"),
     ("executives.jsonl.gz", "other_firm_name_raw", "firm"),
     ("subsidiaries.jsonl.gz", "subsidiary_name_raw", "firm"),
+    ("movements.jsonl.gz", "target_name_raw", "firm"),
 ]
 
 
@@ -206,6 +207,122 @@ def build_edges(res: Resolver) -> tuple[list[dict], dict[str, dict]]:
 
 
 # --------------------------------------------------------------------------
+# movements
+# --------------------------------------------------------------------------
+
+# Movements that transfer or contest ownership. A capital increase changes
+# every holder's percentage but creates no tie, so it is recorded in the
+# movements table and not as an edge.
+OFFER_TYPES = {
+    "opa", "opa_obligatoire", "opa_simplifiee", "opr_retrait",
+    "ope_echange", "opf_prix_ferme", "opv_prix_ouvert", "maintien_de_cours",
+}
+
+
+def build_movement_edges(res: Resolver) -> tuple[list[dict], list[dict], list[dict]]:
+    """Return (edges, movement rows, firm listing events).
+
+    Two layers come out of the notices:
+
+    ``tender_offer``
+        initiator -> target, weighted by the stake the offer states. This is a
+        dated, directed claim on control, which the annual snapshots cannot
+        express.
+    ``concert_party``
+        an undirected tie between every pair of parties to the same offer.
+        "Agir de concert" is a declared coalition, so this is a tie the issuer
+        states rather than one inferred from co-occurrence.
+    """
+    movements = {m["movement_id"]: m for m in read_jsonl(RECORDS / "movements.jsonl.gz")}
+    parties = read_jsonl(RECORDS / "movement_parties.jsonl.gz")
+
+    edges: list[dict] = []
+    listing: list[dict] = []
+
+    def prov(m: dict) -> dict:
+        return {
+            "doc_node_key": m.get("doc_node_key"),
+            "doc_type": m.get("doc_type"),
+            "doc_url": m.get("doc_url"),
+            "page": None,
+            "doc_sha256": m.get("doc_sha256"),
+        }
+
+    by_movement: dict[str, list[dict]] = defaultdict(list)
+    for p in parties:
+        by_movement[p["movement_id"]].append(p)
+
+    for mid, plist in by_movement.items():
+        m = movements.get(mid)
+        if m is None or m.get("event_year") is None:
+            continue
+        if m["event_type"] not in OFFER_TYPES:
+            continue
+        target, _ = res.resolve(m.get("target_name_raw") or "", hint="firm")
+        # A stated stake is the natural weight; where the notice gives none the
+        # tie still exists, so it is recorded with weight 1 and the absence is
+        # visible in `pct_stated`.
+        pct = m.get("pct_max_stated") or m.get("pct_stated")
+        resolved = []
+        for p in plist:
+            pid, ptype = res.resolve(p["party_name_raw"] or "")
+            if pid:
+                resolved.append((pid, ptype, p["role"]))
+        if target:
+            for pid, ptype, role in resolved:
+                if pid == target:
+                    continue
+                edges.append({
+                    "layer": "tender_offer", "year": m["event_year"],
+                    "obs_date": m.get("event_date"),
+                    "source_id": pid, "target_id": target,
+                    "weight": float(pct) if pct else 1.0,
+                    "directed": 1, "role": role,
+                    "event_type": m["event_type"],
+                    "pct_stated": pct, "price_tnd": m.get("price_tnd"),
+                    **prov(m),
+                })
+        # Coalition ties among the parties themselves.
+        ids = sorted({pid for pid, _t, _r in resolved})
+        for a, b in itertools.combinations(ids, 2):
+            edges.append({
+                "layer": "concert_party", "year": m["event_year"],
+                "obs_date": m.get("event_date"),
+                "source_id": a, "target_id": b, "weight": 1.0, "directed": 0,
+                "event_type": m["event_type"], **prov(m),
+            })
+
+    # Listing events: an admission dates a firm's arrival on the cote, a
+    # radiation its departure. Together they are the listing history the BVMT
+    # roster snapshot cannot give.
+    for m in movements.values():
+        ev, date = m.get("listing_event"), m.get("event_date")
+        if m.get("delisting_date"):
+            ev, date = "radiation", m["delisting_date"]
+        if not ev:
+            continue
+        fid, _ = res.resolve(m.get("target_name_raw") or "", hint="firm")
+        if not fid:
+            continue
+        listing.append({
+            "entity_id": fid, "firm_name": m.get("target_name_raw"),
+            "listing_event": ev, "event_date": date,
+            "event_year": int(date[:4]) if date and date[:4].isdigit() else None,
+            "market": m.get("market"), "isin": m.get("isin"), "ticker": m.get("ticker"),
+            "doc_node_key": m.get("doc_node_key"), "doc_url": m.get("doc_url"),
+        })
+
+    # Resolve movement rows to entity ids for the standalone table.
+    rows = []
+    for m in movements.values():
+        fid, _ = res.resolve(m.get("target_name_raw") or "", hint="firm")
+        rows.append({**m, "target_id": fid,
+                     "target_name": res.canonical_name(fid) if fid else None})
+    rows.sort(key=lambda r: (r.get("event_date") or "", r.get("event_type") or ""))
+    return edges, rows, listing
+
+
+# --------------------------------------------------------------------------
 # derived firm-firm layers
 # --------------------------------------------------------------------------
 
@@ -303,11 +420,23 @@ def expand_panel(edges: list[dict], max_carry: int = 3) -> list[dict]:
 # main
 # --------------------------------------------------------------------------
 
+MOVEMENT_FIELDS = [
+    "movement_id", "event_type", "is_result", "event_date", "event_year",
+    "event_date_source", "target_id", "target_name", "target_name_raw",
+    "price_tnd", "pct_stated", "pct_max_stated", "shares_sought",
+    "shares_acquired", "shares_stated", "capital_before_tnd", "capital_after_tnd",
+    "capital_stated_tnd", "capital_method", "new_shares", "listing_event",
+    "delisting_date", "market", "isin", "ticker", "open_date", "close_date",
+    "decision_date", "doc_node_key", "doc_type", "doc_title", "doc_url",
+    "doc_sha256", "filing_date",
+]
+
 EDGE_FIELDS = [
     "layer", "year", "obs_date", "source_id", "source_name", "source_type",
     "target_id", "target_name", "target_type", "weight", "directed", "role",
     "mandate_start", "mandate_end", "n_shares", "seat_holder_type", "represents",
-    "shared_actors", "doc_node_key", "doc_type", "doc_url", "page", "doc_sha256",
+    "shared_actors", "event_type", "pct_stated", "price_tnd",
+    "doc_node_key", "doc_type", "doc_url", "page", "doc_sha256",
 ]
 
 
@@ -322,6 +451,8 @@ def main() -> None:
     seed_evidence(res)
     log.info("pass 2: resolving entities and building edges")
     edges, listed = build_edges(res)
+    movement_edges, movement_rows, listing_events = build_movement_edges(res)
+    edges += movement_edges
     derived = derive_firm_layers(edges)
     all_edges = edges + derived
 
@@ -351,7 +482,18 @@ def main() -> None:
     all_edges.sort(key=lambda e: (e["layer"], e["year"] or 0, e["source_id"], e["target_id"]))
     write_csv(PROCESSED / "multiplex_edges_observed.csv.gz", all_edges, EDGE_FIELDS)
 
-    panel = expand_panel(all_edges, max_carry=args.max_carry)
+    # Movements are dated events, not states: carrying a tender offer forward
+    # would assert an offer that was never made, so they are excluded from the
+    # panel expansion and remain in the observed edge list only.
+    write_csv(PROCESSED / "movements.csv", movement_rows, MOVEMENT_FIELDS)
+    write_csv(PROCESSED / "firm_listing_events.csv",
+              sorted(listing_events, key=lambda r: (r.get("event_date") or "")),
+              ["entity_id", "firm_name", "listing_event", "event_date", "event_year",
+               "market", "isin", "ticker", "doc_node_key", "doc_url"])
+
+    panel = expand_panel([e for e in all_edges
+                          if e["layer"] not in ("tender_offer", "concert_party")],
+                         max_carry=args.max_carry)
     panel.sort(key=lambda e: (e["layer"], e["panel_year"], e["source_id"], e["target_id"]))
     write_csv(PROCESSED / "multiplex_edges_panel.csv.gz", panel,
               ["panel_year", "observation_type"] + EDGE_FIELDS)

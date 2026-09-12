@@ -138,6 +138,41 @@ def run_checks() -> list[dict]:
     add("INFO", "bvmt_linkage",
         f"{len(listed)} entities matched to a BVMT-listed security")
 
+    # --- movements ---------------------------------------------------------
+    movements = _read(PROCESSED / "movements.csv")
+    if movements:
+        add("INFO", "movements", f"{len(movements)} dated operations extracted")
+        untargeted = [m for m in movements if not m.get("target_id")]
+        if untargeted:
+            add("WARN", "movements_without_target",
+                "operations whose company could not be resolved; they carry no "
+                "edge and no listing event", len(untargeted))
+        by_src = Counter(m.get("event_date_source") for m in movements)
+        add("INFO", "movement_date_precision",
+            ", ".join(f"{k}={v}" for k, v in by_src.most_common()))
+        filing_dated = by_src.get("filing_date", 0)
+        if filing_dated:
+            add("WARN", "movements_dated_by_filing",
+                "operations dated only by when the notice was filed, which is an "
+                "upper bound on when they happened", filing_dated)
+        # A capital increase should increase capital.
+        shrank = [
+            m for m in movements
+            if m.get("event_type") == "augmentation_capital"
+            and _f(m.get("capital_before_tnd")) and _f(m.get("capital_after_tnd"))
+            and _f(m["capital_after_tnd"]) <= _f(m["capital_before_tnd"])
+        ]
+        if shrank:
+            add("WARN", "capital_increase_not_increasing",
+                "capital increases whose stated after-value does not exceed the "
+                "before-value; check the notice", len(shrank))
+
+    listings = _read(PROCESSED / "firm_listing_events.csv")
+    if listings:
+        add("INFO", "listing_events",
+            ", ".join(f"{k}={v}" for k, v in
+                      Counter(r["listing_event"] for r in listings).most_common()))
+
     # --- temporal coverage -------------------------------------------------
     years = sorted({int(e["year"]) for e in edges if (e.get("year") or "").isdigit()})
     if years:

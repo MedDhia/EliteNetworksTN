@@ -266,13 +266,15 @@ Why the CMF filings:
 - **directors declare ties beyond the cote.** The mandates section names
   unlisted companies too, so the network reaches into the private economy that
   no listing-based source sees;
-- **movements are dated.** Tender offers, capital increases and
-  threshold-crossing declarations record stake changes to the day. They are
-  harvested into the registry; parsing them is the obvious next extension.
+- **movements are dated.** Tender offers and their result notices, capital
+  increases, admissions and withdrawals record changes to the day. 400 of them
+  are parsed into `movements.csv`, which is what lets ownership be read as
+  change rather than as a series of stills.
 
-Current build: **213 registration documents → 2,764 entities → 11,982 observed
-ties across nine layers**, 1994–2026, with 75 entities linked to a BVMT security
-by ISIN. Ownership weights are percentages of capital as reported; interlock
+Current build: **213 registration documents and 400 operation notices → 2,927
+entities → 12,111 observed ties across eleven layers**, 1994–2026, with 75
+entities linked to a BVMT security by ISIN, plus 400 dated operations and 29
+listing events. Ownership weights are percentages of capital as reported; interlock
 weights are counts of shared directors. Coverage thins sharply before ~2008 —
 treat the usable panel as roughly 2008–2026 and check
 `data/processed/bourse/layer_year_coverage.csv` before reading any time trend,
@@ -286,7 +288,7 @@ the panel is an assumption rather than an observation.
 
 ```bash
 make bourse          # spine -> crawl -> resolve -> fetch -> extract
-                     # -> build -> export -> validate
+                     # -> movements -> build -> export -> validate
 make bourse-test
 ```
 
