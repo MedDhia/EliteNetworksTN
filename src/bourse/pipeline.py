@@ -12,6 +12,7 @@ import argparse
 import multiprocessing as mp
 import re
 import traceback
+from collections import Counter
 
 import pdfplumber
 
@@ -56,6 +57,37 @@ def issuer_from_title(title: str, issuer_hint: str | None = None) -> tuple[str |
     return name, year
 
 
+# "Rapport Annuel 2015", "exercice clos le 31 decembre 2015", "exercice 2015",
+# and the year the CMF puts in the file name ("rapport_biat_2025.pdf").
+_REPORT_YEAR_TEXT = re.compile(
+    r"(?:rapport\s+annuel\s+(?:de\s+l['’]exercice\s+)?|"
+    r"exercice\s+(?:clos\s+le\s+\d{1,2}\s+\w+\s+)?|"
+    r"au\s+31[/\s.-]*(?:12|d[ée]cembre)[/\s.-]*)((?:19|20)\d{2})",
+    re.I,
+)
+_REPORT_YEAR_FILE = re.compile(r"((?:19|20)\d{2})(?=[^0-9]*\.pdf$)", re.I)
+
+
+def detect_report_year(text: str, local_path: str) -> int | None:
+    """Year an annual report covers, which is not the year it was filed.
+
+    Reports are published in the year after the one they describe, so the
+    filing date is systematically one year late. The document states its own
+    period, and the CMF puts the year in the file name; both are used.
+    """
+    head = re.sub(r"\s+", " ", text[:6000])
+    years = [int(m.group(1)) for m in _REPORT_YEAR_TEXT.finditer(head)]
+    years = [y for y in years if 1990 <= y <= 2035]
+    if years:
+        # The reporting year recurs throughout the front matter; the most
+        # frequent mention is more reliable than the first.
+        return Counter(years).most_common(1)[0][0]
+    m = _REPORT_YEAR_FILE.search(local_path or "")
+    if m and 1990 <= int(m.group(1)) <= 2035:
+        return int(m.group(1))
+    return None
+
+
 def process_pdf(entry: dict, max_pages: int | None = None) -> dict[str, list[dict]]:
     path = PDF_DIR / entry["local_path"]
     issuer, ref_year = issuer_from_title(entry.get("title", ""), entry.get("issuer_hint"))
@@ -69,6 +101,9 @@ def process_pdf(entry: dict, max_pages: int | None = None) -> dict[str, list[dic
     with pdfplumber.open(path) as pdf:
         tables = extract_tables(pdf, max_pages=max_pages)
         n_pages = len(pdf.pages)
+        if entry.get("doc_type") == "rapport_annuel" and ref_year is None:
+            head = "\n".join((p.extract_text() or "") for p in pdf.pages[:6])
+            ref_year = detect_report_year(head, entry.get("local_path", ""))
     out = parse_all(tables, doc)
     for kind, rows in out.items():
         for r in rows:
@@ -110,6 +145,13 @@ def main() -> None:
     ap.add_argument("--doc-types", nargs="*", default=["document_de_reference"])
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--max-pages", type=int, default=None)
+    ap.add_argument("--year-min", type=int, default=None,
+                    help="only documents whose file name carries a year >= this")
+    ap.add_argument("--year-max", type=int, default=None,
+                    help="only documents whose file name carries a year <= this")
+    ap.add_argument("--skip-processed", action="store_true",
+                    help="skip documents already present in the extraction log, "
+                         "so a long corpus can be worked through in batches")
     args = ap.parse_args()
 
     entries = [
@@ -117,6 +159,26 @@ def main() -> None:
         if e.get("status") == "ok"
         and (not args.doc_types or e.get("doc_type") in args.doc_types)
     ]
+    if args.year_min or args.year_max:
+        # The CMF puts the reporting year in the file name, which lets a
+        # particular period be worked through first - useful when the corpus is
+        # larger than one sitting and some years matter more than others.
+        lo = args.year_min or 0
+        hi = args.year_max or 9999
+
+        def _yr(e):
+            ys = [int(y) for y in re.findall(r"(?:19|20)\d{2}", e.get("local_path", ""))
+                  if 1990 <= int(y) <= 2035]
+            return max(ys) if ys else None
+
+        entries = [e for e in entries if (_yr(e) is not None and lo <= _yr(e) <= hi)]
+        log.info("restricted to file-name years %s-%s: %d documents", lo, hi, len(entries))
+
+    if args.skip_processed:
+        done = {r.get("node_key") for r in read_jsonl(RECORDS_DIR / "extraction_log.jsonl.gz")}
+        before = len(entries)
+        entries = [e for e in entries if e["node_key"] not in done]
+        log.info("%d of %d documents already extracted", before - len(entries), before)
     if args.limit:
         entries = entries[: args.limit]
     log.info("extracting from %d documents", len(entries))
@@ -148,10 +210,25 @@ def main() -> None:
             log.info("  %d/%d documents", i, len(entries))
 
     RECORDS_DIR.mkdir(parents=True, exist_ok=True)
-    for kind, rows in buckets.items():
+    # Merge rather than overwrite. Running this stage for one document type
+    # must not wipe the records extracted from another: the record files are
+    # shared across document types, and a plain write would silently drop
+    # everything the previous run produced.
+    processed_keys = {e["node_key"] for e in entries}
+    for kind in set(buckets) | {"blockholders", "director_holdings",
+                                "capital_structure", "subsidiaries", "board",
+                                "interlocks", "executives", "_meta"}:
         name = "extraction_log" if kind == "_meta" else kind
-        n = write_jsonl(RECORDS_DIR / f"{name}.jsonl.gz", rows)
-        log.info("%-20s %6d rows", name, n)
+        path = RECORDS_DIR / f"{name}.jsonl.gz"
+        kept = [r for r in read_jsonl(path)
+                if r.get("node_key" if kind == "_meta" else "doc_node_key")
+                not in processed_keys]
+        rows = kept + buckets.get(kind, [])
+        if not rows:
+            continue
+        n = write_jsonl(path, rows)
+        log.info("%-20s %6d rows (%d new, %d kept)",
+                 name, n, len(buckets.get(kind, [])), len(kept))
     if failures:
         write_jsonl(RECORDS_DIR / "failures.jsonl.gz", failures)
         log.warning("%d documents failed to parse (see failures.jsonl)", len(failures))

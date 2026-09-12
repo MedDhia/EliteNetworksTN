@@ -76,9 +76,11 @@ bourse-fetch:    ## download registration documents and movement notices
 	$(BPY) -m bourse.fetch_docs --doc-types offre_publique \
 	        operation_sur_capital augmentation_de_capital
 	$(BPY) -m bourse.fetch_docs --doc-types resolutions_ag
+	$(BPY) -m bourse.fetch_docs --doc-types rapport_annuel
 
 bourse-extract:  ## parse tables into typed records (slow; parallel)
 	$(BPY) -m bourse.pipeline --doc-types document_de_reference
+	$(BPY) -m bourse.pipeline --doc-types rapport_annuel --skip-processed
 
 bourse-movements: ## parse dated operations out of CMF notices
 	$(BPY) -m bourse.movements_pipeline

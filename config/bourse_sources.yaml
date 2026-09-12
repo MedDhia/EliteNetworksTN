@@ -65,8 +65,16 @@ sections:
   - key: rapport_annuel_societe
     slug: "rapports-annuels-des-soci-t-s"
     doc_type: "rapport_annuel"
-    priority: 2
-    note: Company annual reports.
+    priority: 1
+    note: >-
+      Company annual reports. Filed by far more issuers than file a registration
+      document, so they are the second source of board and blockholder tables.
+      Their tables are not CMF-standardised, which is why the extractor keys on
+      table headers rather than section numbering. Two cautions: a report is
+      filed the year *after* the year it covers, so the reference year has to be
+      read out of the document (see `detect_report_year`); and reports for
+      financial years up to 2011 are scanned images with no text layer, so they
+      yield nothing without OCR.
 
   - key: convocation_assemblee
     slug: "convocation-des-assembl-es"

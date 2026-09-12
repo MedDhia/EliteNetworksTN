@@ -148,6 +148,19 @@ def crawl_listings(
     return out
 
 
+def parse_node_date(html: str) -> str | None:
+    """Read the publication date a filing's own page carries.
+
+    Some sections list filings without a date - the annual reports are titled
+    only "Rapport Annuel" - so the node page is the one place the date appears.
+    """
+    soup = BeautifulSoup(html, "lxml")
+    span = soup.find("span", class_="date-display-single")
+    if span and span.get("content"):
+        return str(span["content"])[:10]
+    return None
+
+
 def parse_node_for_pdf(html: str, base_url: str) -> list[str]:
     """Return PDF URLs attached to a filing node, excluding site-wide boilerplate."""
     soup = BeautifulSoup(html, "lxml")
@@ -179,6 +192,11 @@ def resolve_pdfs(fetcher: Fetcher, cfg: dict, records: list[dict], limit: int | 
     for i, rec in enumerate(todo, 1):
         html = fetcher.get(rec["node_url"])
         rec["pdf_urls"] = parse_node_for_pdf(html, base) if html else []
+        if html and not rec.get("filing_date"):
+            node_date = parse_node_date(html)
+            if node_date:
+                rec["filing_date"] = node_date
+                rec["filing_date_source"] = "node_page"
         rec["resolved_at"] = now_iso()
         if i % 50 == 0:
             write_jsonl(REGISTRY, records)

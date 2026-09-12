@@ -46,7 +46,7 @@ observation per dyad-year is wanted.
 | Variable | Type | Description |
 |---|---|---|
 | `layer` | factor | Which relation. See §4. |
-| `year` | int | Year the tie is **observed to hold**: the year of the date the document states it describes (`as_of`), else the filing date. |
+| `year` | int | Year the tie is **observed to hold**, taken from the first of these the source supplies: the date the table states it describes (`as_of`); the financial year the document covers; the filing date. The middle step matters for annual reports, which are published the year *after* the year they report on — dating them by filing would shift every tie in them one year late. |
 | `obs_date` | date | The underlying date, at day resolution where stated. |
 | `source_id`, `target_id` | string | Endpoints (`entity_id`). For directed layers, source → target reads "holds a stake in" / "is parent of". |
 | `source_name`, `target_name` | string | Canonical names, denormalised for convenience. |
@@ -249,6 +249,30 @@ These are properties of the sources, and should be stated in any write-up.
 10. **Board coverage skews to investment funds.** SICAVs file diligently;
     operating companies less so. 483 of 606 rows concern operating companies,
     across 78 firms.
+
+11. **Annual reports extend the series forward, not backward.** They are the
+    second source of board and blockholder tables, and they widen the set of
+    firms observed considerably, because many more issuers file an annual report
+    than file a registration document. They do **not** repair the 2012–2017 hole
+    in limitation 9, and it is worth being explicit about why, because the
+    natural assumption is that they would.
+
+    The CMF's annual-report section holds nothing at all for financial years
+    2012, 2013 and 2014. For 2004–2011 it holds 165 reports, of which 164 are
+    scanned page images carrying no text layer: an automated reader returns
+    literally nothing from them. Born-digital filing arrives across 2016–2018
+    (62% of FY2016 reports are still images, 50% of FY2017, 11% of FY2018, and
+    under 6% from FY2019 on). The rows this source contributes therefore land
+    overwhelmingly in 2018 and later.
+
+    Making the older reports usable means OCR, not a better parser. That is a
+    real and worthwhile extension — Tesseract with the `fra` model, then table
+    reconstruction from OCR word boxes — but it would produce data of a
+    different and lower reliability class than the rest of this dataset, so it
+    is left undone rather than mixed in silently.
+
+    For the 2012–2017 window the `board_seat` and `ownership` layers, sourced
+    from registration documents, remain the only coverage.
 
    Two firm-years still show declared stakes above 100% (see
    `validation_report.md`). Both trace to inconsistencies in the filings

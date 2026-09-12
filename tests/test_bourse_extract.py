@@ -427,6 +427,34 @@ for junk in ["décide", "de renouveler", "arrive à échéance", "Désigner",
         failures.append(f"fragment accepted as entity: {junk!r}")
 
 
+# --- annual-report reference year -----------------------------------------
+# A report is filed the year after the year it covers, so reading the covered
+# year out of the document is what keeps its ties from being dated a year late.
+from bourse.build_dataset import _year  # noqa: E402
+from bourse.pipeline import detect_report_year  # noqa: E402
+
+check("report year from the title line",
+      detect_report_year("RAPPORT ANNUEL 2019\nSociété X", ""), 2019)
+check("report year from the closing date",
+      detect_report_year("États financiers de l'exercice clos le 31 décembre 2015", ""), 2015)
+check("report year from a balance-sheet date",
+      detect_report_year("Bilan arrêté au 31/12/2021", ""), 2021)
+check("report year from the file name when the text is silent",
+      detect_report_year("", "cmf_pdfs/rapport_biat_2020.pdf"), 2020)
+check("no year invented", detect_report_year("", "cmf_pdfs/rapport.pdf"), None)
+check("the most-mentioned year wins over the first",
+      detect_report_year("Rapport annuel 2018 - comparatif. Exercice 2019. "
+                         "Rapport annuel 2019. Exercice clos 2019", ""), 2019)
+
+# _year's precedence is the point: the reference year must beat the filing date.
+check("reference year beats the filing date",
+      _year({"issuer_ref_year": 2019, "filing_date": "2020-06-30"}), 2019)
+check("as_of beats the reference year",
+      _year({"as_of": "2018-12-31", "issuer_ref_year": 2019}), 2018)
+check("filing date is the last resort",
+      _year({"filing_date": "2020-06-30"}), 2020)
+
+
 if __name__ == "__main__":
     if failures:
         print(f"FAILED ({len(failures)}):")

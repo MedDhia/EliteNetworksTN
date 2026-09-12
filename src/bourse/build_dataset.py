@@ -51,15 +51,27 @@ EVIDENCE_COLUMNS = [
 
 
 def _year(rec: dict) -> int | None:
-    """Year the record describes: the stated 'as of' date, else the filing."""
-    for field in ("as_of", "filing_date"):
-        v = rec.get(field)
-        if v and len(str(v)) >= 4 and str(v)[:4].isdigit():
-            y = int(str(v)[:4])
-            if 1990 <= y <= 2035:
-                return y
+    """Year the record describes.
+
+    Order matters. A stated "as of" date is best. The document's own reference
+    year comes next, and must beat the filing date: an annual report is filed
+    the year *after* the year it reports on, so falling back to the filing date
+    would date every tie in it one year late.
+    """
+    v = rec.get("as_of")
+    if v and len(str(v)) >= 4 and str(v)[:4].isdigit():
+        y = int(str(v)[:4])
+        if 1990 <= y <= 2035:
+            return y
     y = rec.get("issuer_ref_year")
-    return int(y) if y else None
+    if y and 1990 <= int(y) <= 2035:
+        return int(y)
+    v = rec.get("filing_date")
+    if v and len(str(v)) >= 4 and str(v)[:4].isdigit():
+        y = int(str(v)[:4])
+        if 1990 <= y <= 2035:
+            return y
+    return None
 
 
 def _obs_date(rec: dict) -> str | None:

@@ -34,7 +34,7 @@ public à l'épargne") files with it, and the filings are published openly.
 | Autres opérations sur capital | `operation_sur_capital` | Threshold-crossing declarations — the cleanest dated record of stake changes. |
 | Augmentations de capital réalisées | `augmentation_de_capital` | Completed capital increases; dilution events. |
 | Résolutions adoptées | `resolutions_ag` | Adopted AGM resolutions; dated board appointments and renewals. |
-| Rapports annuels des sociétés | `rapport_annuel` | Company annual reports. |
+| Rapports annuels des sociétés | `rapport_annuel` | **The second core source.** Board membership and blockholder tables for the many issuers that never file a registration document. Usable only from financial year 2012 onward — see below. |
 | Convocations des assemblées | `convocation_ag` | AGM agendas; signal pending board or capital changes. |
 | Prospectus visés | `prospectus` | Pre-IPO ownership structure. |
 | Communiqués des sociétés | `communique_societe` | Company press releases filed with the regulator. |
@@ -58,6 +58,43 @@ tables appear in every issuer's filing:
 Section *numbering* drifts between issuers and years, so the extractor keys on
 table headers and binds each table to the heading printed directly above it,
 rather than trusting the numbering. See `src/bourse/extract/tables.py`.
+
+### Annual reports, and why they stop at 2012
+
+Registration documents are the richest filings but the rarest: 213 of them
+cover a handful of issuers. Annual reports are filed by many more companies,
+and carry the same two tables the network needs — the board membership list and
+the list of shareholders above a disclosure threshold. They are parsed with the
+same extractor, because that extractor already keys on table *headers* rather
+than on section numbering.
+
+Two things about them are not obvious and both are handled in code:
+
+1. **A report is filed the year after the year it reports on.** Dating a row by
+   its filing date would shift every annual-report observation forward by one
+   year and put it out of step with the registration-document rows.
+   `pipeline.detect_report_year()` reads the covered year out of the document
+   text ("exercice clos le 31 décembre 2019", "au 31/12/2019") or, failing that,
+   out of the file name, and `build_dataset._year()` prefers it over the filing
+   date.
+2. **Older reports are scanned paper.** The CMF's archive of annual reports is
+   not digital-native throughout. Of the 165 reports held for financial years
+   2004 through 2011, 164 are page images with no text layer at all, so
+   `pdfplumber` returns nothing from them. The transition to born-digital PDFs
+   happens across 2016–2018:
+
+   | FY | 2004–11 | 2015 | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022–25 |
+   |---|---|---|---|---|---|---|---|---|---|
+   | Reports held | 165 | 7 | 85 | 58 | 61 | 83 | 53 | 59 | 186 |
+   | No text layer | **99%** | 86% | 62% | 50% | 11% | 5% | 4% | 3% | 4% |
+
+   (757 of the 780 reports state a financial year we can read; the section holds
+   nothing at all for FY 2012, 2013 or 2014.)
+
+   This is a property of the archive, not of the parser. Recovering the pre-2012
+   reports needs OCR (Tesseract with `fra`, plus table reconstruction from the
+   OCR word boxes), which is a separate piece of work and is not attempted here.
+   **Annual reports therefore extend the dataset forward, not backward.**
 
 ## Provenance guarantees
 
