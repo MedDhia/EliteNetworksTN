@@ -290,6 +290,12 @@ make bourse          # spine -> crawl -> resolve -> fetch -> extract
 make bourse-test
 ```
 
+CI (`.github/workflows/ci.yml`) runs the test suite on Python 3.11 and 3.12, and
+rebuilds this dataset from the committed extraction records to check that the
+committed tables are byte-identical to what the code produces. The data files
+are the deliverable here, so a change that silently alters thousands of rows
+without touching a test fails the build rather than merging unnoticed.
+
 ```r
 source("R/load_bourse_multiplex.R")
 mx <- load_bourse_multiplex()     # observed ties only

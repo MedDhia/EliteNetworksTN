@@ -1,7 +1,7 @@
 """Unit tests for the parsing rules that silently corrupt data when wrong.
 
-Run with:  PYTHONPATH=src .venv/bin/python -m pytest tests -q
-       or: PYTHONPATH=src .venv/bin/python tests/test_bourse_extract.py
+Run with:  pytest tests/ -q                       (the whole suite, as CI does)
+       or: PYTHONPATH=src python tests/test_bourse_extract.py   (this file alone)
 """
 
 from __future__ import annotations
@@ -179,9 +179,23 @@ r3.add_evidence("Total", "firm")
 check("aggregate protected", r3.resolve("Total")[1], "aggregate")
 
 
-if failures:
-    print(f"FAILED ({len(failures)}):")
-    for f in failures:
-        print("  -", f)
-    raise SystemExit(1)
-print("all extraction/entity tests passed")
+def test_parsing_and_entity_rules():
+    """Pytest entry point.
+
+    The checks above run at import, accumulating into ``failures``; this exposes
+    them to pytest as one case. Without it the module contributes no test cases,
+    a regression surfaces only as a collection error, and a green `pytest -q`
+    says nothing about the bourse parsers.
+    """
+    assert not failures, f"{len(failures)} check(s) failed:\n" + "\n".join(
+        f"  - {f}" for f in failures
+    )
+
+
+if __name__ == "__main__":
+    if failures:
+        print(f"FAILED ({len(failures)}):")
+        for f in failures:
+            print("  -", f)
+        raise SystemExit(1)
+    print("all extraction/entity tests passed")

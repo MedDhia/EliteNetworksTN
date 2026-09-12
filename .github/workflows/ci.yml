@@ -1,0 +1,103 @@
+name: CI
+
+# Two things are worth catching automatically in a dataset repository:
+#
+#  1. the parsers still read the sources the way the tests say they do, and
+#  2. the committed tables are still the ones the committed inputs and code
+#     produce.
+#
+# The second matters more than it sounds. The data files here are the
+# deliverable, and a subtle extraction change can alter thousands of rows
+# without touching a test. Rebuilding and diffing makes that impossible to
+# merge unnoticed: either the tables are regenerated in the same commit, or CI
+# says they drifted.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+# A new push supersedes an in-flight run on the same ref.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: tests (py${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+
+      # Runtime deps are split across two files: pyproject carries the JORT
+      # package's own (httpx, rapidfuzz), requirements.txt the rest including
+      # the bourse component's PDF stack. Both are needed to import every
+      # module the test suite touches.
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]" -r requirements.txt
+
+      - name: Run test suite
+        run: pytest tests/ -q
+
+  bourse-dataset:
+    name: bourse dataset rebuilds reproducibly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]" -r requirements.txt
+
+      # Rebuilds entities and edge lists from the committed extraction records
+      # and the committed BVMT roster. No network access and no PDFs needed:
+      # the slow crawl/fetch/extract stages are not re-run here.
+      - name: Rebuild the dataset
+        run: make bourse-build
+
+      # Fails the build on any ERROR-level finding (referential integrity,
+      # self-loops, ownership weights outside (0, 100]).
+      - name: Validate
+        run: make bourse-validate
+
+      - name: Committed tables match the rebuild
+        run: |
+          if ! git diff --exit-code -- data/processed/bourse/; then
+            echo "::error::Rebuilding produced different tables than those committed."
+            echo "Run 'make bourse-build bourse-validate' and commit the result."
+            exit 1
+          fi
+
+      # Exercises the muxViz and GraphML writers. Their output is git-ignored,
+      # so this is a smoke test for the export path rather than a diff check.
+      - name: Export networks
+        run: make bourse-export
+
+      - name: Coverage summary
+        if: always()
+        run: |
+          echo "### Bourse dataset" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          head -n 20 data/processed/bourse/validation_report.md >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
