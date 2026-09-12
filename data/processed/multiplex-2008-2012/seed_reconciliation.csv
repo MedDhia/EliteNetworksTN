@@ -1,0 +1,9 @@
+item,count
+input_data_rows,32742
+rows_parsed_ok,32741
+rows_quarantined,1
+duplicate_edges_collapsed,458
+edges_emitted,32283
+nodes_emitted,29171
+self_loops_flagged,23
+former_edges,566

@@ -12,3 +12,25 @@ data/interim/
 node_modules/
 package.json
 package-lock.json
+
+# --- multiplex-2008-2012 build ---------------------------------------------
+# The manifest is kept: it carries a sha256 per mirrored issue, which is what
+# makes the raw layer verifiable without redistributing it.
+!data/raw/manifest.csv
+
+# Python tooling for this build
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+*.tmp
+.DS_Store
+
+# Large derived artifacts. Committed gzipped instead (see *.gz alongside), or
+# rebuilt from the committed CSVs with `make extract && make export`.
+data/processed/multiplex-2008-2012/events.csv
+data/processed/multiplex-2008-2012/blocks_index.csv
+data/processed/multiplex-2008-2012/resolution.csv
+data/processed/multiplex-2008-2012/panel_edges_monthly.csv
+data/processed/multiplex-2008-2012/gazette_only_persons.csv
+data/processed/multiplex-2008-2012/elitenet.sqlite
+data/processed/multiplex-2008-2012/exports/elite_network_full.gexf

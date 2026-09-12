@@ -179,3 +179,44 @@ Code in this repository is offered for research use. The underlying gazette
 text is a public record of the Tunisian state, mirrored by jort.tn; cite the
 JORT issue and page (every row carries `issue_key`, `page` and `pdf_url`) rather
 than this repository when quoting the source.
+
+---
+
+## A second build: firms, the state, and a curated elite network, 2008–2012
+
+The build described above works from the *Journal Officiel* proper and covers
+the bureaucratic state across 1957–2026. A second, separate build sits
+alongside it under `data/processed/multiplex-2008-2012/`. It answers a
+different question and draws on sources the first build does not touch:
+
+- it starts from a **curated multiplex elite network** of 32,741 ties over
+  29,930 nodes — corporate officers and shareholders, cabinets, party organs,
+  parliamentary blocs, civil-society bodies, kinship and pedagogical lineage —
+  which has no time dimension of its own, and dates it against the gazette;
+- it adds the ***annonces légales*** series, the corporate register, which the
+  first build does not use at all: 172,054 announcement blocks yielding
+  company formations, officer appointments and resignations, share transfers,
+  capital changes, dissolutions, and association registrations;
+- it is scoped to **2008–2012**, straddling the January 2011 rupture, at both
+  yearly and monthly resolution.
+
+Current build: 1,271 issues → 205,755 blocks → 168,789 dated events → 3,086
+dated tie spells plus 27,585 undated seed ties, and 48,176 act citations.
+87% of the hundred highest-degree seed elites acquire at least one dated event.
+
+Read `docs/CODEBOOK-multiplex-2008-2012.md` for variable definitions and
+`docs/LIMITATIONS-multiplex-2008-2012.md` before using it; in particular, no
+precision or recall estimate exists for it yet, so event counts are lower
+bounds of unknown tightness.
+
+```bash
+make all        # seed -> mirror -> calendar -> segment -> extract -> resolve
+                # -> spells -> export -> codebook -> validate
+make test
+```
+
+Code for this build is `src/elitenet/` (the first build's is `src/eltn/`), and
+the two output trees are kept apart so neither overwrites the other. Whether
+they should eventually be unified — sharing one person registry and one
+organisation registry across 1957–2026 — is an open question, not a settled
+design.

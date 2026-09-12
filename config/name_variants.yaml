@@ -1,0 +1,128 @@
+# Name normalisation rules for resolving gazette mentions to seed persons.
+# The seed sheet stores ASCII uppercase with hyphenated particles (HATEM BEN-SALEM);
+# the gazette prints mixed case with spaces and accents (Hatem Ben Salem).
+
+# Particles that the seed sheet hyphenates and the gazette spaces or fuses.
+# Normalisation collapses all three spellings to a single token.
+particles:
+  - BEN
+  - BENT
+  - EL
+  - AL
+  - ABD
+  - ABOU
+  - ABU
+  - BOU
+  - OULD
+  - SIDI
+  - HAJ
+  - HADJ
+
+# Honorifics and titles stripped before comparison.
+honorifics:
+  - MONSIEUR
+  - MADAME
+  - MADEMOISELLE
+  - MR
+  - MME
+  - MLLE
+  - M
+  - DOCTEUR
+  - DR
+  - MAITRE
+  - ME
+  - PROFESSEUR
+  - PR
+
+# Marital-name markers: text after these goes to `maiden_or_married_name`,
+# never silently merged into the primary name.
+spouse_markers:
+  - EPOUSE
+  - EP
+  - NEE
+  - VEUVE
+  - VVE
+
+# Transliteration equivalence classes, used ONLY in the matching/scoring layer
+# (blocking and name similarity) -- never in node-id generation. Folding these
+# into an identifier is irreversible and over-merges: MOHAMED DRISS and
+# MHAMMED DRISS are plausibly different people, and the resolver should weigh
+# that as evidence rather than decide it silently.
+equivalence_classes:
+  - [MOHAMED, MOHAMMED, MUHAMMAD, MOHAMAD]
+  - [MHAMED, MHAMMED, M-HAMED]   # kept apart from MOHAMED deliberately
+  - [FAYCEL, FAYSAL, FAICAL, FAISAL, FAYCAL, FEYCAL]
+  - [CHAKIB, CHEKIB, CHAKIP, CHEQUIB]
+  - [TAHER, TAHAR, THAHER, TAHIR]
+  - [HEDI, HEDHI, ELHEDI]
+  - [HADI, HADHI]                # kept apart from HEDI deliberately
+  - [SLIM, SELIM, SALIM]
+  - [MONCEF, MONDHER-MONCEF, MUNCEF]
+  - [ABDELAZIZ, ABDEL-AZIZ, ABD-ELAZIZ]
+  - [ABDELWAHEB, ABDELWAHAB, ABDEL-WAHAB]
+  - [NEJIB, NAJIB, NEJIBB]
+  - [HABIB, LHABIB, ELHABIB]
+  - [KHALED, KHALID]
+  - [SAMI, SAMY]
+  - [RIDHA, REDHA, RIDA, REDA]
+  - [NOUREDDINE, NOUR-EDDINE, NUREDDINE]
+  - [SALAHEDDINE, SALAH-EDDINE, SLAHEDDINE]
+  - [YOUSSEF, YOUSSEPH, YUSSEF, YOUSEF]
+  - [AHMED, AHMAD]
+  - [MAHMOUD, MAHMOUDH, MAHMUD]
+  - [ZOUARI, ZWARI]
+  - [BOURICHA, BURICHA]
+  - [HAMMAMI, HAMAMI]
+  - [KAMMOUN, KAMOUN]
+  - [ELLOUMI, LOUMI, EL-LOUMI]
+  - [MABROUK, MEBROUK]
+  - [CHAABANE, CHABANE, CHAABAN]
+  - [SELLAMI, SLAMI, SALAMI]
+  - [TRABELSI, TRABELSSI]
+  - [BEN-AYED, BENAYED]
+  - [ABDELKEFI, ABDELKAFI]
+
+# Character-level OCR confusions applied when an exact/fuzzy match fails.
+# Applied as a repair pass, never as the primary key.
+ocr_confusions:
+  - ["1", "L"]
+  - ["0", "O"]
+  - ["5", "S"]
+  - ["8", "B"]
+  - ["RN", "M"]
+  - ["II", "U"]
+  - ["CL", "D"]
+  - ["VV", "W"]
+
+# Corporate legal-form tokens stripped from organisation names before matching.
+org_legal_forms:
+  # Generic form markers only. Deliberately EXCLUDES SICAR / SICAF / SICAV /
+  # HOLDING / GROUPE / COMPAGNIE: in Tunisian corporate practice these designate
+  # genuinely different legal vehicles that frequently share a brand name
+  # (SICAR AVENIR, SICAF AVENIR and SICAV AVENIR are three distinct entities),
+  # so stripping them silently merges separate firms.
+  - SOCIETE
+  - STE
+  - SA
+  - S.A
+  - SARL
+  - S.A.R.L
+  - SUARL
+  - S.U.A.R.L
+  - ETABLISSEMENT
+  - ETABLISSEMENTS
+  - ENTREPRISE
+  - LA
+  - LE
+  - LES
+  - DE
+  - DU
+  - DES
+  - ET
+
+# Orthographic rules safe to apply in node-id generation: these are spelling
+# variants of one string, not different names. Doubled-consonant collapse makes
+# KAMMOUN == KAMOUN, HAMMAMI == HAMAMI.
+identity_orthography:
+  collapse_doubled_consonants: true
+  collapse_doubled_vowels: false      # AA/OO can be meaningful (NAAMA, BOO-)

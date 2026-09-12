@@ -1,0 +1,141 @@
+# Role surface form (lowercased, accent-stripped) -> canonical role.
+# Longest-match-first is applied by the extractor, so order here is irrelevant.
+
+canonical_roles:
+  # --- corporate ---
+  gerant:                  "Manager of a SARL/SUARL (gerant)"
+  cogerant:                "Co-manager"
+  pdg:                     "President-directeur general (combined chair+CEO)"
+  president_ca:            "President du conseil d'administration (chair, non-executive)"
+  dg:                      "Directeur general (CEO)"
+  dga:                     "Directeur general adjoint (deputy CEO)"
+  administrateur:          "Board member (administrateur)"
+  administrateur_delegue:  "Managing director on the board"
+  commissaire_aux_comptes: "Statutory auditor"
+  liquidateur:             "Liquidator"
+  fondateur:               "Founder named in a constitution act"
+  associe:                 "Partner/shareholder of a SARL"
+  actionnaire:             "Shareholder of a SA"
+  representant:            "Natural person representing a legal person"
+  # --- state ---
+  chef_du_gouvernement:    "Head of government / Premier ministre"
+  minister:                "Minister"
+  secretary_of_state:      "Secretaire d'Etat"
+  gouverneur:              "Regional governor"
+  director_general:        "Directeur general of a ministry or public body"
+  director:                "Directeur"
+  sous_directeur:          "Sous-directeur"
+  chef_de_service:         "Chef de service"
+  secretaire_general:      "Secretaire general"
+  chef_de_cabinet:         "Chef de cabinet"
+  conseiller:              "Conseiller"
+  president_public_body:   "President of a public establishment or authority"
+  # --- additional canonical roles needed to represent the seed sheet faithfully ---
+  ceo:                     "Chief executive as labelled CEO in the seed sheet (kept distinct from dg)"
+  chairman:                "Chairman as labelled in the seed sheet"
+  director:                "Director (generic, seed sheet DIRECTOR)"
+  country_manager:         "Country manager"
+  premier_responsable:     "Premier responsable (senior-most official, seed sheet label)"
+  commandant:              "Commandant"
+  accountant:              "Accountant"
+  owner:                   "Owner"
+  shareholder:             "Holder of equity, share size unknown"
+  funder:                  "Provider of funding"
+  member:                  "Member of a collegial body, party organ or bloc"
+  president:               "President of a body (seed sheet PRESIDENT)"
+  branch_of:               "Structural: an entity is a branch of another"
+  parent_of:               "Kinship: parent of"
+  sibling_of:              "Kinship: sibling of"
+  spouse_of:               "Kinship: spouse of"
+  student_of:              "Pedagogic lineage: was a student of"
+  # --- association / party ---
+  association_president:   "President of an association, party or union"
+  association_officer:     "Other named officer of an association"
+
+# Surface form -> canonical. Matched case- and accent-insensitively.
+surface_forms:
+  gerant: gerant
+  gerante: gerant
+  gerant unique: gerant
+  gerant associe: gerant
+  co-gerant: cogerant
+  cogerant: cogerant
+  president directeur general: pdg
+  president-directeur general: pdg
+  pdg: pdg
+  p.d.g: pdg
+  president du conseil d'administration: president_ca
+  presidente du conseil d'administration: president_ca
+  president du conseil: president_ca
+  directeur general: dg
+  directrice generale: dg
+  dg: dg
+  directeur general adjoint: dga
+  directrice generale adjointe: dga
+  dga: dga
+  administrateur: administrateur
+  administrateurs: administrateur
+  administratrice: administrateur
+  membre du conseil d'administration: administrateur
+  administrateur delegue: administrateur_delegue
+  commissaire aux comptes: commissaire_aux_comptes
+  commissaires aux comptes: commissaire_aux_comptes
+  liquidateur: liquidateur
+  fondateur: fondateur
+  associe: associe
+  associes: associe
+  actionnaire: actionnaire
+  chef du gouvernement: chef_du_gouvernement
+  premier ministre: chef_du_gouvernement
+  ministre: minister
+  secretaire d'etat: secretary_of_state
+  gouverneur: gouverneur
+  secretaire general: secretaire_general
+  sous-directeur: sous_directeur
+  sous directeur: sous_directeur
+  chef de service: chef_de_service
+  chef de cabinet: chef_de_cabinet
+  conseiller: conseiller
+  representant: representant
+  representante: representant
+  representants: representant
+  president: association_president
+
+# Roles only one person can hold at an organisation at a time.
+# Used by validation to detect overlapping spells that indicate a resolution error.
+single_holder_roles: [gerant, pdg, president_ca, dg, chef_du_gouvernement]
+
+# Seed-sheet EDGE label -> {tie_class, role_canonical, is_former}.
+# `is_former` is split out so a FORMER tie is the same role with a known-past flag,
+# not a separate role. tie_class groups ties into analytically distinct layers.
+seed_edge_map:
+  MANAGER:                 {tie_class: corporate_officer, role_canonical: gerant,               is_former: false}
+  FORMER MANAGER:          {tie_class: corporate_officer, role_canonical: gerant,               is_former: true}
+  GENERAL MANAGER:         {tie_class: corporate_officer, role_canonical: dg,                   is_former: false}
+  GENRAL MANAGER:          {tie_class: corporate_officer, role_canonical: dg,                   is_former: false}
+  FORMER GENERAL MANAGER:  {tie_class: corporate_officer, role_canonical: dg,                   is_former: true}
+  CEO:                     {tie_class: corporate_officer, role_canonical: ceo,                  is_former: false}
+  CHAIRMAN:                {tie_class: corporate_officer, role_canonical: chairman,             is_former: false}
+  FORMER CHAIRMAN:         {tie_class: corporate_officer, role_canonical: chairman,             is_former: true}
+  BOARD MEMBER:            {tie_class: corporate_officer, role_canonical: administrateur,       is_former: false}
+  FORMER BOARD MEMBER:     {tie_class: corporate_officer, role_canonical: administrateur,       is_former: true}
+  DIRECTOR:                {tie_class: corporate_officer, role_canonical: director,             is_former: false}
+  FORMER DIRECTOR:         {tie_class: corporate_officer, role_canonical: director,             is_former: true}
+  COUNTRY MANAGER:         {tie_class: corporate_officer, role_canonical: country_manager,      is_former: false}
+  FORMER COUNTRY MANAGER:  {tie_class: corporate_officer, role_canonical: country_manager,      is_former: true}
+  REPRESENTATIVE:          {tie_class: corporate_officer, role_canonical: representant,         is_former: false}
+  FOUNDER:                 {tie_class: corporate_officer, role_canonical: fondateur,            is_former: false}
+  ACCOUNTANT:              {tie_class: corporate_officer, role_canonical: accountant,           is_former: false}
+  PRESIDENT:               {tie_class: leadership,        role_canonical: president,            is_former: false}
+  FORMER PRESIDENT:        {tie_class: leadership,        role_canonical: president,            is_former: true}
+  PREMIER RESPONSABLE:     {tie_class: leadership,        role_canonical: premier_responsable,  is_former: false}
+  COMMANDANT:              {tie_class: leadership,        role_canonical: commandant,           is_former: false}
+  SHAREHOLDER:             {tie_class: ownership,         role_canonical: shareholder,          is_former: false}
+  OWNER:                   {tie_class: ownership,         role_canonical: owner,                is_former: false}
+  FUNDER:                  {tie_class: financial,         role_canonical: funder,               is_former: false}
+  MEMBER:                  {tie_class: membership,        role_canonical: member,               is_former: false}
+  BRANCH:                  {tie_class: structural,        role_canonical: branch_of,            is_former: false}
+  PARENT:                  {tie_class: kinship,           role_canonical: parent_of,            is_former: false}
+  SIBLING:                 {tie_class: kinship,           role_canonical: sibling_of,           is_former: false}
+  SPOUSE:                  {tie_class: kinship,           role_canonical: spouse_of,            is_former: false}
+  STUDENT OF:              {tie_class: pedagogic,         role_canonical: student_of,           is_former: false}
