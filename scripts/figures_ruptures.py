@@ -514,7 +514,17 @@ MINISTRY_BLOCS = [
 
 
 def ministry_index(min_pre: float = 12.0) -> pd.DataFrame:
-    """The composition index of figure 12, computed per policy domain."""
+    """The composition index of figure 12, per policy domain and per window.
+
+    Two windows: the three years after a rupture, and the two that follow them.
+    Each is divided by the apparatus-wide ratio computed over the *same* window,
+    so a domain is always being compared with the state as it was at that moment
+    rather than with the state three years earlier.
+
+    The late window of 2021 runs into the end of the record and covers 1.85 of
+    its 2 years. Rates are per year throughout, so a short window is not a small
+    one; it is only noisier.
+    """
     exploded = []
     for label, when in zip(entries.org_portfolio.fillna(""), entries.date):
         for dom in portfolio_domains(label):
@@ -524,19 +534,30 @@ def ministry_index(min_pre: float = 12.0) -> pd.DataFrame:
     rows = []
     for key, t0, _, _ in RUPTURES:
         pre_a, pre_b = t0 - pd.DateOffset(years=4), t0
-        post_a, post_b = t0, t0 + pd.DateOffset(years=3)
-        whole = ((entries.date >= post_a) & (entries.date < post_b)).sum() / 3 / (
-            max(((entries.date >= pre_a) & (entries.date < pre_b)).sum() / 4, 1e-9))
         pre = ex[(ex.date >= pre_a) & (ex.date < pre_b)].domain.value_counts() / 4
-        post = ex[(ex.date >= post_a) & (ex.date < post_b)].domain.value_counts() / 3
-        for _, members in MINISTRY_BLOCS:
-            for dom, _label in members:
-                p = float(pre.get(dom, 0.0))
-                rows.append({
-                    "rupture": key, "category": dom, "pre_rate": p,
-                    "index": (float(post.get(dom, 0.0)) / p) / whole
-                             if p >= min_pre else np.nan,
-                })
+        pre_whole = ((entries.date >= pre_a) & (entries.date < pre_b)).sum() / 4
+
+        windows = {
+            "early": (t0, t0 + pd.DateOffset(years=3)),
+            "late": (t0 + pd.DateOffset(years=3),
+                     min(t0 + pd.DateOffset(years=5), RECORD_ENDS)),
+        }
+        for wname, (qa, qb) in windows.items():
+            years = (qb - qa).days / 365.25
+            if years <= 0.5:
+                continue
+            whole = (((entries.date >= qa) & (entries.date < qb)).sum() / years
+                     ) / max(pre_whole, 1e-9)
+            post = ex[(ex.date >= qa) & (ex.date < qb)].domain.value_counts() / years
+            for _, members in MINISTRY_BLOCS:
+                for dom, _label in members:
+                    p = float(pre.get(dom, 0.0))
+                    rows.append({
+                        "rupture": key, "window": wname, "category": dom,
+                        "pre_rate": p,
+                        "index": (float(post.get(dom, 0.0)) / p) / whole
+                                 if p >= min_pre else np.nan,
+                    })
     return pd.DataFrame(rows)
 
 
@@ -544,54 +565,103 @@ def fig_ministries() -> None:
     table = ministry_index()
     order, labels, rules = [], [], []
     for n_bloc, (bloc, members) in enumerate(MINISTRY_BLOCS):
-        if n_bloc:               # a blank row carries the heading clear of the
-            order.append(None)   # ministry above and below it
+        if n_bloc:
+            order.append(None)
             labels.append("")
         rules.append((len(order), bloc))
         for dom, label in members:
             order.append(dom)
             labels.append(label)
-
-    fig, ax = plt.subplots(figsize=(9.8, 7.2))
-    fig.subplots_adjust(top=0.81, left=0.30, bottom=0.13)
-    _dot_panel(ax, table, order, labels)
-    ax.set_xlabel("churn relative to the state apparatus as a whole  (log scale)",
-                  labelpad=18)
-
-    # Bloc headings sit in the left margin, above the first ministry of each
-    # bloc, with a rule across the panel to separate one from the next.
     n = len(order)
+
+    fig, axes = plt.subplots(1, 3, figsize=(13.0, 6.9), sharey=True)
+    fig.subplots_adjust(top=0.74, left=0.20, bottom=0.13, wspace=0.08)
+
+    for ax, (key, t0, datestr, gloss) in zip(axes, RUPTURES):
+        colour = RUPTURE_COLOUR[key]
+        ax.axvline(1.0, color=INK, lw=1.1, zorder=3)
+        sub = table[table.rupture == key]
+        for i, cat in enumerate(order):
+            y = n - 1 - i
+            if cat is None:
+                continue
+            ax.axhline(y, color=RULE, lw=0.6, zorder=0)
+            row = sub[sub.category == cat]
+            e = row[row.window == "early"]["index"]
+            l = row[row.window == "late"]["index"]
+            e = float(e.iloc[0]) if len(e) and np.isfinite(e.iloc[0]) else np.nan
+            l = float(l.iloc[0]) if len(l) and np.isfinite(l.iloc[0]) else np.nan
+            if np.isfinite(e) and np.isfinite(l):
+                ax.annotate("", xy=(l, y), xytext=(e, y),
+                            arrowprops=dict(arrowstyle="-|>", color=colour,
+                                            lw=1.4, alpha=0.75,
+                                            shrinkA=4.5, shrinkB=0,
+                                            mutation_scale=9), zorder=4)
+            if np.isfinite(e):
+                # Hollow for the first window, solid for the second, so the
+                # two are told apart by shape as well as by where the arrow
+                # points - neither depends on colour.
+                ax.scatter([e], [y], s=42, facecolor=PAPER, edgecolor=colour,
+                           linewidth=1.5, zorder=5)
+            if np.isfinite(l):
+                ax.scatter([l], [y], s=30, color=colour, zorder=6,
+                           edgecolor=PAPER, linewidth=0.8)
+
+        for start, bloc in rules:
+            yb = n - 1 - start
+            if start:
+                ax.axhline(yb + 1.0, color=RULE, lw=0.9, zorder=1)
+
+        ax.set_title(f"{key}  ·  {datestr}\n{gloss}", color=INK, fontsize=9.5,
+                     linespacing=1.5)
+        ax.set_xscale("log")
+        ax.set_xlim(0.13, 6.0)
+        ax.xaxis.set_major_locator(FixedLocator([0.25, 1, 4]))
+        ax.xaxis.set_major_formatter(FixedFormatter(["¼×", "same", "4×"]))
+        ax.xaxis.set_minor_locator(NullLocator())
+        ax.set_ylim(-0.7, n - 0.3)
+        ax.grid(axis="x", zorder=0)
+        ax.set_axisbelow(True)
+        ax.spines["left"].set_visible(False)
+        ax.tick_params(axis="y", length=0)
+
+    axes[0].set_yticks(range(n))
+    axes[0].set_yticklabels(labels[::-1], color=INK)
     for start, bloc in rules:
-        y = n - 1 - start
-        if start:
-            ax.axhline(y + 1.0, color=RULE, lw=0.9, zorder=1)
-        ax.annotate(bloc.upper(), xy=(-0.285, y + 0.72),
-                    xycoords=("axes fraction", "data"),
-                    fontsize=7.0, color=MUTED, fontweight="bold",
-                    ha="left", va="center")
-    ax.legend(handles=_rupture_handles(), loc="lower center",
-              bbox_to_anchor=(0.5, 1.02), ncol=3)
+        axes[0].annotate(bloc.upper(), xy=(-0.46, n - 1 - start + 0.72),
+                         xycoords=("axes fraction", "data"), fontsize=7.0,
+                         color=MUTED, fontweight="bold", ha="left", va="center")
+    axes[1].set_xlabel("churn relative to the state apparatus as a whole  (log scale)",
+                       labelpad=10)
+    axes[1].legend(handles=[
+        Line2D([], [], marker="o", ls="", markersize=7.5, markerfacecolor=PAPER,
+               markeredgecolor=INK, markeredgewidth=1.5, label="years 0–3 after"),
+        Line2D([], [], marker="o", ls="", markersize=6.5, markerfacecolor=INK,
+               markeredgecolor=PAPER, label="years 3–5 after (arrow points here)"),
+    ], loc="lower center", bbox_to_anchor=(0.5, 1.16), ncol=2)
 
     headline(
         fig,
-        "The revolution fell on the courts and the treasury; 2021 fell on the interior ministry",
-        "Appointments in the three years after each rupture against the four years "
-        "before, divided by the same ratio for the apparatus as a whole, by policy "
-        "domain. A point to the right of the line marks a ministry reshaped harder "
-        "than the rest of the state; to the left, one left comparatively alone.",
+        "What each rupture did first, and what it went on doing",
+        "The previous figure's ratio computed twice: over the three years after "
+        "each rupture, and over the two that follow. An arrow pointing left marks "
+        "a ministry the rupture reached early and then let alone; one pointing "
+        "right marks an effect that arrived late. Both windows are measured "
+        "against the apparatus as a whole at the same moment.",
     )
-    save(fig, "fig15_ministry_by_ministry",
+    save(fig, "fig15_ministry_early_and_late",
          SOURCE + "  Merged ministries are counted toward each domain they merge, "
                   "because the portfolio key follows the ministry's name and would "
                   "otherwise break at every rename: read literally, the interior "
-                  "ministry makes 1.5 appointments a year before 2011 and 70 "
-                  "before 2021, an artefact of its having been the ministry of the "
-                  "Interior and Local Development until 2011. Domains with fewer "
-                  "than 12 appointments a year before a rupture are not plotted "
-                  "for it; defence, trade and women's affairs fall below that "
-                  "throughout. Governorates and municipalities are the interior "
+                  "ministry makes 1.5 appointments a year before 2011 and 70 before "
+                  "2021, an artefact of its having been the ministry of the Interior "
+                  "and Local Development until 2011. Domains with fewer than 12 "
+                  "appointments a year before a rupture are not plotted for it. The "
+                  "late window of 2021 ends with the record and covers 1.85 of its "
+                  "two years; rates are per year throughout, so it is noisier rather "
+                  "than smaller. Governorates and municipalities are the interior "
                   "ministry's field administration but are filed under their own "
-                  "form, not its portfolio, so this understates its reach.")
+                  "form, so its reach is understated.")
 
 
 # ---------------------------------------------------------------------------
