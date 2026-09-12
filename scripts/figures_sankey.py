@@ -30,6 +30,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -46,6 +47,15 @@ RUPTURES = [
     ("2021", pd.Timestamp("2021-07-25"), "25 Jul 2021", "Saïed suspends parliament"),
 ]
 RECORD_ENDS = pd.Timestamp("2026-05-31")
+
+# Same-era comparison dates, as elsewhere in this project. They matter more here
+# than anywhere else: most of what a diagram of this kind shows is the ordinary
+# mobility of the bureaucracy, not the rupture. The three ruptures differ from
+# one another by 5.6 to 6.5 points on average across the transition matrix, and
+# each differs from its own ordinary times by only 3.1 to 7.0. A share read off
+# one of these diagrams is therefore close to meaningless on its own, and every
+# figure states the ordinary-times value beside it.
+PLACEBO_LAGS = (3, 4, 5, 6, 7)
 
 # Ordered top (most senior) to bottom, which is how the columns are stacked.
 TIERS = [
@@ -181,12 +191,21 @@ def main() -> None:
     print("drawing…")
     for key, t0, datestr, gloss in RUPTURES:
         m, n_cohort, n_moved = transitions(spells, t0)
-        # The share of the senior tier that reappears at the bottom one. Raw
-        # up/down totals are not quotable here: the bottom tier cannot fall and
-        # the top cannot rise, so how many move each way is fixed as much by the
-        # shape of the hierarchy as by what the rupture did.
+        # The share of the senior tier that reappears at the bottom one, against
+        # the same share in ordinary times. The level alone is not quotable: at
+        # 1987 it is 41%, which sounds severe until the era's own figure turns
+        # out to be 45%. Raw up/down totals are not quotable either, since the
+        # bottom tier cannot fall and the top cannot rise.
         senior_total = m.iloc[0].sum()
         senior_fell = m.iat[0, len(TIER_LABELS) - 1]
+        share = senior_fell / senior_total if senior_total else float("nan")
+        base = []
+        for lag in PLACEBO_LAGS:
+            pm, _, _ = transitions(spells, t0 - pd.DateOffset(years=lag))
+            tot = pm.iloc[0].sum()
+            if tot:
+                base.append(pm.iat[0, len(TIER_LABELS) - 1] / tot)
+        ordinary = float(np.mean(base)) if base else float("nan")
 
         fig, ax = plt.subplots(figsize=(9.4, 5.6))
         fig.subplots_adjust(top=0.70, bottom=0.14, left=0.20, right=0.80)
@@ -204,8 +223,10 @@ def main() -> None:
             f"{n_moved:,} who took a further post within three years "
             f"({n_moved / n_cohort:.0%}), by the rank they held and the rank they "
             f"moved to. Of the {senior_total:,} standing at secretary-general or "
-            f"above, {senior_fell:,} ({senior_fell / senior_total:.0%}) next "
-            f"appear at head of service or below. The remaining "
+            f"above, {senior_fell:,} ({share:.0%}) next appear at head of service "
+            f"or below, against {ordinary:.0%} for the same cohort in ordinary "
+            f"times: a difference of {(share - ordinary) * 100:+.0f} points. The "
+            f"remaining "
             f"{n_cohort - n_moved:,} of the cohort have no further post in the "
             f"record, which the gazette's patchy treatment of departures makes "
             f"unreadable as removal from the state.",
@@ -224,7 +245,12 @@ def main() -> None:
                       "placebo cohorts. That figure also counts any fall in rank, "
                       "where these count only falls that cross a tier boundary - "
                       "946 against 537 in 2021 - so its percentages are the larger "
-                      "of the two and the two are not in conflict.")
+                      "of the two and the two are not in conflict. The three "
+                      "diagrams resemble one another because most of what they "
+                      "show is the standing mobility of the bureaucracy rather "
+                      "than the rupture: across the whole matrix the ruptures "
+                      "differ from each other by 5.6 to 6.5 points on average, "
+                      "and each from its own ordinary times by 3.1 to 7.0.")
     print("done")
 
 
