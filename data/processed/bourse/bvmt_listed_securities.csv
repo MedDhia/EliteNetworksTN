@@ -1,0 +1,76 @@
+isin,ticker,name_fr,name_ar,bvmt_group,bvmt_group_label,last_price_tnd,market_cap_kdt,snapshot_seance,source,source_url,retrieved_at
+TN0007500010,AETEC,AETECH,آي تاك,99,suspended_other,0.41,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0002300358,AL,AIR LIQUIDE TSIE,آر ليكيد تونس,99,suspended_other,224.8,224.8,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0003800703,ALKIM,ALKIMIA,الكيمياء,99,suspended_other,13.49,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0003400058,AB,AMEN BANK,بنك الأمان,11,continuous,90.0,606968.6900000002,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007300015,ARTES,ARTES,الشبكة التونسية للسيارات و الخدمات,11,continuous,10.49,11315.589999999997,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007140015,ASSAD,ASSAD,البطارية التونسية أسد,99,suspended_other,2.27,32915.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TNDKJ8O68X14,AMV,ASSU MAGHREBIA VIE,ASSU MAGHREBIA VIE,11,continuous,12.4,107058.83,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007830011,ASSMA,ASSUR MAGHREBIA,ASSUR MAGHREBIA,11,continuous,82.0,6363.91,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0003000452,AST,ASTREE,شركة أستري للتّامين وإعادة التأمين,12,fixing,88.99,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0003600350,ATB,ATB,البنك  العربي لتونس,11,continuous,3.3,27053.22,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007740012,SAM,ATELIER MEUBLE INT,شركة مشغل الأثاث,11,continuous,5.94,74091.46,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0004700100,ATL,ATL,شركة الإيجارالعربية لتونس,11,continuous,15.0,19644.2,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0001600154,TJARI,ATTIJARI BANK,التجاري بنك,11,continuous,81.0,117908.13,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0006610018,TJL,ATTIJARI LEASING,التجاري للإيجار المالي,11,continuous,43.0,12141.75,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007580012,BL,BEST LEASE,بيت الايجار المالي التونسي السعودي,12,fixing,2.67,133.5,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0006550016,BHASS,BH ASSURANCE,BH ASSURANCE,12,fixing,83.29,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0001900604,BH,BH BANK,بنك الإسكان,11,continuous,14.6,38621.25,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0006720049,BHL,BH LEASING,الشركة العصرية للإيجار المالي,12,fixing,4.75,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0001800457,BIAT,BIAT,بنك تونس العربي الدّولي,11,continuous,161.09,1298981.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0003100609,BNA,BNA,البنك الوطني الفلاحي,11,continuous,20.03,1055022.3300000008,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007680010,BNASS,BNA ASSURANCES,تأمينات سليم,11,continuous,4.12,60676.899999999994,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0002200053,BT,BT,البنك  التّونسي,11,continuous,8.06,193193.84999999995,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0001300557,BTE,BTE (ADP),بنك تونس والإمارات,12,fixing,6.44,8247.26,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007400013,CC,CARTHAGE CEMENT,قرطاج للإسمنت,11,continuous,1.82,234599.73999999996,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007590011,CELL,CELLCOM,سلكوم,11,continuous,1.9,842.2599999999999,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0004200853,CIL,CIL,الشركة الدولية للإيجار المالي,11,continuous,38.7,35499.09999999999,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007350010,SCB,CIMENTS DE BIZERTE,إسمنت بنزرت,12,fixing,0.79,227.52,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007550015,CITY,CITY CARS,سيتي كار,11,continuous,19.25,1191769.6,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007670011,DH,DELICE HOLDING,مجمع دليس القابضة,11,continuous,19.7,228706.00000000003,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007410012,NAKL,ENNAKL AUTOMOBILES,شـركة النقـل,11,continuous,17.4,33674.14,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007210016,SOKNA,ESSOUKNA,السكنى,11,continuous,3.84,227.47999999999996,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007570013,ECYCL,EURO-CYCLES,أوروسيكل,11,continuous,11.2,42432.420000000006,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007310139,HL,HANNIBAL LEASE,حنبعل للإيجار المالي,12,fixing,9.99,10000.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0003200755,ICF,ICF,الصّناعات الكيميا ئيّة للفليور,11,continuous,147.65,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007510019,LNDOR,LAND OR,لاندور,11,continuous,15.28,70328.56999999999,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0006440010,MAG,MAGASIN GENERAL,شركة المغازة العامة,12,fixing,11.52,103898.88,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0001000108,MNP,MONOPRIX,شركة مونوبري,12,fixing,12.19,177785.3,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007620016,MPBS,MPBS,مصنع الورق الخشبي بالجنوب,11,continuous,10.2,6035.299999999999,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007540016,NBL,NEW BODY LINE,نيو بودي لاين,11,continuous,3.19,11603.369999999999,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007700016,PLAST,OFFICEPLAST,أوفيس بلاست,11,continuous,1.48,38.779999999999994,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007530017,OTH,ONE TECH HOLDING,مجمع وان تاك,11,continuous,10.75,194474.65,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0002500650,PLTU,PLAC. TSIE-SICAF,التوظيف التونسي,12,fixing,38.71,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0005700018,PGH,POULINA GP HOLDING,مجمـوعة بولينـا القابضة,11,continuous,26.8,2172761.1199999996,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007610017,SAH,SAH,شركة بيع النتوجات الصحية,11,continuous,12.89,119884.07999999997,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007730013,SMD,SANIMED,سانيماد,99,suspended_other,0.37,3996.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0001100254,SFBT,SFBT,شـركة صنع المشروبـات بتـونس,11,continuous,14.4,429146.12,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0006590012,SIAME,SIAME,الشركة الصناعية للأجهزة و الآلات الكهربائية,11,continuous,4.39,96.38999999999999,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0004000055,SIMPA,SIMPAR,الشركة العقارية وللمساهمات,12,fixing,35.5,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0006670012,SIPHA,SIPHAT,الشركة  التونسية للصناعات الصيدلية,99,suspended_other,4.97,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007180011,SITS,SITS,الشركة العقارية التونسية السعودية,12,fixing,4.29,2145.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TNQPQXRODTH8,SMART,SMART TUNISIE,SMART TUNISIE,11,continuous,33.2,49347.73,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0006780019,SOMOC,SOMOCER,الشركة العصرية للخزف,99,suspended_other,0.74,16460.56,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007600018,SOTEM,SOTEMAIL,الشركة التونسية للتّلا,99,suspended_other,1.13,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0006530018,SOTET,SOTETEL,الشركة التونسية للمقاولات السلكية واللاسلكية,11,continuous,24.3,86818.92,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007630015,STPAP,SOTIPAPIER,الشركة التونسية لصناعة الورق,11,continuous,2.53,2798.51,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0006660013,STPIL,SOTRAPIL,شركة النقل بواسطة الأنابيب,11,continuous,31.07,17775.63,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0006580013,MGR,SOTUMAG,الشركة التونسية لأسواق الجملة,11,continuous,25.28,307829.87,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0006560015,SOTUV,SOTUVER,الشركة التونسية للبلور,11,continuous,25.0,109967.15,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0001400704,SPDIT,SPDIT - SICAF,شركة الإستثمار والتنمية الصناعية والسياحية,11,continuous,15.75,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TNNGTFLC2986,STA,STA,STA,11,continuous,116.5,257860.75,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0006060016,STAR,STAR,الشّركة التّونسيّة  للتّامين وإعادة التأمين - ستار-,11,continuous,92.0,12319.95,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0002600955,STB,STB,الشركة التّونسيّة للبنك,11,continuous,5.27,234008.06999999998,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0005030010,STIP,STIP,الشركة التونسية لصناعة الإطارات المطّاطية,99,suspended_other,8.0,200.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007650013,TGH,TAWASOL GP HOLDING,مجمع تواصل القابضة,99,suspended_other,0.82,25972.679999999997,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007440019,TLNET,TELNET HOLDING,تلنـات القـابضة,11,continuous,11.8,240982.47999999998,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007270010,TPR,TPR,تونس لمجنبات الأليمنيوم,11,continuous,13.0,601538.56,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0004100202,TINV,TUNINVEST-SICAR,شركة الاستثمار تونافست,12,fixing,42.9,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007380017,TRE,TUNIS RE,الشركة التونسية لإعادة التأمين,12,fixing,14.19,248975.49000000008,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0001200401,TAIR,TUNISAIR,الخطوط التونسية,99,suspended_other,0.3,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0002100907,TLS,TUNISIE LEASING F,التونسية للإيجار المالي,11,continuous,36.0,36932.25,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007690019,UADH,UADH,الشركة العالمية لتوزيع السيارات القابضة,99,suspended_other,0.43,0.0,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0002400505,UBCI,UBCI,الاتّحاد البنكي للتّجارة و الصّناعة,12,fixing,39.99,661194.6599999998,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0003900107,UIB,UIB,الاتّحاد الدّولي للبنوك,11,continuous,34.95,922.9699999999999,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007720014,UMED,UNIMED,شركة مخابر يونيماد,11,continuous,8.83,177614.41000000003,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z
+TN0007200017,WIFAK,WIFACK INT BANK,الوفاق الدولي للبنوك,12,fixing,8.1,234.89999999999998,11 sept. 2026,BVMT REST API,"https://www.bvmt.com.tn/rest_api/rest/market/groups/11,12,52,99",2026-09-12T01:25:41Z

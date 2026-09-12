@@ -242,3 +242,70 @@ the two output trees are kept apart so neither overwrites the other. Whether
 they should eventually be unified — sharing one person registry and one
 organisation registry across 1957–2026 — is an open question, not a settled
 design.
+
+---
+
+## A third build: listed companies, shareholders and boards, 1994–2026
+
+The first two builds read the state's record of itself. This one reads the
+market's: **the publicly listed companies of the Tunis bourse, who owns them,
+and who sits on their boards**, from the filings the Conseil du Marché
+Financier requires of every issuer making a public offering.
+
+It is the business half of the same elite structure. A minister recorded in the
+gazette and a bank chairman recorded in a registration document are often the
+same social stratum and sometimes the same person, but no source covers both,
+so they are collected separately and left joinable rather than merged.
+
+Why the CMF filings:
+
+- **the regulator fixes their contents.** A `document de référence` must state
+  the capital structure, every shareholder above the disclosure threshold, the
+  board, and each director's mandates in other companies. The same tables recur
+  in every issuer's filing, which is what makes automated extraction possible;
+- **directors declare ties beyond the cote.** The mandates section names
+  unlisted companies too, so the network reaches into the private economy that
+  no listing-based source sees;
+- **movements are dated.** Tender offers, capital increases and
+  threshold-crossing declarations record stake changes to the day. They are
+  harvested into the registry; parsing them is the obvious next extension.
+
+Current build: **213 registration documents → 2,764 entities → 11,982 observed
+ties across nine layers**, 1994–2026, with 75 entities linked to a BVMT security
+by ISIN. Ownership weights are percentages of capital as reported; interlock
+weights are counts of shared directors. Coverage thins sharply before ~2008 —
+treat the usable panel as roughly 2008–2026 and check
+`data/processed/bourse/layer_year_coverage.csv` before reading any time trend,
+because a rise in observed ties can be a rise in filings.
+
+Read [`docs/CODEBOOK-bourse.md`](docs/CODEBOOK-bourse.md) for variable
+definitions and [`docs/SOURCES-bourse.md`](docs/SOURCES-bourse.md) for what each
+filing type yields. Section 6 of the codebook lists the limitations that matter:
+disclosure thresholds truncate ownership, homonyms merge, and carry-forward in
+the panel is an assumption rather than an observation.
+
+```bash
+make bourse          # spine -> crawl -> resolve -> fetch -> extract
+                     # -> build -> export -> validate
+make bourse-test
+```
+
+CI (`.github/workflows/ci.yml`) runs the test suite on Python 3.11 and 3.12, and
+rebuilds this dataset from the committed extraction records to check that the
+committed tables are byte-identical to what the code produces. The data files
+are the deliverable here, so a change that silently alters thousands of rows
+without touching a test fails the build rather than merging unnoticed.
+
+```r
+source("R/load_bourse_multiplex.R")
+mx <- load_bourse_multiplex()     # observed ties only
+layer_summary(mx)
+multiplex_actors(mx, 2024)        # actors present in more than one layer
+```
+
+Code is `src/bourse/`, outputs are `data/processed/bourse/`, and source PDFs are
+not redistributed: the corpus manifest carries a canonical URL and sha256 per
+file, so `make bourse-resolve bourse-fetch` reconstructs it from the CMF's own
+servers. As with the second build, the output trees are kept apart; whether the
+gazette's person registry and this one should eventually share identifiers is
+the same open question, with the same answer — not yet.

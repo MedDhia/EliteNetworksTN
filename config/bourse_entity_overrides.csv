@@ -1,0 +1,25 @@
+raw_name,entity_id,entity_type,canonical_name,note
+# Researcher corrections to automatic entity resolution. Overrides always win.
+#
+# Columns:
+#   raw_name       the spelling exactly as it appears in a filing (match is
+#                  accent- and case-insensitive)
+#   entity_id      force this name onto a specific entity. Give two spellings
+#                  the SAME entity_id to merge them; give a homonym a DIFFERENT
+#                  entity_id to split it apart. Leave blank to keep the
+#                  automatic ID and only correct the type or display name.
+#   entity_type    person | firm | fund | state | aggregate
+#   canonical_name display name to use
+#   note           why - keep this filled in, it is the audit trail
+#
+# Two corrections the automatic matcher cannot make on its own:
+#   1. Splitting homonyms. Same name, different people (common where given
+#      names repeat across generations). Give each a distinct entity_id.
+#   2. Merging across renaming. "UBCI Bourse" became "Union Capital" after the
+#      2024 merger with COFIB Capital Finances. Whether that is one node over
+#      time or two is a substantive decision, so it is left to you.
+#
+# Example rows (commented out - delete the leading # to activate):
+#
+# UBCI Bourse,F00000000a,firm,Union Capital,renamed after 2024 COFIB merger
+# COFIB Capital Finances,F00000000a,firm,Union Capital,absorbed into Union Capital 2024
