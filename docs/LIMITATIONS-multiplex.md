@@ -24,9 +24,12 @@ as French. Any tie appearing only in the Arabic series is missed.
 all, so property-registry ties are not represented.
 
 **Corporate ties cannot go back beyond 2004.** The *annonces légales* series
-begins that year. This dataset starts in 2008 by design, but the constraint
-matters for anyone extending it backwards: before 2004 the gazette supports
-state appointments only.
+begins that year, and the window now runs from 1957, so this is the sharpest
+discontinuity in the dataset: before 2004 the gazette supports **state
+appointments only**, and the whole of 1957–2003 contributes a few dozen dated
+corporate ties between them. A rise in corporate or ownership ties over time is
+therefore mostly a rise in what the gazette printed, not in what happened.
+Never compare corporate density across that boundary.
 
 ## Time
 
@@ -100,9 +103,30 @@ also where new elite entrants would appear. They have not been vetted.
 
 ## Extraction
 
-**Precision 0.982, recall 0.967 — measured, but by a self-audit.** A stratified
-sample of 402 blocks was drawn with a fixed seed (`gold/`, seed `20260912`);
-112 extracted events and 75 blocks were coded against the printed French.
+**The accuracy figures are out of the scope of their own evidence.** Precision
+0.982 and recall 0.967 were coded on **2008–2012** blocks and are quoted below
+for a dataset that now spans **1957–2026**. They are not wrong; they describe
+five years of seventy. Three things changed when the window widened, and each
+is a different extraction problem:
+
+- **before 2004** the corpus is almost entirely state acts — the commercial
+  register in this mirror effectively begins in 2004 — so the clause families
+  being matched are different ones;
+- **the 1960s–80s scans** carry the worst OCR in the corpus, where digit
+  confusion (4 for 6) and broken diacritics are routine;
+- **after 2012** the register continues but the political vocabulary changes,
+  and five of the seed sheet's seven governments sit here.
+
+`python -m elitenet.gold draw --eras` allocates a sample equally across eras
+rather than proportionally, and `score` then reports precision per era into
+`docs/GOLD-SCORE-BY-ERA-multiplex.md`. Until those rows are coded, treat the
+figures below as measured for 2008–2012 and **unmeasured** elsewhere —
+unmeasured, not good.
+
+**Precision 0.982, recall 0.967 on 2008–2012 — measured, but by a self-audit.**
+A stratified sample of 402 blocks was drawn with a fixed seed (`gold/`, seed
+`20260912`); 112 extracted events and 75 blocks were coded against the printed
+French.
 
 | | estimate | 95% CI | basis |
 | --- | --- | --- | --- |
@@ -131,16 +155,41 @@ number in a paper.
 controlled vocabulary the verbatim form is kept and the event flagged
 `needs_review`, rather than being forced into the nearest category.
 
-**Organisation resolution is the weaker half.** Firm names are matched on
-normalised forms, acronyms and token-blocked fuzzy comparison, and matricule
-fiscal is used where present. `SICAR`, `SICAF`, `SICAV`, `HOLDING` and `GROUPE`
+**Organisation resolution is the weaker half, and it now has an independent
+check.** A matricule fiscal and a registre-de-commerce number are hard
+identifiers: a firm has one of each. So an organisation node carrying two
+values of one of them is a defect, and `make orgattrs` reports those into
+`docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md`, ordered by how far apart the
+values are — a one-character difference is OCR damage, a wholly different
+number is a **resolution merge**, and every tie on a merged node is suspect.
+This is the only signal in the pipeline that can see a merge: a merge
+otherwise looks exactly like a well-corroborated match, because both names
+really do appear beside the same kind of clause. It is the counterpart to the
+merged-homonym warning on the person side, and it is reported rather than
+fixed, because some conflicts are genuine re-registrations.
+
+Firm names are matched on normalised forms, acronyms and token-blocked fuzzy
+comparison, and both hard identifiers are used where present — with the
+deliberate exception that where the two disagree, neither is trusted, since
+that disagreement is the merge signal itself. `SICAR`, `SICAF`, `SICAV`, `HOLDING` and `GROUPE`
 are deliberately *not* stripped as generic suffixes, because in Tunisian
 practice they designate different legal vehicles that share a brand name. Even
 so, a group and its investment arm can still be conflated where names are close.
 
-**OCR quality is unmeasured for this window.** It is visibly good in 2008–2012
-compared with earlier decades, and the calendar recovered 99.6% of publication
-dates, but no character- or field-level error rate has been computed.
+**OCR quality is unmeasured, and it is not uniform across the window.** It is
+visibly good in 2008–2012 and visibly worse in the 1960s–80s, which is one of
+the reasons accuracy is now reported per era rather than pooled. No character-
+or field-level error rate has been computed. The identifier-conflict table is
+the closest thing to a measurement: a one-character difference between two
+matricules on the same firm is an OCR error caught by arithmetic, and the share
+of conflicts of that kind is a lower bound on the digit error rate.
+
+**Addresses and registration numbers are recorded, not verified.** `RE_RC` and
+`RE_SIEGE` capture what the notice prints, trimmed at the first following
+clause. The trim is tested against sampled captures but it is a heuristic: a
+long address that runs into an unusual clause can still carry a fragment of it.
+Use `org_addresses.csv` for geography and grouping, not as a verified postal
+record.
 
 ## Reproducibility
 

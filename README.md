@@ -204,7 +204,7 @@ than this repository when quoting the source.
 
 ---
 
-## A second build: firms, the state, and a curated elite network, 2008–2012
+## A second build: firms, the state, and a curated elite network, 1957–2026
 
 The build described above works from the *Journal Officiel* proper and covers
 the bureaucratic state across 1957–2026. A second, separate build sits
@@ -219,8 +219,12 @@ different question and draws on sources the first build does not touch:
   first build does not use at all: 172,054 announcement blocks yielding
   company formations, officer appointments and resignations, share transfers,
   capital changes, dissolutions, and association registrations;
-- it is scoped to **2008–2012**, straddling the January 2011 rupture, at both
-  yearly and monthly resolution.
+- it is scoped to the **full range the sources support, 1957–2026**, at yearly
+  resolution throughout and monthly across 2008–2014, where the January 2011
+  rupture is invisible at annual resolution. Widening it from the original
+  2008–2012 mattered more than expected: **five of the seed sheet's seven
+  governments postdate 2012**, which is why the narrow window could date only
+  12.5% of seed ties.
 
 Current build: 1,271 issues → 207,369 blocks → 197,532 dated events → 4,287
 dated tie spells plus 27,585 undated seed ties, and 48,176 act citations.
@@ -228,8 +232,12 @@ dated tie spells plus 27,585 undated seed ties, and 48,176 act citations.
 
 Extraction accuracy on a seeded stratified sample, coded against the printed
 French: **precision 0.982** (95% CI 0.937–0.995) with **no spurious events**,
-**recall 0.967** (0.886–0.991). This is a self-audit, not an independent
-estimate — see `docs/GOLD-SCORE-multiplex.md` and the limitations.
+**recall 0.967** (0.886–0.991). Two caveats, and both matter: this is a
+self-audit rather than an independent estimate, and it was coded on
+**2008–2012 blocks only**, so it is out of the scope of its own evidence for a
+1957–2026 dataset. `gold draw --eras` samples across eras instead and reports
+per era; until those rows are coded, accuracy outside 2008–2012 is *unmeasured*
+rather than good. See `docs/GOLD-SCORE-multiplex.md` and the limitations.
 
 Read `docs/CODEBOOK-multiplex.md` for variable definitions and
 `docs/LIMITATIONS-multiplex.md` before using it. For temporal ERGMs,
@@ -237,13 +245,30 @@ Read `docs/CODEBOOK-multiplex.md` for variable definitions and
 lagged kinship, shareholding and co-membership covariates; read
 `docs/TERGM-multiplex.md` first, because right-censoring makes the
 dissolution side of such a model uninterpretable here.
+
+`make orgties` builds a second, **one-mode and directed** network of
+organisation-to-organisation ties — mostly shareholding, plus audit mandates
+and branches — kept apart from the bipartite panel because adding those rows to
+it would break every two-mode term silently. The ordinary closure terms
+(`triangle`, `gwesp`) are valid there and are not valid on the bipartite panel;
+`R/build_org_ownership.R` and `docs/ORG-TIES-multiplex.md` say why, and why the
+onsets in that layer are overwhelmingly left-censored.
+
+`make orgattrs` records what the register prints beside a company name: the
+matricule fiscal, the registre-de-commerce number and the stated seat. The
+identifiers are not only description. A firm has one tax ID, so a node carrying
+two is either OCR damage or an **organisation-resolution merge** — which makes
+this the only check in the pipeline that can see a merge, since a merge
+otherwise looks exactly like a well-corroborated match. See
+`docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md`.
 `docs/GOLD-FINDINGS-multiplex.md` records the twenty extraction
 defects the gold sample exposed, which is also why the figures above supersede
 those of the first release.
 
 ```bash
 make all        # seed -> mirror -> calendar -> segment -> extract -> resolve
-                # -> spells -> export -> codebook -> validate
+                # -> spells -> orgties -> orgattrs -> export -> tergm
+                # -> codebook -> validate
 make test
 ```
 
