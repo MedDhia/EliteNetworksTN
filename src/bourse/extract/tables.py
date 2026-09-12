@@ -602,6 +602,23 @@ def _header_line(page, top: float, bottom: float) -> list[str] | None:
     return None
 
 
+def _release(page) -> None:
+    """Drop a page's cached objects once we are done with it.
+
+    pdfplumber keeps every parsed character, line and rect of every page it has
+    touched, so reading a long document end to end grows without bound. A
+    500-page annual report - most of it financial statements - took a worker to
+    11.4 GB and had it killed, which then hung the whole pool waiting for a
+    result that was never coming. Nothing here looks back at an earlier page,
+    so the cache can go as soon as the page is processed.
+    """
+    for release in ("flush_cache", "close"):
+        try:
+            getattr(page, release)()
+        except Exception:
+            pass
+
+
 def extract_tables(pdf, max_pages: int | None = None,
                    from_words: bool = False) -> list[FoundTable]:
     """Walk a pdfplumber PDF and return every table we can classify.
@@ -626,6 +643,7 @@ def extract_tables(pdf, max_pages: int | None = None,
         if not _RELEVANT_PAGE.search(text):
             for _, h in page_headings(text):
                 last_heading = h
+            _release(page)
             continue
 
         heads = ocr_headings(page) if from_words else page_headings(page)
@@ -658,6 +676,7 @@ def extract_tables(pdf, max_pages: int | None = None,
                 )
             if heads:
                 last_heading = heads[-1][1]
+            _release(page)
             continue
 
         for tf in tables:
@@ -736,4 +755,5 @@ def extract_tables(pdf, max_pages: int | None = None,
             )
         if heads:
             last_heading = heads[-1][1]
+        _release(page)
     return found

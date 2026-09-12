@@ -24,6 +24,18 @@ from .extract.tables import extract_tables
 MANIFEST = PROCESSED / "corpus" / "pdf_manifest.jsonl.gz"
 RECORDS_DIR = PROCESSED / "records"
 
+# How far into a filing to read, by document type. A registration document is
+# read whole: it is the validated core source, its governance chapter sits
+# after the business description, and there are only ~200 of them. Annual
+# reports and prospectuses are read only as far as their front matter, which is
+# where the board and shareholder tables are; the rest is financial statements,
+# hundreds of pages of it, and reading them cost a worker 11 GB and a kill.
+# An explicit --max-pages overrides this.
+DEFAULT_MAX_PAGES = {
+    "rapport_annuel": 60,
+    "prospectus": 80,
+}
+
 # "Document de reference \" UBCI 2025 \"", "Actualisation du Document de
 # reference << BTK Leasing 2025 >>", "Rapport Annuel".
 _DOC_PREFIX = re.compile(
@@ -100,6 +112,8 @@ def process_pdf(entry: dict, max_pages: int | None = None,
         "pdf_url": entry.get("pdf_url"),
         "filing_date": entry.get("filing_date"),
     }
+    if max_pages is None:
+        max_pages = DEFAULT_MAX_PAGES.get(entry.get("doc_type"))
     scanned = False
     with pdfplumber.open(path) as pdf:
         n_pages = len(pdf.pages)
@@ -245,7 +259,10 @@ def main() -> None:
         results = ((e, _safe_process(e, args.max_pages, args.ocr, args.ocr_max_pages))
                    for e in entries)
     else:
-        with mp.Pool(args.workers) as pool:
+        # maxtasksperchild returns a worker's memory to the OS between
+        # documents. Without it one very large filing leaves the worker fat for
+        # the rest of the run, and the next large one tips it over.
+        with mp.Pool(args.workers, maxtasksperchild=4) as pool:
             pairs = pool.starmap(
                 _safe_process_pair,
                 [(e, args.max_pages, args.ocr, args.ocr_max_pages) for e in entries],
