@@ -222,14 +222,20 @@ different question and draws on sources the first build does not touch:
 - it is scoped to **2008–2012**, straddling the January 2011 rupture, at both
   yearly and monthly resolution.
 
-Current build: 1,271 issues → 205,755 blocks → 168,789 dated events → 3,086
+Current build: 1,271 issues → 207,369 blocks → 197,532 dated events → 4,287
 dated tie spells plus 27,585 undated seed ties, and 48,176 act citations.
-87% of the hundred highest-degree seed elites acquire at least one dated event.
+90% of the hundred highest-degree seed elites acquire at least one dated event.
+
+Extraction accuracy on a seeded stratified sample, coded against the printed
+French: **precision 0.982** (95% CI 0.937–0.995) with **no spurious events**,
+**recall 0.967** (0.886–0.991). This is a self-audit, not an independent
+estimate — see `docs/GOLD-SCORE-multiplex-2008-2012.md` and the limitations.
 
 Read `docs/CODEBOOK-multiplex-2008-2012.md` for variable definitions and
-`docs/LIMITATIONS-multiplex-2008-2012.md` before using it; in particular, no
-precision or recall estimate exists for it yet, so event counts are lower
-bounds of unknown tightness.
+`docs/LIMITATIONS-multiplex-2008-2012.md` before using it.
+`docs/GOLD-FINDINGS-multiplex-2008-2012.md` records the twenty extraction
+defects the gold sample exposed, which is also why the figures above supersede
+those of the first release.
 
 ```bash
 make all        # seed -> mirror -> calendar -> segment -> extract -> resolve

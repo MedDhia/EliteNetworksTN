@@ -58,6 +58,37 @@ jobs:
       - name: Run test suite
         run: pytest tests/ -q
 
+  multiplex-consistency:
+    name: 2008-2012 multiplex dataset is self-consistent
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]" -r requirements.txt
+
+      # Reads the committed CSVs under data/processed/multiplex-2008-2012/, so
+      # it needs no gazette mirror. --strict exits non-zero when the dataset
+      # contradicts itself: a spell that ends before it begins, an act
+      # published before it happened, or a resolved link with no organisation
+      # agreement.
+      #
+      # Three checks cannot run here and report themselves skipped at WARN:
+      # the verbatim-quote guard, the negative control, and the act-citation
+      # graph all read data/interim/, a git-ignored intermediate rebuilt from
+      # the mirror. They are exercised locally before each push instead. The
+      # run rewrites docs/VALIDATION-multiplex-2008-2012.md with those WARNs;
+      # nothing diffs docs/, so the committed report stays the full-input one.
+      - name: Consistency checks
+        run: python -m elitenet.validate --strict
+
   bourse-dataset:
     name: bourse dataset rebuilds reproducibly
     runs-on: ubuntu-latest

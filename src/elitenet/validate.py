@@ -22,7 +22,7 @@ from collections import Counter, defaultdict
 from datetime import date
 from pathlib import Path
 
-from .paths import DOCS, INTERIM, PROCESSED, ensure_dirs, load_config
+from .paths import DOCS, INTERIM, PROCESSED, ROOT, ensure_dirs, load_config
 
 WINDOW = (date(2008, 1, 1), date(2012, 12, 31))
 
@@ -58,6 +58,28 @@ def _read(path: Path) -> list[dict]:
         return []
     with path.open(encoding="utf-8", newline="") as fh:
         return list(csv.DictReader(fh))
+
+
+BLOCKS = INTERIM / "blocks.jsonl"
+
+# Three checks read data/interim/, which is deliberately git-ignored: the block
+# corpus is a 1.3 GB intermediate rebuilt from the gazette mirror. So they can
+# run for whoever built the pipeline but not from a fresh clone or in CI, and a
+# check that cannot run must say so rather than crash (which strands the checks
+# after it) or report a vacuous pass. Skipping is recorded as a WARN because a
+# reader of the report needs to know the provenance guard and the negative
+# control were not exercised on this run -- an absent number is not a zero.
+# The stage whose output each skippable input is, so the report says how to
+# make the check runnable rather than only that it was not run.
+_REBUILD_WITH = {"blocks.jsonl": "segment", "act_citations.csv": "extract"}
+
+
+def _skip(rep: Report, check: str, needs: Path) -> None:
+    stage = _REBUILD_WITH[needs.name]
+    rep.add("WARN", check,
+            f"not checked: {needs.relative_to(ROOT)} is absent (a git-ignored "
+            f"intermediate). Run `make mirror {stage}` to rebuild it, then "
+            f"re-validate.")
 
 
 def check_calendar(rep: Report) -> None:
@@ -112,8 +134,11 @@ def check_events(rep: Report) -> None:
 def check_quotes_are_verbatim(rep: Report, sample: int = 2000) -> None:
     """Every quote must literally occur in its block. This is the guard that
     makes the provenance claim checkable rather than decorative."""
+    if not BLOCKS.exists():
+        _skip(rep, "quotes verbatim", BLOCKS)
+        return
     blocks: dict[str, str] = {}
-    with (INTERIM / "blocks.jsonl").open(encoding="utf-8") as fh:
+    with BLOCKS.open(encoding="utf-8") as fh:
         for line in fh:
             b = json.loads(line)
             blocks[b["block_uid"]] = b["text"]
@@ -220,9 +245,12 @@ def check_coverage(rep: Report) -> None:
 
 def check_negative_control(rep: Report) -> None:
     """Auction and fonds-de-commerce notices should produce no appointments."""
+    if not BLOCKS.exists():
+        _skip(rep, "negative control", BLOCKS)
+        return
     events = _read(PROCESSED / "events.csv")
     by_block = {}
-    with (INTERIM / "blocks.jsonl").open(encoding="utf-8") as fh:
+    with BLOCKS.open(encoding="utf-8") as fh:
         for line in fh:
             b = json.loads(line)
             if b.get("domain") in {"judicial", "commercial"}:
@@ -258,7 +286,11 @@ def check_cabinets(rep: Report) -> None:
 
 
 def check_citations(rep: Report) -> None:
-    cits = _read(INTERIM / "act_citations.csv")
+    path = INTERIM / "act_citations.csv"
+    if not path.exists():
+        _skip(rep, "act citation graph", path)
+        return
+    cits = _read(path)
     dated = [c for c in cits if c["cited_date"]]
     rep.add("INFO", "act citation graph",
             f"{len(cits)} citations, {len(dated)} with a resolvable cited date")

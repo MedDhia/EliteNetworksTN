@@ -18,11 +18,24 @@ from .paths import load_config
 U = r"A-ZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝ"
 L = r"a-zà-öø-ÿ"
 
-TITLE = (r"(?:Monsieur|Madame|Mademoiselle|Messieurs|Mesdames|"
+# The title is matched case-insensitively with a scoped flag: the gazette
+# prints "monsieur" in lower case 5,840 times, and those mentions were being
+# missed. The flag must NOT extend to the name itself -- NAME relies on
+# uppercase initials to find a name at all, and making it case-insensitive
+# would let any run of ordinary words look like one.
+TITLE = (r"(?i:Monsieur|Madame|Mademoiselle|Messieurs|Mesdames|"
          r"M\.|Mme|Mlle|Mr\.?|Dr\.?|Me\.?|Maître)")
 PARTICLE = r"(?:ben|bent|bin|el|al|ould|ouled|abou|abd|abdel|si|sidi|bel|bou|ibn|ebn)"
 _TOK = rf"[{U}][{U}{L}'’\.\-]*"
-NAME = rf"(?:{_TOK}|{PARTICLE})(?:[ \-](?:{_TOK}|{PARTICLE})){{0,4}}"
+# A role word must not be swallowed into the name: "Mr Ayadi Bouguerba
+# Commissaire aux Comptes" was yielding a person called "Ayadi Bouguerba
+# Commissaire". Titles of function are excluded from name continuation.
+_NOT_NAME = (r"(?!(?i:Commissaire|G[ée]rant|G[ée]rante|G[ée]rants|Administrateur|"
+             r"Administrateurs|Pr[ée]sident|Pr[ée]sidente|Directeur|Directrice|"
+             r"Liquidateur|Tr[ée]sorier|Secr[ée]taire|Membre|Associ[ée]|"
+             r"Actionnaire|Cog[ée]rant|Co)\b)")
+NAME = (rf"(?:{_TOK}|{PARTICLE})"
+        rf"(?:[ \-]{_NOT_NAME}(?:{_TOK}|{PARTICLE})){{0,4}}")
 SPOUSE = rf"(?:\s+(?:[ée]pouse|[ée]p\.|n[ée]e|veuve|vve)\s+(?P<spouse>{NAME}))?"
 
 RE_PERSON = re.compile(rf"{TITLE}\s+(?P<name>{NAME}){SPOUSE}", re.UNICODE)
@@ -36,7 +49,14 @@ NAME_STOPWORDS = {
     "AFFECTATION", "DEPOT", "DELAI", "MODALITE", "CONDITIONS", "PROJET",
     "TRIBUNAL", "GREFFE", "RECETTE", "QUITTANCE", "MONSIEUR", "MADAME",
     "ARTICLE", "ART", "NOTA", "REGISTRE", "NATIONAL", "ENTREPRISES",
+    # Signature lines: a block often closes with "Le Gerant" or "La Gerance",
+    # which is the signatory's function, not a name.
+    "LE", "LA", "LES", "GERANT", "GERANTE", "GERANTS", "LIQUIDATEUR",
+    "PRESIDENT", "ADMINISTRATEUR", "COMMISSAIRE", "SECRETAIRE", "TRESORIER",
 }
+
+# Identity-document labels that trail a name in association filings.
+_ID_LABELS = {"CIN", "CNI", "PASSEPORT", "CIF", "MF"}
 
 MONTHS = {
     "janvier": 1, "fevrier": 2, "mars": 3, "avril": 4, "mai": 5, "juin": 6,
@@ -194,6 +214,9 @@ def clean_name(raw: str) -> str:
     name = name.strip(" .,;:-'’")
     # drop a dangling particle left at the end of a truncated capture
     toks = name.split()
+    while toks and strip_accents(toks[-1]).upper() in _ID_LABELS:
+        toks.pop()
+    name = " ".join(toks)
     while toks and strip_accents(toks[-1]).lower() in {
         "ben", "bent", "bin", "el", "al", "ould", "ouled", "abou", "abd",
         "abdel", "si", "sidi", "bel", "bou", "ibn", "ebn", "et", "de", "du",
@@ -297,21 +320,32 @@ def find_persons(text: str) -> list[tuple[str, str, int]]:
 # a resolution naming two officers has no punctuation between them, so an
 # unbounded capture swallows the second person and mis-titles them.
 RE_QUALITE = re.compile(
-    r"en\s+(?:sa|leur|ses)?\s*qualit[ée]s?\s+d[e\']\s*"
+    r"en\s+(?:(?:sa|leur|ses)?\s*qualit[ée]s?\s+d[e\']|tant\s+qu[e\'])\s*"
     r"(?P<role>(?:(?!\s+et\s+(?:" + TITLE + r"))(?!\s+en\s+qualit)[^,.;\n]){3,90})",
     re.IGNORECASE)
+
+
+@lru_cache(maxsize=1)
+def _role_word_re() -> re.Pattern:
+    """Alternation over every surface role form, longest first."""
+    forms = sorted((re.escape(s) for s, _c in role_lookup()), key=len, reverse=True)
+    return re.compile(r"(?<![a-z])(" + "|".join(forms) + r")(?![a-z])", re.IGNORECASE)
 
 
 def pair_person_roles(clause: str) -> list[tuple[str, str, str]]:
     """Associate each person in a clause with their own role.
 
-    A single resolution often names several people with different roles --
-    "a nomme Madame X en qualite de President du Conseil d'Administration et
-    Monsieur Y en qualite de Directeur General" -- so a clause-level role
-    applied to everyone would silently mis-title people. Each person takes the
-    first role phrase that appears after them and before the next person.
+    A single resolution often names several people in different roles --
+    "Mme Saida Bessrour est nommee gerante ... et Mr Sami Ben Sedrine est nomme
+    co-gerant" -- so a clause-level role applied to everyone mis-titles people.
+    Each person takes the first role that appears after them and before the
+    next person named.
 
-    Returns (name, married_name, role_phrase); role_phrase may be empty.
+    Role anchors are not limited to "en qualite de": a bare role word counts
+    too, which is how the majority of appointments are actually phrased.
+
+    Returns (name, married_name, role_phrase); role_phrase is empty when the
+    text gives that person no role of their own.
     """
     persons = [(m.start(), clean_name(m.group("name")),
                 clean_name(m.group("spouse") or ""))
@@ -321,6 +355,16 @@ def pair_person_roles(clause: str) -> list[tuple[str, str, str]]:
         return []
 
     roles = [(m.start(), m.group("role")) for m in RE_QUALITE.finditer(clause)]
+    # Fall back to bare role words where no explicit "en qualite de" phrase sits
+    # between this person and the next.
+    # The role lexicon is accent-stripped, so the search runs on a folded copy
+    # of the clause. Folding a Latin-1 accented letter leaves length unchanged,
+    # so offsets still line up with the original.
+    folded = strip_accents(clause)
+    if len(folded) == len(clause):
+        roles += [(m.start(), clause[m.start():m.end()])
+                  for m in _role_word_re().finditer(folded)]
+    roles.sort()
     out: list[tuple[str, str, str]] = []
     for i, (offset, name, spouse) in enumerate(persons):
         next_offset = persons[i + 1][0] if i + 1 < len(persons) else len(clause) + 1
@@ -331,10 +375,35 @@ def pair_person_roles(clause: str) -> list[tuple[str, str, str]]:
                 break
         out.append((name, spouse, own))
 
-    # If exactly one role phrase precedes every person, it governs them all
+    # A single role phrase before every person governs them all
     # ("sont nommes en qualite d'administrateurs : X, Y et Z").
     if len(roles) == 1 and all(not r for _n, _s, r in out) and roles[0][0] < persons[0][0]:
-        out = [(n, s, roles[0][1]) for n, s, _r in out]
+        return [(n, s, roles[0][1]) for n, s, _r in out]
+
+    return out
+
+
+RE_PLURAL_TITLE = re.compile(
+    r"(?i:Messieurs|Mesdames(?:\s+et\s+Messieurs)?|Mesdemoiselles)\s+(?P<span>[^.;:\n]{6,220})")
+
+
+def split_plural_title(text: str) -> list[str]:
+    """Names introduced by a plural title and joined by commas or "et".
+
+    "Messieurs Foued Noomen et Nizar Frikha" yielded only the first name,
+    because only the first carries a title of its own. The construction appears
+    in 1,166 corporate blocks, so every later name in it was being lost.
+    """
+    out: list[str] = []
+    for m in RE_PLURAL_TITLE.finditer(text):
+        span = m.group("span")
+        # stop at the first verb-like continuation so the span stays a name list
+        span = re.split(r"\s+(?:ont|sont|a|est|au|du|de\s+la|en\s+qualit|en\s+tant)\s+",
+                        span)[0]
+        for part in re.split(r",|\bet\b", span):
+            name = clean_name(part)
+            if name:
+                out.append(name)
     return out
 
 
@@ -344,6 +413,7 @@ def split_person_list(text: str) -> list[str]:
     Needed for the common 'Monsieur X, Monsieur Y et Madame Z' construction.
     """
     names = [n for n, _s, _o in find_persons(text)]
+    names += [n for n in split_plural_title(text) if n not in names]
     if names:
         return names
     # Fall back to splitting an untitled enumeration, but validate each part:
