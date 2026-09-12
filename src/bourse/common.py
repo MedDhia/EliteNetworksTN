@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import gzip
 import hashlib
+import io
 import json
 import logging
 import random
@@ -36,8 +37,17 @@ def open_text(path: Path, mode: str = "r"):
 
     Large derived tables are committed gzipped, following the convention the
     JORT build already uses in this repository.
+
+    Writes set the gzip header mtime to 0. A gzip stream otherwise records the
+    time it was written, so rebuilding unchanged data would produce different
+    bytes and show up as a spurious diff on every run. With the timestamp
+    pinned, the same inputs give a byte-identical file - the same guarantee the
+    entity ids already make.
     """
     if str(path).endswith(".gz"):
+        if "w" in mode or "a" in mode:
+            raw = gzip.GzipFile(filename=path, mode=mode + "b", mtime=0)
+            return io.TextIOWrapper(raw, encoding="utf-8", newline="")
         return gzip.open(path, mode + "t", encoding="utf-8", newline="")
     return path.open(mode, encoding="utf-8", newline="")
 
