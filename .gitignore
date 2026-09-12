@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+# Raw mirror of the JORT OCR corpus (~6.4k gzipped issues, re-downloadable
+# with `python -m eltn.cli harvest`). Never committed.
+data/raw/
+data/interim/
