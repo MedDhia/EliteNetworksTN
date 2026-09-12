@@ -115,11 +115,22 @@ def process_pdf(entry: dict, max_pages: int | None = None,
     if max_pages is None:
         max_pages = DEFAULT_MAX_PAGES.get(entry.get("doc_type"))
     scanned = False
+    from_words = False
     with pdfplumber.open(path) as pdf:
         n_pages = len(pdf.pages)
         scanned = ocr and not has_text_layer(pdf)
         if not scanned:
             tables = extract_tables(pdf, max_pages=max_pages)
+            if not tables:
+                # Nothing ruled on any page. Older filings - most of the
+                # pre-2007 prospectuses - typeset their tables borderless, and
+                # the ordinary path only ever *fills* a table it has already
+                # found, so it comes back empty from a document that is full of
+                # them. The word-based reader does not need the ruling lines.
+                # Tried only when the ruled pass found nothing, so documents
+                # that already extract keep their validated behaviour.
+                tables = extract_tables(pdf, max_pages=max_pages, from_words=True)
+                from_words = bool(tables)
             if entry.get("doc_type") == "rapport_annuel" and ref_year is None:
                 head = "\n".join((p.extract_text() or "") for p in pdf.pages[:6])
                 ref_year = detect_report_year(head, entry.get("local_path", ""))
@@ -143,6 +154,9 @@ def process_pdf(entry: dict, max_pages: int | None = None,
             # Marked on every row, because an OCR'd row is weaker evidence than
             # a row read from a text layer and an analyst may want to drop them.
             r["from_ocr"] = scanned
+            # Rebuilt from word positions rather than read off a ruled table -
+            # true for every OCR'd row, and for borderless filings too.
+            r["from_words"] = scanned or from_words
     out["_meta"] = [
         {
             "node_key": entry["node_key"],
@@ -151,6 +165,7 @@ def process_pdf(entry: dict, max_pages: int | None = None,
             "n_pages": n_pages,
             "n_tables": len(tables),
             "from_ocr": scanned,
+            "from_words": scanned or from_words,
             "counts": {k: len(v) for k, v in out.items() if k != "_meta"},
             "extracted_at": now_iso(),
         }
