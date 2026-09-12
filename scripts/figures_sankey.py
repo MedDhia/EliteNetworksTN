@@ -235,7 +235,7 @@ def draw_sankey(ax, m: pd.DataFrame, *, tier_names: bool = True,
 # the unit becomes the ministry *and its territorial administration*, which is
 # what the interior ministry is in Tunisia; the window runs five years rather
 # than three; and the four rank tiers collapse to three. Together these give
-# 198, 642 and 644 movers with every cell populated.
+# 198, 711 and 678 movers with every cell populated.
 _INTERIOR_CORE = re.compile(
     r"minist[eè]re de l'int[ée]rieur|secr[ée]tariat d'etat [aà] l'int[ée]rieur|"
     r"s[uû]ret[ée] nationale|garde nationale|protection civile", re.I)
@@ -256,10 +256,38 @@ def _portfolio_domains(label: str) -> tuple[str, ...]:
     return (label,)
 
 
+# A body attached to a commune or a governorate is part of the territorial
+# administration whatever its own form says: the municipal technical services of
+# Tunis and the regional council of Bizerte are not free-standing. Roughly half
+# the `direction` rows in the table carry no portfolio at all, so without this
+# they fall out of the apparatus entirely - 608 spells of it.
+#
+# Two guards, each earning its place on a case the other misses. The form
+# restriction drops the agricultural training institute *at* Sidi Thabet "au
+# gouvernorat de l'Ariana", where the phrase gives a location and not an
+# attachment. The ministry rule drops the hospital-construction units "au
+# gouvernorat du Kasserine au ministère de l'équipement", where a ministry named
+# further along the string is the real parent. The spell's own `parent_org_id`
+# would seem the obvious way to do this and is not usable: it is assigned per
+# spell from the surrounding act, and a decree listing appointments across
+# several ministries mislabels them - one `direction générale des impôts` spell
+# carries the interior ministry as its parent.
+_LOCALLY_ATTACHED = re.compile(r"(?:[àa]|de) la commune d|au gouvernorat d", re.I)
+_UNDER_MINISTRY = re.compile(r"au minist[eè]re d", re.I)
+
+
+def _attached_to_local_body(org: str, form: str) -> bool:
+    if form not in ("direction", "autre"):
+        return False
+    m = _LOCALLY_ATTACHED.search(org)
+    return bool(m) and _UNDER_MINISTRY.search(org, m.end()) is None
+
+
 def in_interior_apparatus(portfolio, org: str, form: str) -> bool:
     return ("interieur" in _portfolio_domains(portfolio)
             or bool(_INTERIOR_CORE.search(org))
-            or form in ("gouvernorat", "commune"))
+            or form in ("gouvernorat", "commune")
+            or _attached_to_local_body(org, form))
 
 
 def ia_tier_of(score: float) -> str | None:
@@ -294,6 +322,7 @@ def fig_interior(spells: pd.DataFrame) -> None:
         fig, axes = plt.subplots(2, 3, figsize=(14.6, 8.2))
         fig.subplots_adjust(top=0.72, bottom=0.10, left=0.15, right=0.985,
                             wspace=0.26, hspace=0.30)
+        deltas = []
         for col, (key, t0, datestr, gloss) in enumerate(RUPTURES):
             m, n, cohort = interior_transitions(spells, t0)
             plc = [interior_transitions(spells, t0 - pd.DateOffset(years=k))
@@ -318,6 +347,7 @@ def fig_interior(spells: pd.DataFrame) -> None:
                 ax.set_title(f"{lbl}   ·   {nn:,} movers   ·   "
                              f"{fell(mm, nn):.1f}% fell a tier",
                              color=INK, fontsize=8.6)
+            deltas.append(fell(m, n) - fell(pm, pn))
             axes[0, col].annotate(
                 f"{key}  ·  {datestr}\n{gloss}", xy=(0.5, 1.30),
                 xycoords="axes fraction", ha="center", va="bottom",
@@ -338,8 +368,13 @@ def fig_interior(spells: pd.DataFrame) -> None:
             "is scaled to its own total. The row beneath every rupture is the same "
             "cohort drawn from five ordinary years of the same era, which is the "
             "only thing that makes the row above it readable. On this measure the "
-            "three ruptures move little: +3.8, -4.2 and +2.2 points of tier-crossing "
-            "demotion against their own eras.",
+            "three ruptures move little: "
+            # Read off the panels rather than typed in. An earlier figure in this
+            # set carried a hand-written claim that its own data had stopped
+            # supporting; a subtitle that recomputes cannot drift from the figure
+            # above it.
+            + ", ".join(f"{d:+.1f}" for d in deltas)
+            + " points of tier-crossing demotion against their own eras.",
             width=150,
         )
         save(fig, "fig23_interior_apparatus_flow",

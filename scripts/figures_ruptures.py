@@ -1009,9 +1009,14 @@ def fig_demotion_ministries(min_n: int = 40, min_placebo: int = 60) -> None:
             rows[dom] = {"n": n, "diff": (p1 - p0) * 100, "ci": 1.96 * se * 100}
         per_rupture[key] = rows
 
-    # Ordered by the 2021 shift, which is the rupture the figure is about.
+    # Ordered by the 2021 shift, which is the rupture the figure is about, with
+    # the name as a tiebreaker. Every ministry that 2021 has no row for scores
+    # the same sentinel, and without the second key their order came from
+    # iterating a set of strings - which Python randomises per process, so the
+    # figure came out different on each rebuild and showed up as a diff with
+    # nothing in it.
     order = sorted({d for r in per_rupture.values() for d in r},
-                   key=lambda d: -per_rupture["2021"].get(d, {}).get("diff", -99))
+                   key=lambda d: (-per_rupture["2021"].get(d, {}).get("diff", -99), d))
     n = len(order)
 
     fig, axes = plt.subplots(1, 3, figsize=(13.0, 6.4), sharey=True)
