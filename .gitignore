@@ -1,28 +1,30 @@
 __pycache__/
 *.pyc
-*.py[cod]
 .venv/
-venv/
 .ipynb_checkpoints/
-.pytest_cache/
-*.egg-info/
 
-# Raw mirror of the JORT OCR corpus. Never committed: re-downloadable, and
-# data/raw/manifest.csv carries a sha256 per file for verification.
+# Raw mirror of the JORT OCR corpus (~6.4k gzipped issues, re-downloadable
+# with `python -m eltn.cli harvest`). Never committed.
 data/raw/
 data/interim/
-!data/raw/manifest.csv
 
 # Local tooling only (used to preview the explorer)
 node_modules/
 package.json
 package-lock.json
 
-# Scratch
+# --- multiplex-2008-2012 build ---------------------------------------------
+# The manifest is kept: it carries a sha256 per mirrored issue, which is what
+# makes the raw layer verifiable without redistributing it.
+!data/raw/manifest.csv
+
+# Python tooling for this build
+*.py[cod]
+.pytest_cache/
+*.egg-info/
 *.tmp
 .DS_Store
 
-# --- multiplex-2008-2012 build ---------------------------------------------
 # Large derived artifacts. Committed gzipped instead (see *.gz alongside), or
 # rebuilt from the committed CSVs with `make extract && make export`.
 data/processed/multiplex-2008-2012/events.csv
