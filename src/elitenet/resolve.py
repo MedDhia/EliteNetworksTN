@@ -24,7 +24,7 @@ from pathlib import Path
 from rapidfuzz import fuzz
 
 from .names import org_id, parse_org, parse_person, person_id
-from .paths import INTERIM, PROCESSED, ensure_dirs
+from .paths import CONFIG, INTERIM, PROCESSED, ensure_dirs
 
 # Score weights. Organisation agreement outweighs name similarity: two people
 # with the same common name are common, but two people with the same name at
@@ -71,9 +71,16 @@ RESOLUTION_FIELDS = [
     "resolved_org_label", "score", "link_status",
     "s_name", "s_org", "s_mf", "s_cooccur", "s_role",
     "n_candidates", "margin_to_runner_up", "runner_up_person_id",
+    "runner_up_label", "runner_up_score", "rival_candidates",
     "n_events", "first_event_date", "last_event_date",
     "seed_degree", "name_ambiguity", "mention_cluster_id", "evidence_quote",
+    # everything below exists so an ambiguous row can be adjudicated from the
+    # row itself, without going back to the pipeline
+    "role_observed", "issue_uid", "folio_page", "source_url", "pdf_url",
+    "candidate_orgs", "decided_by",
 ]
+
+OVERRIDES = "overrides/entity_decisions.csv"
 
 
 # --------------------------------------------------------------------------- #
@@ -296,9 +303,20 @@ def score_pair(name: str, cand_id: str, org_resolved: str, org_score: float,
 # driver
 # --------------------------------------------------------------------------- #
 
+def load_overrides() -> dict[str, dict]:
+    """Human adjudications, which outrank any score the matcher computes."""
+    path = CONFIG / OVERRIDES
+    if not path.exists():
+        return {}
+    with path.open(encoding="utf-8", newline="") as fh:
+        return {r["mention_key"]: r for r in csv.DictReader(fh)
+                if (r.get("mention_key") or "").strip()}
+
+
 def run(events_path: Path | None = None) -> dict:
     ensure_dirs()
     idx = load_seed()
+    overrides = load_overrides()
     events_path = events_path or (INTERIM / "events_raw.jsonl")
 
     # Group events by (person, organisation) dyad: the dyad is the unit of
@@ -325,6 +343,10 @@ def run(events_path: Path | None = None) -> dict:
             "org_mf": e.get("org_mf") or "", "n_events": 0,
             "dates": [], "roles": set(), "blocks": set(),
             "quote": e.get("evidence_quote") or "",
+            "issue_uid": e.get("issue_uid") or "",
+            "folio_page": e.get("folio_page") or "",
+            "collection": e.get("collection") or "",
+            "year": e.get("year") or "", "issue": e.get("issue") or "",
         })
         d["n_events"] += 1
         if e.get("event_date"):
@@ -389,9 +411,45 @@ def run(events_path: Path | None = None) -> dict:
                 stats["forced_review_by_margin"] += 1
             status = "ambiguous"
 
+        # A recorded human decision outranks the score.
+        mention_key = f"{person}||{org_men}"
+        ov = overrides.get(mention_key)
+        decided_by = ""
+        if ov:
+            decision = (ov.get("decision") or "").strip().lower()
+            decided_by = ov.get("coder") or "manual"
+            if decision == "link" and ov.get("person_id") in idx.persons:
+                top = {"person_id": ov["person_id"], "score": 1.0, "s_name": 1.0,
+                       "s_org": 1.0, "s_mf": 0.0, "s_cooccur": 0.0, "s_role": 0.0}
+                status = "manual"
+            elif decision == "none":
+                top, status = None, "manual_none"
+            elif decision == "defer":
+                status = "ambiguous"
+
         stats[status] = stats.get(status, 0) + 1
         dates = sorted(d["dates"])
         pm = parse_person(person)
+
+        # Rival candidates, with the organisations the seed ties each to, so the
+        # choice can be made from this row alone.
+        rivals = []
+        for cand in scored[1:4]:
+            label = idx.persons[cand["person_id"]]["label"]
+            orgs = sorted(idx.orgs[o]["label"] for o in
+                          list(idx.person_orgs.get(cand["person_id"], ()))[:3]
+                          if o in idx.orgs)
+            rivals.append(f"{label} ({cand['score']:.2f}; "
+                          f"{', '.join(orgs[:2]) or 'no seed orgs'})")
+        top_orgs = []
+        if top and status not in {"unresolved", "manual_none"}:
+            top_orgs = sorted(idx.orgs[o]["label"] for o in
+                              list(idx.person_orgs.get(top["person_id"], ()))[:6]
+                              if o in idx.orgs)
+        viewer = (f"https://jort.tn/view/{d['collection']}/fr/{d['year']}/{d['issue']}"
+                  if d["collection"] else "")
+        pdf = (f"https://lake.jort.tn/{d['collection']}/fr/{d['year']}/{d['issue']}.pdf"
+               if d["collection"] else "")
         out_rows.append({
             "mention_key": f"{person}||{org_men}",
             "person_mention": person, "org_mention": org_men,
@@ -411,6 +469,10 @@ def run(events_path: Path | None = None) -> dict:
             "n_candidates": len(scored),
             "margin_to_runner_up": round(margin, 4),
             "runner_up_person_id": runner["person_id"] if runner else "",
+            "runner_up_label": (idx.persons[runner["person_id"]]["label"]
+                                if runner else ""),
+            "runner_up_score": round(runner["score"], 4) if runner else "",
+            "rival_candidates": " | ".join(rivals),
             "n_events": d["n_events"],
             "first_event_date": dates[0] if dates else "",
             "last_event_date": dates[-1] if dates else "",
@@ -421,6 +483,11 @@ def run(events_path: Path | None = None) -> dict:
                 if (top and status != "unresolved") else pm.match_key),
             "mention_cluster_id": person_id(person),
             "evidence_quote": d["quote"],
+            "role_observed": role,
+            "issue_uid": d["issue_uid"], "folio_page": d["folio_page"],
+            "source_url": viewer, "pdf_url": pdf,
+            "candidate_orgs": "; ".join(top_orgs[:4]),
+            "decided_by": decided_by,
         })
 
     _write(PROCESSED / "resolution.csv", out_rows, RESOLUTION_FIELDS)

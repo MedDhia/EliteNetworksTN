@@ -83,3 +83,9 @@ def test_sommaire_entries_are_not_counted_as_acts():
     acts, _ = segment_jo(pm, META_J)
     # The Sommaire repeats the 2017-124 title; it must appear once, from the body.
     assert sum(a["act_number"] == "2017-124" for a in acts) == 1
+
+
+def test_convocation_rubric_is_not_relational():
+    # SANB3 is the Convocations rubric: an agenda item is not an act.
+    from elitenet.segment import _rubric_table
+    assert _rubric_table()["SANB3"]["domain"] == "convocation"
