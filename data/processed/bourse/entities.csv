@@ -429,7 +429,7 @@ F22aad37689,firm,4) Les membres du Conseil pourront être soit des personnes phy
 F22b009fe2d,firm,Ahmed Rjiba(1) Président,0,,,,,1,Ahmed Rjiba(1) Président
 F22c640c859,firm,d'autres sociétés,0,,,,,2,d'autres sociétés | d’autres sociétés
 F22cfe02088,firm,Immeuble International City Center - Tour,0,,,,,1,Immeuble International City Center - Tour
-F22f26c42f9,firm,LAND’OR,1,TN0007510019,LNDOR,لاندور,continuous,3,GROUPE LAND'OR | LAND OR | LAND’OR
+F22f26c42f9,firm,LAND’OR,1,TN0007510019,LNDOR,لاندور,continuous,4,GROUPE LAND'OR | LAND OR | LAND'OR | LAND’OR
 F231c2da790,firm,SITEX,0,,,,,2,SITEX | Sitex
 F23211662e7,firm,Consignations - DG de la CDC Gestion,0,,,,,1,Consignations - DG de la CDC Gestion
 F23217da563,firm,Managing Consultant - Groupe CAPGEMINI,0,,,,,1,Managing Consultant - Groupe CAPGEMINI
@@ -643,6 +643,7 @@ F360919017d,firm,ELBENE,0,,,,,1,ELBENE
 F360f43f89b,firm,Gérant Industrial and Petroleum engineering and contracting - Gérant Mazda Details,0,,,,,1,Gérant Industrial and Petroleum engineering and contracting - Gérant Mazda Details
 F361813b355,firm,SICAV LINVESTISSEUR,0,,,,,1,SICAV LINVESTISSEUR
 F36215bf0f0,firm,Administrateur à SIM-SICAR - Présidente du Conseil d’Administration de Modern Leasing - Présidente du Conseil d’Administration de la SICAV BHO,0,,,,,1,Administrateur à SIM-SICAR - Présidente du Conseil d’Administration de Modern Leasing - Présidente du Conseil d’Administration de la SICAV BHO
+F3646265034,firm,|Dhafrallah HAMMAMI 01/12/2012,0,,,,,1,|Dhafrallah HAMMAMI 01/12/2012
 F3665b9d697,firm,le Comité a le,0,,,,,1,le Comité a le
 F367ad117ec,firm,Mr Abdelkader BOUDRIGA,0,,,,,1,Mr Abdelkader BOUDRIGA
 F36818ab3ea,firm,Clinique EL Amen GAFSA,0,,,,,3,CLINIQUE EL AMEN GAFSA | Clinique EL Amen GAFSA | Clinique El Amen Gafsa
@@ -994,6 +995,7 @@ F51959e3980,firm,SOMVIK par la société KYRANIS,0,,,,,1,SOMVIK par la société
 F51b918ed8b,firm,Commaissaires aux Comptes et vous tenir,0,,,,,1,Commaissaires aux Comptes et vous tenir
 F51d8579793,firm,Présentation de l'ASTREE,0,,,,,2,Présentation de l'ASTREE | Présentation de l’'ASTREE
 F520b13657a,firm,ACTIS Investment Holding,0,,,,,1,ACTIS Investment Holding
+F5242f998d5,firm,Centrale Laitière du Cap Bon représentée par Mr Boubaker Mehri,0,,,,,1,Centrale Laitière du Cap Bon représentée par Mr Boubaker Mehri
 F528d9d425e,firm,SMVDA AZIZIA,0,,,,,1,SMVDA AZIZIA
 F528e92aee5,firm,L'augmentation des frais financiers,0,,,,,1,L'augmentation des frais financiers
 F5292c69711,firm,Integrale,0,,,,,1,Integrale
@@ -1096,6 +1098,7 @@ F5c55ea9cae,firm,1) La société est administrée par un conseil composé de tro
 F5c5da1759b,firm,"Le taux d'occupation a baissé de 46,20% en 2013 à 44,90% en 2014",0,,,,,1,"Le taux d'occupation a baissé de 46,20% en 2013 à 44,90% en 2014"
 F5c64fd1bec,firm,Propriétaire,0,,,,,1,Propriétaire
 F5c752593c8,firm,TUNISIE LEASING (administrateur) - SICAR AMEN (administrateur) - AMEN CAPITAL,0,,,,,1,TUNISIE LEASING (administrateur) - SICAR AMEN (administrateur) - AMEN CAPITAL
+F5c87b1883e,firm,Parmi les principales recommandations,0,,,,,1,Parmi les principales recommandations
 F5c8b59f438,firm,Dans le même cadre la société s’est dotée des structures suivantes,0,,,,,1,Dans le même cadre la société s’est dotée des structures suivantes
 F5cb784c4c2,firm,UADH,1,TN0007690019,UADH,الشركة العالمية لتوزيع السيارات القابضة,suspended_other,1,UADH
 F5cbfb4115d,firm,SICAR AMEN MEDITRAC INTERNATIONAL,0,,,,,1,SICAR AMEN MEDITRAC INTERNATIONAL
@@ -1115,7 +1118,7 @@ F5df045f623,firm,Solde au 31/12/2011 avant affectation,0,,,,,1,Solde au 31/12/20
 F5dfa0457a5,firm,La société JUBA SARL,0,,,,,1,La société JUBA SARL
 F5e0ba6bbff,firm,Immobilière Echerifa,0,,,,,1,Immobilière Echerifa
 F5e18e42c99,firm,OCEANA (contrats conclus en 2015 et 2017),0,,,,,1,OCEANA (contrats conclus en 2015 et 2017)
-F5e41fa6209,firm,Telnet,0,,,,,1,Telnet
+F5e41fa6209,firm,TELNET,0,,,,,2,TELNET | Telnet
 F5e5b677f23,firm,BS,0,,,,,1,BS
 F5e5d2edaf2,firm,STEC,0,,,,,1,STEC
 F5e77baca2c,firm,Loisir,0,,,,,1,Loisir
@@ -1199,6 +1202,7 @@ F657d503621,firm,Dernier poste occupé dans la,0,,,,,1,Dernier poste occupé dan
 F6580fc017e,firm,ASTREE,1,TN0003000452,AST,شركة أستري للتّامين وإعادة التأمين,fixing,1,ASTREE
 F65a48ab4e7,firm,INTERMETAL,0,,,,,1,INTERMETAL
 F65ab88d019,firm,+Réserves pour réinvestissement exonéré {distribuables en,0,,,,,1,+Réserves pour réinvestissement exonéré {distribuables en
+F65c08dd04b,firm,CAR,0,,,,,1,CAR
 F65c8d5ef6f,firm,TOPIC SA,0,,,,,2,TOPIC SA | TOPIC*
 F65d5c39b58,firm,DIVA SICAR,0,,,,,1,DIVA SICAR
 F660ddb5edc,firm,SANADETT SICAV,0,,,,,2,SANADETT SICAV | Sanadett Sicav
@@ -1283,6 +1287,7 @@ F6df05c38c4,firm,"de la clientèle. S'agissant des emplois, la Société",0,,,,,
 F6df150fd02,firm,Fax,0,,,,,1,Fax
 F6e0a78ff11,firm,Le Groupe des Assurances du Crédit Mutuel,0,,,,,1,Le Groupe des Assurances du Crédit Mutuel
 F6e61ff4d56,firm,BH BF *,0,,,,,1,BH BF *
+F6e971a53e0,firm,El Karama Holding SA représentée par Mr Mohamed BICHIOU,0,,,,,1,El Karama Holding SA représentée par Mr Mohamed BICHIOU
 F6e97c07ea3,firm,Pouvoir du conseil d’administration,0,,,,,2,Pouvoir du conseil d'administration | Pouvoir du conseil d’administration
 F6eb53bf42c,firm,Sté recouvrement,0,,,,,1,Sté recouvrement
 F6eebb19963,firm,BTE,0,,,,,1,BTE
@@ -1442,6 +1447,7 @@ F7bd9d5983b,firm,Mohamed El Aziz MILED,0,,,,,1,Mohamed El Aziz MILED
 F7bef772538,firm,IT. Situation touristique de la région de Sousse,0,,,,,1,IT. Situation touristique de la région de Sousse
 F7c133f3e9c,firm,Président du Conseil d’Administration de la C.G.I,0,,,,,1,Président du Conseil d’Administration de la C.G.I
 F7c16ce78a7,firm,Au 31.12.2013,0,,,,,1,Au 31.12.2013
+F7c29e673e8,firm,TAWASOL,0,,,,,1,TAWASOL
 F7c3b992b31,firm,"STE HOTELIERE ""H. KURIAT PALACE""",0,,,,,1,"STE HOTELIERE ""H. KURIAT PALACE"""
 F7c55787f67,firm,"Comités, avec voix consultative",0,,,,,1,"Comités, avec voix consultative"
 F7c6e9963ec,firm,CIMENT DE GABES,0,,,,,1,CIMENT DE GABES
@@ -1470,6 +1476,7 @@ F7de50fdc96,firm,Expert en engagement avec les partie prenantes pour les projets
 F7df774f982,firm,Société Tunisienne des Banques - STB,0,,,,,1,Société Tunisienne des Banques - STB
 F7e0e38b8c4,firm,alimente un certain immobilisme de La part des investisseurs,0,,,,,1,alimente un certain immobilisme de La part des investisseurs
 F7e44e6efe9,firm,FINSTAT permettant un accès avec,0,,,,,1,FINSTAT permettant un accès avec
+F7e94e558e9,firm,Le cumul de qualité du,0,,,,,1,Le cumul de qualité du
 F7e9541587b,firm,PNUD,0,,,,,1,PNUD
 F7ea2675085,firm,Slimene BETTAIEB Président Directeur Général 2015 - 2017 Tunis M. Zouheir TANBOURA Directeur Général Adjoint Depuis 2000 Tunis,0,,,,,1,Slimene BETTAIEB Président Directeur Général 2015 - 2017 Tunis M. Zouheir TANBOURA Directeur Général Adjoint Depuis 2000 Tunis
 F7ed7d7d6a0,firm,8. STE TUN.RECOUVR. DES CREANCES “STRC”,0,,,,,1,8. STE TUN.RECOUVR. DES CREANCES “STRC”
@@ -1587,6 +1594,8 @@ F8725c4362b,firm,Société ELBOUNIANE,0,,,,,1,Société ELBOUNIANE
 F874d8b7518,firm,Le Comite Permanent d'Audit Interne assiste Le Conseil,0,,,,,1,Le Comite Permanent d'Audit Interne assiste Le Conseil
 F874e4fde2c,firm,Clinique Hannibal,0,,,,,1,Clinique Hannibal
 F8757fd109d,firm,BTK Invest Holding S.A (ex UP SICAF),0,,,,,1,BTK Invest Holding S.A (ex UP SICAF)
+F876bcb6b08,firm,Directeur Général 29/10/2012,0,,,,,1,Directeur Général 29/10/2012
+F8782087847,firm,Le conseil a étudié plusieurs points notamment,0,,,,,1,Le conseil a étudié plusieurs points notamment
 F87840ec4fb,firm,MEDIMETAL,0,,,,,1,MEDIMETAL
 F879d04a7c7,firm,Directeur Contrôle de Gestion de YKH Holding,0,,,,,1,Directeur Contrôle de Gestion de YKH Holding
 F87b2d9573d,firm,"Le mandat des administrateurs M. MOURAD GHAZI, M. ABDELAZIZ BEN",0,,,,,1,"Le mandat des administrateurs M. MOURAD GHAZI, M. ABDELAZIZ BEN"
@@ -1918,6 +1927,7 @@ Fa3e8ab64fc,firm,COFITE SICAF,0,,,,,1,COFITE SICAF
 Fa3f27cee43,firm,ALYSSA SICAV,0,,,,,1,ALYSSA SICAV
 Fa4003e2dd6,firm,Société Tuniso-Koweïtienne d’El Emar (STKE),0,,,,,1,Société Tuniso-Koweïtienne d’El Emar (STKE)
 Fa418c3b1a2,firm,L'Assemblée Générale Ordinaire peut nommer un salarié de la société,0,,,,,1,L'Assemblée Générale Ordinaire peut nommer un salarié de la société
+Fa42993c174,firm,Nommés par l'AGC du 29/10/2012,0,,,,,1,Nommés par l'AGC du 29/10/2012
 Fa440aa863c,firm,SOIVM.SICAF,0,,,,,1,SOIVM.SICAF
 Fa44a1e725c,firm,Azur Papier SA,0,,,,,2,AZUR PAPIER | Azur Papier SA
 Fa45ce89868,firm,STIF,0,,,,,1,STIF
@@ -2034,6 +2044,7 @@ Facf4ef108f,firm,les opérations avec les correspondants,0,,,,,1,les opérations
 Fad13d855dc,firm,Eclair Companie Internationale,0,,,,,1,Eclair Companie Internationale
 Fad15c36426,firm,Représente la société vis-à-vis des tiers et de toutes,0,,,,,1,Représente la société vis-à-vis des tiers et de toutes
 Fad228f7446,firm,S.E.P.T.S,0,,,,,2,S.E.P.T.S | SEPTS
+Fad4f5ac9a4,firm,ASSURANCE AMI,0,,,,,1,ASSURANCE AMI
 Fad7edcfbb1,firm,Directeur Général Adjoint AB,0,,,,,1,Directeur Général Adjoint AB
 Fadb12e9843,firm,Veille à la realisation des options,0,,,,,1,Veille à la realisation des options
 Fadd1d3b2d1,firm,Sté LE RECOUVREMENT (administrateur) - Sté SICAR AMEN,0,,,,,1,Sté LE RECOUVREMENT (administrateur) - Sté SICAR AMEN
@@ -2113,6 +2124,7 @@ Fb4ae7c9e18,firm,La Banque Nationale Agricole,0,,,,,1,La Banque Nationale Agrico
 Fb4b2b625c5,firm,la Sté Jumeaux Immobilière,0,,,,,1,la Sté Jumeaux Immobilière
 Fb4c54562ec,firm,CRJ construction,0,,,,,2,CRJ Construction | CRJ construction
 Fb4ea5f4871,firm,PDG COFAT Mateur,0,,,,,1,PDG COFAT Mateur
+Fb4f9a26f6a,firm,Brahim,0,,,,,1,Brahim
 Fb514a16570,firm,Le capital social de la société les,0,,,,,1,Le capital social de la société les
 Fb51a57cbfc,firm,Charte,0,,,,,1,Charte
 Fb5294737b8,firm,SICAF Epargne Invest,0,,,,,2,SICAF EPARGNE INVEST | SICAF Epargne Invest
@@ -2477,6 +2489,7 @@ Fd53dbefc27,firm,e Restructuration du dispositif des,0,,,,,1,e Restructuration d
 Fd56e4856e3,firm,a pour mission d'aider Le Conseil d'Administration à,0,,,,,1,a pour mission d'aider Le Conseil d'Administration à
 Fd583e55ad9,firm,Vice-président du Conseil d'administration de la COMAR,0,,,,,1,Vice-président du Conseil d'administration de la COMAR
 Fd589880c50,firm,Caisse Tunisienne d'Assurances Mutuelles Agricoles''',0,,,,,1,Caisse Tunisienne d'Assurances Mutuelles Agricoles'''
+Fd597eda509,firm,La durée des fonctions des administrateurs est de trois (3) ans. Tout,0,,,,,1,La durée des fonctions des administrateurs est de trois (3) ans. Tout
 Fd5ab9ca5d5,firm,Sables du Centre SARL,0,,,,,1,Sables du Centre SARL
 Fd5bb6398b0,firm,PDG COFAT TN,0,,,,,1,PDG COFAT TN
 Fd5c24b9ed3,firm,Gérant Aures Gros,0,,,,,1,Gérant Aures Gros
@@ -2877,7 +2890,7 @@ Ff9905b2103,firm,Le Conseil d'Administration nomme parmi ses membres un,0,,,,,1,
 Ff9b9132a52,firm,CARTHAGE CEMENT,1,TN0007400013,CC,قرطاج للإسمنت,continuous,2,CARTHAGE CEMENT | Carthage Cement
 Ff9c378912e,firm,Tout actionnaire désirant prendre part aux Assemblées peut,0,,,,,1,Tout actionnaire désirant prendre part aux Assemblées peut
 Ff9d1d90ba7,firm,Banque de l’Habitat,0,,,,,3,BANQUE DE L’HABITAT | Banque de l'Habitat | Banque de l’Habitat
-Ff9d724d949,firm,El Wifack Leasing,0,,,,,3,EL WIFACK LEASING | El Wifack Leasing | El Wifack Leasing)
+Ff9d724d949,firm,El Wifack Leasing,0,,,,,4,EL WIFACK LEASING | El Wifack Leasing | El Wifack Leasing) | GROUPE EL WIFACK LEASING
 Ffa172db867,firm,AMEN INVEST SINEW,0,,,,,1,AMEN INVEST SINEW
 Ffa59a5fe7c,firm,Certification ISO 9001 version 2000 en 2002,0,,,,,1,Certification ISO 9001 version 2000 en 2002
 Ffac05a835b,firm,"Dénomination ASTREE, Compagnie d'Assurances et de",0,,,,,1,"Dénomination ASTREE, Compagnie d'Assurances et de"
@@ -2892,6 +2905,7 @@ Ffb11a1e56c,firm,STE GAMMARTH TOURISME ET LOISIRS VEGA (Nova Park),0,,,,,1,STE G
 Ffb3bb1ba4a,firm,Immobilière Tuniso-Séoudienne « SITS,0,,,,,1,Immobilière Tuniso-Séoudienne « SITS
 Ffb885e43e6,firm,"l'inspection Générale et du contrôle périodique, du responsable",0,,,,,1,"l'inspection Générale et du contrôle périodique, du responsable"
 Ffb99549d6c,firm,SMART FINANCE,0,,,,,1,SMART FINANCE
+Ffbb523763e,firm,dans la société TGH,0,,,,,1,dans la société TGH
 Ffbd116a304,firm,Lorsque le nombre des Membres du Conseil,0,,,,,1,Lorsque le nombre des Membres du Conseil
 Ffbe6ee4f05,firm,KASSO SA,0,,,,,1,KASSO SA
 Ffc1f1c2a42,firm,STE PARTNER CONSEIL,0,,,,,1,STE PARTNER CONSEIL
@@ -3338,7 +3352,7 @@ P43c5cdc9a4,person,Skander KAMOUN,0,,,,,3,Skander KAMOUN | Skander KAMOUN*** | S
 P4412c91404,person,"IFICO S,A",0,,,,,1,"IFICO S,A"
 P4468b77a27,person,Moncef BOUSSANOUGA,0,,,,,1,Moncef BOUSSANOUGA
 P446ed9ac92,person,Rafika AKKARI,0,,,,,1,Rafika AKKARI
-P44ff7dcf22,person,Sami Zghal,0,,,,,1,Sami Zghal
+P44ff7dcf22,person,Sami Zghal,0,,,,,2,Sami ZGHAL | Sami Zghal
 P454b33b40f,person,Abdelhafidh KALLEL,0,,,,,1,Mr Abdelhafidh KALLEL
 P45566b3662,person,Kuwaït Investment Authority - KIA (représenté par Mohamed Saad AL MUNAIFI),0,,,,,1,Kuwaït Investment Authority - KIA (représenté par Monsieur Mohamed Saad AL MUNAIFI)
 P45577c6a1d,person,Imededdine CHERIF,0,,,,,1,Imededdine CHERIF
@@ -3362,7 +3376,7 @@ P491def1509,person,Jaouhar BEN ZID,0,,,,,1,Jaouhar BEN ZID
 P4965c75428,person,Tarek Hamila,0,,,,,4,Mr. Tarek Hamila | Mr.Tarek HAMILA | Tarek HAMILA | Tarek Hamila
 P49772d3866,person,Septième reliquat,0,,,,,1,Septième reliquat
 P497731d478,person,Khélil BELHOUANE,0,,,,,1,Khélil BELHOUANE
-P4999aa9d29,person,Souhir Taktak,0,,,,,1,Souhir Taktak
+P4999aa9d29,person,Souhir Taktak,0,,,,,2,Souhir TAKTAK | Souhir Taktak
 P4a8d099c1e,person,"émises""; Primes",0,,,,,1,"émises""; Primes"
 P4aad593df8,person,Walid ZAHEG,0,,,,,1,Walid ZAHEG
 P4ae0553bf6,person,Mahmoud ZAHAF,0,,,,,2,Mahmoud ZAHAF | Mahmoud Zahaf
@@ -3477,6 +3491,7 @@ P5bfe157080,person,Myriam BEN ABDENNEBI,0,,,,,1,Myriam BEN ABDENNEBI
 P5c1f0bbcf7,person,Régime fiscal,0,,,,,1,Régime fiscal
 P5cbc638b45,person,SAMIRA GHRIBI,0,,,,,1,SAMIRA GHRIBI
 P5d516a4180,person,Ismail HMADI,0,,,,,1,Ismail HMADI
+P5d5d7c717a,person,au titre de 2014,0,,,,,1,au titre de 2014
 P5d6b3cca15,person,Sami EL ABED,0,,,,,1,Sami EL ABED
 P5d8a9d32e9,person,TLF (Président du Conseil de Surveillance),0,,,,,1,TLF (Président du Conseil de Surveillance)
 P5dc68b6f3d,person,Selma BABBOU,0,,,,,2,Mme Selma Babbou | Selma BABBOU
@@ -3662,6 +3677,7 @@ P7c209de70f,person,Suite à,0,,,,,1,Suite à
 P7c76857287,person,KHALED BEN MILED,0,,,,,2,KHALED BEN MILED | Khaled Ben MILED
 P7d2f5f4949,person,Mohamed EL JAZIRI**,0,,,,,1,Mohamed EL JAZIRI**
 P7d856ced51,person,Mohamed Salah FRAD,0,,,,,3,Mohamed SALAH FRAD | Mohamed Salah FRAD | Mohamed Salah Frad
+P7dbfa1dc27,person,Hatem Denguezli,0,,,,,1,Hatem Denguezli
 P7dc24f8063,person,Président,0,,,,,3,PRESIDENT | President | Président
 P7e17f7c0b3,person,ou par,0,,,,,1,ou par
 P7e49323662,person,Hamouda Belkhouja,0,,,,,1,Hamouda Belkhouja
@@ -3808,6 +3824,7 @@ P982a9d14c2,person,"de la qualite (nouvelle technologie), qu’au niveau des vol
 P98f6ac48c4,person,Abdessatar Ben Ghedhifa,0,,,,,1,Abdessatar Ben Ghedhifa
 P991d14d18a,person,Brahim LAAJIMI,0,,,,,1,Brahim LAAJIMI
 P99653a78bd,person,Henri MOULARD***,0,,,,,2,Henri MOULARD | Henri MOULARD***
+P99ca818dc9,person,Moncef CHEIKH ROUHOU,0,,,,,1,Moncef CHEIKH ROUHOU
 P99f3630b8f,person,l'Entreprise,0,,,,,1,l'Entreprise
 P99f94c62db,person,Karim BEN YEDDER,0,,,,,5,KARIM BEN YEDDER | Karim BEN YEDDER | Karim BEN YEDDER* | Karim BEN YEDDER** | M. Karim BEN YEDDER
 P9a25c17308,person,Roberto Quaglia,0,,,,,1,Roberto Quaglia
@@ -3867,6 +3884,7 @@ Pa248229f1a,person,Premier reliquat,0,,,,,1,Premier reliquat
 Pa255ba3f18,person,IBRAHIM IBRAHIM,0,,,,,1,IBRAHIM IBRAHIM
 Pa27fa83dc6,person,Nabil FRINI***,0,,,,,2,Nabil FRINI | Nabil FRINI***
 Pa2b25b2b02,person,Philippe GARSUAULT,0,,,,,3,M. Philippe GARSUAULT | Philippe GARSUAULT | Philippe GARSUAULT*
+Pa2f35cc063,person,Nabil CHAIBI,0,,,,,1,Nabil CHAIBI
 Pa30b51f4aa,person,Hichem Driss,0,,,,,1,Hichem Driss
 Pa33a2e9d19,person,Etablissement LOUKIL & CIE,0,,,,,1,Etablissement M. LOUKIL & CIE
 Pa3408fa963,person,"SAH Cote d’Ivoire, SAH Sénégal, SAH Algérie, SAH Libye",0,,,,,1,"SAH Cote d’Ivoire, SAH Sénégal, SAH Algérie, SAH Libye"
@@ -4086,6 +4104,7 @@ Pc4c4edac94,person,Jaafar Khatteche,0,,,,,1,Jaafar Khatteche
 Pc4ec4b6b3d,person,Mohamed Tarifa,0,,,,,2,Mohamed TARIFA | Mohamed Tarifa
 Pc51af2fa27,person,Mohamed Larbi,0,,,,,2,Mohamed LARBI | Mohamed Larbi
 Pc555befcec,person,Objet social,0,,,,,1,Objet social
+Pc5d15f7251,person,ET CE,0,,,,,1,ET CE
 Pc699f1f380,person,Mokhtar NEFZI,0,,,,,1,Mokhtar NEFZI
 Pc69f0c3403,person,Saloua ARAB ***,0,,,,,4,Saloua ARAB | Saloua ARAB *** | Saloua ARAB ***** | Saloua Arab
 Pc6aff74bf0,person,Sabeur ELLOUMI,0,,,,,1,Sabeur ELLOUMI
@@ -4176,6 +4195,7 @@ Pd639c0923f,person,Madih ESSID,0,,,,,1,Madih ESSID
 Pd65f400e3e,person,Mohamed Ali AYED,0,,,,,3,M. Mohamed Ali AYED | Mohamed Ali AYED | Mohamed Ali AYED**
 Pd67a8cb44e,person,AGO statuant sur l'exercice 2014,0,,,,,1,AGO statuant sur l'exercice 2014
 Pd691f27e54,person,Lui - même,0,,,,,4,Lui - même | Lui -même | Lui- même | Lui-même
+Pd69ab60e6b,person,Nom du,0,,,,,1,Nom du
 Pd71ad11646,person,Ghaith Mismar,0,,,,,2,Ghaith MISMAR | Ghaith Mismar
 Pd758d2fc71,person,Mohamed FKIH,0,,,,,1,Mohamed FKIH
 Pd7a8903d58,person,la Sté ODYSSEE PALACE,0,,,,,1,la Sté ODYSSEE PALACE
@@ -4330,6 +4350,7 @@ Ped296401cb,person,MOHAMED BRAYEK,0,,,,,1,MOHAMED BRAYEK
 Ped4bffbd60,person,Yousser ACHICH,0,,,,,1,Yousser ACHICH
 Ped6447031c,person,Brahim SAADA,0,,,,,1,Brahim SAADA
 Ped7c47121c,person,Sofiane HAMMAMI,0,,,,,1,Sofiane HAMMAMI
+Peda642602b,person,Mohamed DJARRAYA,0,,,,,1,Mohamed DJARRAYA
 Pedae93d956,person,Fonction principale,0,,,,,1,Fonction principale
 Pedb58ea503,person,Loïc de Saint,0,,,,,1,Loïc de Saint
 Pee0e9dcfe6,person,Mohamed CHOUCHENE,0,,,,,1,Mohamed CHOUCHENE
