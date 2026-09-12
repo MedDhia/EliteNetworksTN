@@ -59,6 +59,8 @@ TABLES = {
     "org_ties": PROCESSED / "org_ties.csv",
     "org_tie_spells": PROCESSED / "org_tie_spells.csv",
     "panel_org_ties_yearly": PROCESSED / "panel_org_ties_yearly.csv",
+    "org_identifiers": PROCESSED / "org_identifiers.csv",
+    "org_addresses": PROCESSED / "org_addresses.csv",
 }
 
 VIEWS = {
@@ -147,6 +149,9 @@ def build_sqlite() -> dict:
         'CREATE INDEX ix_spells_org ON spells(org_id)',
         'CREATE INDEX ix_panel_y ON panel_edges_yearly(panel_id)',
         'CREATE INDEX ix_res_key ON resolution(mention_key)',
+        'CREATE INDEX ix_orgid_org ON org_identifiers(org_id)',
+        'CREATE INDEX ix_orgid_val ON org_identifiers(value_normalised)',
+        'CREATE INDEX ix_orgaddr_org ON org_addresses(org_id)',
     ):
         try:
             con.execute(idx)

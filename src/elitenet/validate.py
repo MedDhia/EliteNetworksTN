@@ -350,11 +350,11 @@ def check_org_attrs(rep: Report) -> None:
     should not fail over an ambiguity in the source. The number is what matters,
     and it belongs in the report where a reader will see it.
     """
-    ids = _read(PROCESSED / "org_identifiers.csv")
     if not _table_exists(PROCESSED / "org_identifiers.csv"):
         _skip_stage(rep, "organisation identifiers",
                     PROCESSED / "org_identifiers.csv")
         return
+    ids = _read(PROCESSED / "org_identifiers.csv")
 
     by_type = Counter(r["id_type"] for r in ids)
     rep.add("INFO", "organisation identifiers",
