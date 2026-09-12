@@ -341,6 +341,8 @@ def _dot_panel(ax, table, categories, labels):
     dodge = {k: (j - 1) * 0.22 for j, (k, _, _, _) in enumerate(RUPTURES)}
     for i, cat in enumerate(categories):
         y = len(categories) - 1 - i
+        if cat is None:          # blank row, used to separate groups
+            continue
         ax.axhline(y, color=RULE, lw=0.6, zorder=0)
         vals = table[table.category == cat]
         for key, _, _, _ in RUPTURES:
@@ -436,6 +438,148 @@ def fig_depth() -> None:
                   "carry this statistic and are omitted.")
 
 
+
+# ---------------------------------------------------------------------------
+# figure 15 - ministry by ministry
+# ---------------------------------------------------------------------------
+def portfolio_domains(label: str) -> tuple[str, ...]:
+    """The policy domains a portfolio label covers.
+
+    Ministries are renamed, merged and split constantly, and the portfolio key
+    follows the name, so a series keyed on it breaks silently at every
+    reorganisation. Between 2007 and 2010 the interior ministry was the
+    "ministere de l'Interieur et du Developpement Local" and its appointments
+    were filed under a compound key; in 2011 it reverted. Read literally, the
+    interior ministry therefore appears to make 43 appointments a year before
+    1987, **1.5** before 2011, and 70 before 2021 - which is a fact about its
+    letterhead, not about the state.
+
+    Splitting a compound label onto each of its domains repairs the series: the
+    same three figures become 45, 60 and 69. An appointment to a merged ministry
+    counts toward each domain it merged, which is what the act itself means, and
+    the same expansion is applied on both sides of every ratio.
+
+    Presidency keys are atomic: "presidence_republique" and
+    "presidence_gouvernement" are two different institutions, not a merger.
+    """
+    if not label:
+        return ()
+    if label.startswith("min_"):
+        return tuple(d for d in label[4:].split("+") if d)
+    return (label,)
+
+
+# Ministries grouped by what they are for. The grouping is the analytical point
+# of the figure: whether a rupture fell on the ministries that hold power or on
+# the ministries that deliver services.
+MINISTRY_BLOCS = [
+    ("Sovereignty and security", [
+        ("interieur", "Interior"),
+        ("justice", "Justice"),
+        ("affaires_etrangeres", "Foreign Affairs"),
+    ]),
+    ("Centre of government", [
+        ("presidence_republique", "Presidency of the Republic"),
+        ("presidence_gouvernement", "Prime Minister's Office"),
+    ]),
+    ("Economic", [
+        ("finances", "Finance"),
+        ("agriculture", "Agriculture"),
+        ("equipement", "Public Works"),
+        ("transport", "Transport"),
+    ]),
+    ("Social and cultural", [
+        ("affaires_sociales", "Social Affairs"),
+        ("sante", "Health"),
+        ("education", "Education"),
+        ("enseignement_superieur", "Higher Education"),
+        ("culture", "Culture"),
+        ("jeunesse_sport", "Youth and Sport"),
+    ]),
+]
+
+
+def ministry_index(min_pre: float = 12.0) -> pd.DataFrame:
+    """The composition index of figure 12, computed per policy domain."""
+    exploded = []
+    for label, when in zip(entries.org_portfolio.fillna(""), entries.date):
+        for dom in portfolio_domains(label):
+            exploded.append((dom, when))
+    ex = pd.DataFrame(exploded, columns=["domain", "date"])
+
+    rows = []
+    for key, t0, _, _ in RUPTURES:
+        pre_a, pre_b = t0 - pd.DateOffset(years=4), t0
+        post_a, post_b = t0, t0 + pd.DateOffset(years=3)
+        whole = ((entries.date >= post_a) & (entries.date < post_b)).sum() / 3 / (
+            max(((entries.date >= pre_a) & (entries.date < pre_b)).sum() / 4, 1e-9))
+        pre = ex[(ex.date >= pre_a) & (ex.date < pre_b)].domain.value_counts() / 4
+        post = ex[(ex.date >= post_a) & (ex.date < post_b)].domain.value_counts() / 3
+        for _, members in MINISTRY_BLOCS:
+            for dom, _label in members:
+                p = float(pre.get(dom, 0.0))
+                rows.append({
+                    "rupture": key, "category": dom, "pre_rate": p,
+                    "index": (float(post.get(dom, 0.0)) / p) / whole
+                             if p >= min_pre else np.nan,
+                })
+    return pd.DataFrame(rows)
+
+
+def fig_ministries() -> None:
+    table = ministry_index()
+    order, labels, rules = [], [], []
+    for n_bloc, (bloc, members) in enumerate(MINISTRY_BLOCS):
+        if n_bloc:               # a blank row carries the heading clear of the
+            order.append(None)   # ministry above and below it
+            labels.append("")
+        rules.append((len(order), bloc))
+        for dom, label in members:
+            order.append(dom)
+            labels.append(label)
+
+    fig, ax = plt.subplots(figsize=(9.8, 7.2))
+    fig.subplots_adjust(top=0.81, left=0.30, bottom=0.13)
+    _dot_panel(ax, table, order, labels)
+    ax.set_xlabel("churn relative to the state apparatus as a whole  (log scale)",
+                  labelpad=18)
+
+    # Bloc headings sit in the left margin, above the first ministry of each
+    # bloc, with a rule across the panel to separate one from the next.
+    n = len(order)
+    for start, bloc in rules:
+        y = n - 1 - start
+        if start:
+            ax.axhline(y + 1.0, color=RULE, lw=0.9, zorder=1)
+        ax.annotate(bloc.upper(), xy=(-0.285, y + 0.72),
+                    xycoords=("axes fraction", "data"),
+                    fontsize=7.0, color=MUTED, fontweight="bold",
+                    ha="left", va="center")
+    ax.legend(handles=_rupture_handles(), loc="lower center",
+              bbox_to_anchor=(0.5, 1.02), ncol=3)
+
+    headline(
+        fig,
+        "The revolution fell on the courts and the treasury; 2021 fell on the interior ministry",
+        "Appointments in the three years after each rupture against the four years "
+        "before, divided by the same ratio for the apparatus as a whole, by policy "
+        "domain. A point to the right of the line marks a ministry reshaped harder "
+        "than the rest of the state; to the left, one left comparatively alone.",
+    )
+    save(fig, "fig15_ministry_by_ministry",
+         SOURCE + "  Merged ministries are counted toward each domain they merge, "
+                  "because the portfolio key follows the ministry's name and would "
+                  "otherwise break at every rename: read literally, the interior "
+                  "ministry makes 1.5 appointments a year before 2011 and 70 "
+                  "before 2021, an artefact of its having been the ministry of the "
+                  "Interior and Local Development until 2011. Domains with fewer "
+                  "than 12 appointments a year before a rupture are not plotted "
+                  "for it; defence, trade and women's affairs fall below that "
+                  "throughout. Governorates and municipalities are the interior "
+                  "ministry's field administration but are filed under their own "
+                  "form, not its portfolio, so this understates its reach.")
+
+
 # ---------------------------------------------------------------------------
 # figure 14 - elite renewal
 # ---------------------------------------------------------------------------
@@ -510,5 +654,6 @@ if __name__ == "__main__":
     fig_survival()
     fig_where()
     fig_depth()
+    fig_ministries()
     fig_renewal()
     print("done")

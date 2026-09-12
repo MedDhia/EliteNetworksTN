@@ -50,7 +50,14 @@ CAT4 = ["#A03B2C", "#1B5FC1", "#B5852A", "#5B4E9E"]
 # The three ruptures are unordered categories, so they take categorical slots
 # rather than a ramp. Fixed here so a given rupture keeps its colour in every
 # figure that shows all three.
-RUPTURE_COLOUR = {"1987": CAT4[0], "2011": CAT4[1], "2021": CAT4[3]}
+#
+# Slots 0, 1, 2 and not 0, 1, 3. The four-slot palette above is validated on its
+# *adjacent* pairs, and taking a subset creates adjacencies that validation never
+# saw: slots 1 and 3 together come to dE 8.9 in normal vision, under the floor of
+# 15, and 5.7 for a deuteranope. Any subset has to be re-validated as its own
+# palette - here scripts/validate_palette.js passes these three on every pair,
+# worst 18.9 normal and 15.9 deutan.
+RUPTURE_COLOUR = {"1987": CAT4[0], "2011": CAT4[1], "2021": CAT4[2]}
 
 ERA_RAMP = ["#CBDCF2", "#92B5E3", "#5A8CD0", "#2F63B4", "#17408A"]
 RANK_RAMP = ["#F0C7BC", "#DE9683", "#C4634C", "#9C3626", "#63160F"]
