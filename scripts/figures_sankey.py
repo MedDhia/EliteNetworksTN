@@ -27,7 +27,6 @@ supply 38, 11 and 4 movers across the three ruptures, too few to draw.
 
 from __future__ import annotations
 
-import re
 import sys
 from pathlib import Path
 
@@ -39,6 +38,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from figstyle import (  # noqa: E402
     INK, MUTED, PROC, SOURCE, headline, plt, save,
 )
+from interior import in_interior_apparatus  # noqa: E402
 from matplotlib.patches import Patch, PathPatch  # noqa: E402
 from matplotlib.path import Path as MplPath  # noqa: E402
 
@@ -236,58 +236,12 @@ def draw_sankey(ax, m: pd.DataFrame, *, tier_names: bool = True,
 # what the interior ministry is in Tunisia; the window runs five years rather
 # than three; and the four rank tiers collapse to three. Together these give
 # 198, 711 and 678 movers with every cell populated.
-_INTERIOR_CORE = re.compile(
-    r"minist[eè]re de l'int[ée]rieur|secr[ée]tariat d'etat [aà] l'int[ée]rieur|"
-    r"s[uû]ret[ée] nationale|garde nationale|protection civile", re.I)
-
 IA_TIERS = [
     (60, 999, "Secretary-general,\ngovernor and above"),
     (40, 60, "Director and\ndeputy director"),
     (0, 40, "Head of service\nand below"),
 ]
 IA_LABELS = [t[2] for t in IA_TIERS]
-
-
-def _portfolio_domains(label: str) -> tuple[str, ...]:
-    if not isinstance(label, str) or not label:
-        return ()
-    if label.startswith("min_"):
-        return tuple(d for d in label[4:].split("+") if d)
-    return (label,)
-
-
-# A body attached to a commune or a governorate is part of the territorial
-# administration whatever its own form says: the municipal technical services of
-# Tunis and the regional council of Bizerte are not free-standing. Roughly half
-# the `direction` rows in the table carry no portfolio at all, so without this
-# they fall out of the apparatus entirely - 608 spells of it.
-#
-# Two guards, each earning its place on a case the other misses. The form
-# restriction drops the agricultural training institute *at* Sidi Thabet "au
-# gouvernorat de l'Ariana", where the phrase gives a location and not an
-# attachment. The ministry rule drops the hospital-construction units "au
-# gouvernorat du Kasserine au ministère de l'équipement", where a ministry named
-# further along the string is the real parent. The spell's own `parent_org_id`
-# would seem the obvious way to do this and is not usable: it is assigned per
-# spell from the surrounding act, and a decree listing appointments across
-# several ministries mislabels them - one `direction générale des impôts` spell
-# carries the interior ministry as its parent.
-_LOCALLY_ATTACHED = re.compile(r"(?:[àa]|de) la commune d|au gouvernorat d", re.I)
-_UNDER_MINISTRY = re.compile(r"au minist[eè]re d", re.I)
-
-
-def _attached_to_local_body(org: str, form: str) -> bool:
-    if form not in ("direction", "autre"):
-        return False
-    m = _LOCALLY_ATTACHED.search(org)
-    return bool(m) and _UNDER_MINISTRY.search(org, m.end()) is None
-
-
-def in_interior_apparatus(portfolio, org: str, form: str) -> bool:
-    return ("interieur" in _portfolio_domains(portfolio)
-            or bool(_INTERIOR_CORE.search(org))
-            or form in ("gouvernorat", "commune")
-            or _attached_to_local_body(org, form))
 
 
 def ia_tier_of(score: float) -> str | None:

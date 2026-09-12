@@ -23,7 +23,6 @@ of the differences survive it. Most do not.
 
 from __future__ import annotations
 
-import math
 import sys
 from pathlib import Path
 
@@ -31,118 +30,15 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from figures_sankey import (  # noqa: E402
-    PLACEBO_LAGS, RECORD_ENDS, RUPTURES, in_interior_apparatus,
-    _portfolio_domains,
+from figures_sankey import PLACEBO_LAGS, RECORD_ENDS, RUPTURES  # noqa: E402
+from interior import (  # noqa: E402
+    BLOCS, STAYS, destination, in_interior_apparatus, wilson,
 )
 from figstyle import (  # noqa: E402
-    CAT4, INK, MUTED, PROC, RULE, RUPTURE_COLOUR, SOURCE, headline, save,
+    INK, MUTED, PROC, RULE, RUPTURE_COLOUR, SOURCE, headline, save,
 )
 
 import matplotlib.pyplot as plt  # noqa: E402
-import re  # noqa: E402
-
-# --- destinations ----------------------------------------------------------
-# Roughly half the `direction` rows in the spell table carry no portfolio, so a
-# portfolio-only classifier leaves 39% of the outflow unplaced. The body's own
-# name is the fallback: it either names its ministry outright or is one of a
-# small number of standing bodies whose attachment is not in doubt — the tax,
-# customs and public-accounts directorates-general to finance, the regional
-# agricultural commissariats to agriculture.
-#
-# The spell's `parent_org_id` would seem the obvious fallback and is not usable.
-# It is assigned per spell from the surrounding act, so a decree listing
-# appointments across several ministries mislabels them: one `direction générale
-# des impôts` spell carries the interior ministry as its parent.
-_BY_NAME = [
-    ("finance and economy", re.compile(
-        r"minist[eè]re des finances|minist[eè]re de l'[ée]conomie|"
-        r"minist[eè]re du plan|domaines de l'etat|"
-        r"direction g[ée]n[ée]rale des imp[ôo]ts|contr[ôo]le fiscal|"
-        r"comptabilit[ée] publique|direction g[ée]n[ée]rale des douanes|"
-        r"direction g[ée]n[ée]rale des participations", re.I)),
-    ("infrastructure and production", re.compile(
-        r"minist[eè]re de l'agriculture|minist[eè]re de l'[ée]quipement|"
-        r"minist[eè]re du transport|minist[eè]re de l'industrie|"
-        r"minist[eè]re du commerce|minist[eè]re du tourisme|"
-        r"minist[eè]re de l'environnement|minist[eè]re de l'[ée]nergie|"
-        r"minist[eè]re des communications|minist[eè]re des technologies|"
-        r"d[ée]veloppement agricole|d[ée]veloppement r[ée]gional|"
-        r"ponts et chauss[ée]es", re.I)),
-    ("social ministries", re.compile(
-        r"minist[eè]re de l'[ée]ducation|enseignement sup[ée]rieur|"
-        r"commissariat r[ée]gional de l'[ée]ducation|universit[ée]|"
-        r"minist[eè]re de la sant[ée]|h[ôo]pital|affaires sociales|"
-        r"minist[eè]re de l'emploi|formation professionnelle|"
-        r"minist[eè]re de la culture|affaires religieuses|"
-        r"minist[eè]re de la jeunesse|minist[eè]re des sports", re.I)),
-    ("sovereign and oversight", re.compile(
-        r"affaires [ée]trang[eè]res|d[ée]fense nationale|"
-        r"minist[eè]re de la justice|cour de cassation|tribunal|"
-        r"cour d'appel|conseil d'etat|cour des comptes|"
-        r"assembl[ée]e des repr[ée]sentants du peuple|chambre des d[ée]put[ée]s|"
-        r"chambre des conseillers", re.I)),
-    ("the centre", re.compile(
-        r"pr[ée]sidence de la r[ée]publique|pr[ée]sidence du gouvernement|"
-        r"premier minist[eè]re|secr[ée]tariat d'etat [aà] la pr[ée]sidence", re.I)),
-]
-
-# Five blocs, not fourteen. A dozen destinations looks more informative and is
-# not: 1987 sends about a hundred people out of the apparatus in five years,
-# which is single figures in most cells.
-BLOCS = ["the centre", "sovereign and oversight", "finance and economy",
-         "infrastructure and production", "social ministries",
-         "public enterprise", "not identifiable"]
-
-STAYS = "stays in the interior apparatus"
-
-
-def destination(portfolio, org: str, form: str) -> str:
-    if in_interior_apparatus(portfolio, org, form):
-        return STAYS
-    d = set(_portfolio_domains(portfolio))
-    if form == "presidence" or {"presidence_republique",
-                                "presidence_gouvernement"} & d:
-        return "the centre"
-    if form == "juridiction" or {"justice", "defense",
-                                 "affaires_etrangeres"} & d:
-        return "sovereign and oversight"
-    if {"finances", "economie", "domaines_etat", "plan"} & d:
-        return "finance and economy"
-    if form in ("entreprise_publique", "banque"):
-        return "public enterprise"
-    if form == "instance_independante":
-        return "sovereign and oversight"
-    if ({"education", "enseignement_superieur", "sante", "affaires_sociales",
-         "emploi", "culture", "affaires_religieuses", "jeunesse_sport",
-         "femme_famille"} & d
-            or form in ("universite", "etablissement_sante")):
-        return "social ministries"
-    if {"equipement", "transport", "agriculture", "energie", "industrie",
-        "environnement", "commerce", "tourisme", "developpement",
-        "information", "technologies"} & d:
-        return "infrastructure and production"
-    for label, pat in _BY_NAME:          # portfolio blank: read the name
-        if pat.search(org):
-            return label
-    return "not identifiable"
-
-
-def wilson(k: int, n: int) -> tuple[float, float]:
-    """Wilson interval, in percentage points.
-
-    Used rather than the normal approximation because several of these shares
-    sit near zero on cohorts of a hundred, where the normal interval runs below
-    it and reports something impossible.
-    """
-    if not n:
-        return 0.0, 0.0
-    z, p = 1.96, k / n
-    d = 1 + z * z / n
-    c = (p + z * z / (2 * n)) / d
-    h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
-    return max(0.0, (c - h)) * 100, min(1.0, (c + h)) * 100
-
 
 def _marker(ax, x: float, y: float, colour: str, *, lo: float, hi: float,
             benchmark: float, ms: float) -> bool:

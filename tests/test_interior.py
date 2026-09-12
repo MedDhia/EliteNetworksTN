@@ -4,20 +4,20 @@ Both are built from specific rows of `spells.csv.gz`, and the cases below are
 those rows rather than invented strings. That matters here because the two
 guards on the local-attachment rule each exist for one real pattern in the
 gazette, and a paraphrase would not exercise either.
+
+The rules live in ``scripts/interior.py`` rather than in the figure scripts so
+that this module imports no drawing library: matplotlib is not a dependency of
+this project, and a test that needed it would be skipped in CI, which is the
+one place these rules most need checking.
 """
 
 import sys
 from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")
-
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from figures_interior_outflow import destination  # noqa: E402
-from figures_sankey import (  # noqa: E402
-    _attached_to_local_body, in_interior_apparatus,
+from interior import (  # noqa: E402
+    attached_to_local_body, destination, in_interior_apparatus, wilson,
 )
 
 
@@ -58,12 +58,12 @@ class TestLocallyAttachedBodies:
     """
 
     def test_municipal_services_are_interior(self):
-        assert _attached_to_local_body(
+        assert attached_to_local_body(
             "direction générale des services techniques à la commune de Tunis",
             "direction")
 
     def test_regional_council_is_interior(self):
-        assert _attached_to_local_body(
+        assert attached_to_local_body(
             "conseil régional au gouvernorat de Bizerte", "autre")
 
     def test_a_location_is_not_an_attachment(self):
@@ -71,7 +71,7 @@ class TestLocallyAttachedBodies:
         # to be in Ariana. The form is what rejects it.
         name = ("institut national pédagogique et de la formation continue "
                 "agricole de Sidi Thabet au gouvernorat de l'Ariana")
-        assert not _attached_to_local_body(name, "universite")
+        assert not attached_to_local_body(name, "universite")
         assert not in_interior_apparatus(None, name, "universite")
 
     def test_a_ministry_named_later_wins(self):
@@ -81,7 +81,7 @@ class TestLocallyAttachedBodies:
                 "gestion par objectifs au gouvernorat du Kasserine au "
                 "ministère de l'équipement, de l'habitat et de "
                 "l'aménagement du territoire")
-        assert not _attached_to_local_body(name, "direction")
+        assert not attached_to_local_body(name, "direction")
 
 
 class TestDestination:
@@ -107,3 +107,34 @@ class TestDestination:
     def test_what_cannot_be_placed_says_so(self):
         assert destination(None, "centre national du cuir et de la chaussure",
                            "autre") == "not identifiable"
+
+
+class TestWilson:
+    """The interval used on the outflow figure.
+
+    Wilson rather than the normal approximation because several of these shares
+    sit near zero on cohorts of a hundred, where the normal interval runs below
+    zero and reports something that cannot happen.
+    """
+
+    def test_never_runs_below_zero(self):
+        lo, hi = wilson(0, 92)
+        assert lo == 0.0
+        assert 0.0 < hi < 10.0
+
+    def test_never_runs_above_a_hundred(self):
+        lo, hi = wilson(92, 92)
+        assert hi == 100.0
+        assert 90.0 < lo < 100.0
+
+    def test_brackets_the_point_estimate(self):
+        lo, hi = wilson(29, 198)
+        assert lo < 29 / 198 * 100 < hi
+
+    def test_a_larger_cohort_gives_a_tighter_interval(self):
+        small = wilson(30, 100)
+        large = wilson(300, 1000)
+        assert (large[1] - large[0]) < (small[1] - small[0])
+
+    def test_an_empty_cohort_does_not_divide_by_zero(self):
+        assert wilson(0, 0) == (0.0, 0.0)
