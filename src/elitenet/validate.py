@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import gzip
 import json
 from collections import Counter, defaultdict
 from datetime import date
@@ -54,11 +55,36 @@ class Report:
         return "\n".join(out)
 
 
+# The large derived tables are committed *gzipped* and git-ignored
+# uncompressed (see .gitignore), so in a fresh clone -- and therefore in CI --
+# only `<name>.gz` exists. Reading the plain name and silently returning [] for
+# a missing file meant every ERROR-level check over events, spells and
+# resolution passed on an empty list: the gate was real locally and vacuous in
+# CI, which is how 87 impossible act dates sailed through it. The `.gz` is the
+# canonical committed form, so fall back to it rather than treating the table
+# as absent. A table that is genuinely missing still yields [], but no table
+# the repository actually carries can read as empty again.
 def _read(path: Path) -> list[dict]:
-    if not path.exists():
+    fh = _open_table(path)
+    if fh is None:
         return []
-    with path.open(encoding="utf-8", newline="") as fh:
+    with fh:
         return list(csv.DictReader(fh))
+
+
+def _open_table(path: Path):
+    if path.exists():
+        return path.open(encoding="utf-8", newline="")
+    gz = path.with_suffix(path.suffix + ".gz")
+    if gz.exists():
+        return gzip.open(gz, "rt", encoding="utf-8", newline="")
+    return None
+
+
+# Whether a table is readable at all, for the checks that need to distinguish
+# "the stage has not run" from "the stage ran and produced nothing".
+def _table_exists(path: Path) -> bool:
+    return path.exists() or path.with_suffix(path.suffix + ".gz").exists()
 
 
 BLOCKS = INTERIM / "blocks.jsonl"
@@ -73,7 +99,8 @@ BLOCKS = INTERIM / "blocks.jsonl"
 # The stage whose output each skippable input is, so the report says how to
 # make the check runnable rather than only that it was not run.
 _REBUILD_WITH = {"blocks.jsonl": "segment", "act_citations.csv": "extract"}
-_STAGE_FOR = {"node_key.csv": "tergm", "org_tie_spells.csv": "orgties"}
+_STAGE_FOR = {"node_key.csv": "tergm", "org_tie_spells.csv": "orgties",
+              "org_identifiers.csv": "orgattrs"}
 
 
 def _skip(rep: Report, check: str, needs: Path) -> None:
@@ -308,6 +335,74 @@ def check_citations(rep: Report) -> None:
             f"{len(cits)} citations, {len(dated)} with a resolvable cited date")
 
 
+def check_org_attrs(rep: Report) -> None:
+    """Organisation identifiers, and what they say about resolution quality.
+
+    A matricule fiscal and a registre-de-commerce number are hard identifiers:
+    a firm has one of each. So an organisation node carrying two is a defect,
+    and this is the only check in the pipeline that can see an
+    organisation-resolution **merge** -- a merge otherwise looks exactly like a
+    well-corroborated match, since both names really do appear beside the same
+    kind of clause.
+
+    Reported at WARN, not ERROR, for the reason the merged-homonym check on the
+    person side is: some conflicts are genuine re-registrations, and the build
+    should not fail over an ambiguity in the source. The number is what matters,
+    and it belongs in the report where a reader will see it.
+    """
+    ids = _read(PROCESSED / "org_identifiers.csv")
+    if not _table_exists(PROCESSED / "org_identifiers.csv"):
+        _skip_stage(rep, "organisation identifiers",
+                    PROCESSED / "org_identifiers.csv")
+        return
+
+    by_type = Counter(r["id_type"] for r in ids)
+    rep.add("INFO", "organisation identifiers",
+            f"{len(ids)} (organisation, identifier, value) rows: "
+            + ", ".join(f"{k}={v}" for k, v in by_type.most_common()))
+
+    for id_type in ("matricule_fiscal", "registre_commerce"):
+        rows = [r for r in ids if r["id_type"] == id_type]
+        if not rows:
+            continue
+        orgs = {r["org_id"] for r in rows}
+        clashing = {r["org_id"] for r in rows if r["is_conflicting"] == "1"}
+        share = f"{len(clashing)/len(orgs):.0%}" if orgs else "—"
+        rep.add("WARN" if clashing else "INFO",
+                f"conflicting {id_type}",
+                f"{len(clashing)} of {len(orgs)} organisations carrying one "
+                f"hold two or more values ({share}); a one-character "
+                f"difference is OCR, a wholly different value is an "
+                f"organisation-resolution merge. See "
+                f"docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md")
+
+    # An identifier is per-organisation, so a value shared by two nodes is the
+    # same defect seen from the other side: either one firm split across two
+    # nodes, or a misread that collided.
+    shared = Counter()
+    for r in ids:
+        shared[(r["id_type"], r["value_normalised"])] += 1
+    multi = [k for k, n in shared.items() if n > 1]
+    rep.add("WARN" if multi else "INFO", "identifiers shared across nodes",
+            f"{len(multi)} identifier values appear on more than one "
+            f"organisation node (one firm split in two, or a collision)")
+
+    addrs = _read(PROCESSED / "org_addresses.csv")
+    if addrs:
+        moved = [a for a in addrs if a["obs_kind"] == "moved_to"]
+        per_org = Counter(a["org_id"] for a in addrs)
+        rep.add("INFO", "organisation addresses",
+                f"{len(addrs)} dated address observations over "
+                f"{len(per_org)} organisations; {len(moved)} are transfer "
+                f"destinations; "
+                f"{sum(1 for n in per_org.values() if n > 1)} organisations "
+                f"have more than one address on record")
+        undated = [a for a in addrs if not a["observed_date"]]
+        rep.add("ERROR" if undated else "INFO", "addresses are dated",
+                f"{len(undated)} address observations carry no date, so they "
+                f"cannot be ordered into a sequence of seats")
+
+
 def check_org_ties(rep: Report) -> None:
     """The organisation-to-organisation layer.
 
@@ -371,10 +466,10 @@ def check_tergm_panel(rep: Report) -> None:
     checked here instead.
     """
     d = PROCESSED / "exports" / "tergm"
-    key = _read(d / "node_key.csv")
-    if not key:
+    if not _table_exists(d / "node_key.csv"):
         _skip_stage(rep, "tergm panel", d / "node_key.csv")
         return
+    key = _read(d / "node_key.csv")
     edges = _read(d / "edges_yearly.csv")
     activity = _read(d / "vertex_activity_yearly.csv")
     attrs = _read(d / "node_attrs_yearly.csv")
@@ -420,8 +515,33 @@ def check_tergm_panel(rep: Report) -> None:
     rep.add("ERROR" if outside else "INFO", "tergm ties lie inside the risk set",
             f"{len(outside)} ties fall in a period where an endpoint is inactive")
 
+    # The panel must cover the window the rest of the pipeline is configured
+    # for. This check exists because the rectangularity test below derives its
+    # periods from the panel itself, so a panel built under a narrower window
+    # is internally consistent and passes: the window could be widened, every
+    # other stage rebuilt, and this panel left behind, with analyses quietly
+    # running on five years of a seventy-year configuration.
+    #
+    # The period axis is read off the activity table, not the edge list. A year
+    # in which no tie is observed has no edge rows but is still a period of the
+    # panel -- an empty network, not an absent one -- and taking the axis from
+    # the edges would report the early decades, which carry 37 dated ties
+    # between them, as missing.
+    from .spells import periods as _periods
+    configured = [p for p, _s, _e in _periods("yearly")]
+    present = sorted({r["period"] for r in activity} or
+                     {r["period"] for r in edges})
+    missing = [p for p in configured if p not in set(present)]
+    extra = [p for p in present if p not in set(configured)]
+    rep.add("ERROR" if (missing or extra) else "INFO",
+            "tergm panel covers the configured window",
+            f"{len(present)} periods present, {len(configured)} configured"
+            + (f"; {len(missing)} missing ({missing[0]}..{missing[-1]})"
+               if missing else "")
+            + (f"; {len(extra)} outside the window" if extra else ""))
+
     # btergm reads one vertex set per period; a ragged panel silently drops rows.
-    per = sorted({r["period"] for r in edges})
+    per = present
     ragged = [p for p in per
               if sum(1 for r in attrs if r["period"] == p) != len(key)
               or sum(1 for r in activity if r["period"] == p) != len(key)]
@@ -443,6 +563,7 @@ def run(fail_on_error: bool = False) -> int:
     check_cabinets(rep)
     check_citations(rep)
     check_org_ties(rep)
+    check_org_attrs(rep)
     check_tergm_panel(rep)
 
     DOCS.mkdir(parents=True, exist_ok=True)

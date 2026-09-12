@@ -30,13 +30,14 @@ EVENT_FIELDS = [
     "event_id", "event_type", "source_type", "block_uid", "issue_uid",
     "collection", "year", "issue", "folio_page", "ocr_page",
     "person_mention", "person_married_name",
-    "org_mention", "org_mf", "counterparty_mention",
+    "org_mention", "org_mf", "org_rc", "org_address", "org_postal_code",
+    "counterparty_mention",
     "role_canonical", "role_verbatim", "portfolio", "ministry",
     "act_date", "registration_date", "filing_date", "effective_date", "pub_date",
     "event_date", "event_date_source", "event_date_lo", "event_date_hi",
     "date_precision", "mandate_years", "amount_dt", "legal_form", "domain",
     "extractor", "pattern_id", "extract_confidence", "evidence_quote",
-    "needs_review",
+    "alt_group", "needs_review",
 ]
 
 CITATION_FIELDS = [
@@ -366,6 +367,35 @@ def is_convocation(block: dict) -> bool:
     return bool(RE_CONVOCATION.search(head))
 
 
+# The two hard identifiers the register prints beside a company name, and its
+# stated seat. The matricule fiscal was already captured as a resolution
+# signal; the registre-de-commerce number and the address were pattern-matched
+# only to *reject* such lines as company names, so neither reached any output.
+# Recorded on the event row rather than resolved here: the mention has not been
+# linked to an organisation yet at this point, and `orgattrs` does the join.
+def _org_identifiers(text: str) -> tuple[str, str, str]:
+    rcm = G.RE_RC.search(text)
+    rc = G.normalise_rc(rcm.group("rc")) if rcm else ""
+
+    # The transfer clause states the seat being left and the one being taken.
+    # Reading either as "the address" would be wrong, so only the destination
+    # is recorded, and only when both ends parse and differ -- otherwise the
+    # clause was matched on a fragment.
+    address = ""
+    mv = G.RE_SIEGE_MOVE.search(text)
+    if mv:
+        frm = G.trim_address(mv.group("from"))
+        to = G.trim_address(mv.group("to"))
+        if frm and to and G.normalise_address(frm) != G.normalise_address(to):
+            address = to
+    if not address:
+        sg = G.RE_SIEGE.search(text)
+        address = G.trim_address(sg.group("addr")) if sg else ""
+
+    pm = G.RE_POSTAL.search(address)
+    return rc, address, (pm.group("code") if pm else "")
+
+
 def extract_corporate(block: dict) -> list[dict]:
     if is_convocation(block):
         return []
@@ -373,6 +403,7 @@ def extract_corporate(block: dict) -> list[dict]:
     org = org_name(text)
     mfm = G.RE_MF.search(text)
     mf = G.normalise_mf(mfm.group("mf")) if mfm else ""
+    rc, address, postal = _org_identifiers(text)
     dates = _dates_for_block(text, block["pub_date"])
     ev_date, ev_src, ev_lo, ev_hi, precision = _resolve_event_date(dates, block["pub_date"])
     capital = G.parse_capital(text)
@@ -385,6 +416,7 @@ def extract_corporate(block: dict) -> list[dict]:
         "folio_page": block.get("folio_page_start") or "",
         "ocr_page": block.get("ocr_page_start") or "",
         "org_mention": org, "org_mf": mf,
+        "org_rc": rc, "org_address": address, "org_postal_code": postal,
         "ministry": "", "portfolio": "",
         "act_date": dates.get("act_date", ""),
         "registration_date": dates.get("registration_date", ""),
@@ -410,6 +442,7 @@ def extract_corporate(block: dict) -> list[dict]:
         row.setdefault("role_verbatim", "")
         row.setdefault("mandate_years", "")
         row.setdefault("amount_dt", "")
+        row.setdefault("alt_group", "")
         key = (row["event_type"], row["person_mention"], row["role_canonical"],
                row["org_mention"], row["event_date"], row.get("counterparty_mention", ""))
         if key in seen:
@@ -458,10 +491,16 @@ def extract_corporate(block: dict) -> list[dict]:
         # nothing and would only add noise.
         return len(name) >= 6 and bool(re.search(r"[A-Za-zÀ-ÿ]{3}", name))
 
-    # The stated target wins wherever the clause names one, for every relation:
-    # it is a targeted capture, while org_name() resolves on only 55% of these
-    # blocks and sometimes returns a clause. Where no target is stated -- a
-    # constitution listing its own associates, say -- the subject firm is right.
+    # Both candidate targets are emitted, not one chosen here. Letting the
+    # stated target override the subject firm was measured and is net
+    # negative: it fires on 4% of ownership blocks and where it fires it costs
+    # eight resolutions for every four it wins, because RE_ORG_TARGET
+    # sometimes captures a clause rather than a name. Resolution is the stage
+    # that knows which candidate is a seed organisation, so both go forward
+    # sharing an `alt_group`, and `orgties` keeps whichever end resolves --
+    # preferring the stated target when both do, since it is the targeted
+    # capture. The group key is what stops the pair being counted as two
+    # different dyads.
     for rx, relation, conf in (
         (G.RE_ORG_ACQUIRES,    "shares_acquired",       0.88),
         (G.RE_ORG_CEDES,       "shares_ceded",          0.88),
@@ -474,20 +513,32 @@ def extract_corporate(block: dict) -> list[dict]:
             holder = _tidy_org(G.trim_org_party(m.group("org")))
             if not _ok(holder):
                 continue
-            target = stated_target if _ok(stated_target) else org
+            # Ordered by preference: the stated target first.
+            cands = [c for c in (stated_target, org) if _ok(c or "")]
             # A self-tie compared on raw strings slips through: "la societe
             # Alpha Holding" and "Societe Alpha Holding" are the same firm and
             # differ only by an article. Compare on the normalised key that
             # resolution uses for exact matching. Resolution drops self-matches
             # again once both ends carry seed ids -- this only keeps the
             # obvious ones out of events.csv.
-            if not _ok(target or "") or _same_org(target, holder):
+            cands = [c for c in cands if not _same_org(c, holder)]
+            if len(cands) == 2 and _same_org(*cands):
+                cands = cands[:1]
+            if not cands:
                 continue
-            emit(event_type="org_tie", pattern_id=f"corp.org_{relation}",
-                 counterparty_mention=holder, org_mention=target,
-                 role_canonical=relation,
-                 role_verbatim=_tidy_org(m.group(0))[:90],
-                 extract_confidence=conf, evidence_quote=_quote(m.group(0)))
+            group = (_event_id(block["block_uid"], relation, holder, m.start())
+                     if len(cands) > 1 else "")
+            for target in cands:
+                emit(event_type="org_tie", pattern_id=f"corp.org_{relation}",
+                     counterparty_mention=holder, org_mention=target,
+                     role_canonical=relation, alt_group=group,
+                     role_verbatim=_tidy_org(m.group(0))[:90],
+                     # The fallback candidate is the same evidence read a
+                     # second way, so it carries the same confidence; which
+                     # one survives is resolution's call, not a confidence
+                     # question.
+                     extract_confidence=conf,
+                     evidence_quote=_quote(m.group(0)))
 
     # --- association bureau: "Role : Name" ------------------------------- #
     if block.get("domain") == "association":
@@ -666,7 +717,9 @@ def extract_state(block: dict) -> tuple[list[dict], list[dict]]:
         "year": block["year"], "issue": block["issue"],
         "folio_page": block.get("folio_page_start") or "",
         "ocr_page": block.get("ocr_page_start") or "",
-        "org_mention": ministry, "org_mf": "", "ministry": ministry,
+        "org_mention": ministry, "org_mf": "",
+        "org_rc": "", "org_address": "", "org_postal_code": "",
+        "ministry": ministry,
         "act_date": act_date, "registration_date": "", "filing_date": "",
         "effective_date": eff, "pub_date": block["pub_date"],
         "event_date": ev_date, "event_date_source": ev_src,

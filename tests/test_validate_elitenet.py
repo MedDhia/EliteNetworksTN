@@ -53,3 +53,58 @@ def test_strict_validation_survives_a_missing_interim_tree(tmp_path):
     # Checks that need only the committed tables must still have run.
     assert "- **spells**" in proc.stdout
     assert "- **no negative durations**" in proc.stdout
+
+
+# --- the gate itself --------------------------------------------------------
+# The large derived tables are committed only gzipped, so a CI checkout has
+# `events.csv.gz` and no `events.csv`. `_read` used to return [] for the
+# missing plain name *silently*, which meant every ERROR-level check over
+# events, spells and resolution passed on an empty list: CI reported a clean
+# build while `validate --strict` refused the same dataset locally. The bug
+# was invisible because an empty table produces no errors, so it is pinned by
+# deletion -- build the tree CI actually has and assert the numbers are real.
+
+def _ci_shaped_tree(tmp_path: Path) -> Path:
+    """A checkout carrying only what git tracks: no uncompressed twins."""
+    src = ROOT / "data" / "processed"
+    (tmp_path / "config").symlink_to(ROOT / "config")
+    tracked = subprocess.run(["git", "ls-files", "data/processed"],
+                             capture_output=True, text=True, cwd=ROOT, check=True)
+    for rel in tracked.stdout.split():
+        dest = tmp_path / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        origin = ROOT / rel
+        if origin.exists():
+            dest.symlink_to(origin)
+    assert (tmp_path / "data/processed/multiplex/events.csv.gz").exists()
+    assert not (tmp_path / "data/processed/multiplex/events.csv").exists()
+    return tmp_path
+
+
+def _count(stdout: str, check: str) -> int:
+    line = next(l for l in stdout.splitlines() if l.startswith(f"- **{check}**"))
+    return int(line.split("—", 1)[1].split()[0])
+
+
+def test_ci_shaped_tree_validates_real_row_counts(tmp_path):
+    root = _ci_shaped_tree(tmp_path)
+    proc = _run(root)
+
+    assert "Traceback" not in proc.stderr, proc.stderr
+
+    # These are the three tables every ERROR check depends on. A zero here is
+    # the vacuous pass: the check ran, read nothing, and found nothing wrong.
+    assert _count(proc.stdout, "events") > 0, (
+        "events read as empty from a gzip-only tree -- the gate is vacuous")
+    assert _count(proc.stdout, "spells") > 0, proc.stdout
+    assert "resolution status — \n" not in proc.stdout + "\n"
+
+    status = next(l for l in proc.stdout.splitlines()
+                  if l.startswith("- **resolution status**"))
+    assert "resolved=" in status, status
+
+    # The seed-elite coverage line reported "0 (0%)" in CI for the same
+    # reason, and that number is one of the dataset's headline claims.
+    seed = next(l for l in proc.stdout.splitlines()
+                if l.startswith("- **seed elites with a dated gazette event**"))
+    assert "top 100: 0 (0%)" not in seed, seed

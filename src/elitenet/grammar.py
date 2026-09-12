@@ -107,6 +107,19 @@ RE_MF = re.compile(
     r"(?:M(?:at)?\.?\s*Fisc\.?|\bMF\b|matricule\s+fiscal)\s*[:.]?\s*"
     r"(?P<mf>\d{6,8}\s*[/\s]?[A-Z]{1,4}(?:\s*[/\s]\s*[A-Z])*(?:\s*[/\s]\s*\d{3})?)",
     re.IGNORECASE)
+# The registre-de-commerce number. Two things make the naive pattern useless.
+# `R.?C.?` without a leading word boundary matches inside ordinary French --
+# exe*rc*ices, ma*rc*he, comme*rc*iales, exclusion -- which inflated a first
+# corpus count by 70%. And the value has a shape: an optional bureau letter
+# then the sequence and the registration year run together (B133371997 =
+# B + 13337 + 1997), so requiring five or more digits rejects the bare years
+# that follow "exercices 2003, 2004".
+RE_RC = re.compile(
+    r"(?:\bR\.?\s?C\.?S?\b|\bregistre\s+d[eu]\s+commerce\b)"
+    r"(?:\s*(?:sous\s+le\s+)?(?:n[°ºo]\.?|num[ée]ro\b))?"
+    r"\s*[:.]?\s*"
+    r"(?P<rc>[A-Z]\s?\d{5,12}|\d{6,12})\b",
+    re.IGNORECASE)
 RE_CAPITAL = re.compile(
     r"[Aa]u\s+capital\s+(?:social\s+)?(?:de\s+)?(?P<amount>[\d][\d\s.,]{2,20})\s*"
     r"(?P<cur>dinars?|DT|D\b)", re.IGNORECASE)
@@ -216,6 +229,139 @@ def trim_org_party(raw: str) -> str:
     if m:
         s = s[:m.start()]
     return s.strip(" .,;:«»\"'-")
+
+
+# --- headquarters address -------------------------------------------------
+# The label is followed by the address in a running clause ("Siege social :
+# 2, rue des metiers Z.I. Charguia") and, in the tabular notices, by a line
+# break and the address on its own line. Both forms occur in the same issue,
+# so the newline is allowed inside the capture.
+# The label must name the seat. A bare "adresse" also introduces the
+# correspondence address of a liquidator and the address of a court registry
+# ("a l'adresse du greffe"), which are not the firm's seat; allowing it raised
+# the hit rate from 38% of blocks to 71% and every added capture sampled was
+# one of those.
+_SIEGE_LABEL = r"(?:adresse\s+d[eu]\s+)?si[èe]ge(?:\s+social)?"
+RE_SIEGE = re.compile(
+    _SIEGE_LABEL + r"\s*"
+    r"(?:est\s+)?(?:sis(?:e)?\s+|situ[ée]e?\s+(?:au?x?\s+)?)?[:,]?\s*"
+    # Not the transfer form: "siege social de la societe de X a Y" states two
+    # addresses and neither is the standing seat. RE_SIEGE_MOVE reads those.
+    r"(?P<addr>(?!de\s+la\s+soci[ée]t[ée]\b)\S[^\n]{3,119}"
+    r"(?:\n[^\n]{4,120})?)",
+    re.IGNORECASE)
+
+# The transfer form, which states the old seat and the new one in one clause:
+# "transfert du siege social de la societe de 1, rue Jobrane Khalil Jobrane
+# - Bordj Louzir Ariana a 8, rue Ibn Abi Dhiaf El Menzah V - Ariana".
+RE_SIEGE_MOVE = re.compile(
+    _SIEGE_LABEL + r"\s*(?:de\s+la\s+soci[ée]t[ée]\s*)?"
+    r"(?:sis(?:e)?\s+|situ[ée]e?\s+)?"
+    r"(?:de\s+|du\s+|d[eu]\s+l[ae']\s*)"
+    r"(?P<from>[^\n]{6,110}?)"
+    r"\s+(?:au?\s+|vers\s+|[àa]\s+l[ae']\s*)"
+    r"(?P<to>[^\n.]{6,110})",
+    re.IGNORECASE)
+
+# An address capture has to be cut, exactly as a corporate-party name does: a
+# sampled capture ran from the address straight through the RC number and into
+# the next clause ("a Tunis rue Hedi Nouira RC n 14231996, ayant elu domicile
+# en l'etude de son avocat"). These are the clause heads that follow an address.
+_SIEGE_STOP = re.compile(
+    r"\s*(?:\bR\.?\s?C\.?S?\b\s*(?:(?:sous\s+le\s+)?(?:n[°ºo]\.?|num[ée]ro\b))?"
+    r"\s*[:.]?\s*[A-Z]?\s?\d{5}"
+    r"|\bregistre\s+d[eu]\s+commerce"
+    r"|\bmatricule\s+fiscal|\bM(?:at)?\.?\s*Fisc\b"
+    r"|\bimmatricul[eé]e?s?\b|\binscrite?s?\s+a[ud]\b"
+    r"|\bau\s+capital\b|\brepr[eé]sent[eé]e?s?\s+par\b"
+    r"|\bayant\s+[ée]lu\s+domicile\b|\bannonce(?:nt)?\b"
+    r"|\bd[ée]cide(?:nt)?\b|\bconform[ée]ment\b"
+    # The tabular constitution notice prints one rubric per line, so the
+    # label of whichever rubric follows the address ends it.
+    r"|\bobjet\s+social\b|\bforme\s+juridique\b|\bd[ée]nomination\b"
+    r"|\bdur[ée]e\b|\bg[ée]rance\b|\bcapital\s+social\b"
+    r"|\bexercice\s+social\b|\bnombre\s+de\s+parts\b"
+    r"|\bassoci[ée]s?\s*:|\bcommissaire\s+aux\s+comptes\b"
+    r"|\bobjet\b\s*:|\b\d\s*[)\]]\s*[A-Z]"
+    r"|\benregistr[ée]e?s?\b|,?\s+du\s+\d{1,2}\s+\w+\s+(?:19|20)\d\d"
+    r"|\bpour\s+d[ée]lib[ée]rer\b|\bordre\s+du\s+jour\b"
+    r"|\bfonds\s+de\s+commerce\b|\b[àa]\s+l['’]effet\s+de\b"
+    # A person named after the seat -- "..., gerant : Mr Faouzi Neji, avec
+    # tous les pouvoirs" -- is the next clause, not part of the address.
+    r"|,?\s*\bg[ée]ran(?:t|ce)s?\s*:|,\s*\bM(?:r|me|lle|onsieur|adame)\b"
+    r"|\bavec\s+tous\s+les\s+pouvoirs\b|\ba\s+le\s+pouvoir\b)",
+    re.IGNORECASE)
+
+# A tabular notice prints "Siege social" as a column header, and the cell
+# under it is sometimes the company name rather than the street. A capture
+# that opens with a legal form is that header artefact, not an address.
+_NOT_AN_ADDRESS = re.compile(
+    r"^(?:la\s+)?(?:soci[ée]t[ée]|ste\b|s\.?a\.?r\.?l|s\.?a\b|entreprise"
+    r"|groupe|[«\"]"
+    # A genuine stated seat does not open with a bare preposition. When it
+    # does, the clause is the transfer form ("...de la Z.I Charguia ... au 28,
+    # rue Alain Savary"), whose first address is the seat being left, not the
+    # standing one. Those belong to RE_SIEGE_MOVE; recording the old address
+    # as the current seat would date the move backwards.
+    r"|d[eu]\s|d['’]|social\b|transf[ée]r)",
+    re.IGNORECASE)
+
+# The transfer preposition, but only where a second address plainly follows:
+# a street number or a street type. "a Tunis rue Hedi Nouira" is one address
+# and must not be cut; "au 28, rue Alain Savary" is a second one.
+_SECOND_ADDRESS = re.compile(
+    r"\s+(?:[àa]u?x?|vers)\s+(?=\d|(?:la\s+|le\s+|l['’])?"
+    r"(?:rue|avenue|av\.|boulevard|bd\b|impasse|route|zone|z\.?\s?i\b"
+    r"|cit[ée]|immeuble|km\b|place|passage|lotissement))",
+    re.IGNORECASE)
+
+
+def trim_address(raw: str) -> str:
+    """Cut a captured address at the first clause boundary after it."""
+    s = " ".join((raw or "").split())
+    for pat in (_SIEGE_STOP, _SECOND_ADDRESS):
+        m = pat.search(s)
+        if m:
+            s = s[:m.start()]
+    s = s.strip(" .,;:«»\"'-")
+    return "" if _NOT_AN_ADDRESS.match(s) or len(s) < 4 else s
+
+
+def normalise_address(raw: str) -> str:
+    """Fold an address to a comparable key.
+
+    Casing, accents, punctuation and the abbreviation of the street type all
+    vary between two printings of the same address, so comparing the raw
+    strings would report a move that never happened.
+    """
+    s = (raw or "").lower()
+    for a, b in (("à", "a"), ("â", "a"), ("é", "e"), ("è", "e"), ("ê", "e"),
+                 ("î", "i"), ("ï", "i"), ("ô", "o"), ("û", "u"), ("ç", "c")):
+        s = s.replace(a, b)
+    s = re.sub(r"\bav(?:e?nue)?\b", "avenue", s)
+    s = re.sub(r"\b(?:bd|boul(?:evard)?)\b", "boulevard", s)
+    s = re.sub(r"\bz\.?\s?i\.?\b", "zi", s)
+    s = re.sub(r"[^a-z0-9]+", " ", s)
+    return " ".join(s.split())
+
+
+RE_POSTAL = re.compile(r"\b(?P<code>[1-9]\d{3})\b")
+
+
+def normalise_rc(raw: str) -> str:
+    """Reduce a registre-de-commerce number to a comparable stem.
+
+    The bureau letter is sometimes dropped and sometimes lower-cased, and the
+    spacing before the digits varies, so only the letter and the digit run
+    identify the registration.
+    """
+    if not raw:
+        return ""
+    compact = re.sub(r"[^0-9A-Za-z]", "", raw).upper()
+    m = re.match(r"([A-Z])?(\d{5,12})$", compact)
+    if not m:
+        return ""
+    return (m.group(1) or "") + m.group(2)
 
 
 # --- state appointment / departure formulas (journal-officiel) ---

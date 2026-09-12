@@ -91,6 +91,46 @@ TABLE_DOCS: dict[str, str] = {
         "vertex appears in every period, isolates included). Use "
         "`cum_degree_lag` rather than `cum_degree` in `nodecov`: degree "
         "measured at t is a function of the ties being modelled at t.",
+    "org_ties.csv":
+        "Organisation-to-organisation observations, one row per resolved "
+        "(holder, target, relation) assertion. Both endpoints must resolve to "
+        "**distinct** seed organisations; a mention resolving to the subject "
+        "firm is a self-tie and is dropped rather than counted.",
+    "org_tie_spells.csv":
+        "The org-org layer as intervals, in the same vocabulary as "
+        "`spells.csv`. It is a **separate, one-mode, directed** layer: adding "
+        "these rows to `spells.csv` would silently break every two-mode term "
+        "in the TERGM panel. `evidence_tier` separates gazette-dated spells "
+        "from the undated seed ties carried alongside them. Read "
+        "`docs/ORG-TIES-multiplex.md` before modelling: the dominant clause "
+        "confirms a standing holding rather than dating its start, so onsets "
+        "here are overwhelmingly left-censored.",
+    "panel_org_ties_yearly.csv":
+        "The org-org layer by calendar year, the input to "
+        "`R/build_org_ownership.R`.",
+    "org_ties_review_queue.csv":
+        "Org-org observations a human has to settle. `queue_reason` separates "
+        "a dyad whose link score landed in the ambiguous band from the far "
+        "larger set with **one end resolved**: there the resolved end anchors "
+        "the dyad and only a single name is in question, so `failed_mention`, "
+        "`near_org_label` and `near_score` carry what the coder needs.",
+    "org_identifiers.csv":
+        "Hard identifiers per organisation: the matricule fiscal and the "
+        "registre-de-commerce number, one row per (organisation, kind, "
+        "value). These are **stable** attributes -- a firm keeps them -- which "
+        "is why `is_conflicting = 1` is a defect rather than a change over "
+        "time: it means the node holds two values of an identifier a firm has "
+        "one of. A one-character difference is OCR; a wholly different value "
+        "is an organisation-resolution merge, and every tie on that node is "
+        "then suspect. See `docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md`.",
+    "org_addresses.csv":
+        "Stated seats, one row per (organisation, normalised address, kind), "
+        "dated. **Time-varying**, unlike the identifiers: `obs_kind` is "
+        "`moved_to` where the address is the destination named in a transfer "
+        "clause and `stated` where it is the seat as printed. Aggregated on "
+        "the normalised form, because casing, accents and the street "
+        "abbreviation vary between two printings of one address and comparing "
+        "raw strings would report a move that never happened.",
     "dyad_cov_yearly.csv":
         "Dyadic covariates as **sparse triplets** -- dense would be 2,592 x "
         "2,915 per covariate per period. Projected from the seed sheet's "

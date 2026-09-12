@@ -33,7 +33,7 @@ from datetime import date, datetime
 
 from .paths import INTERIM, PROCESSED, ensure_dirs, window
 from .resolve import (THRESHOLD_AMBIGUOUS, THRESHOLD_RESOLVED, SeedIndex,
-                      load_seed, resolve_org)
+                      best_org_match, load_seed, resolve_org)
 from .spells import periods
 
 # How each relation bears on the interval. `shares_ceded` is the holder giving
@@ -54,6 +54,15 @@ FIELDS_TIES = [
     "holder_mention", "target_mention", "holder_match", "target_match",
     "score", "link_status", "evidence_quote", "event_id", "block_uid",
     "issue_uid", "folio_page", "extract_confidence",
+]
+# The queue carries two kinds of row -- a dyad that resolved ambiguously, and
+# an observation with only one end resolved -- so it names the reason and, for
+# the second kind, the mention that failed and what it came closest to. Without
+# those columns the row is not adjudicable: a coder cannot confirm or reject a
+# match they cannot see.
+FIELDS_QUEUE = FIELDS_TIES + [
+    "queue_reason", "failed_end", "failed_mention",
+    "near_org_id", "near_org_label", "near_score",
 ]
 FIELDS_SPELLS = [
     "org_spell_id", "holder_id", "holder_label", "target_id", "target_label",
@@ -139,9 +148,41 @@ def score_link(holder_match: float, target_match: float, n_obs: int,
     return round(min(1.0, 0.75 * ends + 0.15 * extract_conf + repeat), 4)
 
 
-def observations(events: list[dict], idx: SeedIndex) -> tuple[list[dict], dict]:
-    """Resolve each org_tie event to a (holder, target) pair of seed orgs."""
+# One observation row, shared by the resolved path and the review queue so a
+# queued row carries the same provenance columns a resolved one does.
+def _obs_row(e: dict, idx: SeedIndex, hid: str, hs: float, tid: str, ts: float,
+             hlabel: str, tlabel: str) -> dict:
+    relation = e.get("role_canonical") or "shareholder_confirmed"
+    kind = ("opening" if relation in OPENING else
+            "closing" if relation in CLOSING else "confirmation")
+    return {
+        "org_tie_obs_id": _sid(e.get("event_id", ""), hid, tid, relation),
+        "holder_id": hid, "holder_label": hlabel,
+        "target_id": tid, "target_label": tlabel,
+        "relation": relation,
+        "is_ownership": int(relation in OWNERSHIP),
+        "obs_kind": kind,
+        "obs_date": e.get("event_date", ""),
+        "date_precision": e.get("date_precision", ""),
+        "holder_mention": (e.get("counterparty_mention") or "").strip(),
+        "target_mention": (e.get("org_mention") or "").strip(),
+        "holder_match": round(hs, 4), "target_match": round(ts, 4),
+        "evidence_quote": e.get("evidence_quote", ""),
+        "event_id": e.get("event_id", ""), "block_uid": e.get("block_uid", ""),
+        "issue_uid": e.get("issue_uid", ""), "folio_page": e.get("folio_page", ""),
+        "extract_confidence": e.get("extract_confidence", ""),
+    }
+
+
+def observations(events: list[dict],
+                 idx: SeedIndex) -> tuple[list[dict], list[dict], dict]:
+    """Resolve each org_tie event to a (holder, target) pair of seed orgs.
+
+    Returns the resolved observations, the rows that need a human (one end
+    resolved), and diagnostics.
+    """
     out: list[dict] = []
+    pending: list[dict] = []
     diag = defaultdict(int)
     cache: dict[str, tuple[str, float]] = {}
 
@@ -150,9 +191,43 @@ def observations(events: list[dict], idx: SeedIndex) -> tuple[list[dict], dict]:
             cache[mention] = resolve_org(mention, idx)
         return cache[mention]
 
+    # The extractor emits both candidate targets for a clause that states one,
+    # sharing an `alt_group`, and the choice belongs here: this is the first
+    # stage that knows which candidate is a seed organisation. Alternates are
+    # walked in the order emitted -- stated target first -- and the first that
+    # resolves at both ends wins the group, so a stated target that resolves
+    # beats the subject firm and a stated target that does not costs nothing.
+    # Collapsing by group is also what keeps one clause from becoming two
+    # dyads.
+    groups: dict[str, list[dict]] = defaultdict(list)
+    singles: list[dict] = []
     for e in events:
         if e.get("event_type") != "org_tie":
             continue
+        g = (e.get("alt_group") or "").strip()
+        (groups[g] if g else singles).append(e)
+
+    chosen: list[dict] = list(singles)
+    for g, alts in groups.items():
+        both = [a for a in alts
+                if rv((a.get("counterparty_mention") or "").strip())[0]
+                and rv((a.get("org_mention") or "").strip())[0]]
+        if both:
+            diag["alt_group_target_chosen"] += 1
+            # The first alternate is the stated target; taking it over the
+            # subject firm is only right when it actually resolved, which is
+            # the measured failure of the old unconditional override.
+            if both[0] is not alts[0]:
+                diag["alt_group_fell_back_to_subject"] += 1
+            chosen.append(both[0])
+        else:
+            # Nothing in the group resolves at both ends. Keep the first
+            # alternate so the clause still reaches the review queue rather
+            # than vanishing, and count the group once, not twice.
+            diag["alt_group_unresolved"] += 1
+            chosen.append(alts[0])
+
+    for e in chosen:
         diag["events"] += 1
         holder_m = (e.get("counterparty_mention") or "").strip()
         target_m = (e.get("org_mention") or "").strip()
@@ -162,34 +237,40 @@ def observations(events: list[dict], idx: SeedIndex) -> tuple[list[dict], dict]:
             diag["neither_end_resolved"] += 1
             continue
         if not hid or not tid:
+            # One end is a seed organisation and the other is not. This is the
+            # adjudicable material: the resolved end anchors the dyad, so a
+            # coder has only to judge a single name. It used to reach nothing
+            # -- the queue was fed only by the ambiguous band of score_link,
+            # which resolve_org's 0.88 floor makes unreachable, so the file was
+            # always empty while ten thousand of these were dropped silently.
             diag["one_end_resolved"] += 1
+            failed_m = target_m if hid else holder_m
+            near_id, near_s = best_org_match(failed_m, idx)
+            pending.append({
+                **_obs_row(e, idx,
+                           hid or "", hs, tid or "", ts,
+                           idx.orgs[hid]["label"] if hid else "",
+                           idx.orgs[tid]["label"] if tid else ""),
+                "score": round(near_s, 4), "link_status": "unresolved",
+                "queue_reason": "one_end_resolved",
+                "failed_end": "target" if hid else "holder",
+                "failed_mention": failed_m,
+                "near_org_id": near_id,
+                "near_org_label": idx.orgs[near_id]["label"] if near_id else "",
+                "near_score": round(near_s, 4),
+            })
             continue
         if hid == tid:
             # The clause named the subject firm as its own party. Usually the
             # target capture and the holder capture landed on the same name.
             diag["self_match_dropped"] += 1
             continue
-        relation = e.get("role_canonical") or "shareholder_confirmed"
-        kind = ("opening" if relation in OPENING else
-                "closing" if relation in CLOSING else "confirmation")
-        out.append({
-            "org_tie_obs_id": _sid(e.get("event_id", ""), hid, tid, relation),
-            "holder_id": hid, "holder_label": idx.orgs[hid].get("label", ""),
-            "target_id": tid, "target_label": idx.orgs[tid].get("label", ""),
-            "relation": relation,
-            "is_ownership": int(relation in OWNERSHIP),
-            "obs_kind": kind,
-            "obs_date": e.get("event_date", ""),
-            "date_precision": e.get("date_precision", ""),
-            "holder_mention": holder_m, "target_mention": target_m,
-            "holder_match": round(hs, 4), "target_match": round(ts, 4),
-            "evidence_quote": e.get("evidence_quote", ""),
-            "event_id": e.get("event_id", ""), "block_uid": e.get("block_uid", ""),
-            "issue_uid": e.get("issue_uid", ""), "folio_page": e.get("folio_page", ""),
-            "extract_confidence": e.get("extract_confidence", ""),
-        })
+        out.append(_obs_row(e, idx, hid, hs, tid, ts,
+                            idx.orgs[hid].get("label", ""),
+                            idx.orgs[tid].get("label", "")))
     diag["resolved_observations"] = len(out)
-    return out, dict(diag)
+    diag["queued_one_end"] = len(pending)
+    return out, pending, dict(diag)
 
 
 def build_spells(obs: list[dict], seed_edges: list[dict],
@@ -221,7 +302,8 @@ def build_spells(obs: list[dict], seed_edges: list[dict],
         if status != "resolved":
             diag["not_resolved_dyads"] += 1
             if status == "ambiguous":
-                queue.append({**rows[0], "score": score, "link_status": status})
+                queue.append({**rows[0], "score": score, "link_status": status,
+                              "queue_reason": "ambiguous_dyad"})
             continue
         if not dated:
             diag["resolved_but_undated"] += 1
@@ -370,14 +452,17 @@ def build_panel(spells: list[dict]) -> list[dict]:
 def run() -> dict:
     ensure_dirs()
     idx = load_seed()
-    obs, d1 = observations(read_events(), idx)
+    obs, pending, d1 = observations(read_events(), idx)
     spells, queue, d2 = build_spells(obs, _read("seed_edges.csv"), idx)
     panel = build_panel(spells)
+    # Both queue sources in one file, ambiguous dyads first: they are fewer and
+    # a decision on one settles every observation of that dyad.
+    queue = queue + pending
 
     _write("org_ties.csv", obs, FIELDS_TIES)
     _write("org_tie_spells.csv", spells, FIELDS_SPELLS)
     _write("panel_org_ties_yearly.csv", panel, FIELDS_PANEL)
-    _write("org_ties_review_queue.csv", queue, FIELDS_TIES)
+    _write("org_ties_review_queue.csv", queue, FIELDS_QUEUE)
 
     dated = [s for s in spells if s["evidence_tier"] == "gazette_dated"]
     diag = {**d1, **d2,
@@ -387,7 +472,9 @@ def run() -> dict:
             "panel_rows": len(panel), "review_queue": len(queue)}
     print("organisation-to-organisation layer")
     for k in ("events", "resolved_observations", "one_end_resolved",
-              "neither_end_resolved", "self_match_dropped", "not_resolved_dyads",
+              "neither_end_resolved", "self_match_dropped",
+              "alt_group_target_chosen", "alt_group_fell_back_to_subject",
+              "alt_group_unresolved", "queued_one_end", "not_resolved_dyads",
               "left_censored_onsets", "cession_before_onset", "dyads_dated",
               "spells_dated", "spells_seed_undated", "seed_ties_carried",
               "panel_rows", "review_queue"):

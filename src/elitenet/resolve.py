@@ -32,6 +32,11 @@ from .paths import CONFIG, INTERIM, PROCESSED, ensure_dirs
 W_NAME = 0.35
 W_ORG = 0.35
 W_MF = 0.10
+
+# The identifier columns on an event row that identify a firm outright, rather
+# than describing it. Both are registration numbers, so both are usable as an
+# identity spine; the weight W_MF applies to either.
+HARD_IDS = ("org_mf", "org_rc")
 W_COOCCUR = 0.15
 W_ROLE = 0.05
 
@@ -66,7 +71,7 @@ ROLE_AFFINITY: dict[str, set[str]] = {
 }
 
 RESOLUTION_FIELDS = [
-    "mention_key", "person_mention", "org_mention", "org_mf",
+    "mention_key", "person_mention", "org_mention", "org_mf", "org_rc",
     "resolved_person_id", "resolved_person_label", "resolved_org_id",
     "resolved_org_label", "score", "link_status",
     "s_name", "s_org", "s_mf", "s_cooccur", "s_role",
@@ -158,8 +163,14 @@ def load_seed() -> SeedIndex:
 # organisation resolution
 # --------------------------------------------------------------------------- #
 
-def resolve_org(mention: str, idx: SeedIndex) -> tuple[str, float]:
-    """Match an organisation mention to a seed organisation."""
+def best_org_match(mention: str, idx: SeedIndex) -> tuple[str, float]:
+    """The closest seed organisation to a mention, with no floor applied.
+
+    Separated from `resolve_org` so a *failed* match can still name what it
+    came closest to. The org-tie review queue needs that: an observation with
+    one end resolved is adjudicable only if a coder can see which seed
+    organisation the other end nearly matched and by how much.
+    """
     if not mention:
         return "", 0.0
     o = parse_org(mention)
@@ -183,6 +194,12 @@ def resolve_org(mention: str, idx: SeedIndex) -> tuple[str, float]:
         s = fuzz.token_set_ratio(o.match_key, label) / 100.0
         if s > best_s:
             best, best_s = cid, s
+    return best, best_s
+
+
+def resolve_org(mention: str, idx: SeedIndex) -> tuple[str, float]:
+    """Match an organisation mention to a seed organisation."""
+    best, best_s = best_org_match(mention, idx)
     return (best, best_s) if best_s >= 0.88 else ("", best_s)
 
 
@@ -340,7 +357,8 @@ def run(events_path: Path | None = None) -> dict:
         key = (person, org_men)
         d = dyads.setdefault(key, {
             "person_mention": person, "org_mention": org_men,
-            "org_mf": e.get("org_mf") or "", "n_events": 0,
+            "org_mf": e.get("org_mf") or "",
+            "org_rc": e.get("org_rc") or "", "n_events": 0,
             "dates": [], "roles": set(), "blocks": set(),
             "quote": e.get("evidence_quote") or "",
             "issue_uid": e.get("issue_uid") or "",
@@ -354,18 +372,39 @@ def run(events_path: Path | None = None) -> dict:
         if e.get("role_canonical"):
             d["roles"].add(e["role_canonical"])
         d["blocks"].add(e["block_uid"])
-        if not d["org_mf"] and e.get("org_mf"):
-            d["org_mf"] = e["org_mf"]
+        for col in HARD_IDS:
+            if not d[col] and e.get(col):
+                d[col] = e[col]
 
-    # matricule fiscal -> resolved org, learned from unambiguous dyads
-    mf_to_org: dict[str, str] = {}
+    # Hard identifier -> resolved org, learned from unambiguous dyads. Two are
+    # printed beside a company name and both are registration numbers rather
+    # than descriptions, so either settles an identity the name alone leaves
+    # open: an organisation whose name is spelled three ways reaches the same
+    # node through its matricule or its RC number.
+    id_to_org: dict[str, dict[str, str]] = {col: {} for col in HARD_IDS}
     for (person, org_men), d in dyads.items():
-        if d["org_mf"] and org_men:
+        if org_men and any(d[col] for col in HARD_IDS):
             if org_men not in org_cache:
                 org_cache[org_men] = resolve_org(org_men, idx)
             oid, osc = org_cache[org_men]
             if oid and osc >= 0.99:
-                mf_to_org.setdefault(d["org_mf"], oid)
+                for col in HARD_IDS:
+                    if d[col]:
+                        id_to_org[col].setdefault(d[col], oid)
+
+    def learned_org(d: dict) -> str:
+        """The organisation a dyad's hard identifiers point to, if any.
+
+        The matricule is tried first: it is the more frequently printed of the
+        two and the one whose learned map is larger, so it decides more often.
+        Where both are present and disagree, neither is trusted -- a
+        disagreement between two hard identifiers is exactly the signal
+        `orgattrs` reports as a resolution merge, and guessing here would bury
+        it.
+        """
+        hits = {id_to_org[col][d[col]] for col in HARD_IDS
+                if d[col] and d[col] in id_to_org[col]}
+        return next(iter(hits)) if len(hits) == 1 else ""
 
     out_rows: list[dict] = []
     stats = {"dyads": 0, "resolved": 0, "ambiguous": 0, "unresolved": 0,
@@ -376,8 +415,9 @@ def run(events_path: Path | None = None) -> dict:
         if org_men not in org_cache:
             org_cache[org_men] = resolve_org(org_men, idx)
         org_resolved, org_score = org_cache[org_men]
-        if not org_resolved and d["org_mf"] and d["org_mf"] in mf_to_org:
-            org_resolved, org_score = mf_to_org[d["org_mf"]], 0.95
+        by_id = learned_org(d)
+        if not org_resolved and by_id:
+            org_resolved, org_score = by_id, 0.95
         if org_resolved:
             stats["org_resolved"] += 1
 
@@ -388,7 +428,7 @@ def run(events_path: Path | None = None) -> dict:
         role = next(iter(d["roles"]), "")
         cands = candidates_for(person, org_resolved, idx)
         scored = [score_pair(person, c, org_resolved, org_score,
-                             bool(d["org_mf"] and d["org_mf"] in mf_to_org),
+                             bool(by_id),
                              co_mentions, role, idx)
                   for c in cands]
         scored.sort(key=lambda r: -r["score"])
@@ -453,7 +493,7 @@ def run(events_path: Path | None = None) -> dict:
         out_rows.append({
             "mention_key": f"{person}||{org_men}",
             "person_mention": person, "org_mention": org_men,
-            "org_mf": d["org_mf"],
+            "org_mf": d["org_mf"], "org_rc": d["org_rc"],
             "resolved_person_id": top["person_id"] if (top and status != "unresolved") else "",
             "resolved_person_label": (idx.persons[top["person_id"]]["label"]
                                       if (top and status != "unresolved") else ""),

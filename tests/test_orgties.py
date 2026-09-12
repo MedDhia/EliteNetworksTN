@@ -23,8 +23,22 @@ def ties(text, **over):
 
 
 def by_relation(rows):
-    return {r["role_canonical"]: (r["counterparty_mention"], r["org_mention"])
-            for r in rows}
+    """The preferred (holder, target) per relation.
+
+    The extractor emits both candidate targets -- the one the clause states and
+    the block's subject firm -- in preference order and lets resolution choose,
+    so the first row for a relation is the preferred reading. Keying a dict on
+    the relation and taking the last row would silently return the fallback.
+    """
+    out = {}
+    for r in rows:
+        out.setdefault(r["role_canonical"],
+                       (r["counterparty_mention"], r["org_mention"]))
+    return out
+
+
+def candidates(rows, relation):
+    return [r["org_mention"] for r in rows if r["role_canonical"] == relation]
 
 
 # --- direction ------------------------------------------------------------- #
@@ -208,7 +222,7 @@ def _idx():
 
 def test_both_endpoints_must_resolve_or_nothing_is_asserted():
     idx = _idx()
-    obs, diag = observations([
+    obs, _pending, diag = observations([
         ev("ALPHA HOLDING", "BETA INDUSTRIES", "shareholder_confirmed", "2009-01-01"),
         ev("ALPHA HOLDING", "A FIRM NOBODY HAS HEARD OF", "shareholder_confirmed",
            "2009-01-01", eid="EV2"),
@@ -221,7 +235,7 @@ def test_both_endpoints_must_resolve_or_nothing_is_asserted():
 
 
 def test_a_mention_resolving_to_the_subject_firm_is_dropped_as_a_self_tie():
-    obs, diag = observations([
+    obs, _pending, diag = observations([
         ev("ALPHA HOLDING", "Société ALPHA HOLDING", "shareholder_confirmed",
            "2009-01-01"),
     ], _idx())
@@ -235,7 +249,7 @@ def test_a_confirmation_leaves_the_onset_left_censored():
     The window start is a bound, not an estimate, so `onset` stays empty and
     only `onset_hi` is asserted.
     """
-    obs, _ = observations([
+    obs, _pending, _diag = observations([
         ev("ALPHA HOLDING", "BETA INDUSTRIES", "shareholder_confirmed", "2009-06-01"),
     ], _idx())
     spells, _q, diag = build_spells(obs, [], _idx())
@@ -248,7 +262,7 @@ def test_a_confirmation_leaves_the_onset_left_censored():
 
 
 def test_an_acquisition_dates_the_onset_exactly():
-    obs, _ = observations([
+    obs, _pending, _diag = observations([
         ev("GAMMA INVEST", "BETA INDUSTRIES", "shares_acquired", "2010-03-04"),
     ], _idx())
     s = next(x for x in build_spells(obs, [], _idx())[0]
@@ -258,7 +272,7 @@ def test_an_acquisition_dates_the_onset_exactly():
 
 
 def test_a_cession_after_the_onset_closes_the_tie():
-    obs, _ = observations([
+    obs, _pending, _diag = observations([
         ev("GAMMA INVEST", "BETA INDUSTRIES", "shares_acquired", "2010-03-04"),
         ev("GAMMA INVEST", "BETA INDUSTRIES", "shares_ceded", "2012-07-09", eid="EV2"),
     ], _idx())
@@ -272,7 +286,7 @@ def test_a_cession_after_the_onset_closes_the_tie():
 def test_a_cession_predating_every_confirmation_is_recorded_not_forced():
     """Either the stake was rebuilt or one reading is wrong; neither is a
     licence to emit a spell that ends before it starts."""
-    obs, _ = observations([
+    obs, _pending, _diag = observations([
         ev("GAMMA INVEST", "BETA INDUSTRIES", "shares_ceded", "2008-01-01"),
         ev("GAMMA INVEST", "BETA INDUSTRIES", "shares_ceded", "2008-01-01", eid="EV2"),
     ], _idx())
@@ -300,7 +314,7 @@ def test_the_panel_carries_dated_ties_only():
     seed = [{"from_node_id": "CO_ALPHA_HOLDING", "to_node_id": "CO_BETA_INDUSTRIES",
              "from_label": "A", "to_label": "B",
              "edge_label_raw": "SHAREHOLDER", "tie_class": "ownership"}]
-    obs, _ = observations([
+    obs, _pending, _diag = observations([
         ev("GAMMA INVEST", "BETA INDUSTRIES", "shares_acquired", "2010-03-04"),
     ], _idx())
     spells, _q, _d = build_spells(obs, seed, _idx())
@@ -322,10 +336,114 @@ def test_the_weaker_endpoint_governs_the_score():
 
 
 def test_ownership_is_flagged_apart_from_the_other_corporate_relations():
-    obs, _ = observations([
+    obs, _pending, _diag = observations([
         ev("ALPHA HOLDING", "BETA INDUSTRIES", "shareholder_confirmed", "2009-01-01"),
         ev("GAMMA INVEST", "BETA INDUSTRIES", "auditor", "2009-01-01", eid="EV2"),
     ], _idx())
     flags = {o["relation"]: o["is_ownership"] for o in obs}
     assert flags["shareholder_confirmed"] == 1
     assert flags["auditor"] == 0
+
+
+# --- both target candidates, chosen downstream ----------------------------- #
+# Letting the stated target override the subject firm was measured and is net
+# negative: it fires on 4% of ownership blocks and costs eight resolutions for
+# every four it wins, because RE_ORG_TARGET sometimes captures a clause rather
+# than a name. So both readings go forward and resolution picks.
+
+def test_both_target_candidates_are_emitted_in_preference_order():
+    rows = ties(
+        "Cession de parts sociales\n\nDénomination : Société Gamma Services\n"
+        "La société Alpha Holding a cédé ses parts sociales de sa "
+        "participation au capital de la société Beta Industries."
+    )
+    cands = candidates(rows, "shares_ceded")
+    assert len(cands) == 2, cands
+    # The clause's own target first; the subject firm as the fallback.
+    assert "Beta Industries" in cands[0]
+    assert "Gamma Services" in cands[1]
+
+
+def test_the_two_candidates_share_an_alt_group_so_they_are_one_dyad():
+    rows = [r for r in ties(
+        "Cession de parts sociales\n\nDénomination : Société Gamma Services\n"
+        "La société Alpha Holding a cédé ses parts sociales de sa "
+        "participation au capital de la société Beta Industries."
+    ) if r["role_canonical"] == "shares_ceded"]
+    groups = {r["alt_group"] for r in rows}
+    assert len(groups) == 1 and "" not in groups, groups
+    # Same evidence read two ways, so neither reading is the more confident.
+    assert len({r["extract_confidence"] for r in rows}) == 1
+
+
+def test_a_lone_candidate_carries_no_alt_group():
+    """An unambiguous clause must not look like half of a pair."""
+    rows = ties(
+        "Constitution de société\n\nDénomination : Société TUNISIE EVIERS SA\n"
+        "Associés : la société SICAR INVEST et Monsieur Abdelwaheb Bellaaje.\n",
+        section="constitution",
+    )
+    tied = [r for r in rows if r["role_canonical"] == "shareholder_confirmed"]
+    assert tied and all(r["alt_group"] == "" for r in tied)
+
+
+# --- the review queue ------------------------------------------------------ #
+# The queue was fed only by score_link's ambiguous band, which resolve_org's
+# 0.88 floor makes unreachable: score_link's ends term can never fall between
+# the thresholds, so the file was always empty while ten thousand
+# one-end-resolved observations were dropped with nothing but a counter.
+
+def test_a_one_end_resolved_observation_reaches_the_queue():
+    _obs, pending, diag = observations([
+        ev("ALPHA HOLDING", "A FIRM NOBODY HAS HEARD OF",
+           "shareholder_confirmed", "2009-01-01"),
+    ], _idx())
+    assert diag["one_end_resolved"] == 1
+    assert len(pending) == 1
+    row = pending[0]
+    # The resolved end anchors the dyad; the coder judges one name.
+    assert row["holder_id"] and not row["target_id"]
+    assert row["failed_end"] == "target"
+    assert row["failed_mention"] == "A FIRM NOBODY HAS HEARD OF"
+    assert row["queue_reason"] == "one_end_resolved"
+    # Provenance travels with it, or the row cannot be checked against print.
+    assert row["issue_uid"] and row["evidence_quote"]
+
+
+def test_a_queued_row_names_what_the_failed_mention_nearly_matched():
+    """Without the near-miss the row is not adjudicable."""
+    _obs, pending, _diag = observations([
+        ev("ALPHA HOLDING", "BETA INDUSTRIELLE DU SUD",
+           "shareholder_confirmed", "2009-01-01"),
+    ], _idx())
+    assert len(pending) == 1
+    row = pending[0]
+    assert row["near_org_label"] == "BETA INDUSTRIES", row
+    assert 0.0 < float(row["near_score"]) < 1.0
+
+
+def test_an_alt_group_contributes_one_dyad_not_two():
+    """The two candidate targets are one clause read two ways."""
+    alts = [ev("ALPHA HOLDING", "BETA INDUSTRIES", "shares_ceded", "2009-01-01"),
+            ev("ALPHA HOLDING", "GAMMA INVEST", "shares_ceded", "2009-01-01",
+               eid="EV1b")]
+    for a in alts:
+        a["alt_group"] = "G1"
+    obs, _pending, diag = observations(alts, _idx())
+    assert len(obs) == 1
+    assert obs[0]["target_id"] == _idx().org_by_norm["BETA INDUSTRIES"].copy().pop()
+    assert diag["alt_group_target_chosen"] == 1
+
+
+def test_an_alt_group_falls_back_to_the_subject_firm():
+    """The stated target is preferred only when it actually resolves."""
+    alts = [ev("ALPHA HOLDING", "A FIRM NOBODY HAS HEARD OF", "shares_ceded",
+               "2009-01-01"),
+            ev("ALPHA HOLDING", "BETA INDUSTRIES", "shares_ceded", "2009-01-01",
+               eid="EV1b")]
+    for a in alts:
+        a["alt_group"] = "G1"
+    obs, _pending, diag = observations(alts, _idx())
+    assert len(obs) == 1
+    assert obs[0]["target_label"] == "BETA INDUSTRIES"
+    assert diag["alt_group_fell_back_to_subject"] == 1
