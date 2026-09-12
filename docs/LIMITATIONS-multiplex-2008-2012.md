@@ -1,14 +1,15 @@
 # Limitations
 
 What this dataset cannot support, stated plainly. Everything here is measured,
-not assumed; the figures come from `docs/validation_report.md`.
+not assumed; the figures come from `docs/VALIDATION-multiplex-2008-2012.md`.
 
 ## Coverage
 
 **The gazette and the seed sheet cover different populations.** The gazette
 publishes acts for every registered Tunisian company; the seed sheet is a
-curated elite. So only 12.6% of the 13,630 seed persons acquire a dated event,
-while 87% of the hundred highest-degree do. Coverage is therefore strongly
+curated elite. So only 16.9% of the 13,630 seed persons acquire a dated event,
+while 90% of the hundred highest-degree do, and 67% of the highest-degree five
+hundred. Coverage is therefore strongly
 correlated with prominence. Any comparison between well-covered and
 poorly-covered actors is confounded by that, and descriptive statistics over
 "all seed elites" will be dominated by the covered minority.

@@ -1,0 +1,78 @@
+# CMF (Conseil du Marche Financier) disclosure sections harvested by
+# elitenet.cmf_crawl. `slug` is the Drupal ?q= path; `doc_type` is the label
+# carried into the document registry and downstream provenance fields.
+#
+# `priority` drives the default download order: tier 1 sections are the ones
+# that actually carry ownership, board and movement data; tier 2 sections are
+# useful context but are not needed to build the network layers.
+
+base_url: "https://www.cmf.tn"
+
+sections:
+  - key: doc_reference
+    slug: "documents-de-r-f-rences-enregistr-s-aupr-s-du-cmf"
+    doc_type: "document_de_reference"
+    priority: 1
+    note: >-
+      Registration documents. CMF-standardised structure: ch.2 capital
+      structure and named blockholders >=3%, ch.5 board membership and
+      cross-directorships. The single richest source for all layers.
+
+  - key: offre_publique
+    slug: "offres-publiques"
+    doc_type: "offre_publique"
+    priority: 1
+    note: >-
+      Tender offers (OPA), simplified offers (OPAS), withdrawal offers (OPR)
+      and fixed-price offers (OPF). Marks both ownership movements and firm
+      entry/exit from the cote.
+
+  - key: operation_capital
+    slug: "autres-op-rations-sur-capital"
+    doc_type: "operation_sur_capital"
+    priority: 1
+    note: >-
+      Other capital operations, including threshold-crossing declarations
+      (franchissements de seuil) - the cleanest dated record of stake changes.
+
+  - key: augmentation_capital
+    slug: "augmentations-de-capital-r-alis-es"
+    doc_type: "augmentation_de_capital"
+    priority: 1
+    note: Completed capital increases; dilution events that reshape weights.
+
+  - key: resolutions_adoptees
+    slug: "r-solutions-adopt-es-par-les-assembl-s-g-n-rales-des-soci-t-s-faisant-ape"
+    doc_type: "resolutions_ag"
+    priority: 1
+    note: Adopted AGM resolutions; dated board appointments and renewals.
+
+  - key: prospectus
+    slug: "prospectus-vis-s-par-le-cmf"
+    doc_type: "prospectus"
+    priority: 2
+    note: Approved prospectuses; pre-IPO ownership structure.
+
+  - key: rapport_annuel_societe
+    slug: "rapports-annuels-des-soci-t-s"
+    doc_type: "rapport_annuel"
+    priority: 2
+    note: Company annual reports.
+
+  - key: convocation_assemblee
+    slug: "convocation-des-assembl-es"
+    doc_type: "convocation_ag"
+    priority: 2
+    note: AGM convocations; agenda signals pending board or capital changes.
+
+  - key: communique_societe
+    slug: "informations-des-soci-t-s"
+    doc_type: "communique_societe"
+    priority: 2
+    note: Company press releases filed with the regulator.
+
+  - key: visa_capital
+    slug: "visas-capital"
+    doc_type: "visa_capital"
+    priority: 2
+    note: CMF approvals for equity operations.

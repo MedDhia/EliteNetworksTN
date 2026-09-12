@@ -34,3 +34,18 @@ data/processed/multiplex-2008-2012/panel_edges_monthly.csv
 data/processed/multiplex-2008-2012/gazette_only_persons.csv
 data/processed/multiplex-2008-2012/elitenet.sqlite
 data/processed/multiplex-2008-2012/exports/elite_network_full.gexf
+
+# --- bourse component -------------------------------------------------------
+# Source PDFs from the CMF (~1.9 GB). data/raw/ is already ignored above; this
+# is a reminder of what lives there and how to get it back:
+#   make bourse-resolve bourse-fetch
+# The corpus manifest under data/processed/bourse/corpus/ carries the canonical
+# URL and a sha256 per file, so the corpus is reconstructible and verifiable
+# without redistributing CMF documents.
+#
+# Network exports are derived from the committed edge lists and regenerate in
+# seconds with `make bourse-export`.
+data/processed/bourse/graphml/
+data/processed/bourse/graphml_panel/
+data/processed/bourse/muxviz/
+data/processed/bourse/muxviz_panel/

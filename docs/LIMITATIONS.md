@@ -38,16 +38,38 @@ and normalise by issues or pages if the trend matters to your argument.
 ## 3. Exits are recorded far less reliably than entries
 
 An appointment must be published to take effect. A departure often need not
-be: people retire, resign, or are quietly moved without a cessation act. The
-spell logic therefore closes tenures three ways — an explicit termination, a
-successor naming the incumbent replaced, or the person surfacing in another
-office — and right-censors the rest.
+be: people retire, resign, or are quietly moved without a cessation act. Only
+**5.3%** of spells are closed by an act that states the exit.
 
-The share of spells ending `censored` is large. That is not a bug in the
-pipeline; it is the shape of the source. Use survival methods that handle
-right-censoring, and treat `end_reason == "moved"` as an exit whose *date* is
-the day the person reappeared, which may be later than the day they actually
-left.
+The spell logic therefore closes tenures four ways — an explicit termination or
+retirement, a successor naming the incumbent replaced, someone else being
+appointed to the same singular office, or the person surfacing in another
+office — and right-censors the remaining **41.7%**. That share is not a bug in
+the pipeline; it is the shape of the source.
+
+**The load-bearing distinction is `end_precision`, not `end_reason`.** Two of
+the four mechanisms date the exit exactly because an act says so; the other two
+only establish that the person was gone *by* that date. Read as exact exits,
+they bias tenure upward, and badly in the tail: a `displaced` spell running
+thirty years means nobody was recorded in that post for thirty years, not that
+one person held it that long.
+
+```python
+spells = pd.read_csv("data/processed/spells.csv.gz")
+exact = spells[spells.end_precision == "exact"]          # 5.3%
+interval = spells[spells.end_precision == "upper_bound"] # 53.0%
+censored = spells[spells.end_precision == "censored"]    # 41.7%
+```
+
+Use survival methods that handle right-censoring, and treat `upper_bound` rows
+as interval-censored rather than exact. If your design cannot accommodate
+interval censoring, the defensible fallback is to treat `upper_bound` as
+censored too and fit on the 5.3% that is stated — small, but unbiased in a way
+the rest is not.
+
+`displaced` is the newest and most consequential of the four. Its guards are
+documented in the codebook; `build_spells(ev, infer_displacement=False)` turns
+it off if you would rather have censoring than inference.
 
 ## 4. Homonymy is not resolved
 

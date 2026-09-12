@@ -46,3 +46,44 @@ verify-mirror: ## re-check every mirrored file against the upstream ETag (one HE
 
 clean-derived: ## remove everything derived, keeping the raw mirror
 	rm -rf data/interim data/processed
+
+# ---------------------------------------------------------------------------
+# bourse: listed companies, shareholders and boards from BVMT + CMF filings.
+# Independent of the JORT stages above; shares only the data/ root.
+# ---------------------------------------------------------------------------
+
+BPY := PYTHONPATH=src python3
+
+.PHONY: bourse bourse-spine bourse-crawl bourse-resolve bourse-fetch \
+        bourse-extract bourse-build bourse-export bourse-validate bourse-test
+
+bourse: bourse-spine bourse-crawl bourse-resolve bourse-fetch bourse-extract \
+        bourse-build bourse-export bourse-validate
+
+bourse-spine:    ## BVMT listed-securities roster (firm identity spine)
+	$(BPY) -m bourse.bvmt
+
+bourse-crawl:    ## list CMF filings into the document registry
+	$(BPY) -m bourse.cmf_crawl --max-pages 60
+
+bourse-resolve:  ## resolve each filing's PDF link (slow; resumable)
+	$(BPY) -m bourse.cmf_crawl --resolve
+
+bourse-fetch:    ## download registration-document PDFs (~2 GB)
+	$(BPY) -m bourse.fetch_docs --doc-types document_de_reference
+
+bourse-extract:  ## parse tables into typed records (slow; parallel)
+	$(BPY) -m bourse.pipeline --doc-types document_de_reference
+
+bourse-build:    ## assemble entities and multiplex edge lists
+	$(BPY) -m bourse.build_dataset
+
+bourse-export:   ## write muxViz edge lists and yearly GraphML
+	$(BPY) -m bourse.export_networks
+	$(BPY) -m bourse.export_networks --panel
+
+bourse-validate: ## integrity checks -> validation_report.md
+	$(BPY) -m bourse.validate
+
+bourse-test:     ## parser and entity-resolution unit tests
+	$(BPY) tests/test_bourse_extract.py

@@ -10,7 +10,7 @@ the Tunisian administration is published there, dated, numbered, and signed.
 This repository turns seventy years of that record into tables you can put in
 a regression, and into networks you can watch change year by year.
 
-**Current build:** 6,378 issues → 117,508 personnel events → 44,271 persons →
+**Current build:** 6,378 issues → 117,508 personnel events → 45,634 persons →
 99,872 office-holding spells and six dated relational structures. See
 [`docs/CODEBOOK.md`](docs/CODEBOOK.md) for variable definitions and
 [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) before you use it in a paper.
@@ -83,7 +83,7 @@ directly, no unpacking step.
 | `events.csv.gz` | one person–office transition | 117,508 |
 | `spells.csv.gz` | one office-holding spell, with start, end and end reason | 99,872 |
 | `person_year.csv.gz` | person × year panel | 1,301,001 |
-| `persons.csv.gz` | person register with career summary | 44,271 |
+| `persons.csv.gz` | person register with career summary | 45,634 |
 | `organisations.csv.gz` | organisation register | 8,803 |
 | `edges/*.csv.gz` | six relations, each with validity intervals | see below |
 | `graphs/affiliation_senior_dynamic.gexf` | dynamic bipartite graph for Gephi, senior offices | |
@@ -126,6 +126,27 @@ g = nx.from_pandas_edgelist(active, "source", "target", edge_attr="overlap_days"
 For Gephi, open `graphs/affiliation_senior_dynamic.gexf` and enable the timeline; edge
 spells are stored as `start`/`end` years.
 
+## Figures
+
+`figures/` holds nine publication figures, each written as a 300 dpi PNG and a
+vector PDF by `python scripts/figures.py`:
+
+| Figure | What it shows |
+|---|---|
+| `fig01_affiliation_snapshots` | who served where, at four moments |
+| `fig02_signature_network` | who signed whose appointment — the patronage structure |
+| `fig03_succession_chains` | the six offices with the longest sequence of holders |
+| `fig04_coservice_backbone_2011` | the senior co-service network, with its brokers named |
+| `fig05_structure_over_time` | size and connectivity of the senior network by year |
+| `fig06_appointments_by_rank` | seventy years of appointments by seniority |
+| `fig07_cumulative_institution_network` | the whole period at once: institutions tied by shared personnel |
+| `fig08_revolution_and_the_apparatus` | what 2011 did, and did not, do to personnel |
+| `fig09_bipartite_elite_network` | the two-mode graph itself: people and bodies, and its 2-core |
+
+Colour follows the job it does: a two-slot categorical palette for
+person-vs-institution identity, single-hue sequential ramps for seniority and
+era, all validated for colour-vision deficiency, chroma and contrast.
+
 ## The explorer
 
 `explorer/` is a self-contained page that replays the senior network year by
@@ -154,7 +175,8 @@ src/eltn/
   normalize.py  person / organisation / position resolution
   panel.py      spells, person-year panel, registers
   network.py    the six relations, snapshots, GEXF export
-scripts/        one runnable stage each, plus diagnostics and the explorer export
+scripts/        one runnable stage each, plus diagnostics, figures and the explorer export
+figures/        nine publication figures, PNG (300 dpi) + vector PDF
 explorer/       self-contained year-by-year network explorer (index.html + data.js)
 tests/          gold-standard acts transcribed by hand from the gazette
 docs/           codebook and limitations
@@ -202,7 +224,7 @@ different question and draws on sources the first build does not touch:
 
 Current build: 1,271 issues → 207,369 blocks → 197,532 dated events → 4,287
 dated tie spells plus 27,585 undated seed ties, and 48,176 act citations.
-87% of the hundred highest-degree seed elites acquire at least one dated event.
+90% of the hundred highest-degree seed elites acquire at least one dated event.
 
 Extraction accuracy on a seeded stratified sample, coded against the printed
 French: **precision 0.982** (95% CI 0.937–0.995) with **no spurious events**,
@@ -226,3 +248,70 @@ the two output trees are kept apart so neither overwrites the other. Whether
 they should eventually be unified — sharing one person registry and one
 organisation registry across 1957–2026 — is an open question, not a settled
 design.
+
+---
+
+## A third build: listed companies, shareholders and boards, 1994–2026
+
+The first two builds read the state's record of itself. This one reads the
+market's: **the publicly listed companies of the Tunis bourse, who owns them,
+and who sits on their boards**, from the filings the Conseil du Marché
+Financier requires of every issuer making a public offering.
+
+It is the business half of the same elite structure. A minister recorded in the
+gazette and a bank chairman recorded in a registration document are often the
+same social stratum and sometimes the same person, but no source covers both,
+so they are collected separately and left joinable rather than merged.
+
+Why the CMF filings:
+
+- **the regulator fixes their contents.** A `document de référence` must state
+  the capital structure, every shareholder above the disclosure threshold, the
+  board, and each director's mandates in other companies. The same tables recur
+  in every issuer's filing, which is what makes automated extraction possible;
+- **directors declare ties beyond the cote.** The mandates section names
+  unlisted companies too, so the network reaches into the private economy that
+  no listing-based source sees;
+- **movements are dated.** Tender offers, capital increases and
+  threshold-crossing declarations record stake changes to the day. They are
+  harvested into the registry; parsing them is the obvious next extension.
+
+Current build: **213 registration documents → 2,764 entities → 11,982 observed
+ties across nine layers**, 1994–2026, with 75 entities linked to a BVMT security
+by ISIN. Ownership weights are percentages of capital as reported; interlock
+weights are counts of shared directors. Coverage thins sharply before ~2008 —
+treat the usable panel as roughly 2008–2026 and check
+`data/processed/bourse/layer_year_coverage.csv` before reading any time trend,
+because a rise in observed ties can be a rise in filings.
+
+Read [`docs/CODEBOOK-bourse.md`](docs/CODEBOOK-bourse.md) for variable
+definitions and [`docs/SOURCES-bourse.md`](docs/SOURCES-bourse.md) for what each
+filing type yields. Section 6 of the codebook lists the limitations that matter:
+disclosure thresholds truncate ownership, homonyms merge, and carry-forward in
+the panel is an assumption rather than an observation.
+
+```bash
+make bourse          # spine -> crawl -> resolve -> fetch -> extract
+                     # -> build -> export -> validate
+make bourse-test
+```
+
+CI (`.github/workflows/ci.yml`) runs the test suite on Python 3.11 and 3.12, and
+rebuilds this dataset from the committed extraction records to check that the
+committed tables are byte-identical to what the code produces. The data files
+are the deliverable here, so a change that silently alters thousands of rows
+without touching a test fails the build rather than merging unnoticed.
+
+```r
+source("R/load_bourse_multiplex.R")
+mx <- load_bourse_multiplex()     # observed ties only
+layer_summary(mx)
+multiplex_actors(mx, 2024)        # actors present in more than one layer
+```
+
+Code is `src/bourse/`, outputs are `data/processed/bourse/`, and source PDFs are
+not redistributed: the corpus manifest carries a canonical URL and sha256 per
+file, so `make bourse-resolve bourse-fetch` reconstructs it from the CMF's own
+servers. As with the second build, the output trees are kept apart; whether the
+gazette's person registry and this one should eventually share identifiers is
+the same open question, with the same answer — not yet.
