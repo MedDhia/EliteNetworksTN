@@ -15,6 +15,9 @@ event_types:
   renamed:            "Legal name changed (changement de denomination)"
   registered:         "Association, party or union legally registered"
   represented_by:     "A legal person acts through a named natural person (representee par)"
+  charged_with_functions: "Assigned to act in a post (est charge des fonctions de) -- legally an assignment, not titular appointment"
+  delegated_to_body:  "Named to a commission or council as the delegate of a ministry or organisation (representant du ministere de X)"
+  retired:            "Admitted to retirement (admis a la retraite)"
   headquarters_moved: "Registered seat transferred (transfert du siege social)"
 
 # Trailing announcement reference code: YYYY + series letter + sequence + 5-char rubric suffix.

@@ -96,6 +96,9 @@ surface_forms:
   chef de service: chef_de_service
   chef de cabinet: chef_de_cabinet
   conseiller: conseiller
+  representant: representant
+  representante: representant
+  representants: representant
   president: association_president
 
 # Roles only one person can hold at an organisation at a time.
