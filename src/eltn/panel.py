@@ -315,18 +315,42 @@ def build_registers(ev: pd.DataFrame, spells: pd.DataFrame
         if pid and raw:
             names[pid][nz.clean_name(raw)] += 1
 
+    # The register must cover everyone the relations reference, not only
+    # appointees: a person who appears solely as the incumbent an act replaces,
+    # or solely as a signatory, still needs a row, or a join from
+    # succession.csv or signature.csv lands on a missing id.
+    appearances = [
+        ev.assign(_pid=ev.person_id, _role="appointee"),
+        ev[ev.replaces_id != ""].assign(_pid=ev.replaces_id, _role="predecessor"),
+        ev[ev.signatory_id != ""].assign(_pid=ev.signatory_id, _role="signatory"),
+    ]
+    seen = pd.concat(
+        [f[["_pid", "_role", "event_id", "event_year", "rank_score", "org_id"]]
+         for f in appearances],
+        ignore_index=True,
+    )
+    seen = seen[seen._pid != ""]
+
     grp = ev.groupby("person_id")
-    persons = pd.DataFrame({
-        "person_id": list(grp.groups.keys()),
-    })
     agg = grp.agg(
         n_events=("event_id", "size"),
-        first_year=("event_year", "min"),
-        last_year=("event_year", "max"),
         peak_rank_score=("rank_score", "max"),
         n_orgs=("org_id", "nunique"),
     ).reset_index()
-    persons = agg
+
+    span = seen.groupby("_pid").agg(
+        first_year=("event_year", "min"),
+        last_year=("event_year", "max"),
+    ).reset_index().rename(columns={"_pid": "person_id"})
+
+    roles = (seen.groupby("_pid")._role.agg(lambda s: "+".join(sorted(set(s))))
+             .reset_index().rename(columns={"_pid": "person_id", "_role": "roles"}))
+
+    persons = span.merge(agg, on="person_id", how="left").merge(
+        roles, on="person_id", how="left")
+    persons["n_events"] = persons.n_events.fillna(0).astype(int)
+    persons["n_orgs"] = persons.n_orgs.fillna(0).astype(int)
+    persons["peak_rank_score"] = persons.peak_rank_score.fillna(0)
     persons["name"] = persons.person_id.map(
         lambda p: nz.person_display(names[p]) if names.get(p) else ""
     )

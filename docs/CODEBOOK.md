@@ -140,7 +140,14 @@ one year (a post and a board seat) has two rows.
 `persons.csv.gz` carries `name` (the most frequent surface spelling),
 `name_variants` (every spelling merged into this id — inspect this when a
 person looks suspicious), `first_year`, `last_year`, `n_events`, `n_spells`,
-`n_orgs`, `career_days`, `peak_rank` and `peak_rank_score`.
+`n_orgs`, `career_days`, `peak_rank`, `peak_rank_score` and `roles`.
+
+The register covers everyone any relation references, not only appointees.
+`roles` says how a person enters it — `appointee`, `predecessor`, `signatory`,
+or a `+`-joined combination. Someone who only ever appears as the incumbent an
+act replaces, or only as a signatory, still gets a row (with `n_events` 0), so
+a join from `succession.csv.gz` or `signature.csv.gz` never lands on a missing
+id.
 
 `organisations.csv.gz` carries `org_name`, `org_form`, `org_portfolio`,
 `n_events`, `n_persons`, `first_year`, `last_year`.
