@@ -170,6 +170,14 @@ def _dates_for_block(text: str, pub_date: str) -> dict:
             d = G.parse_date_string(m.group("date"))
             if d:
                 out["act_date"] = d.isoformat()
+    # An act cannot be published before it happens. Where a parsed date
+    # postdates the issue, the reading is wrong -- usually a transposed or
+    # OCR-damaged numeral -- so it is dropped rather than repaired by guessing,
+    # and the event falls back to the next available date.
+    if pub_date:
+        for key in ("act_date", "registration_date", "filing_date"):
+            if out.get(key) and out[key] > pub_date:
+                out.pop(key)
     out["pub_date"] = pub_date
     return out
 
@@ -494,14 +502,18 @@ def extract_state(block: dict) -> tuple[list[dict], list[dict]]:
     relation = ("modifies" if "modifiant" in heading_l
                 else "abrogates" if "abrogeant" in heading_l else "cites")
     for m in G.RE_VISA.finditer(text):
-        cited_date = G.parse_date_string(m.group("date") or "")
+        rest = m.group("rest") or ""
+        mnum = G.RE_ACT_NUMBER.search(rest)
+        mdate = G.RE_VISA_DATE.search(rest)
+        mgist = G.RE_VISA_GIST.search(rest)
+        cited_date = G.parse_date_string(mdate.group("date")) if mdate else None
         citations.append({
             "block_uid": block["block_uid"], "issue_uid": block["issue_uid"],
             "citing_act_number": act_number, "citing_act_date": act_date,
             "cited_kind": re.sub(r"\s+", " ", m.group("kind")).strip().lower(),
-            "cited_number": (m.group("num") or "").replace(" ", ""),
+            "cited_number": mnum.group("num").replace(" ", "") if mnum else "",
             "cited_date": cited_date.isoformat() if cited_date else "",
-            "cited_gist": _quote(m.group("gist") or "", 180),
+            "cited_gist": _quote(mgist.group("gist") if mgist else "", 180),
             "relation": relation,
         })
     return events, citations

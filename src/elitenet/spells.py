@@ -270,7 +270,13 @@ def build_spells(events: list[dict], resolution: dict, roles_cfg: dict) -> tuple
         for i, sp in enumerate(holders[:-1]):
             nxt = holders[i + 1]
             start_next = nxt.onset or nxt.onset_hi
-            if sp.open and start_next and sp.person_id != nxt.person_id:
+            own_start = sp.onset or sp.onset_hi
+            # The successor must actually start after the incumbent did.
+            # Sorting can interleave a dated spell with an interval-censored
+            # one, and closing a spell before it opened produces a negative
+            # duration that networkDynamic rejects outright.
+            if (sp.open and start_next and sp.person_id != nxt.person_id
+                    and (own_start is None or start_next > own_start)):
                 sp.terminus = start_next
                 sp.terminus_lo = sp.onset_hi or sp.onset
                 sp.terminus_hi = start_next
@@ -381,13 +387,16 @@ def build_panels(spell_rows: list[dict], granularity: str) -> list[dict]:
     ties, on `certain`+`probable`, and on all -- because that spread *is* the
     measurement-uncertainty sensitivity analysis for a gazette-derived network.
     """
+    # Only dated ties are materialised. An undated seed tie carries no time
+    # information, so placing it in a time slice would assert a presence the
+    # evidence does not support -- and would repeat 27,585 rows across every
+    # period. Those ties remain in spells.csv with evidence_tier
+    # 'seed_undated'; join them in when a cross-section is wanted.
+    dated = [s for s in spell_rows if s["evidence_tier"] == "gazette_dated"]
     out: list[dict] = []
     for period, p_start, p_end in periods(granularity):
-        for s in spell_rows:
-            if s["evidence_tier"] == "seed_undated":
-                # No dates at all: present in every period, flagged as such.
-                certainty = "undated"
-            else:
+        for s in dated:
+            if True:
                 onset = _d(s["onset"]) or _d(s["onset_lo"]) or _d(s["onset_hi"])
                 term = _d(s["terminus"]) or _d(s["terminus_hi"])
                 if onset and onset > p_end:
@@ -433,6 +442,21 @@ def run(include_seed: bool = True) -> dict:
         resolved_ids = {r["person_id"] for r in rows}
         rows += [finalise(s) for s in seed_only_spells(resolved_ids)]
 
+    # Hygiene: a terminus that precedes its onset is not a short spell, it is a
+    # contradiction. Rather than clamp it to zero length, the end is withdrawn
+    # and the spell reverts to right-censored -- we could not establish when it
+    # closed -- and is flagged for review.
+    inconsistent = 0
+    for r in rows:
+        if r["onset"] and r["terminus"] and r["terminus"] < r["onset"]:
+            r["terminus"] = ""
+            r["terminus_lo"] = ""
+            r["terminus_rule"] = "withdrawn_inconsistent"
+            r["right_censored"] = True
+            r["duration_days"] = ""
+            r["needs_review"] = True
+            inconsistent += 1
+
     # right-censor anything still open at the window edge
     for r in rows:
         if r["evidence_tier"] == "gazette_dated" and r["right_censored"]:
@@ -450,6 +474,7 @@ def run(include_seed: bool = True) -> dict:
         "right_censored": sum(1 for r in rows if r["right_censored"]),
         "left_censored": sum(1 for r in rows if r["left_censored"]),
         "observations": len(obs_rows),
+        "termini_withdrawn_inconsistent": inconsistent,
     }
     for gran in load_config("scope")["panel"]["frequencies"]:
         panel = build_panels(rows, gran)

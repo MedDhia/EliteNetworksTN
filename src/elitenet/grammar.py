@@ -131,9 +131,11 @@ RE_RETIREMENT = re.compile(
 RE_VISA = re.compile(
     r"^Vu\s+(?:le|la|l')\s*(?P<kind>d[ée]cret(?:-loi)?(?:\s+Pr[ée]sidentiel|"
     r"\s+gouvernemental)?|arr[êe]t[ée]|loi(?:\s+organique)?|d[ée]cision)"
-    r"[^,\n]{0,60}?(?:n[°ºo]\s*(?P<num>\d{2,4}\s*-\s*\d{1,4}))?"
-    r"\s*(?:du\s+(?P<date>" + DATE_CORE + r"))?(?:,\s*(?P<gist>[^,\n]{0,200}))?",
-    re.IGNORECASE | re.MULTILINE)
+    r"(?P<rest>[^\n]{0,400})", re.IGNORECASE | re.MULTILINE)
+RE_VISA_DATE = re.compile(r"du\s+(?P<date>" + DATE_CORE + r")", re.IGNORECASE)
+RE_VISA_GIST = re.compile(r",\s*(?P<gist>portant[^,\n]{0,200}|"
+                          r"fixant[^,\n]{0,200}|relatif[^,\n]{0,200}|"
+                          r"modifiant[^,\n]{0,200})", re.IGNORECASE)
 
 # --- act's own number and date ---
 RE_ACT_NUMBER = re.compile(r"n[°ºo]\s*(?P<num>\d{2,4}\s*-\s*\d{1,4})", re.IGNORECASE)
