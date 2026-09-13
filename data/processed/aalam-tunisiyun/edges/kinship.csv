@@ -1,7 +1,27 @@
 edge_id,layer,relation,from_id,from_name,to_id,to_name,to_kind,subjects_studied,year,year_lo,year_hi,date_precision,evidence_tier,extractor,pattern_id,confidence,entry_uid,evidence_quote
+ED_b9a93e2ed37a243170c4,kinship,child_of,PERSON_AHMD_ABYBAS,أبو العباس أحمد,PERSON_DAY_THMAN,عثمان داي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.01,وبإعانة ابنه أبى العباس أحمد المشارك له
+ED_0dada87ea3bef7d9d2a6,kinship,child_of,PERSON_AWL_AHMD,أحمد باي الأول,PERSON_MSTFY,مصطفى باي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,"خلفاً لوالده
+مصطفى باي، قرّر إحداث جيش منظم"
 ED_e6422c0fd5999d788ce7,kinship,child_of,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,person,,,,,none,book_stated,rule,KIN01,0.75,aalam:3.10,الذي وجد في شخص والده العلامة الشيخ الطاهر بن عاشور
+ED_1f412c6263bd5fe1a756,kinship,child_of,PERSON_BNKHWJH_BSHYR,البشير بن الخوجة,PERSON_BNKHWJH_SHYKH_ASLAM_MHMD,شيخ الإسلام محمد بن الخوجة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,"أصغر أبنا،
+شيخ الإسلام محمد بن الخوجة الخالد الذكر"
+ED_bd331cc9ca328b808457,kinship,child_of,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,PERSON_BNKHWJH_BSHYR,البشير بن الخوجة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,وهو رابع أبنا، الشيخ البشير بن الخوجة
+ED_04f5381d8d663b1c19b4,kinship,kin_of,PERSON_DYAF_AHMD_BNABY,أحمد بن أبي الضياف,PERSON_BAHY_AHMD,سيدي أحمد الباهي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.06,"تتمثل في انتسابها إلى ولي من أوليا، الله
+الصالحين ألا وهو سيدي أحمد الباهي"
+ED_a63fdbd508cdf9cb99a9,kinship,child_of,PERSON_FATMH,فاطمة,PERSON_THMANH_ZYZH,عزيزة عثمانة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.01,ولقد أبت ابئتها فاطمة المضاهية لها في السخا
+ED_1810ae68e41d330c7fb4,kinship,child_of,PERSON_HMWDH,حمودة باشا,PERSON_LY,علي باي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,حتى ينتقل الحكم بعد وفاته إلى ابنه حمّودة بدون نزاع
+ED_a13dc4bac74f951a4c64,kinship,kin_of,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,PERSON_KHWJH_MHMWD,محمود خوجة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,وأمّه هي ابنة الجئرال محمود خوجة وزير الحرب في عهد
+ED_4632f4d21f9413d3e6e2,kinship,kin_of,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,PERSON_MHMD,محمد باي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,الصادرة في عهد صهره الأمير محمد باي
 ED_b8eb2ed9992aa9faebd9,kinship,child_of,PERSON_KHYRALDYN_TAHR,طاهر باشا خير الدين,PERSON_KHYRALDYN,خير الدين,person,,,,,none,book_stated,rule,KIN01,0.75,aalam:2.09,التحق مع بقيّة إخوته وعائلته بوالده الجنرال خير الدين العظيم الذي كان
 ED_9b0a18fe623d45b8132d,kinship,child_of,PERSON_LATY_HSN,حسن ڤلاتي,PERSON_BNAHMD_LY,علي بن احمد,person,,,,,none,book_stated,rule,KIN01,0.75,aalam:3.07,عندما نقل والده المرحوم علي بن أحمد
+ED_b44842866d329192a999,kinship,kin_of,PERSON_MHMD,محمد باي,PERSON_AWL_AHMD,أحمد باي الأول,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,عهد الأمير أحمد باي الأول وفي مذة خخلفه وابن عمه الأمير محمّد باي
+ED_a6e0f686a121682a8a34,kinship,sibling_of,PERSON_MSTFY,مصطفى باي,PERSON_THANY_HSYN,حسين باي الثاني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.03,الأمير مصطفى باي خلفاً لشقيقه حسين باي
 ED_cb50377344cf4bc34c3b,kinship,child_of,PERSON_RDWAN_TYB,الطيب رضوان,PERSON_MSTFY,مصطفى آغة,person,,,,,none,book_stated,rule,KIN01,0.75,aalam:3.01,وقد أز نلجب أبوه مصطفى » رئيس قسم الإنشا
+ED_98adbefb388fa9ea4e82,kinship,child_of,PERSON_RYAHY_TYB,الطيب الرياحي,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.04,عهد إليه الشيخ إبراهيم الرياحي بتعليم ابنه الطيّب
+ED_e5db716334fbdf22377a,kinship,child_of,PERSON_SALH,صالح,PERSON_THMAN,عثمان باي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,ذلك أن الأميرين صالح وعلي المنشغلي البال بصحّة والدهما
 ED_a82159debf861e95aab5,kinship,child_of,PERSON_SFR_BSHYR,البشير صفر,PERSON_SFR_MSTFY,مصطفى صفر,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.02,وكان هو ثالث الأبنا، الذكور الذين أنجبهم أمير اللوا، مصطفى صفر
 ED_269997ec370fe1ad7b77,kinship,child_of,PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,PERSON_SWSY_MHMD,محمد السئوسي,person,,,,,none,book_stated,rule,KIN01,0.75,aalam:3.08,ذلك أن والده هو الشيخ محمد السئوسي الذي شغل
+ED_697b2d9d99e98605e702,kinship,sibling_of,PERSON_THMAN,عثمان باي,PERSON_HMWDH,حمودة باشا,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,واقترح عليهم تنصيب الأمير عثمان باي شقيق الملك الراحل، على العرش الشاغر
+ED_8db2ea0c80e00ddc633a,kinship,child_of,PERSON_THMANH_ZYZH,عزيزة عثمانة,PERSON_AHMD_ABYBAS,أبو العباس أحمد,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.01,ولدت الأميرة عزيزة في بيت أبي العباس أحمد
+ED_f9f0332ee08b9926cc95,kinship,married_to,PERSON_THMANH_ZYZH,عزيزة عثمانة,PERSON_MRAD,مراد باي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.01,من الضباط التابعين لحاشية والدها يقال إنه مرادباي
+ED_5a428846e37fc13cd3ab,kinship,kin_of,PERSON_ZRWQ_RBY,العربي زروق,PERSON_HSYNYH_ALH,العائلة الحسينية,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,ذلك أنه بفضل مصاهرته للعائلة المالكة وارتباطه ببعض العائلات البرجوازية

@@ -20,7 +20,8 @@ from .tables import FoundTable, norm, strip_accents, to_number
 # Trailing footnote markers on names: "M. Hakim DOGHRI(1)", "Meninx Holding (2)".
 _FOOTNOTE = re.compile(r"\s*\(\s*\d{1,2}\s*\)\s*$")
 _TITLES = re.compile(
-    r"^(m\.|m|mr\.?|mme\.?|mlle\.?|dr\.?|pr\.?|me\.?|monsieur|madame)\s+", re.I
+    r"^(mm\.?|messieurs|mesdames|m\.|m|mr\.?|mme\.?|mlle\.?|dr\.?|pr\.?|me\.?|"
+    r"monsieur|madame)\s+", re.I
 )
 
 # Rows of the aggregate capital-structure table, which must never be read as

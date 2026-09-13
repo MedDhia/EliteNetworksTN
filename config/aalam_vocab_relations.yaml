@@ -32,12 +32,23 @@ relation_types:
   wrote_for:        "Subject edited or wrote for a named publication"
   studied_at:       "Subject was educated at a named institution"
   authored:         "Subject wrote a named work"
+  taught_at:        "Subject held a teaching post at a named institution"
+  commissioned_by:  "Subject was charged with a named mission by the counterparty"
+  patronised_by:    "Counterparty advanced, protected or favoured the subject"
+  patronised:       "Subject advanced, protected or favoured the counterparty"
+  opposed_by:       "Counterparty worked against the subject; rivalry the text states"
+  recommended:      "Subject proposed the counterparty for a post"
+  colleague_of:     "Named as a friend, associate or fellow of the counterparty"
+  eulogised_by:     "Counterparty publicly praised or mourned the subject"
 
 # Directed relation pairs. Where the text states one, the converse holds of the
 # counterparty; recording it once and naming the inverse keeps the edge list
 # from asserting the same tie twice in opposite directions.
 inverses:
   studied_under: taught
+  patronised_by: patronised
+  recommended: recommended_by
+  opposed_by: opposed
   child_of: parent_of
   appointed_to: ""
   succeeded: succeeded_by
