@@ -114,3 +114,71 @@ def test_ci_shaped_tree_validates_real_row_counts(tmp_path):
     seed = next(l for l in proc.stdout.splitlines()
                 if l.startswith("- **seed elites with a dated gazette event**"))
     assert "top 100: 0 (0%)" not in seed, seed
+
+
+# --- a stale stage is not a broken dataset ------------------------------- #
+
+def test_a_resolution_table_predating_the_snowball_is_a_stale_stage(tmp_path, monkeypatch):
+    """The mistake this pins is one this pipeline has now made twice: reading
+    an absent thing as a broken thing. A resolution.csv built before the tier
+    existed has no resolve_pass column and no snowballed links, which is a
+    stage that has not re-run -- and failing CI on it says "broken dataset"
+    where the truth is "stale stage"."""
+    from elitenet import validate as V
+    monkeypatch.setattr(V, "PROCESSED", tmp_path)
+    # _skip_stage renders the path relative to ROOT, so both must move.
+    monkeypatch.setattr(V, "ROOT", tmp_path)
+    (tmp_path / "resolution.csv").write_text(
+        "mention_key,person_mention,org_mention,resolved_person_id,link_status\n"
+        "a||b,A Ben Ali,Societe B,P_A,resolved\n", encoding="utf-8")
+    rep = V.Report()
+    V.check_snowball(rep)
+    assert rep.errors == 0
+    assert any(lv == "WARN" and "snowball passes" in c for lv, c, _d in rep.rows)
+
+
+def test_snowballed_links_with_no_pass_column_stay_an_error(tmp_path, monkeypatch):
+    """The genuine defect the check was written for: links that cannot be told
+    apart from first-pass ones."""
+    from elitenet import validate as V
+    monkeypatch.setattr(V, "PROCESSED", tmp_path)
+    # _skip_stage renders the path relative to ROOT, so both must move.
+    monkeypatch.setattr(V, "ROOT", tmp_path)
+    (tmp_path / "resolution.csv").write_text(
+        "mention_key,person_mention,org_mention,resolved_person_id,link_status\n"
+        "a||b,A Ben Ali,Societe B,P_A,snowball\n", encoding="utf-8")
+    rep = V.Report()
+    V.check_snowball(rep)
+    assert rep.errors == 1
+    assert any("snowball passes are recorded" in c for _lv, c, _d in rep.rows)
+
+
+def test_snowball_reports_its_passes_when_the_column_is_there(tmp_path, monkeypatch):
+    from elitenet import validate as V
+    monkeypatch.setattr(V, "PROCESSED", tmp_path)
+    # _skip_stage renders the path relative to ROOT, so both must move.
+    monkeypatch.setattr(V, "ROOT", tmp_path)
+    (tmp_path / "resolution.csv").write_text(
+        "mention_key,link_status,resolve_pass,snowball_basis\n"
+        "a||b,resolved,0,\n"
+        "c||d,snowball,1,person_names_org\n"
+        "e||f,snowball,2,org_names_person\n", encoding="utf-8")
+    rep = V.Report()
+    V.check_snowball(rep)
+    assert rep.errors == 0
+    detail = next(d for _lv, c, d in rep.rows if c == "snowball links")
+    assert "2 of 3" in detail and "pass 1=1" in detail and "pass 2=1" in detail
+
+
+def test_an_unlabelled_snowball_row_is_an_error(tmp_path, monkeypatch):
+    from elitenet import validate as V
+    monkeypatch.setattr(V, "PROCESSED", tmp_path)
+    # _skip_stage renders the path relative to ROOT, so both must move.
+    monkeypatch.setattr(V, "ROOT", tmp_path)
+    (tmp_path / "resolution.csv").write_text(
+        "mention_key,link_status,resolve_pass,snowball_basis\n"
+        "a||b,snowball,0,\n", encoding="utf-8")
+    rep = V.Report()
+    V.check_snowball(rep)
+    assert rep.errors == 1
+    assert any("names its pass and rule" in c for _lv, c, _d in rep.rows)

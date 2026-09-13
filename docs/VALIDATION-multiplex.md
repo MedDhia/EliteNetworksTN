@@ -14,6 +14,8 @@ Generated 2026-09-13.
 - **conflicting registre_commerce** — 2043 of 33765 organisations carrying one hold two or more values (6%); a few values clustered around one is OCR, many with nothing in common is an organisation-resolution merge. See docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md
 - **organisation merge hubs** — 129 organisations (172 organisation-identifier pairs) hold 10 or more values of a single hard identifier and are near-certainly several firms merged into one; worst is SOCIETE M with 154 distinct matricule fiscal values. Exclude these before computing organisation-level structure — `org_identifiers.csv` carries `n_values_for_org`, and `exports/tergm/node_key.csv` carries `merge_suspect`.
 - **identifiers shared across nodes** — 4464 identifier values appear on more than one organisation node (one firm split in two, or a collision)
+- **person ties** — not checked: data/processed/multiplex/person_tie_spells.csv is absent. Run `make personties` to build it, then re-validate.
+- **snowball passes** — not checked: data/processed/multiplex/resolution.csv predates the snowball tier (no resolve_pass column, and no link claims to have been snowballed). Run `make resolve` to build it, then re-validate.
 
 ## INFO
 
@@ -38,7 +40,7 @@ Generated 2026-09-13.
 - **negative control** — 0 officer events found in 118975 auction/fonds-de-commerce blocks, which are excluded from extraction (0 expected by construction)
 - **ministerial appointments by year** — 1958=6, 1959=1, 1960=2, 1961=3, 1962=3, 1964=1, 1965=3, 1966=10, 1967=4, 1968=3, 1969=10, 1970=4, 1971=12, 1972=20, 1973=12, 1974=18, 1975=4, 1976=7, 1977=13, 1978=17, 1979=6, 1980=43, 1981=63, 1982=21, 1983=53, 1984=44, 1985=37, 1986=45, 1987=81, 1988=45, 1989=27, 1990=36, 1991=45, 1992=47, 1993=36, 1994=42, 1995=41, 1996=39, 1997=50, 1998=27, 1999=45, 2000=44, 2001=56, 2002=33, 2003=25, 2004=29, 2005=67, 2006=42, 2007=55, 2008=57, 2009=30, 2010=57, 2011=102, 2012=178, 2013=118, 2014=138, 2015=195, 2016=190, 2017=164, 2018=131, 2019=73, 2020=243, 2021=88, 2022=69, 2023=20, 2024=52, 2025=15, 2026=3
 - **seed cabinets** — 7 government nodes in the seed sheet: CHAHED GOVERNMENT, ESSID GOVERNMENT, FAKHFAKH GOVERNMENT, JEBALI GOVERNMENT, JOMAA GOVERNMENT, LAARAYEDH GOVERNMENT, MECHICHI GOVERNMENT
-- **act citation graph** — 420593 citations, 408017 with a resolvable cited date
+- **act citation graph** — 0 citations, 0 with a resolvable cited date
 - **org ties** — 3541 dated, 4633 undated seed ties; 3496 dated dyads
 - **org tie relations** — shareholder_confirmed=5729, auditor=1576, shares_ceded=282, shares_acquired=227, funder=201, member=79, branch=46, corporate_officer=33
 - **org ties are not self-loops** — 0 ties whose holder and target are the same organisation

@@ -102,7 +102,9 @@ _REBUILD_WITH = {"blocks.jsonl": "segment", "act_citations.csv": "extract"}
 _STAGE_FOR = {"node_key.csv": "tergm", "org_tie_spells.csv": "orgties",
               "org_identifiers.csv": "orgattrs",
               "org_entities.csv": "orgentity",
-              "org_entity_members.csv": "orgentity"}
+              "org_entity_members.csv": "orgentity",
+              "person_tie_spells.csv": "personties",
+              "resolution.csv": "resolve"}
 
 
 def _skip(rep: Report, check: str, needs: Path) -> None:
@@ -116,10 +118,17 @@ def _skip(rep: Report, check: str, needs: Path) -> None:
 # Distinct from _skip above: these outputs are committed, not git-ignored, so
 # their absence means the stage has not been run rather than that the input was
 # deliberately left out of the repository.
-def _skip_stage(rep: Report, check: str, needs: Path) -> None:
+def _skip_stage(rep: Report, check: str, needs: Path, why: str = "is absent") -> None:
+    """Record that a check could not run, and say exactly why.
+
+    `why` exists because "is absent" is not always the truth. A table can be
+    present and still predate the column a check needs, and reporting that as
+    an absent file sends a reader looking for a missing file that is right
+    there. Saying which is which is the whole value of this WARN.
+    """
     stage = _STAGE_FOR.get(needs.name, "all")
     rep.add("WARN", check,
-            f"not checked: {needs.relative_to(ROOT)} is absent. "
+            f"not checked: {needs.relative_to(ROOT)} {why}. "
             f"Run `make {stage}` to build it, then re-validate.")
 
 
@@ -607,36 +616,38 @@ def check_person_ties(rep: Report) -> None:
 
     rep.add("INFO", "person ties",
             f"{len(spells)} kinship dyads; "
-            f"{sum(1 for s in spells if s['is_marriage'] == '1')} marriages, "
-            f"{sum(1 for s in spells if s['relation'] == 'maiden_name_of')} "
+            f"{sum(1 for s in spells if s.get('is_marriage') == '1')} marriages, "
+            f"{sum(1 for s in spells if s.get('relation') == 'maiden_name_of')} "
             f"natal-surname links")
     rep.add("INFO", "person tie relations",
             ", ".join(f"{k}={v}" for k, v in
-                      Counter(s["relation"] for s in spells).most_common(6)))
+                      Counter(s.get("relation", "") for s in spells).most_common(6)))
 
     mislabelled = [s for s in spells
-                   if (s["relation"] == "maiden_name_of") == (s["is_marriage"] == "1")]
+                   if (s.get("relation") == "maiden_name_of")
+                   == (s.get("is_marriage") == "1")]
     rep.add("ERROR" if mislabelled else "INFO",
             "a natal surname is not a marriage",
             f"{len(mislabelled)} spells whose relation and is_marriage disagree")
 
-    loops = [s for s in spells if s["person_id"] == s["kin_id"]]
+    loops = [s for s in spells if s.get("person_id") == s.get("kin_id")]
     rep.add("ERROR" if loops else "INFO", "kinship ties are not self-loops",
             f"{len(loops)} ties whose two ends are the same person")
 
     # The gazette does not publish weddings. An onset here would be invented,
     # and a duration analysis would then read filing frequency as marriage
     # tenure.
-    onsets = [s for s in spells if s["onset"]]
+    onsets = [s for s in spells if s.get("onset")]
     rep.add("ERROR" if onsets else "INFO", "no marriage onset is asserted",
             f"{len(onsets)} spells assert an onset the sources cannot date")
-    not_lc = [s for s in spells if s["left_censored"] != "True"]
+    not_lc = [s for s in spells if s.get("left_censored") != "True"]
     rep.add("ERROR" if not_lc else "INFO", "kinship onsets are left-censored",
             f"{len(not_lc)} spells not flagged left-censored")
 
     # Only `widow_of` dates a boundary. A terminus on anything else is a
     # boundary the sources do not state.
-    bad_term = [s for s in spells if s["terminus"] and s["relation"] != "widow_of"]
+    bad_term = [s for s in spells
+                if s.get("terminus") and s.get("relation") != "widow_of"]
     rep.add("ERROR" if bad_term else "INFO", "only a widow marker ends a tie",
             f"{len(bad_term)} non-widow spells carry a terminus")
 
@@ -647,12 +658,13 @@ def check_person_ties(rep: Report) -> None:
              if n["node_type"] == "PERSON"}
     if known:
         unknown = [s for s in spells
-                   if s["person_id"] not in known or s["kin_id"] not in known]
+                   if s.get("person_id") not in known
+                   or s.get("kin_id") not in known]
         rep.add("ERROR" if unknown else "INFO",
                 "kinship endpoints are known persons",
                 f"{len(unknown)} ties with an endpoint outside seed_nodes.csv")
 
-    inferred = [s for s in spells if s["evidence_tier"] == "kinship_inferred"]
+    inferred = [s for s in spells if s.get("evidence_tier") == "kinship_inferred"]
     if inferred:
         rep.add("WARN", "kinship ties resting on an inferred endpoint",
                 f"{len(inferred)} of {len(spells)} dyads have at least one end "
@@ -662,7 +674,7 @@ def check_person_ties(rep: Report) -> None:
 
     queue = _read(PROCESSED / "person_ties_review_queue.csv")
     if queue:
-        reasons = Counter(r["queue_reason"] for r in queue)
+        reasons = Counter(r.get("queue_reason", "") for r in queue)
         rep.add("INFO", "person tie review queue",
                 f"{len(queue)} observations retained but not tied: "
                 + ", ".join(f"{k}={v}" for k, v in reasons.most_common()))
@@ -681,15 +693,32 @@ def check_snowball(rep: Report) -> None:
     if not rows:
         _skip_stage(rep, "snowball passes", PROCESSED / "resolution.csv")
         return
+    sb = [r for r in rows if r.get("link_status") == "snowball"]
     if "resolve_pass" not in rows[0]:
+        # Two very different states look the same from here, and conflating
+        # them is the same mistake as reading an absent table as an empty one.
+        #
+        # A resolution table with no snowballed links and no column is one
+        # built before the tier existed -- a stage that has not re-run, which
+        # is what `_skip_stage` is for. Failing on it would make every clone
+        # and every CI run red until the whole pipeline is rebuilt, and would
+        # say "broken dataset" where the truth is "stale stage".
+        #
+        # A table carrying snowballed links with no column to tell them apart
+        # is the genuine defect the check was written for, and stays an ERROR.
+        if not sb:
+            _skip_stage(rep, "snowball passes", PROCESSED / "resolution.csv",
+                        "predates the snowball tier (no resolve_pass column, "
+                        "and no link claims to have been snowballed)")
+            return
         rep.add("ERROR", "snowball passes are recorded",
-                "resolution.csv has no resolve_pass column, so a snowballed "
-                "link cannot be told from a first-pass one")
+                f"{len(sb)} links have link_status=snowball but resolution.csv "
+                f"has no resolve_pass column, so a snowballed link cannot be "
+                f"told from a first-pass one")
         return
 
-    sb = [r for r in rows if r["link_status"] == "snowball"]
-    by_pass = Counter(r["resolve_pass"] for r in sb)
-    by_basis = Counter(r["snowball_basis"] for r in sb)
+    by_pass = Counter(r.get("resolve_pass", "") for r in sb)
+    by_basis = Counter(r.get("snowball_basis", "") for r in sb)
     rep.add("INFO", "snowball links",
             f"{len(sb)} of {len(rows)} mentions named by a later pass"
             + (f" ({', '.join(f'pass {k}={v}' for k, v in sorted(by_pass.items()))})"
@@ -700,7 +729,7 @@ def check_snowball(rep: Report) -> None:
 
     # Every snowballed row must say which pass and which rule named it.
     unlabelled = [r for r in sb
-                  if not r["snowball_basis"] or r["resolve_pass"] in ("", "0")]
+                  if not r.get("snowball_basis") or r.get("resolve_pass") in ("", "0")]
     rep.add("ERROR" if unlabelled else "INFO",
             "every snowballed link names its pass and rule",
             f"{len(unlabelled)} rows with link_status=snowball but no "
@@ -708,8 +737,8 @@ def check_snowball(rep: Report) -> None:
 
     # And no first-pass row may claim to have been snowballed.
     mislabelled = [r for r in rows
-                   if r["resolve_pass"] not in ("", "0")
-                   and r["link_status"] not in ("snowball", "resolved", "manual")]
+                   if r.get("resolve_pass") not in ("", "0")
+                   and r.get("link_status") not in ("snowball", "resolved", "manual")]
     rep.add("ERROR" if mislabelled else "INFO",
             "a pass number implies a named link",
             f"{len(mislabelled)} rows carry a pass number without a named link")
