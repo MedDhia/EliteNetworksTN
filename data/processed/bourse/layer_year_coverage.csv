@@ -108,7 +108,7 @@ concert_party,2023,56,12,3
 concert_party,2026,1,2,1
 coownership,2008,1,2,0
 coownership,2009,1,2,0
-coownership,2010,9,8,0
+coownership,2010,13,9,0
 coownership,2011,1,2,0
 coownership,2012,6,8,0
 coownership,2013,2,3,0
@@ -195,8 +195,8 @@ ownership,2005,4,5,1
 ownership,2006,2,4,2
 ownership,2007,5,7,2
 ownership,2008,39,42,7
-ownership,2009,34,35,7
-ownership,2010,95,79,9
+ownership,2009,39,41,8
+ownership,2010,128,90,11
 ownership,2011,59,53,8
 ownership,2012,119,101,18
 ownership,2013,77,73,16
@@ -215,7 +215,7 @@ ownership,2025,39,35,9
 ownership,2026,13,16,3
 ownership_director,2008,15,17,2
 ownership_director,2009,9,10,1
-ownership_director,2010,26,30,4
+ownership_director,2010,36,37,5
 ownership_director,2011,22,25,3
 ownership_director,2012,52,56,7
 ownership_director,2013,21,26,5
