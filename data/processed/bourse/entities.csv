@@ -128,7 +128,7 @@ F078085027f,firm,MAISON DU BANQUIER -MFC,0,,,,,1,MAISON DU BANQUIER -MFC
 F078c8e27d9,firm,FAIZA BEN MASOUD FEKI,0,,,,,2,FAIZA BEN MASOUD FEKI | Faiza BEN MASOUD FEKI
 F07930c7fec,firm,S. AMEN PREMIERE,0,,,,,1,S. AMEN PREMIERE
 F07a8bd1ca2,firm,T.S.P.P Groupe STUSID Mr Khaled TAKTAK Membre 2008-2011* Tunis,0,,,,,1,T.S.P.P Groupe STUSID Mr Khaled TAKTAK Membre 2008-2011* Tunis
-F07ab355073,firm,MEDCOM,0,,,,,1,MEDCOM
+F07ab355073,firm,MEDCOM,0,,,,,2,MEDCOM | Société MEDCOM
 F07ba323cae,firm,Réunion du Comité d’audit,0,,,,,1,Réunion du Comité d’audit
 F07ec0bad0a,firm,Mohamed Fahd Sakher EL MATERI,0,,,,,1,Mohamed Fahd Sakher EL MATERI
 F07f07ff873,firm,Alpha Hyundai Motor,0,,,,,1,Alpha Hyundai Motor
@@ -206,6 +206,7 @@ F0ccb397354,firm,STE ALIMENTA,0,,,,,1,STE ALIMENTA
 F0cda3500f9,firm,Mutuelle Assurances de l'Enseignement,0,,,,,2,Mutuelle Assurances de l'Enseignement | Mutuelle Assurances de l'Enseignement*
 F0d0e54f319,firm,Plastic Tunisie SA,0,,,,,2,Plastic Tunisie | Plastic Tunisie SA
 F0d0f5ae790,firm,L L'activité touristique en Tunisie,0,,,,,1,L L'activité touristique en Tunisie
+F0d14cbaa1c,firm,Mutuelle d'Assurance de l'Enseignement,0,,,,,1,Mutuelle d'Assurance de l'Enseignement
 F0d4774e667,firm,M.B.Z. KPMG TUNISIE 2009-2011,0,,,,,1,M.B.Z. KPMG TUNISIE 2009-2011
 F0d781e1cdf,firm,vulnérabilités (Qualys) qui permet l’analyse,0,,,,,1,vulnérabilités (Qualys) qui permet l’analyse
 F0d82627530,firm,C.S.A,0,,,,,1,C.S.A
@@ -272,6 +273,7 @@ F12ec8f6e2e,firm,Au terme de l'exercice,0,,,,,1,Au terme de l'exercice
 F1310cf8e2b,firm,synthèse de leurs travaux à la plus prochaine séance du Conseil,0,,,,,1,synthèse de leurs travaux à la plus prochaine séance du Conseil
 F1317a5fc0c,firm,Contribution aux travaux du Conseil,0,,,,,1,Contribution aux travaux du Conseil
 F132a80c80e,firm,et les premiers responsables des métiers du Groupe,0,,,,,1,et les premiers responsables des métiers du Groupe
+F13612d344f,firm,Groupe FERHI PLAST,0,,,,,1,Groupe FERHI PLAST
 F13624f9e6a,firm,de SOHOB et,0,,,,,1,de SOHOB et
 F1384ad1878,firm,Désignation,0,,,,,1,Désignation
 F13968a337f,firm,MAT,0,,,,,1,MAT
@@ -332,22 +334,25 @@ F16a4bd5ec3,firm,PRESICIUM TUNISIE,0,,,,,1,PRESICIUM TUNISIE
 F16b121eb0f,firm,STE BOUMAKHLOUF,0,,,,,1,STE BOUMAKHLOUF
 F16d233080b,firm,Société d’Automobiles et de Matériels SAM,0,,,,,1,Société d’Automobiles et de Matériels SAM
 F16d4e9e475,firm,KOWEIT INVESTMENT AUTORITY,0,,,,,1,KOWEIT INVESTMENT AUTORITY
+F16e23b28b8,firm,ELGAITH Agricole ***,0,,,,,1,ELGAITH Agricole ***
 F17055c42f3,firm,[M Phiippe Montourcier,0,,,,,1,[M Phiippe Montourcier
 F1711e448d9,firm,Compagnie Financière d’investissement (CFI),0,,,,,1,Compagnie Financière d’investissement (CFI)
 F171dcb31f0,firm,Jouda BEN SLAMA BEN SLIMANE,0,,,,,1,Jouda BEN SLAMA BEN SLIMANE
 F171e776fc3,firm,Solde au 31/12/2010 après affectation,0,,,,,1,Solde au 31/12/2010 après affectation
-F1733e9a8af,firm,CTEI,0,,,,,1,CTEI
+F1733e9a8af,firm,CTEI,0,,,,,2,C.T.E.I | CTEI
 F1733eaeafa,firm,TT,0,,,,,1,TT
 F17608cc771,firm,Gérant de la société ECOTECH immobilière,0,,,,,1,Gérant de la société ECOTECH immobilière
 F1762bdde79,firm,minoritaires d'Attijari Leasing,0,,,,,1,minoritaires d'Attijari Leasing
 F177d56592b,firm,"HAMM. SUD ""SEAMHS""",0,,,,,1,"HAMM. SUD ""SEAMHS"""
 F17a090402a,firm,Fethi BLANCO Membre mandaté par lʹATB Lui même 2009‐2011 Tunis,0,,,,,1,Fethi BLANCO Membre mandaté par lʹATB Lui même 2009‐2011 Tunis
 F17c10877ec,firm,Général est chargé de la distribution des dividendes conformément à la,0,,,,,1,Général est chargé de la distribution des dividendes conformément à la
+F17cdb81b96,firm,CYNEX AGRITECH,0,,,,,1,CYNEX AGRITECH
 F17da60f323,firm,ALIOS FINANCE,0,,,,,2,ALIOS FINANCE | ALIOS Finance SA
 F17e4c2eab4,firm,ASSURANCE MAGHREBIA VIE,0,,,,,1,ASSURANCE MAGHREBIA VIE
 F17f072b124,firm,STE HOTELIERE ET TQUE LE GRAND MONASTIR SA,0,,,,,1,STE HOTELIERE ET TQUE LE GRAND MONASTIR SA
 F17f3254410,firm,Banque de Tunisie et des Émirats,0,,,,,3,BANQUE DE TUNISIE ET DES EMIRATS | Banque de Tunisie et des Emirats | Banque de Tunisie et des Émirats
 F1801782353,firm,WEPTON PROPERTIES LTD-ILE JERSEY CHANNEL,0,,,,,1,WEPTON PROPERTIES LTD-ILE JERSEY CHANNEL
+F181c82d457,firm,EL IBHAR,0,,,,,1,EL IBHAR
 F1828f4e777,firm,SOCIETE NOUVELLE DE BOISSONS,0,,,,,1,SOCIETE NOUVELLE DE BOISSONS
 F183c93ce27,firm,Groupement de Commerce Internattional (GCI),0,,,,,1,Groupement de Commerce Internattional (GCI)
 F18497c8a89,firm,à l'IFID,0,,,,,1,à l'IFID
@@ -362,6 +367,7 @@ F18dc7afee3,firm,"Dans un contexte économique globalement ditficile, !'exercice
 F18e0121b9e,firm,SICAV Obligataire,0,,,,,2,SICAV OBLIGATAIRE | SICAV Obligataire
 F18e6f06d59,firm,Mohamed GHELALA,0,,,,,1,Mohamed GHELALA
 F18f9bd042f,firm,Amen Finance Company,0,,,,,1,Amen Finance Company
+F1913a8dfbd,firm,Société Inoplast,0,,,,,1,Société Inoplast
 F193caec9b5,firm,EZZEHIA,0,,,,,1,EZZEHIA
 F193cc24865,firm,A.T.r.D,0,,,,,1,A.T.r.D
 F194e7ab785,firm,L'exercice 2009 s'est soldé par,0,,,,,1,L'exercice 2009 s'est soldé par
@@ -493,6 +499,7 @@ F21beead414,firm,FCP AFRICAMEN,0,,,,,1,FCP AFRICAMEN
 F21cedae475,firm,"Contrôle Pénodique de la Compliance, de la Coordination du Contrôle",0,,,,,1,"Contrôle Pénodique de la Compliance, de la Coordination du Contrôle"
 F21d549d965,firm,Finances et,0,,,,,1,Finances et
 F2200047c7d,firm,étrangères,0,,,,,1,étrangères
+F2200e3a44b,firm,FH SERVICES,0,,,,,1,FH SERVICES
 F2207e7fd46,firm,PDG BTK Invest,0,,,,,1,PDG BTK Invest
 F220f7b144f,firm,Confection Ras Jebel,0,,,,,1,Confection Ras Jebel
 F223bac2bff,firm,CAVEO SERVICES,0,,,,,1,CAVEO SERVICES
@@ -525,6 +532,7 @@ F241a2aa016,firm,Tissage Meublatex,0,,,,,1,Tissage Meublatex
 F241c7fffcd,firm,SAHEL -MAISON DU BANQUIER -MFC POLE,0,,,,,1,SAHEL -MAISON DU BANQUIER -MFC POLE
 F241d041240,firm,SOBOCO,0,,,,,1,SOBOCO
 F24293ec376,firm,• L’urbanisation et la sécurisation des,0,,,,,1,• L’urbanisation et la sécurisation des
+F242b39e6d3,firm,NSC TELECOM,0,,,,,1,NSC TELECOM
 F24697158e4,firm,et Représentation Internationale,0,,,,,1,et Représentation Internationale
 F2483624268,firm,restant a Courir pour le mandat de son predecesseur,0,,,,,1,restant a Courir pour le mandat de son predecesseur
 F248f35c902,firm,stipule,0,,,,,1,stipule
@@ -549,6 +557,7 @@ F25adb9c7b4,firm,CRJ,0,,,,,1,CRJ
 F25b1baf264,firm,Khaled Administrateur Groupe 2022-2024 Tunis • Président Directeur Général de la,0,,,,,1,Khaled Administrateur Groupe 2022-2024 Tunis • Président Directeur Général de la
 F25b66392f3,firm,"(et du reporting ESG), au titre de l’exercice 2021",0,,,,,1,"(et du reporting ESG), au titre de l’exercice 2021"
 F25c1462589,firm,analyse financière,0,,,,,1,analyse financière
+F25c2cc96df,firm,SMVDA EL HAOUEM,0,,,,,1,SMVDA EL HAOUEM
 F25ca5153ee,firm,et du suivi des affaires économiques,0,,,,,1,et du suivi des affaires économiques
 F25d8540ac8,firm,Tarek Nsiri,0,,,,,1,Tarek Nsiri
 F262ec818cb,firm,ASSURANCE COMAR COTE D'IVOIRE (K F.CFA)6,0,,,,,2,ASSURANCE COMAR COTE D'IVOIRE (K F.CFA)6 | ASSURANCE COMAR COTE D’IVOIRE (K F.CFA)6
@@ -585,6 +594,7 @@ F2883e9998b,firm,ASSURANCES -ATL -ATL LLD,0,,,,,1,ASSURANCES -ATL -ATL LLD
 F28b1237768,firm,Ghazi BOULILA (Administrateur indépendant),0,,,,,1,Ghazi BOULILA (Administrateur indépendant)
 F28db9305da,firm,la Sté SMVDA,0,,,,,1,la Sté SMVDA
 F28e39eac1e,firm,Mehdi CHERIHA,0,,,,,1,Mehdi CHERIHA
+F28fa9724b6,firm,UNION IMMOBILIERE,0,,,,,1,UNION IMMOBILIERE
 F28ff9949c2,firm,FIRST PAY,0,,,,,1,FIRST PAY
 F2908aa3c5b,firm,Yellow Spirit sal (Holding),0,,,,,1,Yellow Spirit sal (Holding)
 F2908c8f61e,firm,BVMT a été réalisé par,0,,,,,1,BVMT a été réalisé par
@@ -631,6 +641,7 @@ F2b714b2979,firm,la finance islamique,0,,,,,1,la finance islamique
 F2b727dd608,firm,"Conformément aux directives du CMF, le conseil d 'administration",0,,,,,1,"Conformément aux directives du CMF, le conseil d 'administration"
 F2b8b6151a5,firm,ELBENE INDUSTRIE,0,,,,,1,ELBENE INDUSTRIE
 F2b94fbcb10,firm,accordées,0,,,,,1,accordées
+F2b9f02539f,firm,SEIFEDDINE SERVICES,0,,,,,1,SEIFEDDINE SERVICES
 F2beefef158,firm,Ordinaire en vue du comblement,0,,,,,1,Ordinaire en vue du comblement
 F2bfa70e87c,firm,de l'Ordre des Experts Comptables de Tunisie représentée,0,,,,,1,de l'Ordre des Experts Comptables de Tunisie représentée
 F2c1d8c8d85,firm,2) Princinales,0,,,,,1,2) Princinales
@@ -640,6 +651,7 @@ F2c5671b561,firm,Slim BESBES,0,,,,,1,Slim BESBES
 F2c62323380,firm,réunions du Consei[ d'Administration,0,,,,,1,réunions du Consei[ d'Administration
 F2c64ed3523,firm,Compagnie Internationale de Leasing,0,,,,,1,Compagnie Internationale de Leasing
 F2c909957af,firm,TUNICAST,0,,,,,1,TUNICAST
+F2c98397493,firm,Société Tunisienne d'Assurance et de Réassurance ‐ STAR ‐,0,,,,,1,Société Tunisienne d'Assurance et de Réassurance ‐ STAR ‐
 F2cb646cfbf,firm,"CIE DE DEVELOPPEMENT ""LELLA HADHRIA""",0,,,,,1,"CIE DE DEVELOPPEMENT ""LELLA HADHRIA"""
 F2cbf70e528,firm,TUNISIE ACTORING,0,,,,,1,TUNISIE ACTORING
 F2cdb6c8487,firm,BTK Invest,0,,,,,1,BTK Invest
@@ -662,10 +674,12 @@ F2e3f66fb8a,firm,VERITAS,0,,,,,2,Sté VERITAS | VERITAS
 F2e40926b57,firm,la Sté de Développement,0,,,,,1,la Sté de Développement
 F2e4b14b8fb,firm,BOURAK,0,,,,,1,BOURAK
 F2e56dbcca6,firm,MLA (Président du Conseil de Surveillance) - AMEN PROJECT (administrateur) - AMEN CAPITAL (Président du Conseil d’Administration) - SICAR AMEN,0,,,,,1,MLA (Président du Conseil de Surveillance) - AMEN PROJECT (administrateur) - AMEN CAPITAL (Président du Conseil d’Administration) - SICAR AMEN
+F2e59e63a70,firm,Karim REJEB SFAR,0,,,,,1,Karim REJEB SFAR
 F2e5bb1f22a,firm,LA SOCIÉTÉ PARTNER M. AHMED BOUZGUENDA 31 décembre 2024 Membre du conseil,0,,,,,1,LA SOCIÉTÉ PARTNER M. AHMED BOUZGUENDA 31 décembre 2024 Membre du conseil
 F2e8f1e939c,firm,dirigeant de TECNOCASA Tunisie,0,,,,,1,dirigeant de TECNOCASA Tunisie
 F2e9c2e7d99,firm,Consignations,0,,,,,1,Consignations
 F2ea8064e8d,firm,Cursus,0,,,,,1,Cursus
+F2ecdbb23fb,firm,SMVDA AOUILIA**,0,,,,,1,SMVDA AOUILIA**
 F2ece9cd9da,firm,d’expertise comptable inscrite au,0,,,,,1,d’expertise comptable inscrite au
 F2ee228f5f3,firm,Dépôts à vue en dinars,0,,,,,1,Dépôts à vue en dinars
 F2f17971119,firm,BTS Bank,0,,,,,1,BTS Bank
@@ -690,6 +704,7 @@ F305ab3b402,firm,Abu Dhabi Investment Authority (ADIA),0,,,,,1,Abu Dhabi Investm
 F3064b83394,firm,TUNINVEST INNOVATIONS SICAR-TPR-BANK OF AFRICA-BADIS TRADING,0,,,,,1,TUNINVEST INNOVATIONS SICAR-TPR-BANK OF AFRICA-BADIS TRADING
 F306dc4025c,firm,Compte Spécial d'investissement,0,,,,,1,Compte Spécial d'investissement
 F30827b1614,firm,Société Tunisenne de Banque,0,,,,,1,Société Tunisenne de Banque
+F308bf16521,firm,STUSID,0,,,,,1,STUSID
 F309eb61453,firm,En cas de vacances d’un poste au Conseil nomination,0,,,,,1,En cas de vacances d’un poste au Conseil nomination
 F30a98b2848,firm,SICAV OPPORTUNITY,0,,,,,1,SICAV OPPORTUNITY
 F30ac4c902a,firm,"Les sociétés anonymes, par leur",0,,,,,1,"Les sociétés anonymes, par leur"
@@ -738,7 +753,7 @@ F349d2e0c20,firm,d'une autre société. Le,0,,,,,1,d'une autre société. Le
 F34ac6a8be9,firm,PDG de la chaine hôtelière Mehari Beach,0,,,,,1,PDG de la chaine hôtelière Mehari Beach
 F34c7ef5f4d,firm,SICAV LEPARGNANT,0,,,,,1,SICAV LEPARGNANT
 F34f3538b6e,firm,Investment Trust Tunisia S.A. Administrateur Hatem BEN AMEUR 2018 - 2020,0,,,,,1,Investment Trust Tunisia S.A. Administrateur Hatem BEN AMEUR 2018 - 2020
-F34fdf9fa51,firm,Société El BOUNIANE,0,,,,,1,Société El BOUNIANE
+F34fdf9fa51,firm,Société El BOUNIANE,0,,,,,2,Société EL BOUNIANE | Société El BOUNIANE
 F35157a32ae,firm,"""PIT"" (H.MAJESTIC)",0,,,,,1,"""PIT"" (H.MAJESTIC)"
 F3518ec5bfb,firm,Amilcar-Holding Nida,0,,,,,1,Amilcar-Holding Nida
 F351c313ef2,firm,SICAV AVENIR,0,,,,,1,SICAV AVENIR
@@ -773,6 +788,7 @@ F36ec6c302f,firm,DATA BOX FRANCE,0,,,,,1,DATA BOX FRANCE
 F370120ffce,firm,HORCHANI DATTES,0,,,,,1,HORCHANI DATTES
 F370db36e92,firm,conformité,0,,,,,1,conformité
 F3719d01981,firm,Société BINA Corp,0,,,,,2,Bina Corp | Société BINA Corp
+F3738e53a20,firm,Arab Leasing International Finance,0,,,,,1,Arab Leasing International Finance
 F373e240c04,firm,DG de Tunis International Bank,0,,,,,1,DG de Tunis International Bank
 F373e75c1fe,firm,ATTIJARI,0,,,,,1,ATTIJARI
 F3755a3fb56,firm,2. STB INVEST,0,,,,,1,2. STB INVEST
@@ -833,6 +849,7 @@ F3ad07f8407,firm,DISMATIC,0,,,,,1,DISMATIC
 F3b0865c554,firm,Abderrazak BEN AMMAR Administrateur Lui-même 2018 - 2020,0,,,,,1,Abderrazak BEN AMMAR Administrateur Lui-même 2018 - 2020
 F3b3e4d75e1,firm,TUNINVEST INTERNATIONAL SICAR,0,,,,,2,TUNINVEST INTERNATIONAL SICAR | Tuninvest International SICAR
 F3b567e7622,firm,COMMERCE,0,,,,,1,COMMERCE
+F3b58d6132d,firm,SCPMA,0,,,,,1,SCPMA
 F3b6058bfcb,firm,Arab Tunisian Bank M.Abdelwehad GOUIDER Directeur à l'ATB,0,,,,,1,Arab Tunisian Bank M.Abdelwehad GOUIDER Directeur à l'ATB
 F3b615bdd3b,firm,STE DE NUTRITION ANIMALE,0,,,,,1,STE DE NUTRITION ANIMALE
 F3b7ff727ac,firm,Rapport de gestion Annuel 2024,0,,,,,1,Rapport de gestion Annuel 2024
@@ -857,6 +874,7 @@ F3cb7e940ba,firm,IV.4 Comités spéciaux et rôle de chaque comité,0,,,,,1,IV.4
 F3cb8089cff,firm,ESSOUKNA,1,TN0007210016,SOKNA,السكنى,continuous,2,ESSOUKNA | Société ESSOUKNA
 F3cbcddccce,firm,dans la gestion de ces sujets et Le suivi des actions engagées,0,,,,,1,dans la gestion de ces sujets et Le suivi des actions engagées
 F3cdf8c959a,firm,Sté. Balnéaire de Hammamet Sud- (Bahamas),0,,,,,1,Sté. Balnéaire de Hammamet Sud- (Bahamas)
+F3cf8e69750,firm,SODINO SICAR,0,,,,,1,SODINO SICAR
 F3d08dbbc2d,firm,STE BLIBANE TOURISTIC,0,,,,,1,STE BLIBANE TOURISTIC
 F3d23bc7120,firm,M. Abdelwahed GOUIDER (mandaté par l’ATB),0,,,,,1,M. Abdelwahed GOUIDER (mandaté par l’ATB)
 F3d24ab2373,firm,SOCIETE LELLA HADRIA,0,,,,,1,SOCIETE LELLA HADRIA
@@ -900,6 +918,7 @@ F3fdec72917,firm,AU 31/12/2016,0,,,,,1,AU 31/12/2016
 F3ff4d4b289,firm,La Société de Fabrication des Boissons de Tunisie,0,,,,,1,La Société de Fabrication des Boissons de Tunisie
 F3ff75052fa,firm,POLE MONETIQUE TUNISIE,0,,,,,1,POLE MONETIQUE TUNISIE
 F40112af54a,firm,Investisseurs institutionnels,0,,,,,1,Investisseurs institutionnels
+F4015f4f616,firm,SMVDA IFRIKIA,0,,,,,1,SMVDA IFRIKIA
 F4030ad96ad,firm,"les dépasser. Le résultat net, malgré la flambée des cours du plomb, a",0,,,,,1,"les dépasser. Le résultat net, malgré la flambée des cours du plomb, a"
 F4037cf87d6,firm,Sté INTERMETAL représentée par Mme Ines BEN AYED,0,,,,,1,Sté INTERMETAL représentée par Mme Ines BEN AYED
 F404deaa068,firm,DGA CRJ Construction,0,,,,,1,DGA CRJ Construction
@@ -911,6 +930,7 @@ F409fb6cf4f,firm,Messieurs,0,,,,,1,Messieurs
 F40a0af7686,firm,ARTES Immobilière,0,,,,,1,ARTES Immobilière
 F40a2913e71,firm,Gérant Baltic Mediterranean services,0,,,,,1,Gérant Baltic Mediterranean services
 F40b27aaee6,firm,M. Fethi BLANCO (mandaté par ATB),0,,,,,1,M. Fethi BLANCO (mandaté par ATB)
+F40b7f8dbc4,firm,CLIMATECH,0,,,,,1,CLIMATECH
 F40b8e74dbd,firm,La Banque de Tunisie représentée par M. Kamel JENDOUBI,0,,,,,1,La Banque de Tunisie représentée par M. Kamel JENDOUBI
 F40d7c49669,firm,MEDDEB CONSULTING -SARL,0,,,,,1,MEDDEB CONSULTING -SARL
 F40dbc729c6,firm,STE INTERNATIONAL CITY CENTER,0,,,,,1,STE INTERNATIONAL CITY CENTER
@@ -933,6 +953,7 @@ F41b3c4c22b,firm,STB BANK,0,,,,,1,STB BANK
 F41b3da7146,firm,Renouvellement de son mandat d’Administrateur indépendant,0,,,,,1,Renouvellement de son mandat d’Administrateur indépendant
 F41b4900e66,firm,Mme Valérie Lucette Josette BRIGNONE,0,,,,,1,Mme Valérie Lucette Josette BRIGNONE
 F41c116a032,firm,INDUSTRIE –ESSOUKNA- GEVE- IMMOBILIERE DES,0,,,,,1,INDUSTRIE –ESSOUKNA- GEVE- IMMOBILIERE DES
+F41deaed720,firm,IMMOBILIERE SIDI ABDELHAMID,0,,,,,1,IMMOBILIERE SIDI ABDELHAMID
 F41e0f7e163,firm,CONSORTIUM TUNISO-KOWEITIEN DE DEVELOPPEMENT,0,,,,,2,CONSORTIUM TUNISO-KOWEITIEN DE DEVELOPPEMENT | Consortium Tuniso-Koweitien de Développement
 F41edd08439,firm,__ Reprise de provision,0,,,,,1,__ Reprise de provision
 F41f0ce48b6,firm,SMADEA,0,,,,,1,SMADEA
@@ -949,6 +970,7 @@ F436b64c76a,firm,Règlcs applicables à la nornirratiorr dcs nrcmbrcs,0,,,,,1,R�
 F437fad1ada,firm,WIFAK BANK,0,,,,,2,WIFAK BANK | Wifak Bank
 F4395c7b540,firm,CIOK CITECH sidi bouzid -COTUNACE -CTA -CTAMA,0,,,,,1,CIOK CITECH sidi bouzid -COTUNACE -CTA -CTAMA
 F43b1f04dcb,firm,Le capital,0,,,,,1,Le capital
+F43b3535a24,firm,SOGES,0,,,,,1,SOGES
 F43cfaddaca,firm,Arab Banking Corporation BSC,0,,,,,1,Arab Banking Corporation BSC
 F43dc7e1089,firm,Abderrazak BEN AMMAR Administrateur Lui-même 2021 - 2023,0,,,,,1,Abderrazak BEN AMMAR Administrateur Lui-même 2021 - 2023
 F43dedb7fe0,firm,SODASMA,0,,,,,1,SODASMA
@@ -1087,7 +1109,7 @@ F4d3d5fcb76,firm,STA,1,TNNGTFLC2986,STA,STA,continuous,1,STA
 F4d7461f998,firm,PCA BTK Finance - BTK Capital -BTK Conseil Administrateur,0,,,,,1,PCA BTK Finance - BTK Capital -BTK Conseil Administrateur
 F4d7487c5aa,firm,PIRECO,0,,,,,1,PIRECO
 F4d74db8544,firm,l'Artisanat,0,,,,,1,l'Artisanat
-F4d8230833e,firm,HEXABYTE,0,,,,,1,HEXABYTE
+F4d8230833e,firm,HEXABYTE,0,,,,,2,HEXABYTE | Hexabyte
 F4dd5f30880,firm,"Enfin, dans l’objecuf de consolider",0,,,,,1,"Enfin, dans l’objecuf de consolider"
 F4dd77dddec,firm,du Chiffre d’affares total,0,,,,,1,du Chiffre d’affares total
 F4deccaa966,firm,il a passé 12 ans chez HSBC en tant que Directeur de la filière financement de projets puis en tant que directeur de l’activité bancaire pour la région MENA. Son expérience récente se résume comme suit : (cid:2) Août 2016 – Janvier 2017 : Directeur Banque des Entreprises,0,,,,,1,il a passé 12 ans chez HSBC en tant que Directeur de la filière financement de projets puis en tant que directeur de l’activité bancaire pour la région MENA. Son expérience récente se résume comme suit : (cid:2) Août 2016 – Janvier 2017 : Directeur Banque des Entreprises
@@ -1104,6 +1126,7 @@ F4e6eb504f2,firm,Ahmed KALLEL Administrateur Indépendant,0,,,,,1,Ahmed KALLEL A
 F4e7652fae0,firm,choisis parmi les actionnaires. Une personne morale peut être nommée,0,,,,,1,choisis parmi les actionnaires. Une personne morale peut être nommée
 F4e7c8a30a5,firm,Banque Nationale Agricole M. Youssef IDANI Directeur Central de l’Organisation et de l’Informatique,0,,,,,2,Banque Nationale Agricole M. Youssef IDANI Directeur Central de l’Organisation et de l’Informatique | Banque Nationale Agricole Mr Youssef IDANI Directeur Central de l’Organisation et de l’Informatique
 F4ea225faee,firm,BESTFRIGO,0,,,,,1,BESTFRIGO
+F4eb801f822,firm,SOCEK Couv.Chaambi,0,,,,,1,SOCEK Couv.Chaambi
 F4ebb8aacb9,firm,Mme Zina Hidoussi épouse Khouldi,0,,,,,1,Mme Zina Hidoussi épouse Khouldi
 F4ee439945b,firm,STE SEDS,0,,,,,2,S.E.D.S | STE SEDS
 F4eeeabb3f0,firm,JNAYNET HAMMAMET,0,,,,,1,JNAYNET HAMMAMET
@@ -1131,7 +1154,7 @@ F500a048f0f,firm,MED OIL COMPANY,0,,,,,1,MED OIL COMPANY
 F5018814b8e,firm,Conseiller du Ministre des finances - Professeur en science économique agrégé - Directeur de LAREQUAD,0,,,,,1,Conseiller du Ministre des finances - Professeur en science économique agrégé - Directeur de LAREQUAD
 F5024dab53e,firm,Résultat Brut d'Exploitation et le Résultat Net ont,0,,,,,1,Résultat Brut d'Exploitation et le Résultat Net ont
 F5034f77779,firm,Société Industrie des Nouvelles Briques ''INB'',0,,,,,1,Société Industrie des Nouvelles Briques ''INB''
-F5038da9360,firm,BH BANK,1,TN0001900604,BH,بنك الإسكان,continuous,3,BH | BH BANK | BH Bank
+F5038da9360,firm,BH BANK,1,TN0001900604,BH,بنك الإسكان,continuous,4,B.H | BH | BH BANK | BH Bank
 F504e7fdce9,firm,Tawasol Group Holding,0,,,,,1,Tawasol Group Holding
 F50525625d8,firm,La qualité d'actionnaire n’est pas requise pour être,0,,,,,1,La qualité d'actionnaire n’est pas requise pour être
 F50580ef1ef,firm,Ja q u e s F U N E S,0,,,,,1,Ja q u e s F U N E S
@@ -1198,7 +1221,7 @@ F5434021158,firm,ést régi par les dispositions des,0,,,,,1,ést régi par les 
 F5438f2b42e,firm,SOCIETE LA GENERALE DES VENTES,0,,,,,1,SOCIETE LA GENERALE DES VENTES
 F5445ee6f55,firm,IG,0,,,,,2,I-G | IG
 F546b2aa266,firm,SICAV PLUS,0,,,,,2,SICAV PLUS | Sicav Plus
-F546c709e9f,firm,Société MG INVEST,0,,,,,2,Société MG INVEST | Sté MG INVEST
+F546c709e9f,firm,Société MG INVEST,0,,,,,4,MG Invest | MG Invest* | Société MG INVEST | Sté MG INVEST
 F5489ce62d1,firm,La société BINA CORP,0,,,,,1,La société BINA CORP
 F54a3c1e214,firm,INDUSTRIES CHIMIQUES DU FLUOR,0,,,,,1,INDUSTRIES CHIMIQUES DU FLUOR
 F54b5946a92,firm,Assure sous sa responsabilite la direction de la Societe,0,,,,,1,Assure sous sa responsabilite la direction de la Societe
@@ -1220,7 +1243,7 @@ F55cf09ea19,firm,Infrastructures,0,,,,,1,Infrastructures
 F55dbd71d0c,firm,AMEN INVEST,0,,,,,3,AMEN INVEST | Amen Invest | STE AMEN INVEST
 F55dd5ff77c,firm,STFP,0,,,,,1,STFP
 F560900820f,firm,Maintien des certifications qualité environnement ISO 9001,0,,,,,1,Maintien des certifications qualité environnement ISO 9001
-F562ba3394a,firm,"Société Tunisienne de Banque ""STB""",0,,,,,2,"Société Tunisienne de Banque ""STB"" | Société Tunisienne de Banque -STB"
+F562ba3394a,firm,"Société Tunisienne de Banque ""STB""",0,,,,,3,"Société Tunisienne de Banque ""STB"" | Société Tunisienne de Banque -STB | Société Tunisienne de Banque ‐ STB ‐"
 F56345a3fef,firm,2) Principales délésations en cours de validité accordees Dar,0,,,,,1,2) Principales délésations en cours de validité accordees Dar
 F5637b3612e,firm,LLOYD,0,,,,,1,LLOYD
 F563969a47a,firm,"e Une inflation de l'ordre de 4,4% vs. 3,5% en 2010",0,,,,,1,"e Une inflation de l'ordre de 4,4% vs. 3,5% en 2010"
@@ -1247,6 +1270,7 @@ F57d35dcd3f,firm,PUBLIESPACE,0,,,,,1,PUBLIESPACE
 F57d45acac8,firm,Holding » par l’AGO du 27/04/2021 et ce jusqu’à l’AGO qui,0,,,,,1,Holding » par l’AGO du 27/04/2021 et ce jusqu’à l’AGO qui
 F580c4d9b47,firm,Ordinaire en vue du comblement de,0,,,,,1,Ordinaire en vue du comblement de
 F580c7b9f64,firm,plus particulièrement les activités de crédits. Tout au long de son expérience,0,,,,,1,plus particulièrement les activités de crédits. Tout au long de son expérience
+F5819f8771e,firm,Souscripteurs à l'offre,0,,,,,1,Souscripteurs à l'offre
 F582cf6dd1c,firm,Société ENNAKL M. Firas SAID Directeur,0,,,,,2,ENNAKL Mr Firas SAID Directeur | Société ENNAKL M. Firas SAID Directeur
 F5857a6d908,firm,d.2) Rappel du rôle du Conseil d’Administration,0,,,,,1,d.2) Rappel du rôle du Conseil d’Administration
 F585b1bd126,firm,CAPITAUX,0,,,,,1,CAPITAUX
@@ -1256,6 +1280,7 @@ F58f7e552cd,firm,Coopération Internationale,0,,,,,1,Coopération Internationale
 F5912e3bcee,firm,experts comptabtes de Tunisie,0,,,,,1,experts comptabtes de Tunisie
 F594baa0f75,firm,de la,0,,,,,1,de la
 F59abbd35e0,firm,Dotation 2013,0,,,,,1,Dotation 2013
+F59b0c511cd,firm,Souscripteurs à l’Offre au public,0,,,,,2,Souscripteurs à l'offre au public | Souscripteurs à l’Offre au public
 F59b7d1ffc8,firm,LE PASSAGE,0,,,,,1,LE PASSAGE
 F59c03b2ecf,firm,La Pierre Immobilière,0,,,,,1,La Pierre Immobilière
 F59d53e38a5,firm,DJERBA LES DUNES,0,,,,,1,DJERBA LES DUNES
@@ -1313,12 +1338,14 @@ F5cf3e65a6c,firm,UTP-SICAF,0,,,,,2,UTP SICAF | UTP-SICAF
 F5cf58c9508,firm,trois dernières années,0,,,,,1,trois dernières années
 F5d0f2fa91e,firm,Taux,0,,,,,1,Taux
 F5d3dafb4cf,firm,Ben JEMAA membre Ben JEMAA la Société d’Automobile et de,0,,,,,1,Ben JEMAA membre Ben JEMAA la Société d’Automobile et de
+F5d3ee11756,firm,Société MONIA,0,,,,,2,Société MONIA | Société MONIA*
 F5d40a8d3d7,firm,ALJAZIRA,0,,,,,1,ALJAZIRA
 F5d5d8683e2,firm,statuera sur l’exercice 2023,0,,,,,1,statuera sur l’exercice 2023
 F5d67097d79,firm,JENAYEH vient à expiration avec l'exercice 2014,0,,,,,1,JENAYEH vient à expiration avec l'exercice 2014
 F5d94d34b35,firm,BH LEASING,1,TN0006720049,BHL,الشركة العصرية للإيجار المالي,fixing,1,BH LEASING
 F5d9b20dcd0,firm,"STE. D'ET. & D'AMENAGEMENT LA MARINA HAMM. SUD ""SEAMHS""",0,,,,,1,"STE. D'ET. & D'AMENAGEMENT LA MARINA HAMM. SUD ""SEAMHS"""
 F5da58c9203,firm,"promouvoir l'efficience, l'efficacité, La protection des actifs de",0,,,,,1,"promouvoir l'efficience, l'efficacité, La protection des actifs de"
+F5dc9a025f4,firm,Société de Commerce International Méditerranéenne (SCIM),0,,,,,1,Société de Commerce International Méditerranéenne (SCIM)
 F5dea2d96b9,firm,HABITAT,0,,,,,1,HABITAT
 F5df045f623,firm,Solde au 31/12/2011 avant affectation,0,,,,,1,Solde au 31/12/2011 avant affectation
 F5dfa0457a5,firm,La société JUBA SARL,0,,,,,1,La société JUBA SARL
@@ -1333,6 +1360,7 @@ F5e5d2edaf2,firm,STEC,0,,,,,1,STEC
 F5e6d6d8a8d,firm,Riadh Jaidane,0,,,,,1,Riadh Jaidane
 F5e6d73fc69,firm,BTK Invest Holding S.A,0,,,,,1,BTK Invest Holding S.A
 F5e77baca2c,firm,Loisir,0,,,,,1,Loisir
+F5e90fb9cb4,firm,INFOLAND **,0,,,,,1,INFOLAND **
 F5e92b1d0a7,firm,débloqué en totalité courant l’exercice 2019. Ce crédit est rémunéré au taux TMM+,0,,,,,1,débloqué en totalité courant l’exercice 2019. Ce crédit est rémunéré au taux TMM+
 F5ea758ad25,firm,SICAV PATRIMOINE OBLIGATAIRE,0,,,,,1,SICAV PATRIMOINE OBLIGATAIRE
 F5eaa9e5378,firm,SICAV SECURITY,0,,,,,1,SICAV SECURITY
@@ -1391,7 +1419,7 @@ F62a54efdea,firm,SOTUGAR,0,,,,,1,SOTUGAR
 F62a6a175cd,firm,Chargé de la direction générale du contrôle,0,,,,,1,Chargé de la direction générale du contrôle
 F62ad2b5ea5,firm,"""Col des Ruines""",0,,,,,1,"""Col des Ruines"""
 F62b79716a6,firm,RETEL SERVICE,0,,,,,1,RETEL SERVICE
-F62cb101d01,firm,Banque de l'Habitat - BH,0,,,,,1,Banque de l'Habitat - BH
+F62cb101d01,firm,Banque de l'Habitat - BH,0,,,,,2,Banque de l'Habitat - BH | Banque de l'Habitat – BH*
 F62dc63f96b,firm,OFFICEPLAST,1,TN0007700016,PLAST,أوفيس بلاست,continuous,2,OFFICEPLAST | OfficePlast
 F62f987a21e,firm,Rapport d’activite 2012,0,,,,,1,Rapport d’activite 2012
 F6307e8f6a4,firm,Sté. Trade & Retail,0,,,,,1,Sté. Trade & Retail
@@ -1418,13 +1446,14 @@ F64c3f7b6e5,firm,"STE HOTELIERE ET TOURISTIQUE DU SAHEL ""H.LIBERTY""",0,,,,,1,"
 F64f48271de,firm,1．3Altest諦如細面競灘かeenboursecharged．l・。Pe．。ti。n：,0,,,,,1,1．3Altest諦如細面競灘かeenboursecharged．l・。Pe．。ti。n：
 F64ff744ecd,firm,Lee Cooper Distribution,0,,,,,1,Lee Cooper Distribution
 F650206ee57,firm,M.Mohamed,0,,,,,2,M.Mohamed | Mohamed
+F65113b637a,firm,Clinique AUTO HERMASSI,0,,,,,1,Clinique AUTO HERMASSI
 F65189536ea,firm,STE PROMOTION & FINAN. TOURISTIQUE SPFT-CARTHAGO,0,,,,,1,STE PROMOTION & FINAN. TOURISTIQUE SPFT-CARTHAGO
 F651b695719,firm,durée de trois ans. Leur mandat prend fin à,0,,,,,1,durée de trois ans. Leur mandat prend fin à
 F651cc4036e,firm,Dividendes distribués,0,,,,,1,Dividendes distribués
 F6543e06e79,firm,Solde au 31/12/ 2012,0,,,,,1,Solde au 31/12/ 2012
 F6555aa29f1,firm,SICAV TRESOR,0,,,,,1,SICAV TRESOR
 F655d1ace8e,firm,INVESTMENT (SPI),0,,,,,1,INVESTMENT (SPI)
-F657763215f,firm,POULINA,0,,,,,1,POULINA
+F657763215f,firm,POULINA,0,,,,,2,Groupe Poulina | POULINA
 F657d503621,firm,Dernier poste occupé dans la,0,,,,,1,Dernier poste occupé dans la
 F657e015635,firm,Le Groupe Chimique,0,,,,,1,Le Groupe Chimique
 F6580fc017e,firm,ASTREE,1,TN0003000452,AST,شركة أستري للتّامين وإعادة التأمين,fixing,1,ASTREE
@@ -1436,6 +1465,7 @@ F65d5c39b58,firm,DIVA SICAR,0,,,,,1,DIVA SICAR
 F65d90f5a3b,firm,Le capital social de,0,,,,,1,Le capital social de
 F660ddb5edc,firm,SANADETT SICAV,0,,,,,1,SANADETT SICAV
 F66123f20e3,firm,des lettres,0,,,,,1,des lettres
+F661c12a266,firm,"Détenant au max 0,5%",0,,,,,1,"Détenant au max 0,5%"
 F66213061ae,firm,Avocat,0,,,,,1,Avocat
 F662fb22180,firm,ZITOUNA BANQUE,0,,,,,1,ZITOUNA BANQUE
 F6650f5ad4a,firm,V.C. Rôle de chaque organe d’administration et de direction,0,,,,,2,V.C. Rôle de chaque organe d'administration et de direction | V.C. Rôle de chaque organe d’administration et de direction
@@ -1537,11 +1567,12 @@ F6ddde10149,firm,SMART TUNISIE,1,TNQPQXRODTH8,SMART,SMART TUNISIE,continuous,2,S
 F6dde26c66a,firm,TUNISIE TELECOM,0,,,,,2,TUNISIE TELECOM | Tunisie Télécom
 F6dded7b365,firm,Solde au 31/12/2010 avant affectation,0,,,,,1,Solde au 31/12/2010 avant affectation
 F6de0622735,firm,COOPERATION INTERNATIONALE Membre M. HEDI BEJAOUI 2010-2012 Tunis,0,,,,,1,COOPERATION INTERNATIONALE Membre M. HEDI BEJAOUI 2010-2012 Tunis
-F6de5c41e2b,firm,SIM-SICAR,0,,,,,2,SIM SICAR | SIM-SICAR
+F6de5c41e2b,firm,SIM-SICAR,0,,,,,4,SIM SICAR | SIM- SICAR | SIM-SICAR | SIM-SICAR*
 F6de68c011d,firm,M. Néji GHANDRI,0,,,,,2,M. Néji GHANDRI | Mr Néji GHANDRI
 F6df05c38c4,firm,"de la clientèle. S'agissant des emplois, la Société",0,,,,,1,"de la clientèle. S'agissant des emplois, la Société"
 F6df12f79c6,firm,Fonderie,0,,,,,1,Fonderie
 F6e0a78ff11,firm,Le Groupe des Assurances du Crédit Mutuel,0,,,,,1,Le Groupe des Assurances du Crédit Mutuel
+F6e0c7dd18e,firm,STE ETABLISST.LOUKIL ET CIE,0,,,,,1,STE ETABLISST.LOUKIL ET CIE
 F6e60925ed7,firm,LA CARTE,0,,,,,1,LA CARTE
 F6e61ff4d56,firm,BH BF *,0,,,,,1,BH BF *
 F6e79c889f5,firm,L'ensemble de ces travaux ont permis à notre,0,,,,,1,L'ensemble de ces travaux ont permis à notre
@@ -1601,6 +1632,7 @@ F7238f755f6,firm,CLOTUREE BANQUE DE L’HABITAT,0,,,,,1,CLOTUREE BANQUE DE L’H
 F7242f7e7cc,firm,tableau de l'Ordre des Experts,0,,,,,1,tableau de l'Ordre des Experts
 F7264086565,firm,SYB REAL ESTATE SCES,0,,,,,1,SYB REAL ESTATE SCES
 F72782f922c,firm,scientifique auprès du commissaire européen chargé de la recherche,0,,,,,1,scientifique auprès du commissaire européen chargé de la recherche
+F72818e8dc7,firm,SODEK,0,,,,,1,SODEK
 F7282191b19,firm,"HOTEL LES MIMOSAS""",0,,,,,1,"HOTEL LES MIMOSAS"""
 F728dfcfdf5,firm,Le s,0,,,,,1,Le s
 F72bd3c14eb,firm,UNOPS,0,,,,,1,UNOPS
@@ -1671,8 +1703,10 @@ F774e312c77,firm,Tableau des candidats à un poste de,0,,,,,1,Tableau des candid
 F7761c7434a,firm,CARTONNERIE TUNISIENNE,0,,,,,1,CARTONNERIE TUNISIENNE
 F779ea23c71,firm,BTK Conseil (ex SCIF),0,,,,,1,BTK Conseil (ex SCIF)
 F77ade70900,firm,"Ministère de l'Industrie et de l'Energie M. MOHAMED EL AGREBI PDG Sergar, PDG Sotugat",0,,,,,1,"Ministère de l'Industrie et de l'Energie M. MOHAMED EL AGREBI PDG Sergar, PDG Sotugat"
+F77b513f035,firm,JIBEL Accessoires Métalliques,0,,,,,1,JIBEL Accessoires Métalliques
 F77c604bc8c,firm,Matériel,0,,,,,1,Matériel
 F77ecd1a3b8,firm,"MAGASINS GENERAUX ET ENTREPOTS REELS DE TUNISIE ""MGERT""",0,,,,,1,"MAGASINS GENERAUX ET ENTREPOTS REELS DE TUNISIE ""MGERT"""
+F77fcd8a4f9,firm,Société Wided Services,0,,,,,1,Société Wided Services
 F7801072fa7,firm,Indépendant,0,,,,,2,Indépendant | indépendant
 F780a7b1859,firm,EFE,0,,,,,1,EFE
 F780dea5623,firm,KARTHAGO AIRLINES,0,,,,,1,KARTHAGO AIRLINES
@@ -1692,6 +1726,7 @@ F7868f023bb,firm,SICAV.BNA,0,,,,,2,SICAV BNA | SICAV.BNA
 F786d1dd4f3,firm,Examen des différentes expositions stratégiques dé,0,,,,,1,Examen des différentes expositions stratégiques dé
 F7873d04d6b,firm,COMMISSAIRES,0,,,,,1,COMMISSAIRES
 F78756b0d67,firm,Skander HANDOUS,0,,,,,1,Skander HANDOUS
+F7878bd4aab,firm,ASSET MANAGEMENT,0,,,,,1,ASSET MANAGEMENT
 F7879be5d1a,firm,BTK Capital (ex UI SICAR),0,,,,,1,BTK Capital (ex UI SICAR)
 F788f449de8,firm,Tahar BAYAHI (Président du Conseil),0,,,,,2,Tahar BAYAHI (Président du Conseil | Tahar BAYAHI (Président du Conseil)
 F789454ee01,firm,"STE TANIT INTERNATIONAL ""STI""",0,,,,,1,"STE TANIT INTERNATIONAL ""STI"""
@@ -1734,6 +1769,7 @@ F7b6b0dc46b,firm,décision de l'AGO du 09 Juin 2011,0,,,,,1,décision de l'AGO d
 F7b6be8121a,firm,Abou Dhabi Investment Authority (ADIA) Membre M. OUBEID MOURAD ESSOUIDI(5) 2010-2012 Abu Dhabi,0,,,,,1,Abou Dhabi Investment Authority (ADIA) Membre M. OUBEID MOURAD ESSOUIDI(5) 2010-2012 Abu Dhabi
 F7b739a0622,firm,ADWYA Il,0,,,,,1,ADWYA Il
 F7b77159df0,firm,Maghreb private equity fund 1! (mauritius pcc),0,,,,,1,Maghreb private equity fund 1! (mauritius pcc)
+F7b7c0ace70,firm,Hédi REJEB SFAR,0,,,,,1,Hédi REJEB SFAR
 F7b853f013f,firm,Générale. Il s’attache à promouvoir la,0,,,,,1,Générale. Il s’attache à promouvoir la
 F7b98f9d4f8,firm,Mourad BEN Membre du Conseil,0,,,,,1,Mourad BEN Membre du Conseil
 F7bab3a4cdf,firm,consultant international Expert international en énergie,0,,,,,1,consultant international Expert international en énergie
@@ -1747,6 +1783,7 @@ F7c1db743fd,firm,Zouhaier BESBES Administrateur Lui-même 2018 - 2020,0,,,,,1,Zo
 F7c29e673e8,firm,TAWASOL,0,,,,,1,TAWASOL
 F7c3b992b31,firm,"STE HOTELIERE ""H. KURIAT PALACE""",0,,,,,1,"STE HOTELIERE ""H. KURIAT PALACE"""
 F7c55787f67,firm,"Comités, avec voix consultative",0,,,,,1,"Comités, avec voix consultative"
+F7c5abaa643,firm,Société Frikha et Compagnie,0,,,,,1,Société Frikha et Compagnie
 F7c606d5ca9,firm,La société BINA HOLDING,0,,,,,1,La société BINA HOLDING
 F7c6e9963ec,firm,CIMENT DE GABES,0,,,,,1,CIMENT DE GABES
 F7c787fd63f,firm,HAYATCOM TUNISIE,0,,,,,1,HAYATCOM TUNISIE
@@ -1880,7 +1917,8 @@ F84eb0325d2,firm,Nont,0,,,,,1,Nont
 F8506b13c6e,firm,Forme juridique Société Anonyme,0,,,,,1,Forme juridique Société Anonyme
 F8507429e7e,firm,• (3) trois années (2021-2022 & 2023) • Président du Conseil d’Administration,0,,,,,1,• (3) trois années (2021-2022 & 2023) • Président du Conseil d’Administration
 F85282f2854,firm,du jOuR dE l’AGO,0,,,,,1,du jOuR dE l’AGO
-F85483bae59,firm,BTL,0,,,,,1,BTL
+F8545ebabe3,firm,Sarra Ines AL MECHRIA,0,,,,,1,Sarra Ines AL MECHRIA
+F85483bae59,firm,B.T.L,0,,,,,2,B.T.L | BTL
 F855d860d30,firm,BANQUE DE FINANCEMENT DES PETITES ET MOYENNES ENTREPRISES,0,,,,,1,BANQUE DE FINANCEMENT DES PETITES ET MOYENNES ENTREPRISES
 F856dcc363b,firm,La structure du capital,0,,,,,1,La structure du capital
 F8576e881f3,firm,BH TECHNOLOGIE,0,,,,,1,BH TECHNOLOGIE
@@ -1911,7 +1949,7 @@ F86c5fea23b,firm,Le suivi des travaux du Comité de coordination et de,0,,,,,1,L
 F86cc02bd0d,firm,Mme Yvette BAUDRON,0,,,,,1,Mme Yvette BAUDRON
 F86d45ec885,firm,De gauche à droite,0,,,,,1,De gauche à droite
 F87062b114d,firm,Groupe CTAMA/MGA,0,,,,,1,Groupe CTAMA/MGA
-F8725c4362b,firm,Société ELBOUNIANE,0,,,,,1,Société ELBOUNIANE
+F8725c4362b,firm,Société ELBOUNIANE,0,,,,,2,Société ELBOUNIANE | Société ELBOUNIANE*
 F874e4fde2c,firm,Clinique Hannibal,0,,,,,1,Clinique Hannibal
 F87624e2bb9,firm,RETEL TELECOM,0,,,,,1,RETEL TELECOM
 F877fbfb5a3,firm,Rapport de gestion Annuel 2019,0,,,,,1,Rapport de gestion Annuel 2019
@@ -1963,7 +2001,7 @@ F8a8a114e61,firm,‘’BNP Paribas IRB Participations’’ par l’AGO du 27/04
 F8a8ed2160d,firm,M.SAMIR MLAOUHIA Mme NAJOUA KHRAIEF Mme Asma MESSAOUDI M. MOHAMED CHOUIKHA M. OLIVIER PEQUEUX M.YU-YI FANG M.DIDIER LALUET M. HABIB KARAOULI M.EZZEDDINE EL KADHI M.AYMEN BEN AYED Mme AMINA BOUZGUENDA ZEGHAL M. ANIS ALLOUCHE,0,,,,,1,M.SAMIR MLAOUHIA Mme NAJOUA KHRAIEF Mme Asma MESSAOUDI M. MOHAMED CHOUIKHA M. OLIVIER PEQUEUX M.YU-YI FANG M.DIDIER LALUET M. HABIB KARAOULI M.EZZEDDINE EL KADHI M.AYMEN BEN AYED Mme AMINA BOUZGUENDA ZEGHAL M. ANIS ALLOUCHE
 F8ac8fca5d2,firm,Société Immobilière et de Viabilisation (SIVIA),0,,,,,1,Société Immobilière et de Viabilisation (SIVIA)
 F8ad09db4ab,firm,Société Moderne de Titrisation (SMT),0,,,,,1,Société Moderne de Titrisation (SMT)
-F8adb368d2e,firm,AL Baraka Bank,0,,,,,2,AL Baraka Bank | Al Baraka Bank
+F8adb368d2e,firm,Al Baraka Bank,0,,,,,2,AL Baraka Bank | Al Baraka Bank
 F8ae4674fb0,firm,Mr Zakaria BELKHOJA,0,,,,,1,Mr Zakaria BELKHOJA
 F8ae513af2d,firm,SICAM,0,,,,,1,SICAM
 F8aed169080,firm,Ahmed Ben GHAZI * (independent),0,,,,,1,Ahmed Ben GHAZI * (independent)
@@ -2024,6 +2062,7 @@ F8fb0acab9c,firm,ALIOS,0,,,,,1,ALIOS
 F8fcdfdcdf9,firm,SODEK SICAR,0,,,,,3,S.O.D.E.K – SICAR | SODEK SICAR | SODEK-SICAR
 F8fd8af5492,firm,Stratégie,0,,,,,1,Stratégie
 F8fd8b59376,firm,BTE – SICAR,0,,,,,3,BTE Sicar | BTE – SICAR | BTE–SICAR
+F8fd9bd58be,firm,Groupe des Assurances de Tunisie ‐ GAT ‐,0,,,,,1,Groupe des Assurances de Tunisie ‐ GAT ‐
 F90019f1240,firm,• Généralisation d’une architecture avec haute,0,,,,,1,• Généralisation d’une architecture avec haute
 F901f29da5b,firm,CTAMA IMMOBILIERE,0,,,,,1,CTAMA IMMOBILIERE
 F901f2d87f4,firm,ASSURANCES AMINA,0,,,,,1,ASSURANCES AMINA
@@ -2063,7 +2102,7 @@ F923d18c813,firm,SERVICES LE GOLF DES,0,,,,,1,SERVICES LE GOLF DES
 F9241195642,firm,M. Lotfi HADJ KACEM,0,,,,,1,M. Lotfi HADJ KACEM
 F924ff521dc,firm,Traitement de Surface de Profiles en Aluminium par thermo laquage,0,,,,,1,Traitement de Surface de Profiles en Aluminium par thermo laquage
 F926aa4e207,firm,POULINA TRADING,0,,,,,1,POULINA TRADING
-F92922d8bb6,firm,Immobilières SLIM,0,,,,,1,Immobilières SLIM
+F92922d8bb6,firm,Immobilières SLIM,0,,,,,2,Immobilières SLIM | Immobilières SLIM*
 F92992a1cf2,firm,LIN,0,,,,,1,LIN
 F92c1ea87d4,firm,AGO,0,,,,,1,AGO
 F92ef82da5e,firm,Walid amous,0,,,,,1,Walid amous
@@ -2088,10 +2127,11 @@ F93d5f148ef,firm,L’Accumulateur,0,,,,,1,L’Accumulateur
 F93d6435d22,firm,CLINIQUE EL AMEN NABEUL,0,,,,,1,CLINIQUE EL AMEN NABEUL
 F93e7244777,firm,Bahrein,0,,,,,1,Bahrein
 F942163a347,firm,le programme et Les resultats de leurs contrôles,0,,,,,1,le programme et Les resultats de leurs contrôles
+F9442265db8,firm,Ste de Loisirs de Tabarka SLT,0,,,,,1,Ste de Loisirs de Tabarka SLT
 F94513d28af,firm,La maison du banquier,0,,,,,2,LA MAISON DU BANQUIER | La maison du banquier
 F945330dbed,firm,"frais du personnel (+1,3 MD)",0,,,,,1,"frais du personnel (+1,3 MD)"
 F94594233d6,firm,SHERRENINVESTMENT LTD-ILE JERSEY CHANNEL,0,,,,,1,SHERRENINVESTMENT LTD-ILE JERSEY CHANNEL
-F945a8bc3f3,firm,TSPI,0,,,,,1,TSPI
+F945a8bc3f3,firm,TSPI,0,,,,,2,T.S.P.I | TSPI
 F9461552e80,firm,M. Ammar Tlili (mandaté par la BNA),0,,,,,2,M. Ammar TLILI (mandaté par la BNA) | M. Ammar Tlili (mandaté par la BNA)
 F9468b4d142,firm,Taher MARREKCHI,0,,,,,1,Taher MARREKCHI
 F948fe5069e,firm,GOUIDER***,0,,,,,1,GOUIDER***
@@ -2103,6 +2143,7 @@ F954159800f,firm,AMEN CAPITAL,0,,,,,2,AMEN CAPITAL | Amen Capital
 F95526ac92f,firm,A démissionné de son mandat d’Administrateur le 07/10/2021,0,,,,,1,A démissionné de son mandat d’Administrateur le 07/10/2021
 F9554de0cd8,firm,énergie renouvelable,0,,,,,1,énergie renouvelable
 F956c18bb6b,firm,M. KHALED BEN MILED,0,,,,,2,Khaled Ben MILED | M. KHALED BEN MILED
+F957480d6fe,firm,"de 5,90% et une durée de 7 ans. Le conseil a délégué au",0,,,,,1,"de 5,90% et une durée de 7 ans. Le conseil a délégué au"
 F9587aa26d2,firm,Représente la société vis-à-vis des tiers et de toutes admumustrations,0,,,,,1,Représente la société vis-à-vis des tiers et de toutes admumustrations
 F9593f9bf31,firm,TFB,0,,,,,2,TFB | TFB ****
 F95955fcf53,firm,SAH-SA,1,TN0007610017,SAH,شركة بيع النتوجات الصحية,continuous,2,SAH | SAH-SA
@@ -2113,6 +2154,7 @@ F96058c8503,firm,M.SAMIR MLAOUHIA Mme NAJOUA KHRAIEF M. SAMI ZOUBEIDI M. CHAKER 
 F961e4124d1,firm,AMEN PREMIERE SICAV,0,,,,,1,AMEN PREMIERE SICAV
 F96217746b1,firm,AMEN PREMIERE,0,,,,,2,AMEN PREMIERE | Amen Première
 F9629f6e4ec,firm,morale qu'il représente. Lorsque le,0,,,,,1,morale qu'il représente. Lorsque le
+F96366cf8ca,firm,MED FINANCE SICAF,0,,,,,1,MED FINANCE SICAF
 F96453d03de,firm,HEAVY,0,,,,,1,HEAVY
 F964b6d9f93,firm,DB ALGERIA TECH,0,,,,,1,DB ALGERIA TECH
 F964e8a0a43,firm,SOTIPAPIER,1,TN0007630015,STPAP,الشركة التونسية لصناعة الورق,continuous,2,SOTIPAPIER | Sotipapier
@@ -2155,6 +2197,7 @@ F986f55c973,firm,ENNAKL * Membre Mr Firas SAID 2006-2008 Tunis,0,,,,,1,ENNAKL * 
 F98925277f1,firm,SOCIETE FINANCIERE DE GESTION,0,,,,,1,SOCIETE FINANCIERE DE GESTION
 F9894acf50b,firm,RETEL,0,,,,,1,RETEL
 F98965defb1,firm,Yvan,0,,,,,1,Yvan
+F98981643be,firm,Al Tawfik Development House,0,,,,,1,Al Tawfik Development House
 F989a1b8866,firm,STLV HERTZ,0,,,,,1,STLV HERTZ
 F98c3b1d2c3,firm,Générale et Gouvernance de,0,,,,,1,Générale et Gouvernance de
 F98e6a2f19f,firm,MPBS,1,TN0007620016,MPBS,مصنع الورق الخشبي بالجنوب,continuous,1,MPBS
@@ -2177,6 +2220,7 @@ F9a10c3ff92,firm,de loisirs,0,,,,,1,de loisirs
 F9a1ec97137,firm,M. HEDI DAMMAK,0,,,,,1,M. HEDI DAMMAK
 F9a24586b05,firm,de l'édition d'octobre 2018 des Perspectives,0,,,,,1,de l'édition d'octobre 2018 des Perspectives
 F9a384b856c,firm,ST P,0,,,,,1,ST P
+F9a57ab3341,firm,"d'augmentation du capital de l’ UBCI consécutive à la fusion absorption de UBCI Leasing, Union Immobilière, UBCI Asset Management et Med Finance SICAF",0,,,,,1,"d'augmentation du capital de l’ UBCI consécutive à la fusion absorption de UBCI Leasing, Union Immobilière, UBCI Asset Management et Med Finance SICAF"
 F9a5d4ac642,firm,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du Nord",0,,,,,1,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du Nord"
 F9a610e7faf,firm,Kamel Rekik,0,,,,,1,Kamel Rekik
 F9a6666263d,firm,Le taux de présence de ses membres a été de,0,,,,,1,Le taux de présence de ses membres a été de
@@ -2187,6 +2231,7 @@ F9a8f9100d8,firm,Sté. Tunisienne d’Automobiles,0,,,,,2,Sté. Tunisienne d’A
 F9a952ab262,firm,Traitement de surface,0,,,,,1,Traitement de surface
 F9a983421ec,firm,UP SICAF-TUNIS CENTER-UI SICAR-MEDAI-ISTIFA-RIBAT-SCIF-SFAX EL JADIDA- TANKMED-VERITAS-STEG INTERNATIONALE,0,,,,,2,UP SICAF-TUNIS CENTER-UI SICAR-MEDAI-ISTIFA-RIBAT-SCIF-SFAX EL JADIDA- TANKMED-VERITAS-STEG INTERNATIONALE | UP SICAF-TUNIS CENTER-UI SICAR-MEDAI-ISTIFA-RIBAT-SCIF-SFAX EL JADIDA-TANKMED- VERITAS-STEG INTERNATIONALE
 F9aab8ea526,firm,Attijari SICAR,0,,,,,2,ATTIJARI SICAR | Attijari SICAR
+F9ab8af1b39,firm,SCBM,0,,,,,1,SCBM
 F9ad5aa2cf5,firm,Ceramic,0,,,,,1,Ceramic
 F9ae14e2522,firm,"travers des clés USB, e-mails, web, réseaux et",0,,,,,1,"travers des clés USB, e-mails, web, réseaux et"
 F9ae8778d07,firm,applicables à la nomination des membres du Conseil d’administration,0,,,,,1,applicables à la nomination des membres du Conseil d’administration
@@ -2252,6 +2297,7 @@ F9f5b0bcdfe,firm,SERVICOM,0,,,,,1,SERVICOM
 F9f650c9be6,firm,TELNET CORPORATION USA,0,,,,,1,TELNET CORPORATION USA
 F9f7ba9ae0c,firm,M. Taïeb BELAÏD,0,,,,,1,M. Taïeb BELAÏD
 F9fa8b1c49c,firm,M. BASSEL HMAID,0,,,,,1,M. BASSEL HMAID
+F9fb3d8bce7,firm,Nessim REJEB,0,,,,,1,Nessim REJEB
 F9fc59c73cc,firm,BTK BANK,0,,,,,1,BTK BANK
 F9fcc1cdf1a,firm,3.c. Membres du Comité de Direction,0,,,,,1,3.c. Membres du Comité de Direction
 F9fce4da073,firm,trois membres et au maximum de douze membres. Les membres du conseil,0,,,,,1,trois membres et au maximum de douze membres. Les membres du conseil
@@ -2306,6 +2352,7 @@ Fa2d1839fe7,firm,Sté. d’Investissement Hôtelier El MOURADI (SIHM),0,,,,,1,St
 Fa2dada212c,firm,SERVICES,0,,,,,1,SERVICES
 Fa2e5d584f6,firm,B.E.A.T.L,0,,,,,1,B.E.A.T.L
 Fa2ea85c867,firm,HOTEL ITROPICA BEACH,0,,,,,1,HOTEL ITROPICA BEACH
+Fa2eb1bce3b,firm,ALICO,0,,,,,1,ALICO
 Fa2ef81e559,firm,STE DE DEV. ET D'INVEST. DU CAP-BON (SODICAB),0,,,,,1,STE DE DEV. ET D'INVEST. DU CAP-BON (SODICAB)
 Fa31cd28e97,firm,possède une expertise approfondie dans le métier de banque,0,,,,,1,possède une expertise approfondie dans le métier de banque
 Fa33c5e7b6c,firm,SODIMA,0,,,,,1,SODIMA
@@ -2430,6 +2477,7 @@ Faa99c8410e,firm,Sté SOTIC représentée par Mr. Khaled ABDELKEFI,0,,,,,3,Sté 
 Faaa7b9dff3,firm,Investment Trust Tunisia S.A. Administrateur Hatem BEN AMEUR 2021 - 2023,0,,,,,1,Investment Trust Tunisia S.A. Administrateur Hatem BEN AMEUR 2021 - 2023
 Faacc67777c,firm,Tuninvest Internationale SICAR,0,,,,,1,Tuninvest Internationale SICAR
 Faad29fd896,firm,ASTER INFORMATIQUE,0,,,,,1,ASTER INFORMATIQUE
+Faad9286982,firm,Sté DENTAL Tunisie,0,,,,,1,Sté DENTAL Tunisie
 Faadae4e1b8,firm,sn o ita p ic itr a P,0,,,,,1,sn o ita p ic itr a P
 Faadfadc944,firm,United Gulf Advisory Services,0,,,,,1,United Gulf Advisory Services
 Faaf3379906,firm,INVEST DEVELOPPEMENT SICAR,0,,,,,1,INVEST DEVELOPPEMENT SICAR
@@ -2492,10 +2540,12 @@ Faf7f8a6990,firm,UTS-PALMA,0,,,,,1,UTS-PALMA
 Faf81bcd319,firm,basé à Paris - Membre du Conseil d'Administration de l'Université Tunis Al Manar,0,,,,,1,basé à Paris - Membre du Conseil d'Administration de l'Université Tunis Al Manar
 Fafc6ee6227,firm,PARETEC,0,,,,,1,PARETEC
 Fafd05eda3f,firm,SICAR AMEN,0,,,,,2,SICAR AMEN | Sicar Amen
+Fafec4eb68d,firm,Cons. Rég. du Gouv. Kasserine,0,,,,,1,Cons. Rég. du Gouv. Kasserine
 Fafff7cee6d,firm,Lorsque le conseil omet de procéder à la,0,,,,,1,Lorsque le conseil omet de procéder à la
 Fb002478382,firm,de loisirs. Et il est gérant de la Sté Jumeaux Immobilière,0,,,,,1,de loisirs. Et il est gérant de la Sté Jumeaux Immobilière
 Fb007af87b0,firm,marché des PME constituant le tissu économique le,0,,,,,1,marché des PME constituant le tissu économique le
 Fb007e83c43,firm,S.T.B.G,0,,,,,1,S.T.B.G
+Fb00c8b2a89,firm,HIGH MAGHREB TECHNOLOGY,0,,,,,1,HIGH MAGHREB TECHNOLOGY
 Fb01de12717,firm,SONIBANK(FCFA),0,,,,,1,SONIBANK(FCFA)
 Fb02e0fec4c,firm,BEN YOUSSEF,0,,,,,1,BEN YOUSSEF
 Fb03b77ca85,firm,PRODUCTION AGRICOLE TEBOULBA,0,,,,,2,PRODUCTION AGRICOLE TEBOULBA | Production Agricole Teboulba
@@ -2527,6 +2577,7 @@ Fb192d1df5a,firm,Société Héla d'électroménager et de confort BATAM,0,,,,,1,
 Fb1c70f9491,firm,Vente Profilés Aluminium,0,,,,,1,Vente Profilés Aluminium
 Fb1cb137446,firm,ASSU MAGHREBIA VIE,1,TNDKJ8O68X14,AMV,ASSU MAGHREBIA VIE,continuous,1,ASSU MAGHREBIA VIE
 Fb1cc5f8027,firm,Kamel GUESMI Membre Lui même 2006-2008 Tunis,0,,,,,1,Kamel GUESMI Membre Lui même 2006-2008 Tunis
+Fb1e50c046e,firm,Compagnie Méditerranéenne d'Assurances et de Réassurance ‐ COMAR ‐,0,,,,,1,Compagnie Méditerranéenne d'Assurances et de Réassurance ‐ COMAR ‐
 Fb1ee8227a5,firm,TUNISIE LEASING F,1,TN0002100907,TLS,التونسية للإيجار المالي,continuous,1,TUNISIE LEASING F
 Fb238d970a7,firm,GENERALE ALIMENTAIRE,0,,,,,1,GENERALE ALIMENTAIRE
 Fb23bbb23ee,firm,Admin.representant les petits actionnaires,0,,,,,1,Admin.representant les petits actionnaires
@@ -2538,6 +2589,7 @@ Fb3143a893b,firm,Médecin,0,,,,,1,Médecin
 Fb32003cc47,firm,STS,0,,,,,1,STS
 Fb32c3a610f,firm,Règles applicables à la nomination et au remplacement des membres du,0,,,,,1,Règles applicables à la nomination et au remplacement des membres du
 Fb34701592e,firm,Cc developpement soutenu de notre acuvite est le fruit,0,,,,,1,Cc developpement soutenu de notre acuvite est le fruit
+Fb350594908,firm,ENNEJMA,0,,,,,1,ENNEJMA
 Fb37d005de1,firm,Le renouvellement des moyens et outils de production,0,,,,,1,Le renouvellement des moyens et outils de production
 Fb390cb2354,firm,Examen régulier du respect des ratios prudentiels ét,0,,,,,1,Examen régulier du respect des ratios prudentiels ét
 Fb392902755,firm,Fnkha,0,,,,,1,Fnkha
@@ -2628,6 +2680,7 @@ Fb83e760a71,firm,Risques d’Attijari bank,0,,,,,1,Risques d’Attijari bank
 Fb8459dc451,firm,Rafiaa Bhira épouse Harzallah,0,,,,,1,Rafiaa Bhira épouse Harzallah
 Fb866da5020,firm,La société,0,,,,,3,La Société | La société | la société
 Fb8699f94c3,firm,la Sté ETATHMEER Holding,0,,,,,1,la Sté ETATHMEER Holding
+Fb8752df958,firm,Sté Huilerie TORCHANI,0,,,,,1,Sté Huilerie TORCHANI
 Fb87bb4557b,firm,du Mobile et d’internet Banking par la mise en,0,,,,,1,du Mobile et d’internet Banking par la mise en
 Fb87e414c87,firm,STB MOYENS GENERAUX,0,,,,,1,STB MOYENS GENERAUX
 Fb899013544,firm,Mr Hammadi MOKDADI,0,,,,,3,Hammadi MOKDADI | Hammadi MOKDADI** | Mr Hammadi MOKDADI
@@ -2693,6 +2746,7 @@ Fbde2cae9e8,firm,AMI,0,,,,,1,AMI
 Fbdf6ee3e48,firm,IV.3 Rôle de chaque organe d’administration et de direction,0,,,,,1,IV.3 Rôle de chaque organe d’administration et de direction
 Fbe1da36866,firm,Zitouna Tamkeen,0,,,,,2,Zitouna Tamkeen | zitouna Tamkeen
 Fbe236321fd,firm,AMEN CAPITAL (administrateur) 2021,0,,,,,1,AMEN CAPITAL (administrateur) 2021
+Fbe3bedcc46,firm,AFFICHE TUNISIENNE,0,,,,,1,AFFICHE TUNISIENNE
 Fbe6ed034ac,firm,SERVIPRINT,0,,,,,1,SERVIPRINT
 Fbe756d373f,firm,FIC,0,,,,,1,FIC
 Fbe9ceac705,firm,Sous les mêmes réserves le,0,,,,,1,Sous les mêmes réserves le
@@ -2710,8 +2764,10 @@ Fbf3caa833a,firm,responsable des Risques IL présente au Conseil d'Administratio
 Fbf4ecb5e5e,firm,Hygiène & Santé,0,,,,,1,Hygiène & Santé
 Fbf55e8ff49,firm,ŒILLETS -INTER BANK,0,,,,,1,ŒILLETS -INTER BANK
 Fbf7abbe563,firm,JOYPE TUNISIE,0,,,,,1,JOYPE TUNISIE
+Fbf7f5d3055,firm,Société Meunière Tunisienne,0,,,,,1,Société Meunière Tunisienne
 Fbfb96b6e19,firm,L'ordre du jour de l'Assemblée est le suivant,0,,,,,1,L'ordre du jour de l'Assemblée est le suivant
 Fbfd7b88d3f,firm,Mortalité de bétails qui accuse,0,,,,,1,Mortalité de bétails qui accuse
+Fbfd89cff38,firm,Société les Industries Alimentaires Randa,0,,,,,1,Société les Industries Alimentaires Randa
 Fbfeda364da,firm,CLN,0,,,,,1,CLN
 Fbff0cf0fa9,firm,FCPR Zitouna Moucharaka III,0,,,,,1,FCPR Zitouna Moucharaka III
 Fc00f3f06b9,firm,DEBUT,0,,,,,1,DEBUT
@@ -2720,12 +2776,13 @@ Fc033e9d240,firm,"TUN CLEAR/A,STICODE",0,,,,,1,"TUN CLEAR/A,STICODE"
 Fc039a1e349,firm,HANNIBAL LEASE 1-A partir du vendredi 21 juin 2013,0,,,,,1,HANNIBAL LEASE 1-A partir du vendredi 21 juin 2013
 Fc087b5ead3,firm,Dimassi,0,,,,,1,Dimassi
 Fc08c2c6ca3,firm,FCPR Zitouna Moucharaka 1,0,,,,,1,FCPR Zitouna Moucharaka 1
+Fc08d6c9c82,firm,"Mars 2007, Cette rémunération est composée de",0,,,,,1,"Mars 2007, Cette rémunération est composée de"
 Fc098b2c1ef,firm,Le capital social de la société les Ateliers Mécaniques du Sahel s'élève,0,,,,,1,Le capital social de la société les Ateliers Mécaniques du Sahel s'élève
 Fc0b420f2b2,firm,T2S MED,0,,,,,1,T2S MED
 Fc0bded7ec1,firm,Automobile Réseau Tunisien et Services - ARTES SA,0,,,,,1,Automobile Réseau Tunisien et Services - ARTES SA
 Fc0c37f255e,firm,POSTE DE MEMBRE DU CONSEILET UN ACTIONNAIRE DETENANT PLUS DE,0,,,,,1,POSTE DE MEMBRE DU CONSEILET UN ACTIONNAIRE DETENANT PLUS DE
 Fc0c4d3868e,firm,"Philipe AGUIGNIER, coopté en date du 08/11/2017",0,,,,,1,"Philipe AGUIGNIER, coopté en date du 08/11/2017"
-Fc0d64a7eb6,firm,Banque Nationale Agricole,0,,,,,5,"BANQUE NATIONALE AGRICOLE | Banque Nationale Agricole | Banque Nationale Agricole ""BNA"" | Banque Nationale Agricole (BNA) | Banque Nationale Agricole - BNA"
+Fc0d64a7eb6,firm,Banque Nationale Agricole,0,,,,,6,"BANQUE NATIONALE AGRICOLE | Banque Nationale Agricole | Banque Nationale Agricole ""BNA"" | Banque Nationale Agricole (BNA) | Banque Nationale Agricole - BNA | Banque Nationale Agricole ‐ BNA ‐"
 Fc107a2e02a,firm,e Restructuration du dispositif des fins d'une application,0,,,,,1,e Restructuration du dispositif des fins d'une application
 Fc10b06c4c8,firm,Après approbation des EF de l'ex 2025,0,,,,,1,Après approbation des EF de l'ex 2025
 Fc11b3ff896,firm,FCP AMEN SELECTION,0,,,,,1,FCP AMEN SELECTION
@@ -2745,6 +2802,7 @@ Fc216b7ecaa,firm,Société d’Investissement et de Développement du Centre,0,,
 Fc2316db773,firm,MINISTERE DE L'INDUSTRIE ET DE L'ENERGIE M. TAREK EZZINE Chef de Cabinet du Ministre de l’industrie,0,,,,,1,MINISTERE DE L'INDUSTRIE ET DE L'ENERGIE M. TAREK EZZINE Chef de Cabinet du Ministre de l’industrie
 Fc235f2bf4b,firm,Usinage mécanique de précision,0,,,,,1,Usinage mécanique de précision
 Fc243fe6846,firm,POSTE DE MEMBRE DU CONSEIL ET UN ACTIONNAIRE DETENANT PLUS DE,0,,,,,1,POSTE DE MEMBRE DU CONSEIL ET UN ACTIONNAIRE DETENANT PLUS DE
+Fc24f65ac2e,firm,U.T.A.P,0,,,,,1,U.T.A.P
 Fc261fd79ec,firm,Mokhtar BEN CHEIKH AHMED,0,,,,,1,Mokhtar BEN CHEIKH AHMED
 Fc282b8e4a0,firm,MARHABA,0,,,,,1,MARHABA
 Fc28b0385ff,firm,SOCIETE NOUVELLE DES VILLAGES DE VACANCES,0,,,,,2,SOCIETE NOUVELLE DES VILLAGES DE VACANCES | Société Nouvelle des Villages de Vacances
@@ -2794,7 +2852,7 @@ Fc59139592a,firm,Ex Président du Conseil d’administration de Mena capital Par
 Fc5b9d0960a,firm,Chiheb BEN HMIDA,0,,,,,1,Chiheb BEN HMIDA
 Fc5cb4f8eed,firm,La désignation des Membres du Conseil,0,,,,,1,La désignation des Membres du Conseil
 Fc5d3c3e0ee,firm,Kallel,0,,,,,1,Kallel
-Fc5d83f6fa5,firm,T.S.P.P Groupe STUSID,0,,,,,1,T.S.P.P Groupe STUSID
+Fc5d83f6fa5,firm,T.S.P.P Groupe STUSID,0,,,,,2,T.S.P.P Groupe STUSID | TSPP Groupe STUSID
 Fc5e7d0da97,firm,La société ATD SICAR,0,,,,,1,La société ATD SICAR
 Fc5e807f71d,firm,Véronique,0,,,,,1,Véronique
 Fc608c71a3a,firm,Union Financière Holding,0,,,,,2,UNION FINANCIERE HOLDING | Union Financière Holding
@@ -2863,6 +2921,7 @@ Fca32ceaa3c,firm,constitue Le second principal,0,,,,,1,constitue Le second princ
 Fca4edcde5f,firm,représenté par son P.D.G,0,,,,,1,représenté par son P.D.G
 Fca4eed5fdc,firm,CHABCHOUB Mohamed,0,,,,,1,CHABCHOUB Mohamed
 Fca6a005686,firm,Fakher CHEIKHROUHOU Administrateur Indépendant,0,,,,,1,Fakher CHEIKHROUHOU Administrateur Indépendant
+Fca7824d859,firm,Droits d’attribution rompus,0,,,,,1,Droits d’attribution rompus
 Fca99b06484,firm,Sté. La villa,0,,,,,1,Sté. La villa
 Fcabdd231a9,firm,Responsable de zone géographique,0,,,,,1,Responsable de zone géographique
 Fcae10c090f,firm,STE D'EXPANSION TQUE DE TABARKA,0,,,,,1,STE D'EXPANSION TQUE DE TABARKA
@@ -2942,6 +3001,8 @@ Fd0646becbd,firm,Contrôler la gestion de la société et veiller à la,0,,,,,1,
 Fd089893a45,firm,la société de PLASTIC UNION,0,,,,,1,la société de PLASTIC UNION
 Fd097619c21,firm,Académie tunisienne des sciences,0,,,,,1,Académie tunisienne des sciences
 Fd09f7228a5,firm,HANNIBAL LEASE,1,TN0007310139,HL,حنبعل للإيجار المالي,fixing,4,GROUPE HANNIBAL LEASE | HANNIBAL LEASE | HL | Hannibal Lease
+Fd0a18a7162,firm,Sté des Articles Hygiéniques SAH,0,,,,,1,Sté des Articles Hygiéniques SAH
+Fd0aae31e93,firm,CLIMATECH INETRNATIONALE,0,,,,,1,CLIMATECH INETRNATIONALE
 Fd0bd9e2950,firm,CITY CENTER,0,,,,,1,CITY CENTER
 Fd0e04f5990,firm,EL MAZRAA,0,,,,,1,EL MAZRAA
 Fd0fc48f53d,firm,XPRESSPHONE,0,,,,,1,XPRESSPHONE
@@ -2952,6 +3013,7 @@ Fd1609b1839,firm,O.T.D,0,,,,,1,O.T.D
 Fd1625a973a,firm,SOCIETE TUNISIENNE DE COORDINATION TECHNIQUE,0,,,,,1,SOCIETE TUNISIENNE DE COORDINATION TECHNIQUE
 Fd169b45c3c,firm,TIC,0,,,,,1,TIC
 Fd1760b1b9d,firm,M. Sahir JELJELI (mandaté par la société ENNAKL),0,,,,,1,M. Sahir JELJELI (mandaté par la société ENNAKL)
+Fd18e782bfb,firm,AFRIQUE MARBRE,0,,,,,1,AFRIQUE MARBRE
 Fd19151e4e3,firm,FLAT 6LABS TUNISIA,0,,,,,1,FLAT 6LABS TUNISIA
 Fd192b46d95,firm,STE HOTEL HOUDA,0,,,,,1,STE HOTEL HOUDA
 Fd1a61e9844,firm,OSaaéé Cionisienne des Sndustries de Pneumatiques,0,,,,,1,OSaaéé Cionisienne des Sndustries de Pneumatiques
@@ -2968,6 +3030,7 @@ Fd258632e2f,firm,Bridge Bank Group West Africa,0,,,,,1,Bridge Bank Group West Af
 Fd261ad3fb8,firm,présence aux premières réunions du Conseil,0,,,,,1,présence aux premières réunions du Conseil
 Fd26893cc8d,firm,Raffinerie Africaine,0,,,,,1,Raffinerie Africaine
 Fd2745302f7,firm,PBHT,0,,,,,1,PBHT
+Fd27ca8d810,firm,Sté Carrière EL AYARI,0,,,,,1,Sté Carrière EL AYARI
 Fd293cf8dd1,firm,"Co-gérant deENERGIKA, Co",0,,,,,1,"Co-gérant deENERGIKA, Co"
 Fd2a1925360,firm,AMEN ALLIANCE SICAV,0,,,,,1,AMEN ALLIANCE SICAV
 Fd2b1441cfb,firm,Sahir JELJELI Membre mandaté par la société ENNAKL Lui même 2009-2011 Tunis,0,,,,,2,Sahir JELJELI Membre mandaté par la société ENNAKL Lui même 2009-2011 Tunis | Sahir JELJELI Membre mandaté par la société ENNAKL Lui même 2009‐2011 Tunis
@@ -2992,6 +3055,7 @@ Fd3d5280c80,firm,sociétés commerciales (Article 18 des statuts),0,,,,,1,socié
 Fd3e57e54d8,firm,Générale de la banque,0,,,,,1,Générale de la banque
 Fd407528c32,firm,transition énergétique,0,,,,,1,transition énergétique
 Fd41e0a290d,firm,MEUBLATEX (Vice président directeur général) - PANOBOIS (Vice président directeur général) - Tissages Meublatex,0,,,,,1,MEUBLATEX (Vice président directeur général) - PANOBOIS (Vice président directeur général) - Tissages Meublatex
+Fd42cf941f8,firm,IMMOBILIERE BIR MCHERGUA,0,,,,,1,IMMOBILIERE BIR MCHERGUA
 Fd42e992eea,firm,M. FADHEL BEN OTHMAN,0,,,,,1,M. FADHEL BEN OTHMAN
 Fd439303309,firm,BNP Paribas B.D.D.I.Part,0,,,,,1,BNP Paribas B.D.D.I.Part
 Fd46bac75c6,firm,T F BANK,0,,,,,1,T F BANK
@@ -3029,6 +3093,7 @@ Fd60a825424,firm,Règles opplicobles à lo nominotion,0,,,,,1,Règles opplicoble
 Fd611b3c37d,firm,SICAV BHP,0,,,,,1,SICAV BHP
 Fd61afde3dd,firm,GOULET,0,,,,,1,GOULET
 Fd62cd172da,firm,SOCIETE D'ELEVAGE MATEUR - JALTA,0,,,,,1,SOCIETE D'ELEVAGE MATEUR - JALTA
+Fd64bf71be5,firm,SMVDA ESSAIDIA*,0,,,,,1,SMVDA ESSAIDIA*
 Fd654563c54,firm,ATELIER MEUBLE INT,1,TN0007740012,SAM,شركة مشغل الأثاث,continuous,2,ATELIER MEUBLE INT | SAM
 Fd6782ba08b,firm,surveillance IL veille au respect par l'UBCI de La mise en place,0,,,,,1,surveillance IL veille au respect par l'UBCI de La mise en place
 Fd683f7d6c1,firm,risque,0,,,,,1,risque
@@ -3111,6 +3176,7 @@ Fdcb55f75aa,firm,Les Industries Nouvelles,0,,,,,1,Les Industries Nouvelles
 Fdcbcf6e8e7,firm,HOTEL NAHRAWAS,0,,,,,1,HOTEL NAHRAWAS
 Fdcc1fd29f0,firm,d. Prix d’émission,0,,,,,1,d. Prix d’émission
 Fdcd43e2095,firm,Radhi,0,,,,,1,Radhi
+Fdcf35b3c22,firm,M. Abdelaziz ABDELHAK (membre indépendant),0,,,,,1,M. Abdelaziz ABDELHAK (membre indépendant)
 Fdcfc7f6502,firm,Tunisian Investment Company,0,,,,,1,Tunisian Investment Company
 Fdd01108869,firm,CARTE,0,,,,,3,CARTE | Groupe CARTE | • Groupe CARTE
 Fdd02a55b7b,firm,Subventions,0,,,,,1,Subventions
@@ -3123,6 +3189,7 @@ Fdd6bd55d47,firm,Partner,0,,,,,1,Partner
 Fdd6d554290,firm,emprunt obligataire,0,,,,,1,emprunt obligataire
 Fdd78d53777,firm,Extrusion d'Aluminium,0,,,,,1,Extrusion d'Aluminium
 Fdd809b1a4c,firm,Réserves pour réinvestissement exonéré,0,,,,,1,Réserves pour réinvestissement exonéré
+Fdd99ea4bce,firm,d'Offre à Prix Ferme OPF et d'admission au marché principal de la cote de la Bourse de la société,0,,,,,1,d'Offre à Prix Ferme OPF et d'admission au marché principal de la cote de la Bourse de la société
 Fddc61f7ed4,firm,{qui a donné pouvoir à Mr Karim AMMAR),0,,,,,1,{qui a donné pouvoir à Mr Karim AMMAR)
 Fddc7d37cb2,firm,VACANCES ET LIBERTE,0,,,,,1,VACANCES ET LIBERTE
 Fdde8265c8d,firm,par la Direction Générale,0,,,,,1,par la Direction Générale
@@ -3132,6 +3199,7 @@ Fde2dd6e6f1,firm,Après approbation des EF de l'ex 2026,0,,,,,1,Après approbati
 Fde2fddef5b,firm,PLYBOIS,0,,,,,1,PLYBOIS
 Fde40dc754e,firm,PGI - SICOF - PARENIN,0,,,,,1,PGI - SICOF - PARENIN
 Fde4c43c377,firm,Ex membre du Conseil d’Administration de la BNA,0,,,,,1,Ex membre du Conseil d’Administration de la BNA
+Fde4e554e25,firm,SERVICOM (société mère),0,,,,,1,SERVICOM (société mère)
 Fde6454a59c,firm,Union Capital,0,,,,,2,UNION CAPITAL | Union Capital
 Fde7362e448,firm,ATLAS-CO,0,,,,,1,ATLAS-CO
 Fde910f1433,firm,"CYPRES""",0,,,,,1,"CYPRES"""
@@ -3186,6 +3254,7 @@ Fe2157338a0,firm,LGD,0,,,,,1,LGD
 Fe21f7f4446,firm,Après approbation des EF de l'ex 2024,0,,,,,1,Après approbation des EF de l'ex 2024
 Fe231f50c32,firm,de Transport International »,0,,,,,1,de Transport International »
 Fe237f0fa4e,firm,Construction,0,,,,,1,Construction
+Fe2544ad9d3,firm,M. Mohamed Salem RAOUINE (membre indépendant),0,,,,,1,M. Mohamed Salem RAOUINE (membre indépendant)
 Fe2671c1f98,firm,Tuniso Émiratie Sicav (TES),0,,,,,6,TUNISO EMIRATIE SICAV | TUNISO-EMIRATIE SICAV | Tuniso Emiratie SICAV (TES) | Tuniso Emiratie Sicav (TES) * | Tuniso Emiratie Sicav (TES)** | Tuniso Émiratie Sicav (TES)
 Fe26c51076a,firm,1. STB BANK (société Mère),0,,,,,1,1. STB BANK (société Mère)
 Fe292768ecb,firm,HAYATCOM RDC,0,,,,,1,HAYATCOM RDC
@@ -3214,6 +3283,7 @@ Fe3d7ecaea1,firm,chargé de la Banque de Détail,0,,,,,1,chargé de la Banque de
 Fe3ed352841,firm,ELW,0,,,,,1,ELW
 Fe41cd1a144,firm,ARAB TUNISIAN BANK - ATB,0,,,,,6,"ARAB TUNISIAN BANK | ARAB TUNISIAN BANK ""ATB"" | ARAB TUNISIAN BANK - ATB | Arab Tunisian Bank | Arab Tunisian Bank ""ATB"" | Arab Tunisian Bank - *"
 Fe4350eeea4,firm,IMMOBILIERE TUNISO- SAOUDIENNE -SITS Il,0,,,,,2,IMMOBILIERE TUNISO- SAOUDIENNE -SITS Il | IMMOBILIERE TUNISO-SAOUDIENNE -SITS Il
+Fe437d981ef,firm,MIS,0,,,,,1,MIS
 Fe43a6cde65,firm,et Juridique d’Attijari bank,0,,,,,1,et Juridique d’Attijari bank
 Fe447616995,firm,"Les sociétés en nom collectif, les sociétés en commandite",0,,,,,1,"Les sociétés en nom collectif, les sociétés en commandite"
 Fe456c491d7,firm,prochaine Assemblée Générale Ordinaire. Au,0,,,,,1,prochaine Assemblée Générale Ordinaire. Au
@@ -3228,6 +3298,7 @@ Fe54c461bb8,firm,Mohamed Mounir BEN MILED,0,,,,,1,Mohamed Mounir BEN MILED
 Fe55ed4f54b,firm,stratégique,0,,,,,1,stratégique
 Fe56300df1d,firm,Confection RasJebel,0,,,,,1,Confection RasJebel
 Fe56a72dd5c,firm,Amilcar LLD,0,,,,,1,Amilcar LLD
+Fe57663426d,firm,U.T.I.C.A. Kasserine,0,,,,,1,U.T.I.C.A. Kasserine
 Fe5915d38e4,firm,"des Sociétés commerciales, nous",0,,,,,1,"des Sociétés commerciales, nous"
 Fe59475133a,firm,SUNAGRI,0,,,,,2,SUNAGRI | SUNAGRI4
 Fe5b94d5861,firm,SOCIÉTÉ TUNISIENNE D’INVESTISSEMENT (STI)*,0,,,,,1,SOCIÉTÉ TUNISIENNE D’INVESTISSEMENT (STI)*
@@ -3243,7 +3314,7 @@ Fe661f7511a,firm,Affectation des résultats 2010 suivant,0,,,,,1,Affectation des
 Fe68d712247,firm,(Extraits des articles 19 et 20 du statut de SOTETEL),0,,,,,1,(Extraits des articles 19 et 20 du statut de SOTETEL)
 Fe6937084b2,firm,"STE D'EXPLOITATION TQUE ""AZUREA""",0,,,,,1,"STE D'EXPLOITATION TQUE ""AZUREA"""
 Fe6a3eebc40,firm,L'accréditation des établissement de 2ème et 3ème lignes,0,,,,,1,L'accréditation des établissement de 2ème et 3ème lignes
-Fe6bcb7b1a5,firm,Epargne Invest SICAF,0,,,,,3,EPARGNE INVEST SICAF | Epargne Invest SICAF | Société Epargne Invest (SICAF)
+Fe6bcb7b1a5,firm,Epargne Invest SICAF,0,,,,,4,EPARGNE INVEST SICAF | Epargne Invest SICAF | Epargne Invest SICAF* | Société Epargne Invest (SICAF)
 Fe6cc291f3f,firm,SICAME INTERNATIONAL,0,,,,,1,SICAME INTERNATIONAL
 Fe6ce64b3fb,firm,L'évolution générale de l'activité de la compagnie,0,,,,,1,L'évolution générale de l'activité de la compagnie
 Fe6da0bf38f,firm,UBCI LEASING,0,,,,,1,UBCI LEASING
@@ -3271,13 +3342,14 @@ Fe82d809613,firm,SODEAT EL GHANIMA,0,,,,,1,SODEAT EL GHANIMA
 Fe82ec39bf2,firm,STS TAPARURA- TDA –TIS,0,,,,,1,STS TAPARURA- TDA –TIS
 Fe838dfaeec,firm,BONNA Tunisie,0,,,,,1,BONNA Tunisie
 Fe84aeecfe3,firm,Société Pole de compétitivité de Sousse (SPCS),0,,,,,1,Société Pole de compétitivité de Sousse (SPCS)
-Fe851154c1d,firm,BTK,0,,,,,2,BTK | BTK (***)
+Fe851154c1d,firm,BTK,0,,,,,3,B.T.K | BTK | BTK (***)
 Fe8706006cb,firm,Nom el Prénom,0,,,,,1,Nom el Prénom
 Fe8768b31da,firm,Sabri Cheriha,0,,,,,1,Sabri Cheriha
 Fe8844d074b,firm,SANAD FUND FOR MSME,0,,,,,1,SANAD FUND FOR MSME
 Fe8847e1be2,firm,Arab International Lease,0,,,,,3,ARAB INTERNATIONAL LEASE - AIL | Arab International Lease | Arab International Lease (AIL)
 Fe89502d110,firm,décembre 2022 à 603 KDT,0,,,,,1,décembre 2022 à 603 KDT
 Fe8992af9ca,firm,Tunisian International Bank TIB,0,,,,,1,Tunisian International Bank TIB
+Fe89a01d773,firm,Emprunt obligataire “SERVICOM 2012”,0,,,,,1,Emprunt obligataire “SERVICOM 2012”
 Fe8a085e220,firm,ENNAKL,0,,,,,2,ENNAKL | Société ENNAKL
 Fe8a5c4712d,firm,Acquisition 2011,0,,,,,1,Acquisition 2011
 Fe8b7c2e244,firm,La Société AB Corporation,0,,,,,1,La Société AB Corporation
@@ -3308,6 +3380,7 @@ Fea73ee8d65,firm,l’arrangement,0,,,,,1,l’arrangement
 Fea92a1919f,firm,Banque Zitouna,0,,,,,2,BANQUE ZITOUNA | Banque Zitouna
 Fea967e552d,firm,Résultat de l'exercice 2014,0,,,,,1,Résultat de l'exercice 2014
 Fea9bbcd4b7,firm,SIAME,1,TN0006590012,SIAME,الشركة الصناعية للأجهزة و الآلات الكهربائية,continuous,1,SIAME
+Feaab7d9c41,firm,Sté Transport de Marchandise SOTRAM,0,,,,,1,Sté Transport de Marchandise SOTRAM
 Feac8eac82b,firm,et de l’environnement par la FONDATION BNA,0,,,,,1,et de l’environnement par la FONDATION BNA
 Feae94d12ab,firm,SMC,0,,,,,1,SMC
 Feaeda4f1e2,firm,Groupe Habib KAMOUN,0,,,,,1,Groupe Habib KAMOUN
@@ -3351,7 +3424,7 @@ Fed7a4d156c,firm,Zouheir TAMBOURA Directeur Général Adjoint Depuis 2000 Tunis,
 Fed8e77a68d,firm,United Gulf Bank,0,,,,,4,"UNITED GULF BANK | United Gulf Bank | United Gulf Bank, UGB | United Gulf Bank, UGB*"
 Fed9a8fdbff,firm,BNA ASSURANCES,1,TN0007680010,BNASS,تأمينات سليم,continuous,1,BNA ASSURANCES
 Feda52a2417,firm,[Delta Finances,0,,,,,2,DELTA FINANCES | [Delta Finances
-Fede9a2bb70,firm,STB,1,TN0002600955,STB,الشركة التّونسيّة للبنك,continuous,2,STB | STB (***)
+Fede9a2bb70,firm,STB,1,TN0002600955,STB,الشركة التّونسيّة للبنك,continuous,3,S.T.B | STB | STB (***)
 Fedec87dd04,firm,Sté LE RECOUVREMENT - Sté SICAR AMEN,0,,,,,1,Sté LE RECOUVREMENT - Sté SICAR AMEN
 Fee024d787d,firm,G é n é r a l -S IT E X,0,,,,,1,G é n é r a l -S IT E X
 Fee115de5a4,firm,Moncef DAKHLI est actuellement,0,,,,,1,Moncef DAKHLI est actuellement
@@ -3480,6 +3553,7 @@ Ff623286145,firm,SICAME ALGERIE,0,,,,,1,SICAME ALGERIE
 Ff650349164,firm,CIE HOTELIERE DES CENTRES VILLES,0,,,,,1,CIE HOTELIERE DES CENTRES VILLES
 Ff65a326b21,firm,ASSURCREDIT_COTUNACE,0,,,,,1,ASSURCREDIT_COTUNACE
 Ff667dbd63c,firm,Mohamed Safouane Ben Aissa,0,,,,,1,Mohamed Safouane Ben Aissa
+Ff66ac7ffb5,firm,SOCOTRAL,0,,,,,1,SOCOTRAL
 Ff66e942913,firm,STE DU POLE DE COMPETITIVITE DE MONASTIR EL FEJJA,0,,,,,1,STE DU POLE DE COMPETITIVITE DE MONASTIR EL FEJJA
 Ff6840b648c,firm,TUNISIENNE D’AUTOMOBILES - STA- Il,0,,,,,1,TUNISIENNE D’AUTOMOBILES - STA- Il
 Ff68d0e3c64,firm,Internationale de Recouvrement de Créances,0,,,,,1,Internationale de Recouvrement de Créances
@@ -3498,14 +3572,15 @@ Ff7f7890411,firm,Ministère du,0,,,,,1,Ministère du
 Ff7fc4a87f7,firm,Jean Marc BRAULT de BOURNONVILLE,0,,,,,1,Jean Marc BRAULT de BOURNONVILLE
 Ff81145ced8,firm,Les convocations prescrites par la loi vous ont,0,,,,,1,Les convocations prescrites par la loi vous ont
 Ff81c3bef98,firm,TUNISIE- AIR LIQUIDE,0,,,,,1,TUNISIE- AIR LIQUIDE
-Ff81f5bf1cc,firm,Assurances SALIM,0,,,,,2,ASSURANCES SALIM | Assurances SALIM
+Ff81f5bf1cc,firm,Assurances SALIM,0,,,,,3,ASSURANCES SALIM | Assurances SALIM | Assurances SALIM*
 Ff82593b744,firm,l’AGO qui statuera sur les comptes de l’exercice 2022,0,,,,,1,l’AGO qui statuera sur les comptes de l’exercice 2022
 Ff83433ee16,firm,SNMVT,0,,,,,1,SNMVT
 Ff8628b16b7,firm,UNIVERS ACTIONS SICAV,0,,,,,1,UNIVERS ACTIONS SICAV
 Ff86bfeb9e6,firm,Sté Tunisienne Alimentaire du Sahel,0,,,,,1,Sté Tunisienne Alimentaire du Sahel
 Ff879e71d9e,firm,Mohamed MELLOUSSE STE STB INVEST LAFICO Monsieur Mohamed Hédi Ben Ayed CONSORTIUM ARABE D'INVESTISSEMENT STE SOGEF Mr Mohamed BRAIK Mr Mohamed Habib Karaouli,0,,,,,1,Mohamed MELLOUSSE STE STB INVEST LAFICO Monsieur Mohamed Hédi Ben Ayed CONSORTIUM ARABE D'INVESTISSEMENT STE SOGEF Mr Mohamed BRAIK Mr Mohamed Habib Karaouli
-Ff883b24a08,firm,AlBaraka Bank,0,,,,,1,AlBaraka Bank
+Ff883b24a08,firm,AlBaraka Bank,0,,,,,2,AlBaraka Bank | AlBaraka Bank*
 Ff8a4855037,firm,Tunisie et des Emirats -BTE,0,,,,,1,Tunisie et des Emirats -BTE
+Ff8d43fc5d5,firm,SOFAC,0,,,,,1,SOFAC
 Ff8e9d0b8b0,firm,Actions gratuites provenant de droits rompus,0,,,,,1,Actions gratuites provenant de droits rompus
 Ff90658acc5,firm,à Ennakl Automobile,0,,,,,1,à Ennakl Automobile
 Ff90f3cdc6c,firm,Z Pack Holding,0,,,,,1,Z Pack Holding
@@ -3521,7 +3596,7 @@ Ff990807d19,firm,INGENIERIE,0,,,,,1,INGENIERIE
 Ff9ac195b5f,firm,Tunisienne d’Assurance et de,0,,,,,1,Tunisienne d’Assurance et de
 Ff9b9132a52,firm,CARTHAGE CEMENT,1,TN0007400013,CC,قرطاج للإسمنت,continuous,2,CARTHAGE CEMENT | Carthage Cement
 Ff9c378912e,firm,Tout actionnaire désirant prendre part aux Assemblées peut,0,,,,,1,Tout actionnaire désirant prendre part aux Assemblées peut
-Ff9d1d90ba7,firm,Banque de l’Habitat,0,,,,,3,BANQUE DE L’HABITAT | Banque de l'Habitat | Banque de l’Habitat
+Ff9d1d90ba7,firm,Banque de l’Habitat,0,,,,,4,BANQUE DE L HABITAT | BANQUE DE L’HABITAT | Banque de l'Habitat | Banque de l’Habitat
 Ff9d724d949,firm,El Wifack Leasing,0,,,,,4,EL WIFACK LEASING | El Wifack Leasing | El Wifack Leasing) | GROUPE EL WIFACK LEASING
 Ff9ec9dfc6f,firm,"§f""8.Lir""Sltf-8{-.§ç{._i/-I{§trY",0,,,,,1,"§f""8.Lir""Sltf-8{-.§ç{._i/-I{§trY"
 Ff9ed26ff0e,firm,et Président de MS solutions SA,0,,,,,1,et Président de MS solutions SA
@@ -3648,9 +3723,10 @@ P052ed1175d,person,Nourdeddine Tabbane,0,,,,,1,Nourdeddine Tabbane
 P053a85633f,person,Mohamed BEN OTHMAN,0,,,,,1,Mohamed BEN OTHMAN
 P0550d490fa,person,IX. Comités spéciaux,0,,,,,1,IX. Comités spéciaux
 P05cb5f32e9,person,HEDI DAMMAK,0,,,,,1,HEDI DAMMAK
-P05d5cd76f5,person,Majdi Zarkouna,0,,,,,1,Majdi Zarkouna
+P05d5cd76f5,person,Majdi ZARKOUNA,0,,,,,2,Majdi ZARKOUNA | Majdi Zarkouna
 P0627e8fe0c,person,United Gulf Bank UGB Administrateur Mohamed Salah FRAD 2021 - 2023,0,,,,,1,United Gulf Bank UGB Administrateur Mohamed Salah FRAD 2021 - 2023
 P065527f278,person,Vice président du Conseil d'Administration et Administrateur Délégué de Tunis International,0,,,,,1,Vice président du Conseil d'Administration et Administrateur Délégué de Tunis International
+P066a98970b,person,Karim REJEB SFAR,0,,,,,1,Karim REJEB SFAR
 P066d428a79,person,Alia Hamila,0,,,,,1,Alia Hamila
 P0674fa466a,person,Nasri MALHAME,0,,,,,1,Nasri MALHAME
 P067c018209,person,Mohamed Benzarti,0,,,,,1,Mohamed Benzarti
@@ -3662,6 +3738,7 @@ P06f7e1a8e9,person,compose de trois membres au moins,0,,,,,1,compose de trois me
 P0718249ce7,person,Ettajouri FATNASSI,0,,,,,1,Ettajouri FATNASSI
 P071e25d781,person,LAFICO TUNISIA,0,,,,,1,LAFICO TUNISIA
 P075374eea8,person,Zied BoUcHaMaoUi,0,,,,,1,Zied BoUcHaMaoUi
+P07737b4304,person,Med Sghaier Zorgui,0,,,,,1,Med Sghaier Zorgui
 P079de602a9,person,Hervé SAINT-SAUVEUR,0,,,,,1,Hervé SAINT-SAUVEUR
 P07a0b6b456,person,Lamine CHARNI,0,,,,,1,Lamine CHARNI
 P07d0b9ead7,person,de Participation,0,,,,,1,de Participation
@@ -3675,6 +3752,7 @@ P0882b257b4,person,Mohamed Férid Ben,0,,,,,1,Mohamed Férid Ben
 P0895c917d4,person,Abdessatar KRIMI Administrateur Lui-même 2018 - 2020,0,,,,,1,Abdessatar KRIMI Administrateur Lui-même 2018 - 2020
 P08ab755592,person,Kamel JENDOUBI,0,,,,,1,Kamel JENDOUBI
 P08d15392f0,person,L'Assistance,0,,,,,1,L'Assistance
+P094357fc57,person,Nessim REJEB,0,,,,,1,Nessim REJEB
 P0948719f6f,person,MOHAMMED KOUBAA,0,,,,,2,MOHAMMED KOUBAA | Mohammed Koubaa
 P09815ed7d6,person,kamel BEN MILED,0,,,,,1,kamel BEN MILED
 P099f6b6c22,person,Mustapha Hichem,0,,,,,1,Mustapha Hichem
@@ -3743,7 +3821,7 @@ P125d44ade6,person,MPEF IV (représenté par Anis Kallel),0,,,,,1,MPEF IV (repr�
 P126dc64068,person,"PDG de la société d’Automobile et de matériel ; de TLD, de SOHOB et",0,,,,,1,"PDG de la société d’Automobile et de matériel ; de TLD, de SOHOB et"
 P127553a7dd,person,Slaheddine LAADJIMI,0,,,,,2,Mr Slaheddine LAADJIMI | Slaheddine LAADJIMI
 P12bcdefd67,person,l’outil RWEB,0,,,,,1,l’outil RWEB
-P12da513ed0,person,Economic Auto,0,,,,,1,Economic Auto
+P12da513ed0,person,Economic Auto,0,,,,,2,ECONOMIC AUTO | Economic Auto
 P12dc85f439,person,Youssef BEN GHORBEL,0,,,,,1,Youssef BEN GHORBEL
 P12ea486346,person,Jalila MEZNI,0,,,,,2,Jalila MEZNI | Mme Jalila MEZNI
 P12fe3ae051,person,Commissaire aux comptes,0,,,,,1,Commissaire aux comptes
@@ -3836,7 +3914,7 @@ P1c3c78cf36,person,renouvelable indéfiniment. Le,0,,,,,1,renouvelable indéfini
 P1c69754bd6,person,José REIG*,0,,,,,1,José REIG*
 P1c726983f2,person,Mortalité de Bétails,0,,,,,1,Mortalité de Bétails
 P1c9ef06580,person,Maledh MARRAKCHI,0,,,,,1,Maledh MARRAKCHI
-P1c9ffcf1ca,person,ETS LOUKIL & CIE,0,,,,,1,ETS LOUKIL & CIE
+P1c9ffcf1ca,person,ETS LOUKIL & CIE,0,,,,,2,ETS LOUKIL & CIE | Ets M.LOUKIL & Cie
 P1ca443a243,person,Ouided BOUCHAMAOUI,0,,,,,1,Ouided BOUCHAMAOUI
 P1cbcf8de96,person,prochaine Assemblée,0,,,,,1,prochaine Assemblée
 P1ccfb8894d,person,Samar Malla,0,,,,,1,Samar Malla
@@ -3978,12 +4056,13 @@ P2e2c55f36c,person,Abdelkader HAMROUNI,0,,,,,5,ABDELKADER HAMROUNI | Abdelkader 
 P2e2c71235c,person,Tarak HAMILA,0,,,,,1,Tarak HAMILA
 P2e3c0eaafa,person,Abou Dhabi Investment Authority (ADIA) Membre MOHAMED SAIF ESSOUIDI 2010-2012 Abu Dhabi,0,,,,,1,Abou Dhabi Investment Authority (ADIA) Membre M. MOHAMED SAIF ESSOUIDI 2010-2012 Abu Dhabi
 P2ea2ba4a89,person,Abou Dhabi Investment Authority (ADIA) Membre KHAMIS OLAYENE 2010-2012 Abu Dhabi,0,,,,,1,Abou Dhabi Investment Authority (ADIA) Membre M. KHAMIS OLAYENE 2010-2012 Abu Dhabi
-P2ebb1d0c8f,person,Ahmed Trabelsi,0,,,,,2,Ahmed TRABELSI | Ahmed Trabelsi
+P2ebb1d0c8f,person,Ahmed Trabelsi,0,,,,,3,Ahmed TRABELSI | Ahmed Trabelsi | Mr Ahmed Trabelsi
+P2ebd76c766,person,Ather CHAABANE,0,,,,,2,Ather CHAABANE | Ather CHAABANE *
 P2ed80c4bfe,person,Abderrazak BEN AMMAR,0,,,,,7,ABDERRAZAK BEN AMMAR | Abderrazak BEN AMMAR | Abderrazak BEN AMMAR* | Abderrazak Ben Ammar | M. Abderrazak BEN AMMAR | M. Abderrazak Ben Ammar | Mr. Abderrazak Ben Ammar
 P2ee5e60cef,person,Alain Dallard,0,,,,,1,Alain Dallard
 P2ee7736c0f,person,PIRELLI TYRE SPA,0,,,,,1,PIRELLI TYRE SPA
 P2f2fe49ecb,person,Abdessattar BEN GHEDIFA,0,,,,,1,Abdessattar BEN GHEDIFA
-P2f76ba4e49,person,Fethi HACHICHA,0,,,,,1,Fethi HACHICHA
+P2f76ba4e49,person,Fethi HACHICHA,0,,,,,2,FETHI HACHICHA | Fethi HACHICHA
 P2f788eea5f,person,Abdelhay CHOUIKHA,0,,,,,1,Abdelhay CHOUIKHA
 P2f800a220e,person,MPEF IV LLC,0,,,,,1,MPEF IV LLC
 P2f830fc36c,person,Kais SELLAMI,0,,,,,1,Kais SELLAMI
@@ -4004,6 +4083,7 @@ P302fd43b67,person,Slaheddine ZAHAF (*),0,,,,,1,Slaheddine ZAHAF (*)
 P3037177d0c,person,S DRISS,0,,,,,1,M.S DRISS
 P303901c4c8,person,GHADA HARROUCH,0,,,,,1,GHADA HARROUCH
 P307105f7e6,person,Brahim ANENE,0,,,,,1,Brahim ANENE
+P309904a13e,person,Rekik Hajer,0,,,,,1,Rekik Hajer
 P30ae0f764e,person,ECONOMIQUES DE ZARZIS,0,,,,,1,ECONOMIQUES DE ZARZIS
 P30b0e3c719,person,Adel ALAYA,0,,,,,1,Adel ALAYA
 P3102a5dde1,person,Hella BRIGUI,0,,,,,1,Hella BRIGUI
@@ -4045,7 +4125,7 @@ P35ba25fd67,person,Karim HAJ ROMDHANE,0,,,,,1,Karim HAJ ROMDHANE
 P35d43d2fdf,person,Gérant des Sociétés Hermès Conseil et Sables du Centre SARL,0,,,,,1,Gérant des Sociétés Hermès Conseil et Sables du Centre SARL
 P35fda41ef8,person,Hatem HABBECHI,0,,,,,1,Hatem HABBECHI
 P36458f73d9,person,Présider les,0,,,,,1,Présider les
-P369c775b6d,person,Ali Dhrif Bouzidi,0,,,,,1,Ali Dhrif Bouzidi
+P369c775b6d,person,Ali Dhrif Bouzidi,0,,,,,2,Ali Dhrif Bouzidi | Mr Ali Dhrif Bouzidi
 P36a38878b5,person,CREDIT INDUSTRIEL,0,,,,,1,CREDIT INDUSTRIEL
 P36add250a4,person,MAAOUI Karim,0,,,,,2,KARIM MAAOUI | MAAOUI Karim
 P36ae630215,person,Mohamed Hilal AL MUTAIRI,0,,,,,1,Mohamed Hilal AL MUTAIRI
@@ -4133,6 +4213,7 @@ P3f1c34c00b,person,’zoughi MZABI,0,,,,,1,M. M’zoughi MZABI
 P3f33aec370,person,Rim LOUKIL,0,,,,,1,Rim LOUKIL
 P3f47937880,person,Ali LAHMAR,0,,,,,1,Ali LAHMAR
 P3f64a7ac85,person,Hédia JELLOULI,0,,,,,1,Hédia JELLOULI
+P3f6530b8b9,person,Fathi Hachicha,0,,,,,1,Fathi Hachicha
 P3f68f3f5cc,person,Mounir JERBI,0,,,,,1,Mounir JERBI
 P3f71d4555d,person,Tarek BEN HDID,0,,,,,1,Tarek BEN HDID
 P3f9425e380,person,Sofiène SELLAMI,0,,,,,2,M. Sofiène SELLAMI | Sofiène SELLAMI
@@ -4152,7 +4233,7 @@ P41c9740e9e,person,LA SOCIÉTÉ PARTNER AHMED BOUZGUENDA 31 décembre 2024 Membr
 P41f766fb51,person,Directeurs Généraux Adjoints),0,,,,,1,Directeurs Généraux Adjoints)
 P4208050a4a,person,Power Brands,0,,,,,1,Power Brands
 P4241bb7a3e,person,Convoquer [e Conseil,0,,,,,1,Convoquer [e Conseil
-P42493c6aaf,person,Aïssa Hidoussi,0,,,,,1,M. Aïssa Hidoussi
+P42493c6aaf,person,Aissa HIDOUSSI,0,,,,,2,M. Aissa HIDOUSSI | M. Aïssa Hidoussi
 P4259015931,person,STE LE PNEU,0,,,,,1,STE LE PNEU
 P425f604784,person,Nommé le,0,,,,,1,Nommé le
 P426249ade6,person,Mohamed LEJMI: Avocat,0,,,,,1,Mohamed LEJMI: Avocat
@@ -4214,6 +4295,7 @@ P49723a74c6,person,Ministère des Finances Membre ABDELLATIF CHAABENE 2010-2012 
 P49772d3866,person,Septième reliquat,0,,,,,1,Septième reliquat
 P497731d478,person,Khélil BELHOUANE,0,,,,,1,Khélil BELHOUANE
 P4999aa9d29,person,Souhir Taktak,0,,,,,2,Souhir TAKTAK | Souhir Taktak
+P49a795d4cd,person,AURES GROS,0,,,,,1,AURES GROS
 P49eaa53403,person,Hayet LABIDI,0,,,,,1,Hayet LABIDI
 P4a05cd08a0,person,Sami Ben Ayed,0,,,,,1,Sami Ben Ayed
 P4a290a143d,person,Ahmed Mongi HORCHANI Administrateur Lui-même 2018 - 2020,0,,,,,1,Ahmed Mongi HORCHANI Administrateur Lui-même 2018 - 2020
@@ -4221,6 +4303,7 @@ P4a6436adcc,person,Espace dedie aux,0,,,,,1,Espace dedie aux
 P4a68102be9,person,Faouzi karoui,0,,,,,1,Faouzi karoui
 P4aad593df8,person,Walid ZAHEG,0,,,,,1,Walid ZAHEG
 P4ae0553bf6,person,Mahmoud ZAHAF,0,,,,,2,Mahmoud ZAHAF | Mahmoud Zahaf
+P4b901eac5d,person,Ikram BEN YOUSSEF,0,,,,,1,Ikram BEN YOUSSEF
 P4b9258b4a8,person,27 Novembre 2013*,0,,,,,1,27 Novembre 2013*
 P4b94b16184,person,[Delta Projets,0,,,,,1,[Delta Projets
 P4bde13f213,person,Zouheir HASSEN,0,,,,,2,"M, Zouheir HASSEN | Zouheir HASSEN"
@@ -4250,6 +4333,7 @@ P4fb2a20f08,person,Rim SELLAMI,0,,,,,1,Rim SELLAMI
 P4fba45a8e3,person,Abou Dhabi Investment Authority (ADIA) Membre OUBEID MOURAD ESSOUIDI(5) 2010-2012 Abu Dhabi,0,,,,,1,Abou Dhabi Investment Authority (ADIA) Membre M. OUBEID MOURAD ESSOUIDI(5) 2010-2012 Abu Dhabi
 P5006cef7e8,person,Mohamed Amine CHABCHOUB,0,,,,,2,CHABCHOUB MOHAMED AMINE | Mohamed Amine CHABCHOUB
 P50081fff72,person,SAMI DJEBALI,0,,,,,1,SAMI DJEBALI
+P500c8122ee,person,Chiheb BENHMIDA,0,,,,,1,Chiheb BENHMIDA
 P501c7d44c8,person,Mouna Hidoussi,0,,,,,1,Mme Mouna Hidoussi
 P504f54113f,person,KHALED FENDRI,0,,,,,2,KHALED FENDRI | Khaled FENDRI
 P508387f00c,person,IBRAHIM AL IBRAHIM,0,,,,,1,IBRAHIM AL IBRAHIM
@@ -4284,13 +4368,13 @@ P53fae34974,person,Cinquième reliquat,0,,,,,1,Cinquième reliquat
 P540681b796,person,Omar DAHMEN,0,,,,,1,Omar DAHMEN
 P54256eb680,person,Yu-Yi FANG,0,,,,,1,Yu-Yi FANG
 P544ba8ac4f,person,dernières années,0,,,,,1,dernières années
-P54676176df,person,Thouraya Loukil,0,,,,,1,Mlle Thouraya Loukil
+P54676176df,person,Thouraya LOUKIL,0,,,,,2,Mlle Thouraya LOUKIL | Mlle Thouraya Loukil
 P5487827f15,person,Cabinet ECC MAZARS représenté par Borhen CHEBBI,0,,,,,1,Cabinet ECC MAZARS représenté par M. Borhen CHEBBI
 P54dcfc9c7a,person,24 du 9 Mars 1992 portant promulgation du Code des Assurances,0,,,,,1,24 du 9 Mars 1992 portant promulgation du Code des Assurances
 P5598b56a2b,person,Tarek KTHIRI,0,,,,,1,Tarek KTHIRI
 P55df847f58,person,Nejib Dimassi,0,,,,,1,Nejib Dimassi
 P55e7482ca6,person,Sunisienne des,0,,,,,1,Sunisienne des
-P55e7998093,person,MOHAMED REKIK,0,,,,,4,MOHAMED REKIK | Mohamed REKIK | Mohamed Rekik | REKIK MOHAMED
+P55e7998093,person,MOHAMED REKIK,0,,,,,6,MOHAMED REKIK | Mohamed REKIK | Mohamed Rekik | REKIK MOHAMED | Rekik Mohamed | Rekik Mohamed*
 P55ff99d193,person,options Il,0,,,,,1,options Il
 P563d8d581d,person,Abderraouf Klibi,0,,,,,2,Abderraouf Klibi | M.Abderraouf Klibi
 P5656d0f127,person,Société Partner,0,,,,,1,Société Partner
@@ -4314,7 +4398,7 @@ P57e2382f01,person,Tumsic Télécom,0,,,,,1,Tumsic Télécom
 P581302b597,person,Les mandats,0,,,,,1,Les mandats
 P581ee92291,person,MEHDI KHOUAJA,0,,,,,2,MEHDI KHOUAJA | Mr.MEHDI KHOUAJA
 P5829846f26,person,DERBEL Abdelaziz,0,,,,,2,DERBEL Abdelaziz | M. DERBEL ABDELAZIZ
-P582cee4730,person,Mohamed LOUKIL,0,,,,,4,M. Mohamed Loukil | Mohamed LOUKIL | Mohamed Loukil | Mr MOHAMED LOUKIL
+P582cee4730,person,Mohamed LOUKIL,0,,,,,5,M. Mohamed Loukil | Mohamed LOUKIL | Mohamed Loukil | Mr MOHAMED LOUKIL | Mr Mohamed LOUKIL
 P5834bcf51d,person,MERIEM MAAOUI,0,,,,,1,MERIEM MAAOUI
 P583790923b,person,Lassaad BEN ROMDHANE,0,,,,,2,Lassaad BEN ROMDHANE | Lassaad BEN ROMDHANE*
 P584d87d6f4,person,Aymen Raies,0,,,,,1,Aymen Raies
@@ -4505,6 +4589,7 @@ P6e34de14ae,person,Gonzague de,0,,,,,1,Gonzague de
 P6e673c7b2b,person,Mohamed TOUZI,0,,,,,1,Mohamed TOUZI
 P6e95ad9b4a,person,Alain SCHMITTER,0,,,,,1,Alain SCHMITTER
 P6eb19eec38,person,Zouhaier TAMBOURA,0,,,,,1,Zouhaier TAMBOURA
+P6ec5bba4e9,person,Zohra ROMDHANA,0,,,,,1,Mme Zohra ROMDHANA
 P6ed33f3d87,person,TABARKA -ELBENE,0,,,,,1,TABARKA -ELBENE
 P6ed67915c3,person,Slim KALLEL,0,,,,,1,Slim KALLEL
 P6f60933ca9,person,MYoussef IDANI,0,,,,,2,MYoussef IDANI | MYoussef IDANI *'
@@ -4585,7 +4670,7 @@ P7712a32b17,person,Slah Ben Turkia,0,,,,,1,Slah Ben Turkia
 P77287472c8,person,Adel Zarrouk,0,,,,,2,Adel ZARROUK | Adel Zarrouk
 P772cf82f46,person,David REY,0,,,,,1,David REY
 P7750342588,person,Mohamed Hedi DRIDI,0,,,,,3,MOHAMED HEDI DRIDI | Mohamed Hedi DRIDI | Mohamed Hédi DRIDI
-P7752509748,person,Anis FOURATI,0,,,,,2,Anis FOURATI | Mr Fourati Anis
+P7752509748,person,Anis FOURATI,0,,,,,3,Anis FOURATI | Anis Fourati | Mr Fourati Anis
 P7776188d95,person,Mohamed BERRAIES Administrateur Lui-même 2021 - 2023,0,,,,,1,Mohamed BERRAIES Administrateur Lui-même 2021 - 2023
 P77920f8bc9,person,Okba Moussa,0,,,,,1,Okba Moussa
 P77adca74c2,person,statuant sur l'exercice 2014,0,,,,,1,statuant sur l'exercice 2014
@@ -4601,9 +4686,10 @@ P789679d5aa,person,Ezeddine EL KADHI,0,,,,,1,Ezeddine EL KADHI
 P78cd5de54e,person,Baya Annabi El MATERI,0,,,,,1,Baya Annabi El MATERI
 P78d8d951d9,person,993 969 D en 2009. Cette,0,,,,,1,993 969 D en 2009. Cette
 P78efae8bf4,person,Ismail KHELIL,0,,,,,1,Ismail KHELIL
+P78f4392d3a,person,Ali BOUCHNIBA,0,,,,,1,Ali BOUCHNIBA
 P793e6792b9,person,Taoufik BEN AYED,0,,,,,1,Taoufik BEN AYED
 P795e37be50,person,Ridha Charfeddine,0,,,,,3,RIDHA CHARFEDDINE | Ridha Charfeddine | Ridha Charfeddine**
-P796a67ed0c,person,PATRICE GARANDEAU,0,,,,,1,PATRICE GARANDEAU
+P796a67ed0c,person,PATRICE GARANDEAU,0,,,,,2,PATRICE GARANDEAU | Patrice Garandeau
 P7980216789,person,Abou Hafs Amor Najai,0,,,,,3,ABOU HAFS AMOR NAJAI | Abou Hafs Amor NAJAI | Abou Hafs Amor Najai
 P7a0227bce6,person,ONAS Mohsen LAOUINI,0,,,,,1,ONAS Mohsen LAOUINI
 P7a1d67310a,person,Résultat par action,0,,,,,1,Résultat par action
@@ -4614,16 +4700,19 @@ P7ab71084a4,person,Moncef MARRAKCHI,0,,,,,1,Mr. Moncef MARRAKCHI
 P7aeb3c437f,person,Samar ELMOLLA Farouk,0,,,,,1,Samar ELMOLLA Mr Farouk
 P7af4901ae4,person,Mohamed MARZOUGUI,0,,,,,1,Mohamed MARZOUGUI
 P7aff7621b3,person,AMMAR TLILI,0,,,,,2,AMMAR TLILI | Ammar TLILI
+P7b1acfeace,person,Fraj ZAAK,0,,,,,1,M. Fraj ZAAK
 P7b911802bc,person,Héla HARIZ,0,,,,,1,Héla HARIZ
 P7b99b41837,person,Commissqire sux Comptes,0,,,,,1,Commissqire sux Comptes
 P7bb45bc334,person,Hamdi BEN REJEB,0,,,,,1,Hamdi BEN REJEB
 P7c0d0d2a72,person,Mohamed Riadh Nakouri,0,,,,,1,Mohamed Riadh Nakouri
 P7c1b4b548c,person,Med Ali BAKIR,0,,,,,1,Med Ali BAKIR
 P7c209de70f,person,Suite à,0,,,,,1,Suite à
+P7c4bd60f17,person,Slaheddine MAMLOUK,0,,,,,1,M. Slaheddine MAMLOUK
 P7c4f57b541,person,MINISTERE DE L'INDUSTRIE ET DE L'ENERGIE Membre TAREK EZZINE 2010-2012 Tunis,0,,,,,1,MINISTERE DE L'INDUSTRIE ET DE L'ENERGIE Membre M. TAREK EZZINE 2010-2012 Tunis
 P7c5759de4b,person,La rubrique,0,,,,,1,La rubrique
 P7c76857287,person,KHALED BEN MILED,0,,,,,2,KHALED BEN MILED | Khaled Ben MILED
 P7cbfe5c3a3,person,STAMBOULI Abdelmajid,0,,,,,2,M. STAMBOULI ABDELMAJID | STAMBOULI Abdelmajid
+P7cfcc679ef,person,Hanène REJEB SFAR,0,,,,,1,Hanène REJEB SFAR
 P7d2f5f4949,person,Mohamed EL JAZIRI**,0,,,,,1,Mohamed EL JAZIRI**
 P7d6735f86b,person,Mohamed FOURATI,0,,,,,2,Mohamed FOURATI | Mohamed FOURATI*
 P7d7398ad22,person,Ahmed Adel BADRELDINE,0,,,,,1,Ahmed Adel BADRELDINE
@@ -4631,6 +4720,7 @@ P7d856ced51,person,Mohamed Salah FRAD,0,,,,,3,Mohamed SALAH FRAD | Mohamed Salah
 P7da9b05533,person,"Ministère de l'Industrie et de l'Energie MOHAMED EL AGREBI PDG Sergar, PDG Sotugat",0,,,,,1,"Ministère de l'Industrie et de l'Energie M. MOHAMED EL AGREBI PDG Sergar, PDG Sotugat"
 P7dba434876,person,Sami GUERFALI,0,,,,,1,Sami GUERFALI
 P7dbfa1dc27,person,Hatem Denguezli,0,,,,,1,Hatem Denguezli
+P7dd019804a,person,Hedi REJEB SFAR,0,,,,,1,Hedi REJEB SFAR
 P7e17f7c0b3,person,ou par,0,,,,,1,ou par
 P7e49323662,person,Hamouda Belkhouja,0,,,,,1,Hamouda Belkhouja
 P7e535bc571,person,Amel BEN RAHAL,0,,,,,2,Amel BEN RAHAL | Amel BEN RAHAL***
@@ -4688,7 +4778,7 @@ P849432203c,person,en DT,0,,,,,1,en DT
 P84f3d041b2,person,Troisième reliquat,0,,,,,1,Troisième reliquat
 P85167d08d8,person,Ilhem FERCHICHI BEN,0,,,,,1,Ilhem FERCHICHI BEN
 P8551fc37aa,person,Tunis International Bank TIB Administrateur Mariem HASSAD 2021 - 2023,0,,,,,1,Tunis International Bank TIB Administrateur Mariem HASSAD 2021 - 2023
-P8598c8b6fa,person,MOURAD GHAZI,0,,,,,2,MOURAD GHAZI | Mourad Ghazi
+P8598c8b6fa,person,MOURAD GHAZI,0,,,,,4,Ghazi Mourad | Ghazi Mourad* | MOURAD GHAZI | Mourad Ghazi
 P85a435b6ae,person,Sofiane Gaied,0,,,,,1,Sofiane Gaied
 P85dd118869,person,AZUR DETERGENT,0,,,,,1,AZUR DETERGENT
 P86121c9131,person,Mohamed BOURAOUI,0,,,,,3,MOHAMED BOURAOUI | Mohamed BOURAOUI | Mohamed Bouraoui
@@ -4697,6 +4787,7 @@ P866a9da9a5,person,LOTFI BEN JEMAA,0,,,,,1,LOTFI BEN JEMAA
 P867ea44306,person,Neila BENZINA,0,,,,,1,Neila BENZINA
 P8683e4d097,person,CHABCHOUB SALMA,0,,,,,2,CHABCHOUB SALMA | Salma CHABCHOUB
 P86992a1f13,person,Mohamed AL-Nemah,0,,,,,1,Mohamed AL-Nemah
+P86a4177fc4,person,FAMILLE Bayahi,0,,,,,1,FAMILLE Bayahi
 P86fbcb5804,person,Nabil AL ABDULJALIL,0,,,,,3,M. Nabil AL ABDULJALIL | Nabil AL ABDULJALIL | Nabil AL ABDULJALIL*
 P8703feb7fc,person,Mongji Jelassi,0,,,,,1,Mongji Jelassi
 P870bb85dab,person,Wadie HELLARA: Médecin,0,,,,,1,Wadie HELLARA: Médecin
@@ -4705,13 +4796,16 @@ P8752f90acb,person,Wassim BEN YEDDER,0,,,,,1,Wassim BEN YEDDER
 P8779137631,person,"Iégal, les autres",0,,,,,1,"Iégal, les autres"
 P87a3f2b568,person,Takek EZZINE,0,,,,,1,Takek EZZINE
 P87be5e71cf,person,NEJIA GHARBI,0,,,,,2,NEJIA GHARBI | Nejia GHARBI
+P87d856f279,person,Ahmed Adel Manaa,0,,,,,1,Ahmed Adel Manaa
 P87e4743d54,person,Kais JOMAA,0,,,,,1,Kais JOMAA
 P87fba9f5ba,person,MOHAMED HACHEM MOALLA,0,,,,,1,MOHAMED HACHEM MOALLA
 P8840d00307,person,Khaled HATTAB,0,,,,,1,Khaled HATTAB
+P885128cfc0,person,Abdessalem Jberi,0,,,,,1,Abdessalem Jberi
 P88746b1ed3,person,Karim Milad (**),0,,,,,3,Karim MILAD | Karim Milad | Karim Milad (**)
 P887d25aa5a,person,2022-2024 et la société,0,,,,,1,2022-2024 et la société
 P88b3bb3d8d,person,Ahmed BADRELDINE,0,,,,,2,Ahmed BADRELDINE | Ahmed Badreldine
 P88bc63590e,person,"Khalil LAJIMI, Président du Comité des Risques",0,,,,,1,"Khalil LAJIMI, Président du Comité des Risques"
+P88d2280723,person,AURES AUTO,0,,,,,1,AURES AUTO
 P88e11e6093,person,Responsable du Pôle Banque de financement Attijari bank,0,,,,,1,Responsable du Pôle Banque de financement Attijari bank
 P890663d0d4,person,Ali Hidoussi,0,,,,,1,M. Ali Hidoussi
 P890d60d508,person,Taher Sioud,0,,,,,1,Taher Sioud
@@ -4728,7 +4822,7 @@ P8a691da985,person,Mourad HAKIM,0,,,,,1,Mourad HAKIM
 P8a7267d626,person,Abdelwahab KALLEL,0,,,,,1,Abdelwahab KALLEL
 P8a80b977bb,person,Ministère des Finances Membre ABDELHAMID EL GHANMI(8) 2010-2012 Tunis,0,,,,,1,Ministère des Finances Membre M. ABDELHAMID EL GHANMI(8) 2010-2012 Tunis
 P8a937594d9,person,Aymen BEN HALIMA,0,,,,,1,Aymen BEN HALIMA
-P8a97aed1f4,person,Zeineb Loukil,0,,,,,1,Mme Zeineb Loukil
+P8a97aed1f4,person,Zeineb LOUKIL,0,,,,,2,Mme Zeineb LOUKIL | Mme Zeineb Loukil
 P8a9b891f47,person,Ali El Hlioui,0,,,,,1,Ali El Hlioui
 P8a9d1363f1,person,Moez JOUDI,0,,,,,4,Moez JOUDI | Moez Joudi | Moëz JOUDI | Môez Joudi
 P8a9e78249d,person,Pierre-Emmanuel Augustin,0,,,,,1,Pierre-Emmanuel Augustin
@@ -4863,9 +4957,10 @@ P9ae9d124cb,person,Samia BEN SALAH,0,,,,,1,Samia BEN SALAH
 P9b02fbbd63,person,Hatem BEN AMMEUR,0,,,,,1,Hatem BEN AMMEUR
 P9b3506b5f8,person,Ahmed BOUZGANDA,0,,,,,1,Ahmed BOUZGANDA
 P9b5c41ce36,person,STEQ (Actions régul.),0,,,,,2,STEQ (Actions régul | STEQ (Actions régul.)
-P9b738dd849,person,Zohra Loukil,0,,,,,1,Mme Zohra Loukil
+P9b738dd849,person,Zohra Loukil,0,,,,,2,Mme Zohra LOUKIL | Mme Zohra Loukil
 P9b8974356f,person,Chedly OUNIS,0,,,,,1,Chedly OUNIS
 P9b9005cccf,person,Mohamed El Mehdi Majdoub,0,,,,,1,Mohamed El Mehdi Majdoub
+P9b9540ec15,person,Salem Hasnaoui,0,,,,,1,Salem Hasnaoui
 P9ba5740054,person,des trois dernières années,0,,,,,1,des trois dernières années
 P9bbdde8943,person,Slaheddine Laajimi,0,,,,,4,M. Slaheddine Laajimi | M.Slaheddine Laajimi | SLAHEDDINE LAAJIMI | Slaheddine LAAJIMI ****
 P9bccb3e1d6,person,Ziad OUESLATI,0,,,,,1,M. Ziad OUESLATI
@@ -4915,8 +5010,9 @@ Pa11923fa06,person,"KAIS MARAKCHI, Représentant ENNAKL",0,,,,,1,"KAIS MARAKCHI,
 Pa15375bdfa,person,Mongi JELASSI,0,,,,,1,Mongi JELASSI
 Pa160238866,person,Lotfi ZGHAL,0,,,,,1,Mr. Lotfi ZGHAL
 Pa188f9c07a,person,Habiba HADHRI,0,,,,,1,Habiba HADHRI
+Pa18d4a7efb,person,Med Hatem Hassine,0,,,,,1,Med Hatem Hassine
 Pa1bd8a324c,person,MUSTAPHA ABDELKEBIR,0,,,,,2,MUSTAPHA ABDELKEBIR | Mustapha ABDELKEBIR
-Pa236319742,person,Société ECONOMIC AUTO,0,,,,,2,Société ECONOMIC AUTO | Société Economic Auto
+Pa236319742,person,SOCIETE ECONOMIC AUTO,0,,,,,3,SOCIETE ECONOMIC AUTO | Société ECONOMIC AUTO | Société Economic Auto
 Pa23ea49332,person,Société Mediterranean Industrial Group Bassem LOUKIL Membre 2008-2011* Tunis,0,,,,,1,Société Mediterranean Industrial Group Mr Bassem LOUKIL Membre 2008-2011* Tunis
 Pa242006155,person,Riadh HAJJEJ,0,,,,,1,Riadh HAJJEJ
 Pa248229f1a,person,Premier reliquat,0,,,,,1,Premier reliquat
@@ -4962,6 +5058,7 @@ Pa7265a01dc,person,Ex membre du Conseil d’Administration de la BNA et membre d
 Pa73d356239,person,Ministère des Finances ABDELHAMID EL GHANMI Directeur Général des participations,0,,,,,1,Ministère des Finances M. ABDELHAMID EL GHANMI Directeur Général des participations
 Pa7639fb646,person,WAFA KHOUADJA SFAR,0,,,,,1,WAFA KHOUADJA SFAR
 Pa7717a9a90,person,Hamouda CHEKIR,0,,,,,1,Hamouda CHEKIR
+Pa79f5612b1,person,Yousri CHAABANE,0,,,,,1,Yousri CHAABANE
 Pa79f691400,person,Mohamed JEBALI,0,,,,,1,Mohamed JEBALI
 Pa7ac8f3463,person,Jamel AREM,0,,,,,2,Jamel AREM | Mr Jamel AREM
 Pa7b3420756,person,Walid Gahbiche (c),0,,,,,2,Mr Walid Gahbiche | Walid Gahbiche (c)
@@ -5086,6 +5183,7 @@ Pb4a8d629ff,person,HERITIERS KHOUAJA BRAHIM,0,,,,,1,HERITIERS KHOUAJA BRAHIM
 Pb4ce2981e4,person,Asma MHIRSI,0,,,,,2,Asma MHIRSI | Asma MHIRSI*
 Pb4d3b7fc3e,person,Rochdi ABDENNADHER,0,,,,,1,Rochdi ABDENNADHER
 Pb4d5567286,person,Selma ELLOUMI ERKIK,0,,,,,1,Mme. Selma ELLOUMI ERKIK
+Pb4e5844fc4,person,STE BENTEC,0,,,,,2,STE BENTEC | STE BENTEC*
 Pb4ef77130d,person,LA SIMPAR,0,,,,,1,LA SIMPAR
 Pb4f47dc28f,person,Sami SNOUSSI,0,,,,,1,Sami SNOUSSI
 Pb509fc8d88,person,KAMEL NAOUI,0,,,,,2,Kamel NAOUI | M.KAMEL NAOUI
@@ -5097,6 +5195,7 @@ Pb5ead74c98,person,AMEN PROJECT (administrateur),0,,,,,1,AMEN PROJECT (administr
 Pb60fba6589,person,Hichem BEN JEBARA,0,,,,,1,Hichem BEN JEBARA
 Pb617c31e60,person,Pierre ALOUGES,0,,,,,1,Pierre ALOUGES
 Pb62977a4a2,person,Sonia FESSI,0,,,,,1,Sonia FESSI
+Pb62ab45643,person,Hichem Chaambi,0,,,,,1,Hichem Chaambi
 Pb644364ce7,person,Pierre BOURSOT,0,,,,,1,Pierre BOURSOT
 Pb668bacc5c,person,Meriem SMIDA,0,,,,,1,Meriem SMIDA
 Pb6719bbf9a,person,Ferid ABBES Ridha,0,,,,,1,Ferid ABBES Mr Ridha
@@ -5110,6 +5209,7 @@ Pb7947b7169,person,Yassine Hamila,0,,,,,1,Yassine Hamila
 Pb799a2ff2a,person,Golsem KSONTINI JAZIRI,0,,,,,1,Golsem KSONTINI JAZIRI
 Pb7a7c12e19,person,Tahar BOURICHA,0,,,,,2,Tahar BOURICHA | Tahar Bouricha
 Pb7cdf322ec,person,Ludovic BAYARD,0,,,,,1,Ludovic BAYARD
+Pb7ef78012a,person,Essayeh Habib,0,,,,,2,Essayeh Habib | Essayeh Habib*
 Pb7fba90263,person,Mohamed Abdennadher,0,,,,,1,Mohamed Abdennadher
 Pb80969cddd,person,Ali Abdallah,0,,,,,1,Ali Abdallah
 Pb82730cb04,person,Abdellatif JERIJNI,0,,,,,1,Abdellatif JERIJNI
@@ -5222,6 +5322,7 @@ Pc552c0495d,person,Ridha Chouria,0,,,,,1,Ridha Chouria
 Pc555befcec,person,Objet social,0,,,,,1,Objet social
 Pc55e65a400,person,Hédi DJILANI Président Lui-même 2018 - 2020,0,,,,,1,Hédi DJILANI Président Lui-même 2018 - 2020
 Pc55f942c7e,person,Moez LABIDI,0,,,,,1,Moez LABIDI
+Pc571d59248,person,Saida JEDIDI,0,,,,,1,Saida JEDIDI
 Pc5869347ea,person,[Jarraya Salah,0,,,,,1,[M Jarraya Salah
 Pc58f645118,person,Banque Commerciale du Maroc,0,,,,,1,Banque Commerciale du Maroc
 Pc59f9984be,person,Son représentant,0,,,,,1,Son représentant
@@ -5459,7 +5560,7 @@ Pe1aa9d3b1c,person,Skander BAYAHI,0,,,,,1,Mr Skander BAYAHI
 Pe1f39a2f25,person,Sarra REJEB,0,,,,,1,Sarra REJEB
 Pe2227ea224,person,Mongia CHABLY,0,,,,,1,Mongia CHABLY
 Pe22850dd58,person,Hella MEHRI,0,,,,,1,Hella MEHRI
-Pe22db857f4,person,Rachida Toumi,0,,,,,1,Rachida Toumi
+Pe22db857f4,person,Rachida TOUMI,0,,,,,2,Mme Rachida TOUMI | Rachida Toumi
 Pe2435568b3,person,Dany MAKLOUF,0,,,,,3,Dany MAKLOUF | Dany MAKLOUF** | M. Dany MAKLOUF
 Pe24510cce9,person,Robert J. TWIST,0,,,,,1,Robert J. TWIST
 Pe247c82f86,person,Arbia ALAYA,0,,,,,1,Arbia ALAYA
@@ -5594,7 +5695,7 @@ Pf00e7c7dcc,person,Population cible,0,,,,,1,Population cible
 Pf0212e1f0e,person,Ahmed Bcn Ghazi,0,,,,,1,Ahmed Bcn Ghazi
 Pf03f71e2a7,person,"RIDHA ZERZERI, Représentant de ASIRAK.SA",0,,,,,1,"RIDHA ZERZERI, Représentant de ASIRAK.SA"
 Pf04c1c33b1,person,“TURBO CALCIUM”,0,,,,,1,“TURBO CALCIUM”
-Pf0506f54ca,person,MICHELE BERAUDO,0,,,,,1,MICHELE BERAUDO
+Pf0506f54ca,person,MICHELE BERAUDO,0,,,,,3,Beraudo Michele | Beraudo Michele* | MICHELE BERAUDO
 Pf06e2016f9,person,Hichem MOKRANI,0,,,,,1,Hichem MOKRANI
 Pf074b4e2aa,person,DDDDEEEETTTTEEEENNNNAAAANNNNTTTT PPPPLLLLUUUUSSSS DDDDEEEE,0,,,,,1,DDDDEEEETTTTEEEENNNNAAAANNNNTTTT PPPPLLLLUUUUSSSS DDDDEEEE
 Pf08b5c5f9c,person,Abdelmajid CHHAIDER,0,,,,,1,Abdelmajid CHHAIDER
@@ -5645,6 +5746,7 @@ Pf5b0e1be50,person,Amortissement annuel,0,,,,,1,Amortissement annuel
 Pf5b6b59a94,person,HORCHANI PECHE,0,,,,,1,HORCHANI PECHE
 Pf5b6bfa00a,person,Sami AMIRA,0,,,,,1,Sami AMIRA
 Pf63dac9c53,person,Mahfoudh BAROUNI,0,,,,,1,Mahfoudh BAROUNI
+Pf658da6487,person,Med LOUKIL,0,,,,,1,Mr Med LOUKIL
 Pf6651d7a9d,person,LOBNA FEKI Elle-même 31 décembre 2025 Présidente du comité,0,,,,,1,LOBNA FEKI Elle-même 31 décembre 2025 Présidente du comité
 Pf6adc04a56,person,Les actionnaires historiques,0,,,,,1,Les actionnaires historiques
 Pf6c59051c3,person,Lotfi BEN HAJ KACEM,0,,,,,1,Lotfi BEN HAJ KACEM
@@ -5717,10 +5819,11 @@ Pffb230be28,person,Mohamed Salah HMAIDI,0,,,,,1,Mohamed Salah HMAIDI
 Pffb85d883a,person,Ferid ABBES,0,,,,,3,Ferid ABBES | Férid ABBES | Férid Abbes
 Pffc66d22ae,person,Horwath AFC,0,,,,,1,Horwath AFC
 S0000000a01,state,État Tunisien,0,,,,,12,"ETAT TUNISIEN | Etat | Etat Tunisien | Etat Tunisien (représenté par Monsieur Ali OUERGHI) | Etat Tunisien (représenté par Monsieur Monsieur Abdessatar BEN SAAD) | Etat tunisien | L'ETAT tunisien | L,ETAT TUNISIEN | L’ETAT tunisien | l'Etat | l’Etat Tunisien | État Tunisien"
-S0000000c01,state,Caisse Nationale de Sécurité Sociale (CNSS),0,,,,,6,"C.N.S.S | CAISSE NATIONALE DE SECURITE SOCIALE (CNSS) | CNSS | Caisse Nationale de Securite Sociale | Caisse Nationale de Sécurité Sociale ""CNSS"" | Caisse Nationale de Sécurité Sociale -CNSS"
+S0000000c01,state,Caisse Nationale de Sécurité Sociale (CNSS),0,,,,,7,"C.N.S.S | CAISSE NATIONALE DE SECURITE SOCIALE (CNSS) | CNSS | Caisse Nationale de Securite Sociale | Caisse Nationale de Sécurité Sociale | Caisse Nationale de Sécurité Sociale ""CNSS"" | Caisse Nationale de Sécurité Sociale -CNSS"
 S0000000d01,state,Caisse des Dépôts et Consignations (CDC),0,,,,,3,"CDC | Caisse des Dépôts et Consignations | Caisse des Dépôts et Consignations ""CDC"""
-S0000000e01,state,Entreprise Tunisienne d'Activités Pétrolières (ETAP),0,,,,,5,E.T.A.P | ENTREPRISE TUNISIENNE DES ACTIVITES PETROLIERES « ETAP » | ETAP | ETAP POUR LE COMPTE DE L'ETAT | ETAP pour le compte de l'Etat
-S0000000f01,state,Office du Commerce de Tunisie,0,,,,,2,Office de Commerce de Tunisie | Office du Commerce de la Tunisie
+S0000000e01,state,Entreprise Tunisienne d'Activités Pétrolières (ETAP),0,,,,,6,E.T.A.P | ENTREPRISE TUNISIENNE DES ACTIVITES PETROLIERES « ETAP » | ETAP | ETAP POUR LE COMPTE DE L'ETAT | ETAP pour le compte de l'Etat | Entreprise Tunisienne d'Activités Pétrolières ‐ ETAP ‐
+S0000000f01,state,Office du Commerce de Tunisie,0,,,,,3,Office de Commerce de Tunisie | Office du Commerce de Tunisie | Office du Commerce de la Tunisie
+S08e067f5d2,state,"STEG, SONEDE et Téléphone)",0,,,,,1,"STEG, SONEDE et Téléphone)"
 S0c4c0e7a3c,state,BNA CAPITAUX- CAP BANK -CDC DEVELOPPEMENT,0,,,,,1,BNA CAPITAUX- CAP BANK -CDC DEVELOPPEMENT
 S0de1396cbf,state,CDC DEVELOPPEMENT -CIOK,0,,,,,1,CDC DEVELOPPEMENT -CIOK
 S14f55d04ec,state,l'Etat ont été nommés et sélectionnés sur,0,,,,,1,l'Etat ont été nommés et sélectionnés sur
@@ -5745,7 +5848,7 @@ Sdd462c34a2,state,MINISTERE DU DEVELOPPEMENT DE,0,,,,,1,MINISTERE DU DEVELOPPEME
 Sdf42d9cd21,state,SONEDE,0,,,,,1,SONEDE
 Se0f4482064,state,"et en tout état de cause, avant la prochaine réunion du Conseil de surveillance",0,,,,,1,"et en tout état de cause, avant la prochaine réunion du Conseil de surveillance"
 U04363cb435,fund,STB INVEST SICAF,0,,,,,2,STB INVEST SICAF | STB INVEST- SICAF
-U0968170a77,fund,SIM Sicar (BH),0,,,,,1,SIM Sicar (BH)
+U0968170a77,fund,SIM Sicar (BH),0,,,,,2,SIM SICAR (BH) | SIM Sicar (BH)
 U0ae02dc55b,fund,SPDIT-SICAF Membre Mr Mohamed Ali BAKIR 2006-2008 Tunis,0,,,,,1,SPDIT-SICAF Membre Mr Mohamed Ali BAKIR 2006-2008 Tunis
 U11d14d3282,fund,SPDIT-SICAF M. Mohamed Ali BAKIR Président Directeur Général,0,,,,,2,SPDIT-SICAF M. Mohamed Ali BAKIR Président Directeur Général | SPDIT-SICAF Mr Mohamed Ali BAKIR Président Directeur Général
 U11d58c65c0,fund,PART BNA -SICAR INVEST,0,,,,,1,PART BNA -SICAR INVEST
@@ -5753,20 +5856,20 @@ U11feb65ab2,fund,Société de l'Investissement Moderne SICAR,0,,,,,1,Société d
 U15ee99fb40,fund,SICAF -SOTUGAR STAR -STBG,0,,,,,1,SICAF -SOTUGAR STAR -STBG
 U1785b0fe0a,fund,SICAR INVEST (BNA),0,,,,,1,SICAR INVEST (BNA)
 U1b3c2b4322,fund,SODINO SODIS SICAR,0,,,,,1,SODINO SODIS SICAR
-U22b9218e0c,fund,La Financière WIDED SICAF,0,,,,,1,La Financière WIDED SICAF
+U22b9218e0c,fund,La Financière WIDED SICAF,0,,,,,2,LA FINANCIERE WIDED SICAF | La Financière WIDED SICAF
 U22c84be2b0,fund,SIBTEL -SICAF PART BNA -SICAR INVEST- SICAV,0,,,,,1,SIBTEL -SICAF PART BNA -SICAR INVEST- SICAV
 U23cf44e467,fund,SPDIT-SICAF Président Directeur Général,0,,,,,1,SPDIT-SICAF Président Directeur Général
 U3237e02672,fund,Réserves pour fonds social,0,,,,,1,Réserves pour fonds social
 U32bdd21445,fund,ATI-SICAF M. Othman ZAHEG Président Directeur Général,0,,,,,3,ATI-SICAF M. Othman ZAHEG Président Directeur Général | ATI-SICAF Mr Othman ZAHEG Président Directeur Général | ATI‐SICAF M. Othman ZAHEG Président Directeur Général
-U39c37c3dc5,fund,ATI SICAF,0,,,,,1,ATI SICAF
 U4bc9f9f8d9,fund,SEFINA SICAF Membre M. Férid ABBES 2009‐2011 Tunis,0,,,,,2,SEFINA SICAF Membre M. Férid ABBES 2009-2011 Tunis | SEFINA SICAF Membre M. Férid ABBES 2009‐2011 Tunis
 U4fb61bb4de,fund,ATI SICAF Membre Mr Othman ZAHEG 2006-2008 Tunis,0,,,,,1,ATI SICAF Membre Mr Othman ZAHEG 2006-2008 Tunis
 U596a85efea,fund,ATI SICAF Membre M. Ahmed Kallel 2009‐2011 Tunis,0,,,,,1,ATI SICAF Membre M. Ahmed Kallel 2009‐2011 Tunis
+U5f4c5097b5,fund,Société Tunisienne de Banque- Invest SICAF,0,,,,,1,Société Tunisienne de Banque- Invest SICAF
 U612e89bfdb,fund,SICAR INVEST-SIVIA -BNA CAPITAUX,0,,,,,1,SICAR INVEST-SIVIA -BNA CAPITAUX
 U643f144625,fund,SODINO SICAR,0,,,,,1,SODINO SICAR
 U64eeba6377,fund,SOFINREC- SOGEST- SOIVM SICAF -SOTUGAR,0,,,,,1,SOFINREC- SOGEST- SOIVM SICAF -SOTUGAR
 U72940068c1,fund,Société SICAR INVEST,0,,,,,1,Société SICAR INVEST
-U7670643783,fund,ATD SICAR,0,,,,,3,ATD SICAR | ATD – SICAR (*) | Atd Sicar
+U7670643783,fund,ATD SICAR,0,,,,,4,ATD SICAR | ATD Sicar | ATD – SICAR (*) | Atd Sicar
 U778b5fa26c,fund,Société STB SICAR,0,,,,,1,Société STB SICAR
 U79a0123dd8,fund,BE SIM- SICAR,0,,,,,1,BE SIM- SICAR
 U80f3a3de94,fund,Par ailleurs et pour consolider son fonds de commerce,0,,,,,1,Par ailleurs et pour consolider son fonds de commerce
@@ -5780,7 +5883,7 @@ U962883516d,fund,Magasin Général SICAR,0,,,,,1,Magasin Général SICAR
 U9964ef650b,fund,FCP Valeurs CEA,0,,,,,1,FCP Valeurs CEA
 Ua420790181,fund,TSPP SICAR,0,,,,,1,TSPP SICAR
 Ua48a3ba56e,fund,ATID SICAF,0,,,,,1,ATID SICAF
-Ua761e8379d,fund,CIF SICAF SA,0,,,,,2,CIF SICAF SA | CIF-SICAF
+Ua761e8379d,fund,CIF SICAF SA,0,,,,,4,CIF SICAF | CIF SICAF SA | CIF SICAF* | CIF-SICAF
 Uaae4538379,fund,SEFINA SICAF,0,,,,,1,SEFINA SICAF
 Uabd11aafbd,fund,SICAV -POLE DE,0,,,,,1,SICAV -POLE DE
 Ub44beea85c,fund,SPDIT-SICAF Membre M. Mohamed Ali BAKIR 2009-2011 Tunis,0,,,,,1,SPDIT-SICAF Membre M. Mohamed Ali BAKIR 2009-2011 Tunis
@@ -5789,6 +5892,7 @@ Uc22cbe0def,fund,O.P.C.V.M,0,,,,,1,O.P.C.V.M
 Uc27c0f5f48,fund,Fonds Social,0,,,,,1,Fonds Social
 Ucbe59ca8f6,fund,SIP SICAR,0,,,,,1,SIP SICAR
 Ud0e8fb4a06,fund,SEFINA SICAF Membre Mr Férid ABBES 2006-2008 Tunis,0,,,,,1,SEFINA SICAF Membre Mr Férid ABBES 2006-2008 Tunis
+Ud1be9ba22f,fund,INDINVEST Sicaf,0,,,,,1,INDINVEST Sicaf
 Ud2578a6bdb,fund,ATI-SICAF M. Adel BEN YOUSSEF Administrateur représentant ATB,0,,,,,1,ATI-SICAF M. Adel BEN YOUSSEF Administrateur représentant ATB
 Ud643cdbf33,fund,SICAV BNA- SIDCO- SIMAC,0,,,,,1,SICAV BNA- SIDCO- SIMAC
 Uecddebab65,fund,OBLIGATAIRE SICAV -POLE DE COMPETITIVITE DE,0,,,,,1,OBLIGATAIRE SICAV -POLE DE COMPETITIVITE DE
@@ -5797,6 +5901,7 @@ Ufbedae563f,fund,ATI‐SICAF M. Ahmed Kallel Administrateur représentant ATB,0,
 Uffacf82ee3,fund,SODET- SUD SODICAB -SODINO SODIS SICAR,0,,,,,1,SODET- SUD SODICAB -SODINO SODIS SICAR
 X0186b63e1c,unknown,Fax 71,0,,,,,1,Fax 71
 X0258eb88c1,unknown,Matricule fiscal 000080SPMOOO,0,,,,,1,Matricule fiscal 000080SPMOOO
+X0aa7108641,unknown,UIB 2011-2,0,,,,,1,UIB 2011-2
 X0d7200e6e1,unknown,Au 31,0,,,,,1,Au 31
 X11fd04a14b,unknown,3.4 Comités spéciaux,0,,,,,1,3.4 Comités spéciaux
 X13fce2a462,unknown,2e104/20Le,0,,,,,1,2e104/20Le
