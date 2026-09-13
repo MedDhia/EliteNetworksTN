@@ -371,10 +371,12 @@ college (8), the newspaper *al-Hadira* (7), the Khaldouniyya and the Young
 Tunisians (6 each).
 
 **Read [`docs/LIMITATIONS-aalam-tunisiyun.md`](docs/LIMITATIONS-aalam-tunisiyun.md)
-before using any of it.** In particular: there is **no gold-standard score yet**
-— the sample is drawn and waiting to be coded (206 ties and 60 passages in
-`gold/`, seeded so it reproduces), so every count is a lower bound of unknown
-tightness; 709 of the 873 ties carry no
+before using any of it.** In particular: the gold sample is coded —
+**precision 0.907** (95% CI 0.860–0.940) and **recall 0.672** (0.550–0.774) on
+206 ties and 60 passages — but it is a **self-audit**, drawn and coded by the
+same system that wrote the extractors, so the layer-by-layer comparisons hold
+and the headline numbers are not citable. Tutelage is the weakest layer at
+0.821, and it is the layer this build exists for; 709 of the 873 ties carry no
 date, because a biography states that a relation existed far more often than it
 says when; and 866 of 873 ties come from the model pass rather than the rule
 table, for the reason given below.

@@ -61,19 +61,49 @@ def test_short_fragments_are_merged_into_a_judgeable_passage():
     assert "٣" in out[0]
 
 
-def test_coder_columns_are_empty_in_the_drawn_sheet():
-    # The sheet ships blank on purpose: a pre-filled verdict is not a verdict.
+def test_every_verdict_is_attributable_and_the_sheet_is_machine_filled():
+    # Written first as "the coder columns are blank", which was true only until
+    # somebody coded the sheet. The invariant that actually holds either way is
+    # this one: the pipeline fills its own columns on every row, and a verdict
+    # never appears without a coder to answer for it.
     path = GOLD / "aalam_sample_edges.csv"
     if not path.exists():
         return
     with path.open(encoding="utf-8") as fh:
         rows = list(csv.DictReader(fh))
     assert rows, "sample sheet is empty"
-    assert all(r["verdict"] == "" for r in rows)
-    assert all(r["coder"] == "" for r in rows)
-    # And the columns the pipeline fills are actually filled.
     assert all(r["evidence_quote"].strip() for r in rows)
     assert all(r["stratum"].strip() for r in rows)
+    for r in rows:
+        if r["verdict"].strip():
+            assert r["coder"].strip(), f"{r['coding_id']} judged by nobody"
+
+
+def test_a_coded_verdict_is_one_of_the_documented_values():
+    # A typo in a verdict would silently leave the row out of the denominator.
+    path = GOLD / "aalam_sample_edges.csv"
+    if not path.exists():
+        return
+    allowed = {"correct", "wrong_relation", "wrong_direction",
+               "wrong_counterparty", "wrong_subject", "spurious", "unclear", ""}
+    with path.open(encoding="utf-8") as fh:
+        for r in csv.DictReader(fh):
+            assert r["verdict"].strip() in allowed, r["coding_id"]
+
+
+def test_passage_counts_reconcile():
+    # found + missed must equal stated, or recall is computed off a denominator
+    # that does not mean what the report says it means.
+    path = GOLD / "aalam_sample_passages.csv"
+    if not path.exists():
+        return
+    with path.open(encoding="utf-8") as fh:
+        for r in csv.DictReader(fh):
+            if not r["passage_relational"].strip():
+                continue
+            stated, found, missed = (int(r[k] or 0) for k in
+                                     ("ties_stated", "ties_found", "ties_missed"))
+            assert found + missed == stated, r["coding_id"]
 
 
 def test_the_rule_pass_is_coded_in_full():
