@@ -138,7 +138,7 @@ a mention gets an `ambiguous_mention` entity, which is retained as data and
 explicitly identifies nothing, rather than being folded in with whichever firm
 was modal.
 
-Entities after the rebuild: TODO(rebuild).
+The rebuild produced **230,023 entities** over 296,795 distinct mentions: 73,770 keyed on a matricule fiscal, 13,650 on an RC number, 140,005 on a name and 2,598 unattributable. **36,405 entities join more than one spelling**, folding 114,524 spellings into single firms.
 
 ## Why entities adopt seed ids
 
@@ -167,7 +167,37 @@ nearly matched and by how much. Only identity changed.
 identity had dropped an observation, which is the one outcome the instruction
 forbids.
 
-Hub nodes remaining after the rebuild: TODO(rebuild).
+After the rebuild, **130 organisations still hold ten or more values of a
+single hard identifier** (176 organisation-identifier pairs), against 288
+before, and the worst node falls from 1,606 matricules to 154. The top
+organisation-to-organisation degree falls from 1,003 to 45, and `CO_TROIS` is
+gone from the layer entirely.
+
+That is a large reduction and not an elimination, and what remains is a
+**different defect**, which is worth separating out. Every one of the 176
+remaining pairs sits on a **seed node**; not one sits on an `ORGE_` entity. So
+the entity layer is clean and the residual is upstream of it, in `seed.py`:
+
+| node | normalised label | values |
+| --- | --- | --- |
+| `CO_M` | `M` | 154 matricules |
+| `CO_PROMOTION_IMMOBILIERE` | `PROMOTION IMMOBILIERE` | 117 matricules |
+| `CO_SMAG` | `SMAG` | 73 |
+| `CO_BB` | `BB` | 62 |
+| `CO_PNEU` | `PNEU` | 57 |
+
+These are not containment matches — the token-blocking index only holds tokens
+longer than three characters, so `M` and `BB` cannot be reached that way. They
+are **exact** normalised matches, on the tier the specificity gate deliberately
+does not touch: many firms called "Société M …" normalise to the single
+character `M` once legal-form words are stripped, and hundreds of firms are
+genuinely, separately named *Société de Promotion Immobilière*.
+
+No name-based method can separate firms that really do share a name. Only an
+identifier can, which is precisely what the entity key does — and the fact
+that zero entities are affected is the evidence that it works. The seed node
+stays merged because the seed sheet has one node per name, and every gazette
+observation now hangs off the entity rather than off that node.
 
 ## What this does not fix
 

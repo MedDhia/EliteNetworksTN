@@ -201,7 +201,13 @@ basis that produced it are retained on every entity, so the previous view is
 exactly reproducible, and a validator ERROR check asserts that every
 organisation mention in `events.csv` reaches an entity. Organisation nodes
 still carrying ten or more values of a single hard identifier after the
-rebuild: TODO(rebuild).
+rebuild: **130**, against 288 before, with the worst falling from 1,606
+matricules to 154. Every one of them is a **seed** node and not one is an
+entity, which locates the residual precisely: it is not the matcher any more
+but `seed.py`'s own collapse, where names that normalise to a very short
+string (`SOCIETE M` normalises to `M`) or that hundreds of firms genuinely
+share (*Société de Promotion Immobilière*) get one node. No name-based method
+can separate firms that really do share a name; the entity key can, and does.
 
 **The two layers were affected very unevenly, and the person side is largely
 unaffected.** Only 258 of 10,844 resolved person–organisation dyads (2.4%) were
@@ -212,7 +218,11 @@ rarely carried a person match with it. The org–org layer was the casualty, at
 an endpoint and resolves each one on its own. So the bipartite panel was little
 distorted by the defect and is little changed by the fix; the org–org layer is
 where the difference lies. Resolved org–org observations after the rebuild:
-TODO(rebuild).
+**4,018, up from 3,104**, and org–org spells 8,178 up from 6,928. The layer
+*gained* data because the old code had been deleting it: two firms both
+absorbed by one hub read as a firm tied to itself, and `self_match_dropped`
+falls from 1,948 to 1,012 accordingly. Top degree in the layer falls from
+1,003 to 45.
 
 **Name-keyed entities split one firm across spellings, which is the residual
 organisation-identity error.** It is the mirror image of the merge. Only about
@@ -231,7 +241,22 @@ identically still share a node id under `seed.py`, with the losers in
 `alt_names`, wherever no hard identifier separates them. And the specificity
 gate could itself cost legitimate matches; a test asserts that
 `"Société SFBT Tunisie"` still matches seed `SFBT`, but the net effect on
-resolved dyads is a measured quantity, not an assumption: TODO(rebuild).
+resolved dyads is a measured quantity, not an assumption: **10,929, up from
+10,844**. Getting there took a second correction. The first rebuild *lost* 372
+dyads, because refusing a generic organisation match also removed the dyad
+**anchor** — and those are different jobs. Person resolution credits a
+candidate only where the organisation agrees across two mentions, which needs
+both mentions on the *same* organisation rather than a defensible one, so a
+refused match still anchors perfectly well. The anchor now keeps the refused
+candidate while `resolved_org_id` carries only identity-grade links.
+
+One reconciliation line remains unexplained and is recorded rather than
+resolved: dated spells fall from 13,031 to 12,600 and spell observations from
+15,749 to 15,110. The likely cause is consolidation — two spellings of one
+firm, joined by a shared matricule, becoming one spell instead of two — but
+that is not proven: `spell_observations.csv` does not record every event by
+design, so the obvious coverage test is not decisive, and there is no
+pre-change baseline for it.
 
 **Organisation resolution remains the weaker half, and it has an independent
 check.** A matricule fiscal and a registre-de-commerce number are hard
