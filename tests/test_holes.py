@@ -187,3 +187,94 @@ def test_two_seed_bearers_of_a_name_are_not_a_split(tmp_path, monkeypatch):
         "candidate_person_id,label,n_events,orgs\n"
         "GZ_1,Mohamed Trabelsi,9,Societe Beta\n", encoding="utf-8")
     assert H.split_person_candidates() == []
+
+
+# --- low-degree nodes: where a missed tie changes the position in KIND --- #
+
+def test_a_pendant_with_the_same_name_elsewhere_is_flagged(tmp_path, monkeypatch):
+    """A degree-1 node has no closure and no brokerage and cannot sit on a
+    path. A second organisation changes that in kind, not in degree, so every
+    claim about who is peripheral rests on this band being genuinely sparse."""
+    monkeypatch.setattr(H, "PROCESSED", tmp_path)
+    (tmp_path / "resolution.csv").write_text(
+        "person_mention,resolved_person_id,resolved_person_label,"
+        "resolved_org_id,link_status\n"
+        "Slim Hexabyte,P_A,Slim Hexabyte,CO_1,resolved\n"
+        "Slim Hexabyte,P_A,Slim Hexabyte,CO_2,resolved\n", encoding="utf-8")
+    rows, stats = H.low_degree_audit({("P_A", "CO_1")})
+    assert stats["persons_degree_1_with_candidates"] == 1
+    assert stats["pendants_that_may_be_brokers"] == 1
+    assert rows[0]["candidate_extra_ties"] == 1
+    assert rows[0]["would_become_degree"] == 2
+    assert "same_name_elsewhere" in rows[0]["sources"]
+
+
+def test_a_node_with_nothing_extra_is_confirmed_sparse(tmp_path, monkeypatch):
+    """The majority case, and the one worth reporting: sparsity checked
+    against the evidence rather than assumed."""
+    monkeypatch.setattr(H, "PROCESSED", tmp_path)
+    (tmp_path / "resolution.csv").write_text(
+        "person_mention,resolved_person_id,resolved_person_label,"
+        "resolved_org_id,link_status\n"
+        "Slim Hexabyte,P_A,Slim Hexabyte,CO_1,resolved\n", encoding="utf-8")
+    rows, stats = H.low_degree_audit({("P_A", "CO_1")})
+    assert rows == []
+    assert stats["persons_degree_1_confirmed_sparse"] == 1
+
+
+def test_a_shared_name_cannot_answer_and_says_so(tmp_path, monkeypatch):
+    """The guard that stops this audit manufacturing a flattering number. If
+    two resolved nodes share the name key, "the same name elsewhere" is not
+    evidence about either of them -- it is how a homonym becomes a hub. The
+    honest output is that the question is unanswerable."""
+    monkeypatch.setattr(H, "PROCESSED", tmp_path)
+    (tmp_path / "resolution.csv").write_text(
+        "person_mention,resolved_person_id,resolved_person_label,"
+        "resolved_org_id,link_status\n"
+        "Mohamed Trabelsi,P_A,Mohamed Trabelsi,CO_1,resolved\n"
+        "Mohamed Trabelsi,P_B,Mohamed Trabelsi,CO_2,resolved\n"
+        "Mohamed Trabelsi,P_A,Mohamed Trabelsi,CO_3,resolved\n", encoding="utf-8")
+    rows, stats = H.low_degree_audit({("P_A", "CO_1")})
+    assert rows == []
+    assert stats["persons_whose_name_cannot_answer"] == 1
+
+
+def test_a_declined_dyad_counts_as_a_candidate(tmp_path, monkeypatch):
+    monkeypatch.setattr(H, "PROCESSED", tmp_path)
+    (tmp_path / "resolution.csv").write_text(
+        "person_mention,resolved_person_id,resolved_person_label,"
+        "resolved_org_id,link_status\n"
+        "Slim Hexabyte,P_A,Slim Hexabyte,CO_1,resolved\n", encoding="utf-8")
+    (tmp_path / "review_queue.csv").write_text(
+        "resolved_person_id,runner_up_person_id,resolved_org_id,org_candidate_id\n"
+        "P_A,,CO_9,\n", encoding="utf-8")
+    rows, stats = H.low_degree_audit({("P_A", "CO_1")})
+    assert stats["persons_degree_1_with_candidates"] == 1
+    assert "declined_dyad" in rows[0]["sources"]
+
+
+def test_a_tie_already_asserted_is_not_counted_twice(tmp_path, monkeypatch):
+    monkeypatch.setattr(H, "PROCESSED", tmp_path)
+    (tmp_path / "resolution.csv").write_text(
+        "person_mention,resolved_person_id,resolved_person_label,"
+        "resolved_org_id,link_status\n"
+        "Slim Hexabyte,P_A,Slim Hexabyte,CO_1,resolved\n", encoding="utf-8")
+    (tmp_path / "review_queue.csv").write_text(
+        "resolved_person_id,runner_up_person_id,resolved_org_id,org_candidate_id\n"
+        "P_A,,CO_1,\n", encoding="utf-8")
+    rows, stats = H.low_degree_audit({("P_A", "CO_1")})
+    assert rows == [] and stats["persons_degree_1_confirmed_sparse"] == 1
+
+
+def test_a_well_connected_node_is_out_of_scope(tmp_path, monkeypatch):
+    """The audit is about the band where a missed tie changes the position in
+    kind. A node with six ties gains degree from a seventh, not a role."""
+    monkeypatch.setattr(H, "PROCESSED", tmp_path)
+    (tmp_path / "resolution.csv").write_text(
+        "person_mention,resolved_person_id,resolved_person_label,"
+        "resolved_org_id,link_status\n"
+        "Slim Hexabyte,P_A,Slim Hexabyte,CO_9,resolved\n", encoding="utf-8")
+    obs = {("P_A", f"CO_{i}") for i in range(5)}
+    rows, stats = H.low_degree_audit(obs)
+    assert rows == []
+    assert not any(k.startswith("persons_degree_") for k in stats)

@@ -472,6 +472,131 @@ def split_person_candidates() -> list[dict]:
 
 
 # --------------------------------------------------------------------------- #
+# low-degree nodes: where a missed tie changes the structural position
+# --------------------------------------------------------------------------- #
+
+FIELDS_LOWDEG = [
+    "node_id", "label", "node_kind", "asserted_degree", "candidate_extra_ties",
+    "would_become_degree", "sources", "detail",
+]
+
+
+def low_degree_audit(observed: set[tuple[str, str]],
+                     max_degree: int = 2) -> tuple[list[dict], dict]:
+    """For every node with 1-2 ties, what else the evidence says it has.
+
+    This is the population where a missed tie matters most, and not because
+    the count is small. A degree-1 node is a PENDANT: it has no closure, no
+    brokerage, and cannot sit on a path between anything. Give it a third tie
+    and its structural position changes in kind, not in degree -- it becomes a
+    broker. Every claim about periphery, about who is marginal to the elite
+    network, rests on nodes in this band being genuinely sparse rather than
+    merely under-resolved.
+
+    Three independent sources of a candidate extra tie, all already recorded:
+
+    * **the same name elsewhere.** A resolved person was resolved from one
+      mention. Every OTHER mention sharing their name key, at another
+      organisation, is a candidate tie -- and the audit reports it only where
+      the name is rare enough for the question to be answerable, because for
+      `MOHAMED TRABELSI` the answer is unknowable and saying so is the honest
+      result.
+    * **a declined dyad.** The review queue holds dyads for this very node
+      that the matcher would not decide.
+    * **a shared identifier.** The organisation's matricule or RC number
+      appearing on another filing whose mention resolved elsewhere.
+
+    Nothing here is added to the network. The output is a worklist ordered by
+    how much a node's position would change, which is the only ordering that
+    matters if the question is whether the periphery is real.
+    """
+    deg_p: dict[str, set[str]] = defaultdict(set)
+    deg_o: dict[str, set[str]] = defaultdict(set)
+    for pid, oid in observed:
+        deg_p[pid].add(oid)
+        deg_o[oid].add(pid)
+
+    res = _read("resolution.csv")
+    # Name key -> the organisations that name was ever printed beside, and the
+    # node it resolved to where it resolved at all.
+    key_orgs: dict[str, set[str]] = defaultdict(set)
+    key_node: dict[str, str] = {}
+    key_bearers: dict[str, set[str]] = defaultdict(set)
+    label_of: dict[str, str] = {}
+    for r in res:
+        k = parse_person(r.get("person_mention") or "").match_key
+        if not k:
+            continue
+        oid = r.get("resolved_org_id") or ""
+        if oid:
+            key_orgs[k].add(oid)
+        pid = r.get("resolved_person_id") or ""
+        if pid and r.get("link_status") in ("resolved", "inferred", "snowball", "manual"):
+            key_node.setdefault(k, pid)
+            label_of.setdefault(pid, r.get("resolved_person_label") or "")
+            key_bearers[k].add(pid)
+
+    # Declined dyads, per person node.
+    declined_for: dict[str, set[str]] = defaultdict(set)
+    for r in _read("review_queue.csv"):
+        pid = r.get("resolved_person_id") or r.get("runner_up_person_id") or ""
+        oid = r.get("resolved_org_id") or r.get("org_candidate_id") or ""
+        if pid and oid:
+            declined_for[pid].add(oid)
+
+    rows: list[dict] = []
+    stats: dict[str, int] = defaultdict(int)
+    for pid, orgs in deg_p.items():
+        d = len(orgs)
+        if not (1 <= d <= max_degree):
+            continue
+        stats[f"persons_degree_{d}"] += 1
+        extra: set[str] = set()
+        sources: list[str] = []
+        # A name shared by two or more resolved nodes cannot answer this
+        # question, and pretending otherwise is how a homonym becomes a hub.
+        keys = [k for k, n in key_node.items() if n == pid]
+        ambiguous_name = any(len(key_bearers[k]) > 1 for k in keys)
+        if not ambiguous_name:
+            for k in keys:
+                same_name = key_orgs.get(k, set()) - orgs
+                if same_name:
+                    extra |= same_name
+                    sources.append("same_name_elsewhere")
+        else:
+            stats["persons_whose_name_cannot_answer"] += 1
+        dec = declined_for.get(pid, set()) - orgs
+        if dec:
+            extra |= dec
+            sources.append("declined_dyad")
+        if not extra:
+            stats[f"persons_degree_{d}_confirmed_sparse"] += 1
+            continue
+        stats[f"persons_degree_{d}_with_candidates"] += 1
+        # The change in KIND, not the change in count: a pendant that gains a
+        # second organisation can broker between them.
+        if d == 1:
+            stats["pendants_that_may_be_brokers"] += 1
+        rows.append({
+            "node_id": pid, "label": label_of.get(pid, ""),
+            "node_kind": "person", "asserted_degree": d,
+            "candidate_extra_ties": len(extra),
+            "would_become_degree": d + len(extra),
+            "sources": ";".join(sorted(set(sources))),
+            "detail": " | ".join(sorted(extra)[:4]),
+        })
+
+    for oid, people in deg_o.items():
+        d = len(people)
+        if not (1 <= d <= max_degree):
+            continue
+        stats[f"orgs_degree_{d}"] += 1
+    rows.sort(key=lambda r: (-r["candidate_extra_ties"], r["node_id"]))
+    stats["low_degree_persons_audited"] = sum(
+        v for k, v in stats.items() if k.startswith("persons_degree_")
+        and k.count("_") == 2)
+    return rows, dict(stats)
+
 
 def run() -> dict:
     ensure_dirs()
@@ -539,6 +664,9 @@ def run() -> dict:
             len(_read("person_ties_review_queue.csv")), len(k_dec)))
     _write("hole_exposure_by_layer.csv", layers, list(layers[0].keys()))
 
+    lowdeg, lowdeg_stats = low_degree_audit(observed)
+    _write("low_degree_audit.csv", lowdeg, FIELDS_LOWDEG)
+
     bridging = sum(int(s["would_connect_persons"] or 0) for s in splits_org)
     diag = {
         "person_org_edges_asserted": len(observed),
@@ -555,6 +683,7 @@ def run() -> dict:
         "split_person_pairs": len(splits_person),
         "person_pairs_behind_split_orgs": bridging,
     }
+    diag.update(lowdeg_stats)
     if pairs_obs:
         diag["false_hole_exposure_pct"] = round(
             100 * (pairs_pot - pairs_obs) / pairs_obs, 1)
