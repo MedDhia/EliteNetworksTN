@@ -101,6 +101,59 @@ whether a token is a given name or a surname. These land in review.
 identity key.** They are mostly non-elite officers of small firms, but they are
 also where new elite entrants would appear. They have not been vetted.
 
+**Four inference tiers widen coverage beyond what the dyad anchor reaches, and
+each carries its own failure mode.** See
+`docs/INFERENCE-TIERS-multiplex.md` for the design and the measurements; what
+follows is what can go wrong with each. All four are labelled and droppable in
+one filter, which is the point of labelling them.
+
+- **Snowballed links propagate their own errors.** A link made from an anchor
+  a previous pass supplied is only as good as that anchor, and a wrong anchor
+  is reused by every later pass. Ambiguity blocks a snowball by the same
+  margin rule the first pass applies, and a tie between two candidate
+  organisations is refused rather than broken — but neither guard catches a
+  confident wrong anchor. `resolve_pass` records which round named each row,
+  so the propagation is measurable: filtering to `resolve_pass == 0`
+  reproduces the single-pass build exactly, and dropping one round at a time
+  shows what each contributed. Downstream these carry
+  `evidence_tier = gazette_snowball`, kept apart from `gazette_inferred`
+  because an inference rests on a name being unique corpus-wide and cannot
+  propagate.
+- **Address corroboration can merge a parent with its subsidiary.** Two firms
+  at one seat sharing a name stem is the commonest false positive, which is
+  why the label test uses `token_sort_ratio` rather than the containment-prone
+  `token_set_ratio`, and why a key carrying a matricule is never merged on its
+  address. The cap on firms per address (4) is a judgement read off a steep but
+  long-tailed distribution; `orgentity --sensitivity` reports the merge count
+  at five settings. Where it fires wrongly it *overstates* a firm's degree,
+  the same direction as the merge hubs it was built to help correct — so the
+  tier is worth dropping in any analysis that turns on organisation degree.
+- **Kinship ties are as good as the person resolution under them.** A tie whose
+  endpoints are two merged homonyms is a marriage between two composites. The
+  tier that is weakest here is flagged: `evidence_tier = kinship_inferred`
+  marks a dyad with at least one end named by name rarity rather than by an
+  organisation agreeing. Separately, `NAME` allows at most five tokens, so a
+  long Tunisian name loses its leading given name ("Malika Bent El Haj Mhamed
+  Sghaier" → "Bent El Haj Mhamed Sghaier"). That predates this tier and
+  affects role events the same way, but it lands on the person side of a
+  kinship tie too.
+- **A marriage has no observable start.** The gazette does not publish
+  weddings, so every `spouse_of` onset is left-censored without exception and
+  `onset` is empty by construction. A duration analysis over this layer would
+  be measuring how often a couple appear in print. Only `widow_of` bounds a
+  terminus.
+- **`maiden_name_of` is a family-name link, not a parent edge.** It says which
+  family a woman was born into, not who her father is. It carries
+  `is_marriage = 0` and must be excluded from any marriage count; the
+  validator checks that at ERROR level rather than reporting it, because a
+  `née` marker read as a marriage invents a husband and the resulting tie
+  looks entirely plausible on inspection.
+- **A stated residence is not an identifier.** Two brothers share a house, so
+  a residence is scored and never matched on. It is used in one place only: to
+  *refuse* a name-rarity inference where one name key appears at two different
+  addresses. Absence of an address is not treated as agreement — most mentions
+  state none.
+
 ## Extraction
 
 **The accuracy figures are out of the scope of their own evidence.** Precision

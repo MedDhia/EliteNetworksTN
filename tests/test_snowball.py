@@ -15,6 +15,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from elitenet import orgentity as OE
+from elitenet.names import parse_person
 from elitenet import resolve as R
 
 
@@ -302,3 +303,33 @@ def test_the_merge_is_independent_of_iteration_order():
         OE._merge_on_address(keyed, key_id, {}, Counter())
         results.append(set(key_id.values()))
     assert results[0] == results[1] and len(results[0]) == 1
+
+
+# --- the residence discriminator on the inference tier -------------------- #
+
+NAME = "Mohamed Trabelsi"
+KEY = parse_person(NAME).match_key
+
+
+def _rarity(*residences):
+    idx = _idx(persons={"P_A": NAME})
+    idx.by_match_key[KEY] = {"P_A"}
+    return R.build_name_rarity(idx, [NAME], [(NAME, a) for a in residences])
+
+
+def test_two_addresses_refuse_a_name_rarity_inference():
+    """A unique spelling says nobody else is written that way; it says nothing
+    about how many people are. "Mohamed Trabelsi" at Sfax and at Ariana is one
+    spelling and two men, and the inference tier has no anchor to tell it so."""
+    assert not _rarity("12 rue de rome tunis",
+                       "34 avenue farhat hached sfax").is_unique(KEY)
+
+
+def test_one_address_leaves_the_inference_standing():
+    assert _rarity("12 rue de rome tunis").is_unique(KEY)
+
+
+def test_no_address_leaves_the_inference_standing():
+    """Most mentions state no residence. Absence must not be read as conflict,
+    or the tier would collapse to nothing."""
+    assert _rarity().is_unique(KEY)

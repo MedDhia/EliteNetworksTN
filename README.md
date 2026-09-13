@@ -271,14 +271,38 @@ two is either OCR damage or an **organisation-resolution merge** — which makes
 this the only check in the pipeline that can see a merge, since a merge
 otherwise looks exactly like a well-corroborated match. See
 `docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md`.
+
+`make personties` builds a third layer: **kinship**, one-mode over persons,
+read off the `épouse` / `ép.` / `EP` / `veuve` markers the gazette drops into
+shareholder and transaction lines. It is separate from the bipartite panel for
+the same reason the ownership layer is. Two things to know before using it.
+`née X` is a woman's **natal surname**, not a husband, so it is a distinct
+relation with `is_marriage = 0` — the validator checks that at ERROR level,
+because a `née` read as a marriage invents a man and the resulting tie looks
+entirely plausible. And no marriage onset is ever observed: the gazette does
+not publish weddings, so every onset is left-censored by construction and a
+duration analysis over this layer would be measuring publication frequency.
+
+Coverage beyond the dyad anchor rests on **four labelled inference tiers** —
+kinship ties, subsidiaries (`filiale de <firm>`), address corroboration of
+organisation identity, and multi-seed snowballing, where what one pass named
+becomes the anchor for what it could not. Each is additive over a first pass
+left exactly as it was, and each is droppable in one filter:
+`resolve_pass == 0` reproduces the single-pass build, `evidence_tier` separates
+`gazette_dated` from `gazette_inferred` and `gazette_snowball`, and
+`entity_basis` marks an address-corroborated merge. Read
+`docs/INFERENCE-TIERS-multiplex.md` for what each rests on and how each can be
+wrong — a snowball propagates its own errors, which is why the pass number is
+recorded rather than the tier being merged into `resolved`.
+
 `docs/GOLD-FINDINGS-multiplex.md` records the twenty extraction
 defects the gold sample exposed, which is also why the figures above supersede
 those of the first release.
 
 ```bash
 make all        # seed -> mirror -> calendar -> segment -> extract -> resolve
-                # -> spells -> orgties -> orgattrs -> export -> tergm
-                # -> codebook -> validate
+                # -> orgentity -> spells -> orgties -> personties
+                # -> orgattrs -> export -> tergm -> codebook -> validate
 make test
 ```
 

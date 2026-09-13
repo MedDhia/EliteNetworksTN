@@ -344,13 +344,27 @@ class NameRarity:
 
     seed_count: dict[str, int] = field(default_factory=dict)
     gazette_count: dict[str, int] = field(default_factory=dict)
+    # Distinct stated residences per name key. A name printed at two different
+    # addresses is borne by two people however uniquely it is spelled, which is
+    # the one orthogonal test on rarity the corpus supplies.
+    addresses: dict[str, set[str]] = field(default_factory=dict)
 
     def is_unique(self, key: str) -> bool:
         return (self.seed_count.get(key, 0) <= MAX_SEED_HOMONYMS
-                and self.gazette_count.get(key, 0) <= MAX_GAZETTE_VARIANTS)
+                and self.gazette_count.get(key, 0) <= MAX_GAZETTE_VARIANTS
+                and len(self.addresses.get(key, ())) <= 1)
 
 
-def build_name_rarity(idx: SeedIndex, mentions: Iterable[str]) -> NameRarity:
+def build_name_rarity(idx: SeedIndex, mentions: Iterable[str],
+                      residences: Iterable[tuple[str, str]] = ()) -> NameRarity:
+    """How rare each name is, and whether it sits at one address or several.
+
+    Spelling uniqueness and address uniqueness fail differently. A unique
+    spelling says nobody else is written that way; it says nothing about how
+    many people are. "Mohamed Trabelsi" at Sfax and "Mohamed Trabelsi" at
+    Ariana is a single spelling and two men, and the inference tier -- which
+    has no organisation to anchor it -- has no other way to know.
+    """
     seed = {k: len(v) for k, v in idx.by_match_key.items()}
     gz: Counter = Counter()
     seen: set[str] = set()
@@ -362,7 +376,13 @@ def build_name_rarity(idx: SeedIndex, mentions: Iterable[str]) -> NameRarity:
         k = parse_person(m).match_key
         if k:
             gz[k] += 1
-    return NameRarity(seed_count=seed, gazette_count=dict(gz))
+    addrs: dict[str, set[str]] = defaultdict(set)
+    for mention, addr in residences:
+        k = parse_person((mention or "").strip()).match_key
+        if k and addr:
+            addrs[k].add(addr)
+    return NameRarity(seed_count=seed, gazette_count=dict(gz),
+                      addresses=dict(addrs))
 
 
 # --------------------------------------------------------------------------- #
@@ -822,7 +842,10 @@ def run(events_path: Path | None = None) -> dict:
     # How rare each name is, on the seed side and across the corpus. Used only
     # to decide whether a name can identify a person with no organisation to
     # anchor it.
-    rarity = build_name_rarity(idx, (p for e in rows for p in _persons_of(e)))
+    rarity = build_name_rarity(
+        idx, (p for e in rows for p in _persons_of(e)),
+        ((e.get("person_mention") or "", e.get("person_address_normalised") or "")
+         for e in rows if e.get("person_address_normalised")))
 
     for e in rows:
         for who in _persons_of(e):
