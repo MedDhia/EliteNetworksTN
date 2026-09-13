@@ -278,6 +278,72 @@ ties), the clause word "Objectifs" (533), and one unlabelled node (532).
 They are excluded from panel (d) and named in its note rather than deleted
 quietly.
 
+## One graph, six tie types — `fig12`
+
+`python scripts/figure_elite_graph.py` →
+`figures/fig12_elite_graph.{png,pdf}` and
+`data/processed/multiplex/elite_graph_{nodes,edges}.csv`
+
+A single entity-level graph — individuals and organisations as separate
+nodes, nothing aggregated or projected onto one mode — admitting exactly six
+kinds of tie and nothing else:
+
+| category | ties |
+|---|---|
+| 6 · every edge in the seed file, whatever its label | 30,295 |
+| 1 · an individual owning shares in, or on the governing body of, a company (state-owned or not) | 8,434 |
+| 5 · an organisation owning shares in another organisation | 1,792 |
+| 3 · an individual on an association board or in a party's national structures | 964 |
+| 4 · members of the government and of parliament | 293 |
+| 2 · individual to individual by family | 13 |
+
+**37,855 entities, 41,791 ties**: 13,630 individuals, 22,920 companies,
+1,076 associations and unions, 194 state bodies, 35 parties and
+parliamentary blocs. The largest connected component holds **23,808 (63%)**
+and is what the figure draws.
+
+The largest nodes are the RCD central committee (419 ties), État Tunisien
+(337), the Présidence (196), the SICAR investment vehicles, BIAT and BNA,
+and the Nidaa Tounes and Ennahda party organs.
+
+### What is excluded
+
+**5,438 gazette ties** whose holder is a government employee below the
+government, parliament and board level: `chef_de_service`,
+`sous_directeur`, `secretaire_general`, `directeur general`, `conseiller`,
+`representant`, and the state offices whose rank the gazette never states.
+Auditors and liquidators go too, and so do chief executives not stated to
+sit on a board.
+
+### Three judgement calls, recorded because they are arguable
+
+* **A SARL's `gérant` counts as a governing-body seat.** A SARL has no
+  board; the gérant *is* its governing organ and is normally also an
+  `associé`. Excluding gérants would drop 10,304 gazette ties and most of
+  the private sector with them.
+* **A chief executive not stated to sit on the board does not count.**
+  `dg`, `dga` and `ceo` are management, and category 1 says "sitting at the
+  board" — so 952 gazette `dg` ties are out. Seed-file rows labelled CEO or
+  GENERAL MANAGER are in regardless, under requirement 6.
+* **`chef_de_cabinet` is out here**, though the broader decision-level cut
+  above keeps him: a cabinet chief is neither a member of the government
+  nor a board member, and this list is narrower.
+
+`BOARD_OR_OWNER`, `ASSOCIATION_OFFICER` and `GOVERNMENT_MEMBER` in
+`scripts/figure_elite_graph.py` are the whole specification, in one place,
+to be re-cut.
+
+### Two notes on the drawing
+
+`nx.spring_layout` is unusable at this size: with scipy present it takes
+the sparse path, which loops over nodes in **Python** once per iteration,
+so 23,808 nodes × 80 iterations ran for 20 minutes without completing a
+step. The layout is igraph's DRL, the same class of algorithm in C, which
+returns in seconds.
+
+The edge and node lists are written alongside the figure so the graph can
+be re-drawn in Gephi, igraph or networkx without re-running the filter.
+
 ## Known limitations
 
 * **Gazette-only people are mention clusters, not verified individuals.** Two
