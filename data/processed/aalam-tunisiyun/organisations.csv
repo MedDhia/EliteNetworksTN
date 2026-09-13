@@ -3,11 +3,10 @@ ASSOC_JMYH_ADAB,جمعية الآداب,JMY ALDAB,association,1,aalam:3.02
 ASSOC_JMYH_ADAB_MSRHYH,جمعية الآداب المسرحية,JMY ALDAB ALMSRHY,association,1,aalam:3.07
 ASSOC_JMYH_ADAB_TMTHYLYH,جمعية الآداب التمثيلية,JMY ALDAB ALTMTHYLY,association,1,aalam:2.11
 ASSOC_JMYH_AWQAF_HRMYN_SHRYFYN,جمعية أوقاف الحرمين الشريفين,JMY WQAF ALHRMYN ALSHRYFYN,association,1,aalam:2.10
-ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,ALJMY ALKHLDWNY,association,16,aalam:2.07
+ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,ALJMY ALKHLDWNY,association,24,aalam:2.03
 ASSOC_JMYH_KHYRYH_ASLAMYH,الجمعية الخيرية الإسلامية,ALJMY ALKHYRY ALSLAMY,association,5,aalam:2.14
 ASSOC_JMYH_NHDH_AQTSADYH,جمعية النهضة الاقتصادية,JMY ALNHD ALAQTSADY,association,1,aalam:3.07
-ASSOC_JMYH_QDMA_MDRSH_SADQYH,جمعية قدماء المدرسة الصادقية,JMY QDMA ALMDRS ALSADQY,association,1,aalam:2.04
-ASSOC_JMYH_QDMA_SADQYH,جمعية قدماء الصادقية,JMY QDMA ALSADQY,association,4,aalam:3.01
+ASSOC_JMYH_QDMA_SADQYH,جمعية قدماء الصادقية,JMY QDMA ALSADQY,association,5,aalam:2.04
 ASSOC_JMYH_TMTHYLYH_ADAB,الجمعية التمثيلية الآداب,ALJMY ALTMTHYLY ALDAB,association,3,aalam:3.06
 ASSOC_NADY_MSTFY_AGHH,نادي مصطفى آغة,NADY MSTF GH,association,1,aalam:3.04
 ASSOC_NADY_QDMA_SADQYH,نادي قدماء الصادقية,NADY QDMA ALSADQY,association,1,aalam:3.04
@@ -22,11 +21,10 @@ MSQ_JAM_SAHB_TAB,جامع صاحب الطابع,JAM SAHB ALTAB,mosque,2,aalam:1.
 MSQ_JAM_ZYTWNH,جامع الزيتونة,JAM ALZYTWN,mosque,19,aalam:1.03
 NEWS_DBYSH,الدبيش,ALDBYSH,newspaper,1,aalam:3.03
 NEWS_FRNSA_ASLAMYH,فرنسا الإسلامية,FRNSA ALSLAMY,newspaper,1,aalam:2.04
-NEWS_HADRH,الحاضرة,ALHADR,newspaper,1,aalam:3.03
 NEWS_JRYDH_ALAM,جريدة الإعلام,JRYD ALLAM,newspaper,1,aalam:1.08
 NEWS_JRYDH_AQDAM,جريدة الإقدام,JRYD ALQDAM,newspaper,2,aalam:2.09
 NEWS_JRYDH_BRHAN,جريدة البرهان,JRYD ALBRHAN,newspaper,2,aalam:3.02
-NEWS_JRYDH_HADRH,جريدة الحاضرة,JRYD ALHADR,newspaper,20,aalam:2.01
+NEWS_JRYDH_HADRH,جريدة الحاضرة,JRYD ALHADR,newspaper,22,aalam:2.01
 NEWS_JRYDH_LSAN_HQ,جريدة لسان الحق,JRYD LSAN ALHQ,newspaper,1,aalam:3.02
 NEWS_JRYDH_MBSHR,جريدة المبشر,JRYD ALMBSHR,newspaper,1,aalam:3.02
 NEWS_JRYDH_MNTZR,جريدة المنتظر,JRYD ALMNTZR,newspaper,1,aalam:3.02
@@ -35,7 +33,7 @@ NEWS_JRYDH_NTAJ_AKHBAR,جريدة نتائج الأخبار,JRYD NTAJ ALKHBAR,ne
 NEWS_JRYDH_SHAHRAH,جريدة شاهراه,JRYD SHAHRAH,newspaper,2,aalam:2.05
 NEWS_JRYDH_SWT_TWNSY,جريدة صوت التونسي,JRYD SWT ALTWNSY,newspaper,2,aalam:3.09
 NEWS_JRYDH_TWNS,جريدة تونس,JRYD TWNS,newspaper,2,aalam:3.08
-NEWS_JRYDH_TWNSY,جريدة التونسي,JRYD ALTWNSY,newspaper,10,aalam:2.04
+NEWS_JRYDH_TWNSY,جريدة التونسي,JRYD ALTWNSY,newspaper,14,aalam:2.04
 NEWS_JRYDH_TWNS_MSAYH,جريدة تونس المسائية,JRYD TWNS ALMSAY,newspaper,1,aalam:2.15
 NEWS_MJLH_ALM_ADBY,مجلة العالم الأدبي,MJL ALALM ALDBY,newspaper,1,aalam:3.08
 NEWS_ML_TWNSY,العمل التونسي,ALML ALTWNSY,newspaper,2,aalam:3.06
@@ -46,7 +44,6 @@ NEWS_RJAL_WWALM,رجال وعوالم,RJAL WWALM,newspaper,1,aalam:3.06
 NEWS_SHF_HZB_HR_DSTWRY_TWNSY,صحف الحزب الحر الدستوري التونسي,SHF ALHZB ALHR ALDSTWRY ALTWNSY,newspaper,1,aalam:3.09
 NEWS_SWT_SHB,صوت الشعب,SWT ALSHB,newspaper,1,aalam:3.06
 NEWS_SWT_TWNSY,صوت التونسي,SWT ALTWNSY,newspaper,1,aalam:3.06
-NEWS_TWNSY,التونسي,ALTWNSY,newspaper,4,aalam:3.03
 NEWS_ZHRH,الزهرة,ALZHR,newspaper,1,aalam:3.03
 OFFICE_ADARH_JHAT,إدارة الجهات,DAR ALJHAT,office,1,aalam:1.02
 OFFICE_ADARH_MTBH_RSMYH,إدارة المطبعة الرسمية,DAR ALMTB ALRSMY,office,1,aalam:3.08
@@ -190,12 +187,8 @@ ORG_HKWMH_THMANYH_JDYDH,الحكومة العثمانية الجديدة,ALHKWM 
 ORG_HKWMH_TWNSYH,الحكومة التونسية,ALHKWM ALTWNSY,org,4,aalam:1.07
 ORG_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,HRK ALSHBAB ALTWNSY,org,7,aalam:2.13
 ORG_HRKH_SHBAN_TWNSYYN,حركة الشبان التونسيين,HRK ALSHBAN ALTWNSYYN,org,2,aalam:2.04
-ORG_HYH_MDYRH_LLJMYH_KHLDWNYH,الهيئة المديرة للجمعية الخلدونية,ALHY ALMDYR LLJMY ALKHLDWNY,org,3,aalam:2.03
-ORG_HYH_THRYR_JRYDH_HADRH,هيئة تحرير جريدة الحاضرة,HY THRYR JRYD ALHADR,org,1,aalam:2.03
-ORG_JMYH_KHLDWNYH,الجمعية الخلدونية,ALJMY ALKHLDWNY,org,2,aalam:2.03
 ORG_JMYH_WQTYH_LFD_NZAAT,الجمعية الوقتية لفض النزاعات,ALJMY ALWQTY LFD ALNZAAT,org,1,aalam:1.06
 ORG_JYSH_TRKY,الجيش التركي,ALJYSH ALTRKY,org,1,aalam:3.05
-ORG_KHLDWNYH,الخلدونية,ALKHLDWNY,org,1,aalam:2.10
 ORG_LJAN_MHDTHH_LDBT_ASLAHAT_ASASYH,اللجان المحدثة لضبط الاصلاحات الأساسية,ALLJAN ALMHDTH LDBT ALASLAHAT ALSASY,org,1,aalam:2.06
 ORG_LJNH_ASLAH_TLYM_ZYTWNY,لجنة إصلاح التعليم الزيتوني,LJN SLAH ALTLYM ALZYTWNY,org,1,aalam:2.15
 ORG_LJNH_BRAMJ_MDRSH_SADQYH,لجنة برامج المدرسة الصادقية,LJN BRAMJ ALMDRS ALSADQY,org,1,aalam:1.08
@@ -276,7 +269,6 @@ SCH_JAMH_AZHR,جامعة الأزهر,JAM ALZHR,school,1,aalam:1.03
 SCH_JAMH_HMBWRGH,جامعة همبورغ,JAM HMBWRGH,school,3,aalam:3.13
 SCH_JAMH_SWRBWN,جامعة الصوربون,JAM ALSWRBWN,school,3,aalam:2.05
 SCH_JAMH_ZYTWNYH,الجامعة الزيتونية,ALJAM ALZYTWNY,school,3,aalam:3.10
-SCH_KHLDWNYH,الخلدونية,ALKHLDWNY,school,2,aalam:3.10
 SCH_KLYH_ADAB_SWRBWN,كلية الآداب (السوربون),KLY ALDAB ALSWRBWN,school,1,aalam:2.13
 SCH_KLYH_HQWQ_BAKS_AN_BRWFANS,كلية الحقوق بإكس آن بروفانس,KLY ALHQWQ BKS N BRWFANS,school,1,aalam:2.15
 SCH_KLYH_HQWQ_BBARYS,كلية الحقوق بباريس,KLY ALHQWQ BBARYS,school,3,aalam:2.13

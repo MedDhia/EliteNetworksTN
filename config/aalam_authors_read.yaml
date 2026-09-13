@@ -53,6 +53,24 @@ authorities:
   - ابن عربي
   - جلال الدين الرومي
 
+  # Classical poets. Drawing the tutelage layer surfaced these: the book names
+  # them among what a man read, and they entered the graph as his teachers.
+  # They were not on the first version of this list, which is the point
+  # LIMITATIONS s5 makes -- a named list catches the authors already seen and
+  # nothing else, and only a figure or a coded sample turns up the next batch.
+  - أبو تمام
+  - الفرزدق
+  - عمر الخيام
+  - الشريف الرضي
+  - أبو العلاء المعري
+  - سعدي الشيرازي
+  - امرؤ القيس
+  - البحتري
+  - أبو نواس
+  - جرير
+  - الخنساء
+  - حافظ الشيرازي
+
   # Modern literary figures the book lists as read rather than attended. None
   # is Tunisian and none taught in Tunis; they appear in the same enumerating
   # construction as the names above, so they fail in the same way. Tunisian

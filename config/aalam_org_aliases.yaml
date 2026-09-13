@@ -1,0 +1,41 @@
+# Organisations the book names more than one way.
+#
+# The register is built from whatever string a sentence used, so one body
+# arrives under several: الجمعية الخلدونية and الخلدونية and
+# الهيئة المديرة للجمعية الخلدونية; جريدة الحاضرة and الحاضرة;
+# جريدة التونسي and التونسي. Left split, the Khaldouniyya looks like two
+# smaller institutions than it is, and a figure of what bound the elite
+# together understates exactly the thing it is drawing.
+#
+# These are hand-picked, not inferred. A containment rule over folded names
+# proposes 109 pairs across 366 organisations, and most are wrong: التونسي is
+# a substring of الحزب الحر الدستوري التونسي, حركة الشباب التونسي and
+# الحكومة التونسية, which are a party, a movement and a government. Merging on
+# similarity would fuse them. So the merges are listed one by one, and a body
+# stays split until someone has read both names.
+#
+# Deliberately NOT merged:
+#   مكتبة جامع الزيتونة        a library inside the mosque, not the mosque
+#   شيخ جامع الزيتونة          an office held at it, not the body
+#   لجنة برامج المدرسة الصادقية a committee that designed its syllabus
+#   النشرة العربية لجريدة التونسي  the paper's Arabic edition, which the book
+#                              treats as a distinct publication
+#
+# Each entry fixes a canonical name AND a canonical kind. The kind matters as
+# much as the name: identifiers are namespaced by it, so the same body arriving
+# once as an `association` and once as a `school` still resolves to two nodes
+# (ASSOC_... and SCH_...) even after the names agree. That is exactly how the
+# Khaldouniyya came out as two institutions on the first drawing.
+aliases:
+  "جريدة الحاضرة":
+    kind: newspaper
+    surfaces: ["الحاضرة", "هيئة تحرير جريدة الحاضرة"]
+  "الجمعية الخلدونية":
+    kind: association
+    surfaces: ["الخلدونية", "الهيئة المديرة للجمعية الخلدونية"]
+  "جريدة التونسي":
+    kind: newspaper
+    surfaces: ["التونسي"]
+  "جمعية قدماء الصادقية":
+    kind: association
+    surfaces: ["جمعية قدماء المدرسة الصادقية"]
