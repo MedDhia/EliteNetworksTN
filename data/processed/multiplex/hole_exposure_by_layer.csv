@@ -1,6 +1,6 @@
 layer,nodes,components_observed,components_potential,largest_observed,largest_potential,connected_pairs_observed,connected_pairs_potential,pairs_on_the_boundary,exposure_pct,bridging_nodes_not_in_network,queue_rows,usable_declined_edges,verdict
-person-organisation (all years),7832,4358,4193,2548,2771,3246528,3839388,592860,18.3,75,3770,3076,measured
-person-organisation 1957-2010,3879,2604,2543,781,846,305522,358482,52960,17.3,71,3770,1202,measured
-person-organisation 2011-2026,7629,4424,4310,2170,2313,2355776,2676319,320543,13.6,43,3770,2087,measured
-organisation ownership,8260,1593,1298,4252,5264,9052835,13854647,4801812,53.0,9077,10641,8146,measured
-kinship,26,13,13,2,2,13,13,0,0.0,12162,8750,7238,measured
+person-organisation (all years),7823,4376,4214,2514,2725,3160474,3713017,552543,17.5,71,3801,3113,measured
+person-organisation 1957-2010,3869,2603,2548,770,829,297034,344277,47243,15.9,69,3801,1210,measured
+person-organisation 2011-2026,7618,4436,4325,2170,2324,2355667,2701589,345922,14.7,41,3801,2117,measured
+organisation ownership,8315,1599,1303,4285,5285,9193689,13965557,4771868,51.9,9087,10627,8144,measured
+kinship,28,14,14,2,2,14,14,0,0.0,12162,8749,7238,measured

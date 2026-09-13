@@ -11,8 +11,8 @@ The register knows which companies exist; it does not know their legal form
 separates a company from an association and stops there: SARL, SUARL, SA and
 everything else are one value. So the register, on its own, cannot produce the
 list of SARL and SA companies that the question asks for. Parsing the form out
-of the registered *name* recovers only 5.4% of rows, because most companies do
-not carry their form in their denomination.
+of the registered *name* recovers only 5.4% of companies, because most do not
+carry their form in their denomination.
 
 The gazette knows the legal form, from its own filing structure
 ---------------------------------------------------------------
@@ -50,7 +50,10 @@ companies whose form is *known*, with the remainder reported as a bound.
 
 **It does not fold SUARL into SARL.** A SUARL is a single-member company: one
 associate, so no internal coalition and no shareholder network to speak of.
-Counting it as a SARL would inflate the SARL population by 19% with firms
+It also behaves differently in the result: a SUARL link reaches a seed elite
+4.1% of the time against a SA's 15.9%, so folding the two together would
+dilute the signal an elite study is looking for.
+Counting it as a SARL would inflate the SARL population by 22% with firms
 whose ownership structure is categorically different. It is labelled and
 reported beside them, and the caller decides.
 
@@ -58,7 +61,7 @@ reported beside them, and the caller decides.
 first under one form and later under another has *transformed* -- a SARL
 opening its capital and becoming an SA is a real corporate event with a date,
 and this project has a standing rule against resolving a disagreement by
-majority. **795** companies convert, and the date of the switch is recorded.
+majority. **746** companies convert, and the date of the switch is recorded.
 
 But a conversion has to be sustained on both sides, and getting that wrong
 was the first error here. Taking the *latest* filing as the current form let
@@ -68,9 +71,9 @@ company into a SARL. That rule produced **1,637** conversions, of which
 **842 -- 51% -- were single anomalous filings**. `decide_form` now requires
 each side of the switch to carry at least `CONVERSION_MIN_SUPPORT` filings of
 its own form; a minority that fails the test is recorded in `minority_forms`
-and does not decide. The 795 that survive split 263 SARL->SA, 258
-SUARL->SARL, 165 SARL->SUARL and 101 SA->SARL -- all directions a company
-can actually move in.
+and does not decide. The 746 that survive split 247 SUARL->SARL, 231
+SARL->SA, 167 SARL->SUARL and 94 SA->SARL -- all directions a company can
+actually move in.
 """
 from __future__ import annotations
 

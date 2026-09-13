@@ -9,7 +9,7 @@ building this stage rather than a hypothetical:
 2. The Arabic phrase for *limited liability* is a SARL, not a SUARL. The
    sole-partner qualifier is what makes it a SUARL, and the first version of
    the name reader mapped every Arabic SARL to SUARL.
-3. An undetermined form is not "not SARL/SA". 76.1% of register identifiers
+3. An undetermined form is not "not SARL/SA". 63.4% of register companies
    have no determinable form and must never be counted as excluded.
 """
 from __future__ import annotations

@@ -14,13 +14,13 @@ This report quantifies the exposure. It fixes nothing.
 
 | quantity | asserted | if every declined link were admitted |
 |---|---|---|
-| person-organisation edges | 20,523 | 23,599 |
-| components in the person projection | 4,358 | 4,219 |
-| largest component | 2,548 | 2,796 |
-| connected person pairs | 3,246,528 | 3,909,027 |
+| person-organisation edges | 20,522 | 23,635 |
+| components in the person projection | 4,376 | 4,238 |
+| largest component | 2,514 | 2,750 |
+| connected person pairs | 3,160,474 | 3,781,505 |
 
-**662,499 person pairs** are unconnected in the dataset as asserted and connected if the review
-queue is admitted wholesale -- 20.4% of the connected pairs the dataset does assert.
+**621,031 person pairs** are unconnected in the dataset as asserted and connected if the review
+queue is admitted wholesale -- 19.6% of the connected pairs the dataset does assert.
 
 Neither column is the truth. The left one treats every declined link
 as absent, which is what produces false holes; the right treats every
@@ -33,11 +33,11 @@ finding.
 
 | layer | nodes | components | if admitted | connected pairs | if admitted | exposure |
 |---|---|---|---|---|---|---|
-| person-organisation (all years) | 7,832 | 4,358 | 4,193 | 3,246,528 | 3,839,388 | 18.3% |
-| person-organisation 1957-2010 | 3,879 | 2,604 | 2,543 | 305,522 | 358,482 | 17.3% |
-| person-organisation 2011-2026 | 7,629 | 4,424 | 4,310 | 2,355,776 | 2,676,319 | 13.6% |
-| organisation ownership | 8,260 | 1,593 | 1,298 | 9,052,835 | 13,854,647 | 53.0% |
-| kinship | 26 | 13 | 13 | 13 | 13 | 0.0% |
+| person-organisation (all years) | 7,823 | 4,376 | 4,214 | 3,160,474 | 3,713,017 | 17.5% |
+| person-organisation 1957-2010 | 3,869 | 2,603 | 2,548 | 297,034 | 344,277 | 15.9% |
+| person-organisation 2011-2026 | 7,618 | 4,436 | 4,325 | 2,355,667 | 2,701,589 | 14.7% |
+| organisation ownership | 8,315 | 1,599 | 1,303 | 9,193,689 | 13,965,557 | 51.9% |
+| kinship | 28 | 14 | 14 | 14 | 14 | 0.0% |
 
 The layers are reported separately on purpose. The
 person-organisation panel is dense and mostly name-resolved, so its
@@ -52,9 +52,9 @@ decision and mean nothing.
 
 ## Where the suspect holes are
 
-- **23,408 organisation pairs** are plausibly one firm, by a shared hard identifier or a shared
+- **23,414 organisation pairs** are plausibly one firm, by a shared hard identifier or a shared
   discriminating seat with an overlapping name. Between them they sit
-  across **2,315 person pairs**
+  across **2,270 person pairs**
   that would be colleagues if the pair were one firm.
 - **4,220 person pairs** are a seed node and
   an unresolved gazette cluster bearing the same name, with exactly one
@@ -69,21 +69,21 @@ this has to be taken on trust.
 
 | organisation A | organisation B | basis | person pairs |
 |---|---|---|---|
-| BANQUE INTERNATIONALE ARABE DE TUNISIE | BANQUE DE TUNISIE BT | shared_registre_commerce | 83 |
 | COMPOSITES POUR LE SANITAIRE ET L'INDU | SOCIETE M | shared_matricule_fiscal | 63 |
 | SOCIETE DE PROMOTION IMMOBILIERE | STRAMICA | shared_matricule_fiscal | 56 |
 | SOCIETE DE PROMOTION IMMOBILIERE | STRAMICA | shared_registre_commerce | 56 |
-| NEWREST CATERING TUNISIE | TUNISIE CATERING | shared_matricule_fiscal | 48 |
 | TUNISIE PROFILES ALUMINIUM TPR | UNION DE FACTORING UNIFACTOR | shared_matricule_fiscal | 39 |
 | BANQUE DE FINANCEMENT DES PETITES ET M | GROUPE CHIMIQUE TUNISIEN | shared_registre_commerce | 36 |
-| ATTIJARI LEASING | BANQUE DE TUNISIE BT | shared_matricule_fiscal | 34 |
-| ATTIJARI LEASING | BANQUE DE TUNISIE BT | shared_registre_commerce | 34 |
+| ATTIJARI LEASING | BANQUE DE TUNISIE BT | shared_matricule_fiscal | 32 |
+| ATTIJARI LEASING | BANQUE DE TUNISIE BT | shared_registre_commerce | 32 |
 | SOCIETE INES | SOCIETE DE PROMOTION IMMOBILIERE | shared_matricule_fiscal | 28 |
-| SOCIETE DE PROMOTION IMMOBILIERE | SOCIETE DE PROMOTION IMMOBILIERE INDUS | shared_matricule_fiscal | 28 |
+| PRIMA TEC | SOCIETE DE PROMOTION IMMOBILIERE | shared_registre_commerce | 28 |
 | SOCIETE DE PROMOTION IMMOBILIERE | TELETEC CATERING | shared_registre_commerce | 28 |
 | SOCIETE DE PROMOTION IMMOBILIERE | TELETEC INDUSTRIES | shared_registre_commerce | 28 |
 | SOCIETE DE PROMOTION IMMOBILIERE | SOCIETE DE PROMOTION IMMOBILIERE KOKET | shared_matricule_fiscal | 27 |
 | SOCIETE DE PROMOTION IMMOBILIERE | SOCIETE DE PROMOTION IMMOBILIERE KOKET | shared_registre_commerce | 27 |
+| KARAMA HOLDING | CO_PRINCESSE_HOLDING | shared_matricule_fiscal | 26 |
+| KARAMA HOLDING | CO_PRINCESSE_HOLDING | shared_registre_commerce | 26 |
 
 ## What this does not cover
 
