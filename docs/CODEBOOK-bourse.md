@@ -209,7 +209,7 @@ These are properties of the sources, and should be stated in any write-up.
 
    | | 1990–99 | 2000–04 | 2005–09 | 2010–14 | 2015–19 | 2020–26 |
    |---|---|---|---|---|---|---|
-   | Ties | 393 | 231 | 2,316 | 4,776 | 4,703 | 6,739 |
+   | Ties | 363 | 235 | 2,510 | 4,974 | 4,767 | 7,455 |
 
    Treat the usable panel as roughly **2005–2026**. Before 2005 the series is
    thin and prospectus-driven, so a firm appears in the year it raised money

@@ -286,16 +286,16 @@ Why the CMF filings:
   company because a buyer needs to know. All three go through the same
   extractor, which keys on table headers rather than section numbering.
 
-Current build: **1,882 filings — 213 registration documents, 1,027 annual
+Current build: **1,886 filings — 215 registration documents, 1,027 annual
 reports and 642 prospectuses, plus 400 operation notices and 529
-adopted-resolution filings → 7,129 entities → 19,165 observed ties across
+adopted-resolution filings → 7,149 entities → 20,304 observed ties across
 thirteen layers**, 1990–2026, with 75 entities linked to a BVMT security by
 ISIN, plus 400 dated operations, 606 dated board decisions and 29 listing
 events. Ownership weights are percentages of capital as reported; interlock
 weights are counts of shared directors.
 
 A third of that corpus was scanned from paper and carries no text layer at
-all, so it is read with OCR and fed to the same table extractor; 1,920 ties
+all, so it is read with OCR and fed to the same table extractor; 1,936 ties
 come from those pages and are flagged `from_ocr = 1` so the scanned stratum
 can be weighted or dropped. Treat the usable panel as roughly 2005–2026, and
 check `data/processed/bourse/layer_year_coverage.csv` before reading any time
