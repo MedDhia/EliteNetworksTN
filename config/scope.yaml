@@ -74,3 +74,15 @@ org_identity:
   # gate on, so every token counts as discriminating and the old behaviour
   # holds. Guards the small fixtures the tests run against.
   min_corpus_mentions: 500
+
+snowball:
+  # How many times what one pass named may become the anchor for what it
+  # could not. The loop is monotone -- rule 1 only fires where an
+  # organisation is unnamed, rules 2 and 3 only where a person is, and
+  # neither can fire again on a row it has named -- so it converges on its
+  # own and stops as soon as a pass adds nothing. This is therefore a safety
+  # bound, not a tuning knob: it exists so a bug cannot spin forever, and it
+  # is set high enough not to bind. `resolution.csv` records `resolve_pass`
+  # on every row, so the marginal yield of each round is visible and any
+  # round can be dropped after the fact.
+  max_passes: 12

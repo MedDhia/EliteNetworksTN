@@ -25,6 +25,7 @@ from pathlib import Path
 
 from .paths import (DOCS, INTERIM, PROCESSED, ROOT, ensure_dirs,
                     load_config, window)
+from .resolve import MAX_SNOWBALL_PASSES
 
 WINDOW = window()
 
@@ -726,6 +727,23 @@ def check_snowball(rep: Report) -> None:
     if sb:
         rep.add("INFO", "snowball bases",
                 ", ".join(f"{k}={v}" for k, v in by_basis.most_common()))
+        # The marginal yield per round, which is the only way to tell a
+        # snowball that converged from one that was cut off by the cap. A
+        # last round still adding links means the bound bound, not that the
+        # evidence ran out -- and that is a different dataset from one that
+        # stopped because nothing was left to name.
+        passes = sorted(int(p) for p in by_pass if str(p).isdigit())
+        if passes:
+            trail = ", ".join(f"pass {p}: +{by_pass[str(p)]}" for p in passes)
+            rep.add("INFO", "snowball marginal yield", trail)
+            last = passes[-1]
+            if by_pass[str(last)] and last >= MAX_SNOWBALL_PASSES:
+                rep.add("WARN", "snowball stopped at the cap, not convergence",
+                        f"pass {last} still added {by_pass[str(last)]} links and "
+                        f"is the last allowed (scope.yaml snowball.max_passes="
+                        f"{MAX_SNOWBALL_PASSES}). Links the evidence supports "
+                        f"are therefore missing; raise the bound and re-run "
+                        f"`make resolve` to converge.")
 
     # Every snowballed row must say which pass and which rule named it.
     unlabelled = [r for r in sb

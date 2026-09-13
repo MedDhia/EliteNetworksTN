@@ -509,7 +509,15 @@ SNOWBALL_METRIC_FLOOR = 0.75
 # who are tied to the same firm in the seed is a board.
 SNOWBALL_COMEMBERS = 2
 
-MAX_SNOWBALL_PASSES = 3
+# A safety bound, not a tuning knob. The loop is monotone: rule 1 fires only
+# where an organisation is unnamed and rules 2 and 3 only where a person is,
+# and neither can fire twice on the same row, so the number of possible
+# upgrades is bounded by 2 per dyad and the loop converges without a cap. The
+# cap is here so that a bug cannot spin forever, and it is set high enough not
+# to bind -- convergence is what stops the loop, and `pass_N_links` in the
+# diagnostics reports the marginal yield of every round.
+MAX_SNOWBALL_PASSES = int(
+    (load_config("scope").get("snowball") or {}).get("max_passes", 12))
 
 # Statuses that name a node, and so can seed the next pass.
 NAMING = {"resolved", "inferred", "snowball", "manual"}
