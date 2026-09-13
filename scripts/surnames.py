@@ -117,8 +117,16 @@ def surname(name: str) -> str | None:
 
 
 def usable(sn: str | None) -> bool:
-    """Whether a surname can stand for a family at all."""
-    if not sn:
+    """Whether a surname can stand for a family at all.
+
+    The isinstance guard is load-bearing, not defensive noise. ``split_name``
+    returns ``None`` for a name with no recoverable surname, but putting that
+    list into a DataFrame column stores it as NaN — and ``not float("nan")``
+    is False, so a bare falsiness check passes NaN through as a usable
+    surname. Every such person then carries the *same* non-value, which a
+    frequency count reads as one large family.
+    """
+    if not isinstance(sn, str) or not sn:
         return False
     if sn in EXTRACTION_NOISE:
         return False
@@ -140,6 +148,50 @@ def same_surname_probability(names: Sequence[str]) -> float:
     if n < 2:
         return float("nan")
     return sum(c * (c - 1) for c in counts) / (n * (n - 1))
+
+
+def shared_outcome_probability(names: Sequence[str],
+                               outcome: Sequence[bool]) -> float:
+    """Chance that two people sharing a surname *both* reached the outcome.
+
+    The rank counterpart of ``same_surname_probability``: that one asks how
+    often two officials in a body share a name, this one how often two people
+    sharing a name share a fate. Sampling is again without replacement, so
+    nobody is paired with themselves.
+
+    Returns nan when no two people share a surname, which is the honest answer
+    for a set of unique names rather than a zero that would read as evidence
+    of no association.
+    """
+    total = Counter(names)
+    hit = Counter(n for n, o in zip(names, outcome) if o)
+    den = sum(c * (c - 1) for c in total.values())
+    if den == 0:
+        return float("nan")
+    return sum(c * (c - 1) for c in hit.values()) / den
+
+
+def shared_outcome_fast(codes, outcome, n_codes: int) -> float:
+    """``shared_outcome_probability`` on integer codes, for permutation loops.
+
+    A permutation run evaluates the statistic a few thousand times over forty
+    thousand people, and counting strings each pass dominates the cost. This
+    is the same quantity by bincount. The string version above stays the
+    definition and the tests pin the two together.
+
+    Lives here rather than in the figure module because it is a rule, not a
+    drawing: a test that reached for it there would have to import matplotlib,
+    which is not a project dependency and is blocked in CI.
+    """
+    import numpy as np
+
+    n = np.bincount(codes, minlength=n_codes).astype(float)
+    h = np.bincount(codes, weights=np.asarray(outcome, dtype=float),
+                    minlength=n_codes)
+    den = (n * (n - 1)).sum()
+    if den == 0:
+        return float("nan")
+    return (h * (h - 1)).sum() / den
 
 
 def namesake_hits(rows: Iterable[tuple[object, object, str]]) -> list[bool]:
