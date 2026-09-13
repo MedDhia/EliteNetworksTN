@@ -1,22 +1,33 @@
-"""The state's organisation chart, drawn as a chart of organisation.
+"""The state's chain of command, and the governance that does not follow it.
 
-A hierarchy is a node-link structure — who answers to whom — so it is drawn
-with nodes and connectors, not as an area-filling partition. A treemap or an
-icicle encodes *subtree size*, which answers "where is the mass" and not "what
-reports to what"; the first version of this figure made that mistake.
+Two relations, drawn together because neither is the whole picture.
 
-**What a page can hold.** 8,803 bodies cannot all be boxes and lines at a
-legible size: the register runs to 4,687 nodes at depth three alone, and a
-node-link tree of them needs a wall, not a plate. So this draws the top of the
-hierarchy properly — the state, every ministry, and the largest bodies under
-each — and says in figures what it elides, rather than shrinking everything to
-an unreadable size or silently dropping the tail. The explorable version
-carries the rest.
+**Line authority**, solid: the head of state, the head of government under him,
+the ministries under that, and the bodies under each ministry. This is a tree
+and it is what an organisation chart usually means.
 
-**Colour still carries the evidence.** Every attachment was inferred, and the
-marker beside each body says from what: its own name, the parent its
-appointment acts name, or the portfolio it carries. That is an ordered
-quantity and takes the house sequential ramp.
+**Co-governance**, dashed: a ministry holding a seat on a body's board. A
+Tunisian public enterprise is run by a board carrying representatives of
+several ministries at once — the Société tunisienne de l'électricité et du gaz
+answers to six, the Agence Nationale des Fréquences to ten — so this relation
+is many-to-many and cannot be a tree. 53% of the bodies governed this way have
+more than one ministry on them. Forcing it into the tree would mean either
+duplicating a company under every ministry that sits on it or picking one and
+discarding the rest, and both misdescribe how the thing is actually run.
+
+The solid/dashed pair is the ordinary organisation-chart convention for line
+against functional authority, which is what these two relations are.
+
+**Where each comes from.** The dashed edges are read off appointments: the
+gazette writes a board seat as "membre représentant le ministère de
+l'agriculture", and the ministry named there is the one taking part. Seats held
+"représentant l'État" are for the state at large and carry no edge. The solid
+edges below the ministries are reconstructed from the register as
+``scripts/orgchart.py`` sets out. The solid edges *above* them — ministries
+under the head of government, he under the head of state — are the one part of
+this chart not read off the data at all: the gazette records appointments, not
+the constitution. They are marked ``constitutional`` in the table and the note
+says so.
 """
 
 from __future__ import annotations
@@ -25,90 +36,64 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from apparatus import MINISTRY_ENGLISH  # noqa: E402
 from figstyle import (  # noqa: E402
-    ERA_RAMP, INK, MUTED, PROC, RULE, SOURCE, headline, plt, save,
+    CAT4, ERA_RAMP, INK, MUTED, PROC, RULE, SOURCE, headline, plt, save,
 )
 from matplotlib.lines import Line2D  # noqa: E402
 
 STATE = "STATE"
-STRUCTURAL = {"root", "canonical"}
+PRESIDENCY = "MIN:presidence_republique"
+GOVERNMENT = "MIN:presidence_gouvernement"
+STRUCTURAL = {"root", "canonical", "constitutional"}
 
-EVIDENCE = [
-    ("name", "its own name says so", ERA_RAMP[4]),
-    ("modal_parent", "the parent its acts name", ERA_RAMP[3]),
-    ("portfolio", "the portfolio it carries", ERA_RAMP[2]),
-    ("form", "nothing placed it", ERA_RAMP[0]),
-]
-EV_COLOUR = {k: c for k, _, c in EVIDENCE}
+LINE = CAT4[1]      # line authority
+DOTTED = CAT4[0]    # co-governance
 
-# Bodies shown under each ministry. Five is what fits beside thirty-six
-# ministries on a page; the rest are counted, never dropped silently.
-PER_MINISTRY = 5
-COLUMNS = 2
+# Co-governed bodies drawn. Those with the most ministries on them: below three
+# the pattern is a single supervising ministry and says nothing this figure is
+# about.
+MIN_MINISTRIES = 3
+MAX_BODIES = 26
 
 
 def load():
-    df = pd.read_csv(PROC / "org_hierarchy.csv.gz", low_memory=False)
-    df["name"] = df.name.fillna("")
+    h = pd.read_csv(PROC / "org_hierarchy.csv.gz", low_memory=False)
+    c = pd.read_csv(PROC / "org_cogovernance.csv.gz", low_memory=False)
+    h["name"] = h.name.fillna("")
+    return h, c
+
+
+def ministries(h: pd.DataFrame) -> list[dict]:
+    """Every ministry with the count of bodies beneath it in the line tree."""
     kids = defaultdict(list)
-    for o, p in zip(df.org_id, df.parent_id):
+    for o, p in zip(h.org_id, h.parent_id):
         if isinstance(p, str):
             kids[p].append(o)
-    return df, kids
-
-
-def gather(df: pd.DataFrame, kids) -> list[dict]:
-    """Each ministry with the bodies beneath it, deepest branch first.
-
-    Descent skips the canonical/register-name tier: that pair is this
-    reconstruction's scaffolding for collapsing renamings, not a level of the
-    state, and drawing it would put "MINISTERE DES FINANCES" under "Finance"
-    as though the ministry reported to itself.
-    """
-    method = dict(zip(df.org_id, df.method))
-    name = dict(zip(df.org_id, df.name))
-    form = dict(zip(df.org_id, df.form))
+    method = dict(zip(h.org_id, h.method))
+    name = dict(zip(h.org_id, h.name))
 
     def below(root):
-        out, stack = [], list(kids.get(root, ()))
+        n, stack = 0, list(kids.get(root, ()))
         while stack:
-            c = stack.pop()
-            if method.get(c) not in STRUCTURAL:
-                out.append(c)
-            stack.extend(kids.get(c, ()))
-        return out
-
-    def sub(node):
-        n, stack = 0, list(kids.get(node, ()))
-        while stack:
-            c = stack.pop()
-            n += 1
-            stack.extend(kids.get(c, ()))
+            x = stack.pop()
+            if method.get(x) not in STRUCTURAL:
+                n += 1
+            stack.extend(kids.get(x, ()))
         return n
 
     out = []
-    for oid, m in zip(df.org_id, df.method):
-        if m != "canonical":
+    for oid, m in zip(h.org_id, h.method):
+        if m != "constitutional" or oid == GOVERNMENT:
             continue
-        d = below(oid)
-        # A ministry's direct bodies, ranked by how much hangs off them.
-        direct = [c for c in d if method.get(c) != "canonical"
-                  and any(c in kids.get(k, ()) for k in [oid] + [
-                      x for x in kids.get(oid, ())])]
-        ranked = sorted(direct, key=lambda c: (-sub(c), name.get(c, "")))
-        out.append({
-            "id": oid, "name": name[oid], "total": len(d),
-            "children": [{"name": name[c], "n": sub(c),
-                          "method": method.get(c, "form"),
-                          "form": form.get(c, "")}
-                         for c in ranked[:PER_MINISTRY]],
-            "n_direct": len(direct),
-        })
-    out.sort(key=lambda r: -r["total"])
+        out.append({"id": oid, "key": oid[4:], "name": name[oid],
+                    "n": below(oid)})
+    out.sort(key=lambda r: -r["n"])
     return out
 
 
@@ -117,142 +102,156 @@ def short(s: str, n: int) -> str:
     return s if len(s) <= n else s[: n - 1].rstrip(" ,;-") + "…"
 
 
-def draw_column(ax, rows, x0: float, y: float, row_h: float,
-                width: float = 0.44) -> float:
-    """Draw ministries down a spine; return the y reached."""
-    spine_x = x0 + 0.028
-    top = y
-    for r in rows:
-        # ministry node
-        ax.plot([x0, spine_x - 0.004], [y, y], color=RULE, lw=0.9, zorder=2)
-        ax.annotate(f"{short(r['name'], 40)}",
-                    xy=(spine_x, y), ha="left", va="center",
-                    fontsize=8.6, fontweight="bold", color=INK, zorder=4)
-        ax.annotate(f"{r['total']:,} bodies",
-                    xy=(x0 + width, y), ha="right", va="center",
-                    fontsize=7.0, color=MUTED, zorder=4)
-        y -= row_h
-
-        # its own spine, down to the bodies beneath it
-        kid_x = spine_x + 0.022
-        branch_top = y + row_h * 0.5
-        last = y
-        for c in r["children"]:
-            ax.plot([kid_x, kid_x + 0.014], [y, y], color=RULE, lw=0.7, zorder=2)
-            ax.plot([kid_x + 0.0165], [y], "s", ms=3.1,
-                    color=EV_COLOUR.get(c["method"], ERA_RAMP[0]), zorder=4)
-            ax.annotate(short(c["name"], 62),
-                        xy=(kid_x + 0.024, y), ha="left", va="center",
-                        fontsize=7.2, color=INK, zorder=4)
-            if c["n"]:
-                ax.annotate(f"{c['n']:,}", xy=(x0 + width, y),
-                            ha="right", va="center", fontsize=6.6,
-                            color=MUTED, zorder=4)
-            last = y
-            y -= row_h
-        rest = r["n_direct"] - len(r["children"])
-        if rest > 0:
-            ax.plot([kid_x, kid_x + 0.014], [y, y], color=RULE, lw=0.7, zorder=2)
-            ax.annotate(f"+ {rest:,} more directly under this ministry",
-                        xy=(kid_x + 0.024, y), ha="left", va="center",
-                        fontsize=6.9, color=MUTED, style="italic", zorder=4)
-            last = y
-            y -= row_h
-        if r["children"] or rest > 0:
-            ax.plot([kid_x, kid_x], [branch_top, last], color=RULE, lw=0.7,
-                    zorder=1)
-        y -= row_h * 0.42
-    ax.plot([x0, x0], [top, y + row_h * 0.42], color=RULE, lw=0.9, zorder=1)
-    return y
-
-
 def fig_orgchart() -> None:
-    df, kids = load()
-    mins = gather(df, kids)
-    bodies = df[~df.method.isin(STRUCTURAL)]
-    unplaced = int(((df.parent_id == STATE) & ~df.method.isin(STRUCTURAL)).sum())
-    by_method = bodies.method.value_counts()
+    h, c = load()
+    mins = ministries(h)
 
-    half = (len(mins) + 1) // 2
-    cols = [mins[:half], mins[half:]]
-    rows_needed = max(sum(1 + len(r["children"])
-                          + (1 if r["n_direct"] > len(r["children"]) else 0)
-                          for r in c) for c in cols)
-    row_h = 1.0 / (rows_needed + len(cols[0]) + 4)
+    # A ministry appearing as a co-governed body muddles the claim, which is
+    # about the enterprises and agencies, so the column is restricted to them.
+    c = c[c.body_form != "ministere"]
+    per_body = c.groupby("org_id").ministry.nunique()
+    keep = per_body[per_body >= MIN_MINISTRIES].sort_values(ascending=False)
+    keep = keep.head(MAX_BODIES)
+    bodies = (c[c.org_id.isin(keep.index)]
+              .drop_duplicates("org_id")
+              .set_index("org_id")
+              .loc[keep.index])
 
-    fig, ax = plt.subplots(figsize=(14.6, 15.2))
-    fig.subplots_adjust(top=0.885, bottom=0.045, left=0.015, right=0.985)
+    m_y = {r["key"]: i for i, r in enumerate(mins)}
+    links = c[c.org_id.isin(keep.index) & c.ministry.isin(m_y)]
+
+    # Order bodies by the average height of the ministries that govern them, so
+    # the dashed lines cross as little as the data allows. The crossing that
+    # remains is the finding.
+    bary = links.groupby("org_id").ministry.apply(
+        lambda x: np.mean([m_y[k] for k in x]))
+    order = bary.sort_values().index.tolist()
+    b_y = {oid: i for i, oid in enumerate(order)}
+
+    fig, ax = plt.subplots(figsize=(15.0, 10.4))
+    fig.subplots_adjust(top=0.775, bottom=0.075, left=0.012, right=0.988)
     ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
     ax.axis("off")
 
-    # The root, and a bus across to both columns: every ministry descends from
-    # it, and drawing thirty-six lines across the plate would say the same
-    # thing far less clearly.
-    ax.annotate("État tunisien", xy=(0.5, 0.985), ha="center", va="center",
-                fontsize=12.5, fontweight="bold", color=INK, zorder=5)
-    ax.annotate(f"{len(bodies):,} bodies, 1957–2026",
-                xy=(0.5, 0.962), ha="center", va="center", fontsize=7.8,
+    n_m, n_b = len(mins), len(order)
+    span = max(n_m, n_b)
+    ax.set_ylim(span + 0.5, -5.0)
+    MX, BX = 0.235, 0.615          # ministry column, body column
+    m_pos = lambda i: i * (span / max(n_m - 1, 1)) * 0.995
+    b_pos = lambda i: i * (span / max(n_b - 1, 1)) * 0.995
+
+    # --- co-governance, behind everything ---
+    for r in links.itertuples():
+        y0, y1 = m_pos(m_y[r.ministry]), b_pos(b_y[r.org_id])
+        ax.plot([MX + 0.145, BX - 0.006], [y0, y1], color=DOTTED,
+                lw=0.55, ls=(0, (2.6, 2.0)), alpha=0.5, zorder=1)
+
+    # --- the constitutional spine ---
+    ax.annotate("Présidence de la République", xy=(0.012, -4.4),
+                ha="left", va="center", fontsize=11.0, fontweight="bold",
+                color=INK, zorder=5)
+    ax.annotate("head of state", xy=(0.012, -3.85), ha="left", va="center",
+                fontsize=7.4, color=MUTED, zorder=5)
+    ax.plot([0.030, 0.030], [-3.55, -3.0], color=LINE, lw=1.4, zorder=3)
+    ax.annotate("Présidence du gouvernement", xy=(0.048, -2.8),
+                ha="left", va="center", fontsize=10.2, fontweight="bold",
+                color=INK, zorder=5)
+    ax.annotate("head of government — every ministry below answers to this office",
+                xy=(0.048, -2.25), ha="left", va="center", fontsize=7.4,
                 color=MUTED, zorder=5)
-    ax.plot([0.5, 0.5], [0.953, 0.944], color=RULE, lw=1.0)
-    ax.plot([0.028, 0.520], [0.944, 0.944], color=RULE, lw=1.0)
-    ax.plot([0.028, 0.028], [0.944, 0.936], color=RULE, lw=1.0)
-    ax.plot([0.520, 0.520], [0.944, 0.936], color=RULE, lw=1.0)
+    # the bus down to the ministries
+    ax.plot([0.066, 0.066], [-1.95, m_pos(n_m - 1)], color=LINE, lw=1.4,
+            zorder=3)
 
-    draw_column(ax, cols[0], 0.028, 0.936, row_h)
-    draw_column(ax, cols[1], 0.520, 0.936, row_h)
+    # --- ministries ---
+    for r in mins:
+        y = m_pos(m_y[r["key"]])
+        ax.plot([0.066, MX - 0.004], [y, y], color=LINE, lw=0.9, zorder=3)
+        ax.annotate(short(r["name"], 32), xy=(MX, y), ha="left", va="center",
+                    fontsize=8.4, fontweight="bold", color=INK, zorder=5)
+        ax.annotate(f"{r['n']:,}", xy=(MX + 0.138, y), ha="right",
+                    va="center", fontsize=7.0, color=MUTED, zorder=5)
 
-    ax.legend(handles=[Line2D([], [], marker="s", ls="", ms=6, color=c,
-                              label=lab) for _, lab, c in EVIDENCE],
-              loc="lower center", bbox_to_anchor=(0.5, -0.028), ncol=4,
-              title="how each attachment was established", fontsize=7.6)
+    # --- co-governed bodies ---
+    for oid in order:
+        y = b_pos(b_y[oid])
+        k = int(per_body[oid])
+        ax.plot([BX - 0.006], [y], "o", ms=3.4, color=DOTTED, zorder=4)
+        ax.annotate(short(bodies.loc[oid, "body"], 62), xy=(BX + 0.006, y),
+                    ha="left", va="center", fontsize=7.6, color=INK, zorder=5)
+        ax.annotate(f"{k}", xy=(0.988, y), ha="right", va="center",
+                    fontsize=7.4, color=DOTTED, fontweight="bold", zorder=5)
 
+    ax.annotate("bodies beneath\nin the line tree", xy=(MX + 0.138, -1.25),
+                ha="right", va="center", fontsize=7.0, color=MUTED,
+                linespacing=1.4, zorder=5)
+    ax.annotate("co-governed bodies — boards carrying several ministries",
+                xy=(BX - 0.006, -1.25),
+                ha="left", va="center", fontsize=8.2, color=INK,
+                fontweight="bold", zorder=5)
+    ax.annotate("ministries\non the board", xy=(0.988, -1.25), ha="right",
+                va="center", fontsize=7.0, color=MUTED, linespacing=1.4,
+                zorder=5)
+
+    ax.legend(handles=[
+        Line2D([], [], color=LINE, lw=1.6,
+               label="line authority — answers to"),
+        Line2D([], [], color=DOTTED, lw=1.2, ls=(0, (2.6, 2.0)),
+               label="co-governance — holds a seat on the board"),
+    ], loc="upper center", bbox_to_anchor=(0.5, -0.012), ncol=2, fontsize=8.4)
+
+    n_multi = int((per_body > 1).sum())
     headline(
         fig,
-        "The Tunisian state, ministry by ministry",
-        f"Every ministry the Journal Officiel records between 1957 and 2026, "
-        f"with the five bodies beneath each that carry the most below them, "
-        f"and a count of the rest. {len(bodies):,} bodies in all. The gazette "
-        f"publishes no parent field, so every attachment here is inferred and "
-        f"the marker says from what: {by_method.get('name', 0):,} from the "
-        f"body's own name, which states it outright — “direction générale des "
-        f"services communs au ministère de l'équipement” — "
-        f"{by_method.get('modal_parent', 0):,} from the parent its appointment "
-        f"acts most often name, {by_method.get('portfolio', 0):,} from the "
-        f"portfolio it carries. A further {unplaced:,} bodies are not drawn "
-        f"here because nothing placed them under any ministry. Successive "
-        f"names of one ministry are collapsed, so équipement and équipement et "
-        f"habitat are one row rather than two. This is a union of seventy "
-        f"years: the ministries listed never all existed at once.",
+        "The ministries answer to the head of government; the companies answer to several ministries at once",
+        f"Solid lines are line authority: the head of state, the head of "
+        f"government beneath him, the {len(mins)} ministries beneath that, and "
+        f"the count of bodies under each. Dashed lines are a different "
+        f"relation — a ministry holding a seat on a body's board, written in "
+        f"the gazette as “membre représentant le ministère de …”. That "
+        f"relation is many-to-many and no tree will hold it: of "
+        f"{len(per_body):,} bodies governed this way, {n_multi:,} "
+        f"({n_multi / len(per_body) * 100:.0f}%) have more than one ministry "
+        f"on the board, and the {len(order)} drawn here are those with at "
+        f"least {MIN_MINISTRIES}. The Société tunisienne de l'électricité et "
+        f"du gaz carries six ministries, the Agence Nationale des Fréquences "
+        f"ten. The crossing in the middle of the plate is the point: economic "
+        f"governance in this state does not run down the chain of command, it "
+        f"runs across it.",
         width=150,
     )
     save(fig, "fig35_state_organigram",
-         SOURCE + "  The hierarchy is reconstructed: neither the "
-                  "organisations table nor the gazette carries a parent field, "
-                  "and the parent recorded on a spell belongs to the act the "
-                  "appointment was published in rather than to the body — one "
-                  "body carries 89 different parents that way. Attachment is "
-                  "read from the body's own name first, since Tunisian "
-                  "administrative titles state what they hang off and beat the "
-                  "act where the two disagree; from the commonest parent its "
-                  "acts give it second, and only where at least 40% of them "
-                  "agree; from its portfolio third. A separator alone is not "
-                  "an attachment — the 'des' in direction générale des impôts "
-                  "is ordinary French — so a name is only split where the "
-                  "separator is followed by a word that names a body. Where an "
-                  "act appoints a committee the whole membership list can land "
-                  "in the name field, at a median 1,051 characters against 72 "
-                  "for a real name, and each 'représentant du ministère de X' "
-                  "in it reads as an attachment; those are cut back before "
-                  "parsing. The count beside a body is everything beneath it, "
-                  "at any depth. Ministries are ordered by how much hangs off "
-                  "them and bodies within a ministry likewise, so the five "
-                  "shown are the largest branches and not the whole of what a "
-                  "ministry directly holds. The full register runs to 4,687 "
-                  "bodies at depth three alone, which no node-link chart can "
-                  "set legibly on a page; an explorable version carries every "
-                  "node, with search, a year filter and the evidence behind "
-                  "each attachment.")
+         SOURCE + "  Two relations, two sources. The dashed edges are read "
+                  "from appointments: where the gazette records a board seat "
+                  "as 'membre représentant le ministère de X', that ministry "
+                  "is taking part in the body's governance; seats recorded as "
+                  "'représentant l'État' are held for the state at large and "
+                  "carry no edge, which is why 1,536 of the 3,023 "
+                  "representation appointments are not drawn. The solid edges "
+                  "below the ministries are reconstructed from the register — "
+                  "neither the organisations table nor the gazette carries a "
+                  "parent field, and the parent recorded on a spell belongs to "
+                  "the act rather than the body, one body carrying 89 "
+                  "different parents that way — so attachment is read from a "
+                  "body's own name first, the commonest parent its acts give "
+                  "it second, its portfolio third. The solid edges above the "
+                  "ministries are not read off the data at all: the gazette "
+                  "records appointments, not the constitution, and the "
+                  "ordering of head of state, head of government and "
+                  "ministries is imposed. It is marked constitutional in the "
+                  "table so it can be filtered out. That ordering also moved "
+                  "over the period — the 1959 constitution put the prime "
+                  "minister well below a dominant president, 2014 made the "
+                  "office genuinely semi-presidential, 2022 reduced it again, "
+                  "and under the 2014 settlement defence and foreign affairs "
+                  "answered to the President directly rather than through the "
+                  "head of government. A union chart cannot draw a "
+                  "relationship that changed three times, so it draws the "
+                  "ordering that held throughout. Bodies are ordered by the "
+                  "average position of the ministries governing them, which "
+                  "minimises crossing; what crosses anyway is structure and "
+                  "not layout. An explorable version carries every one of the "
+                  "8,803 bodies in the line tree.")
 
 
 def main() -> None:

@@ -22,8 +22,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from apparatus import MINISTRY_ENGLISH, ministry_of  # noqa: E402
 from orgchart import (  # noqa: E402
-    MODAL_FLOOR, chain, clean, fold, modal_parent, resolve, split_parent,
-    wellformed,
+    MODAL_FLOOR, chain, clean, fold, modal_parent, represented_body, resolve,
+    split_parent, wellformed,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -118,6 +118,50 @@ def build(o: pd.DataFrame, s: pd.DataFrame) -> pd.DataFrame:
     return pd.concat([pd.DataFrame(extra), df], ignore_index=True)
 
 
+PRESIDENCY = "MIN:presidence_republique"
+GOVERNMENT = "MIN:presidence_gouvernement"
+
+
+def constitutional_spine(df: pd.DataFrame) -> pd.DataFrame:
+    """Put the ministries under the head of government, and him under the head of state.
+
+    This is the one part of the chart that is not read off the register. The
+    gazette records appointments, not the constitution, so nothing in the data
+    says a ministry answers to the Presidency of the Government — it is simply
+    how the Tunisian state is arranged, and a chart that hangs thirty-six
+    ministries off an abstract "state" node instead is wrong about the thing it
+    is drawing.
+
+    Marked ``constitutional`` in ``method`` so it is never mistaken for
+    evidence: these edges are imposed, and a reader filtering on evidence can
+    drop them.
+
+    Two things this deliberately does not try to model. The arrangement moved
+    over the period — the 1959 constitution put a prime minister well below a
+    dominant president, 2014 made the office genuinely semi-presidential, 2022
+    reduced it again — and under the 2014 settlement defence and foreign
+    affairs answered to the President directly rather than through the head of
+    government. A union chart cannot show a relationship that changed three
+    times, so it shows the ordering that held throughout and says so.
+    """
+    parent = dict(zip(df.org_id, df.parent_id))
+    method = dict(zip(df.org_id, df.method))
+    moved = 0
+    for oid, m in list(method.items()):
+        if m != "canonical" or oid in (PRESIDENCY, GOVERNMENT):
+            continue
+        parent[oid] = GOVERNMENT
+        method[oid] = "constitutional"
+        moved += 1
+    if GOVERNMENT in parent:
+        parent[GOVERNMENT] = PRESIDENCY
+        method[GOVERNMENT] = "constitutional"
+    df = df.assign(parent_id=df.org_id.map(parent),
+                   method=df.org_id.map(method))
+    print(f"  ministries placed under the head of government: {moved}")
+    return df
+
+
 def break_cycles(df: pd.DataFrame) -> pd.DataFrame:
     """Re-root anything that ends up in a cycle.
 
@@ -146,11 +190,39 @@ def break_cycles(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def cogovernance(s: pd.DataFrame) -> pd.DataFrame:
+    """Which ministries sit on which bodies' boards.
+
+    A second relation, not a second parent. The tree above says what a body
+    hangs off; this says who governs it, and the two are not the same: 53% of
+    the bodies here answer to more than one ministry, one of them to ten. A
+    chart that forces this into the tree either duplicates the body under every
+    ministry or picks one arbitrarily, and both are lies about how a Tunisian
+    public enterprise is run.
+    """
+    s = s.copy()
+    s["position_clean"] = s.position_clean.fillna("")
+    s["for_whom"] = [represented_body(p) for p in s.position_clean]
+    d = s.dropna(subset=["for_whom"]).copy()
+    d["ministry"] = [ministry_of(None, t) for t in d.for_whom]
+    d = d.dropna(subset=["ministry"])
+    g = (d.groupby(["ministry", "org_id"])
+         .agg(seats=("spell_id", "count"),
+              first_year=("start_year", "min"),
+              last_year=("start_year", "max"))
+         .reset_index())
+    names = s.drop_duplicates("org_id").set_index("org_id")
+    g["body"] = g.org_id.map(names.org_name)
+    g["body_form"] = g.org_id.map(names.org_form)
+    return g.sort_values(["ministry", "seats"], ascending=[True, False])
+
+
 def main() -> None:
     print("loading…")
     o, s = load()
     print("building…")
     df = build(o, s)
+    df = constitutional_spine(df)
     df = break_cycles(df)
 
     out = PROC / "org_hierarchy.csv.gz"
@@ -158,6 +230,15 @@ def main() -> None:
     # other tables in this repository do.
     df.to_csv(out, index=False, compression={"method": "gzip", "mtime": 0})
     print(f"  wrote {out.relative_to(ROOT)}  ({len(df):,} nodes)")
+
+    cog = cogovernance(s)
+    cout = PROC / "org_cogovernance.csv.gz"
+    cog.to_csv(cout, index=False, compression={"method": "gzip", "mtime": 0})
+    print(f"  wrote {cout.relative_to(ROOT)}  ({len(cog):,} governance links, "
+          f"{cog.org_id.nunique():,} bodies, {cog.ministry.nunique()} ministries)")
+    per = cog.groupby("org_id").ministry.nunique()
+    print(f"  bodies governed by more than one ministry: "
+          f"{(per > 1).sum():,} of {len(per):,} ({(per > 1).mean() * 100:.0f}%)")
 
     print("\nattachment method:")
     print(df.method.value_counts().to_string())

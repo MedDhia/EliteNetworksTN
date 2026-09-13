@@ -198,6 +198,34 @@ def resolve(parent: str, by_name: dict, ministry_key) -> tuple[str | None, str]:
     return None, "unresolved"
 
 
+# A board seat held on a ministry's behalf. "membre représentant le ministère
+# de l'agriculture" at a public enterprise is that ministry taking part in the
+# enterprise's governance, which is a different relation from the ownership the
+# tree above records — a company can be co-governed by ten ministries at once
+# and belongs to none of them.
+_REPRESENTS = re.compile(
+    r"repr[ée]sentant\w*\s+(?:de\s+la\s+|de\s+l['’]\s*|des\s+|du\s+|de\s+"
+    r"|les\s+|le\s+|la\s+|l['’]\s*)?", re.I)
+# "représentant l'État" is a seat held for the state at large rather than for
+# any ministry, so it carries no edge.
+_FOR_THE_STATE = re.compile(r"repr[ée]sentant\w*\s+l['’]\s*[eé]tat\b", re.I)
+
+
+def represented_body(position: str) -> str | None:
+    """The body a board seat is held on behalf of, as written in the position.
+
+    Returns the text after "représentant", for a ministry matcher to resolve,
+    or None where the seat is not held on anyone's behalf or is held for the
+    state at large.
+    """
+    if not position or not _REPRESENTS.search(position):
+        return None
+    if _FOR_THE_STATE.search(position):
+        return None
+    tail = _REPRESENTS.split(position, maxsplit=1)[-1].strip(" ,;:.")
+    return tail or None
+
+
 def modal_parent(parents: Iterable[str]) -> tuple[str | None, float]:
     """The commonest parent an act ever gave a body, and its share.
 

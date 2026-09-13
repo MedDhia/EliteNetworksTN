@@ -12,9 +12,44 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from orgchart import (  # noqa: E402
-    MAX_NAME, chain, clean, fold, modal_parent, resolve, split_parent,
-    wellformed,
+    MAX_NAME, chain, clean, fold, modal_parent, represented_body, resolve,
+    split_parent, wellformed,
 )
+
+
+class TestRepresentedBody:
+    """Board seats: who a ministry-appointed director sits for.
+
+    This is the co-governance relation, and it is not the tree. A public
+    enterprise can carry representatives of ten ministries at once and is a
+    directorate of none of them.
+    """
+
+    def test_a_seat_held_for_a_ministry(self):
+        assert represented_body(
+            "membre représentant le ministère de l'agriculture"
+        ) == "ministère de l'agriculture"
+
+    def test_feminine_and_plural_forms(self):
+        assert represented_body("représentante du ministère de la santé") == \
+            "ministère de la santé"
+        assert represented_body("membres représentants le ministère du plan") == \
+            "ministère du plan"
+
+    def test_a_seat_held_for_the_state_carries_no_edge(self):
+        # "administrateur représentant l'État" is a seat for the state at
+        # large, not for any ministry — 1,536 of the 3,023 representation
+        # appointments in the register are these.
+        assert represented_body("administrateur représentant l'Etat") is None
+        assert represented_body("Administrateur représentant l'État") is None
+
+    def test_an_ordinary_post_is_not_a_seat(self):
+        assert represented_body("directeur général") is None
+        assert represented_body("") is None
+        assert represented_body(None) is None
+
+    def test_bare_representant_with_nothing_after_it(self):
+        assert represented_body("représentant") is None
 
 
 class TestClean:
