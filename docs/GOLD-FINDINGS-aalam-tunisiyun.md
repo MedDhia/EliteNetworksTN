@@ -208,3 +208,67 @@ Cousin ties are never caught at all («ابن عمهما حسين باي», «ا
 الجديد محمد باي»), though father and brother ties are. Also missed: the tail of
 enumerated lists, hostile and violent relations, and succession where the
 successor is designated by office rather than named.
+
+## 15. One man, two nodes, and only the Latin column shows it
+
+Not found by coding the sample. Found by glossing the register, which is why it
+sits at the end: giving every Arabic string a Latin form made three pairs
+collapse onto one name.
+
+- `علي بو حاجب` and `علي بوحاجب` are Ali Bou Hajeb, one of the 38 subjects,
+  separated by a single space.
+- `خليل بو حاجب` and `خليل بوحاجب` are the same for Khalil.
+- `حسن قلاتي` and `حسن ڤلاتي` are Hassen Guellaty. Tunisian Arabic writes a
+  hard g as either ق or the augmented ڤ, and the volume uses both.
+
+The identity key is built from the Arabic, and a space is a character, so
+`fuse_particles()` never saw a particle to fuse and the two spellings hashed to
+two ids. The organisation register has no such pair; the fault is in how a
+personal name with بو is written, and in a letter the identifier table does not
+carry at all.
+
+**Not merged, on the same principle as everything above it.** Identifiers hash
+`name_ar`, so merging moves them, and the gold verdicts are coded against the
+edges these ids build. The pairs are pinned in
+`tests/test_romanise_aalam.py::test_no_new_pair_of_people_shares_one_latin_name`,
+which fails on a fourth. The fix is a spacing normalisation in
+`names_ar.fuse_particles()` and a ڤ entry in the transliteration table, landing
+with the rest of the fixes above and followed by a recode of the seeded sample.
+
+Worth stating plainly, because it cuts the other way from the rest of this
+document: this is a defect the Latin edition **found**, not one it introduced.
+Three of 242 person nodes are duplicates, and the Arabic register gave no sign.
+
+## 16. Four of the twelve "unidentified" people are Ibn Sina and his kind
+
+Also found by glossing rather than by coding. `relations.py` decides a node is
+a description rather than a name by its opening word, and `_DESCRIPTION_HEADS`
+lists `ابن ` for "son of". It also catches the patronymic that opens a great
+many real Arabic names.
+
+So `ابن سينا`, `ابن رشد`, `ابن الرومي` and `ابن أبي دينار` are all recorded as
+`name_kind = described`, alongside genuine descriptions like
+`ابنة الأصرم` and `شقيق محمد باي خير الدين`. Avicenna is not an unidentified
+relative of somebody.
+
+The gate is what exposed it and is also the discriminator: a real description
+has no consonant spine in common with a rendering of it, so
+`ابنة الأصرم` against "The daughter of al-Asram" fails, while `ابن سينا`
+against "Ibn Sina" passes. Exactly four of the twelve pass, and they are these
+four.
+
+The consequence is not cosmetic. `docs/LIMITATIONS-aalam-tunisiyun.md` §2 says
+to exclude `described` nodes before counting a population, and
+`scripts/figures_aalam.py` does exactly that when it draws the tutelage layer.
+Ibn Rushd and Ibn Sina are being dropped from that figure as unidentified
+persons, when the reason to treat them carefully is the opposite one: they are
+identified precisely enough to be dead by 1198, which is what §5 of
+`LIMITATIONS` and `config/aalam_authors_read.yaml` are about.
+
+**Not fixed here, and this one is a closer call than the rest.** Changing
+`name_kind` moves no identifier, so the gold verdicts survive it; but it does
+change which nodes the figures draw, and the figures are committed output that
+the same commit would have to regenerate. It belongs with the other fixes, and
+the four are pinned in
+`tests/test_romanise_aalam.py::test_no_other_described_node_turns_out_to_be_a_name`,
+which fails if a fifth appears.

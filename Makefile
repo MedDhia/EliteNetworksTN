@@ -124,10 +124,10 @@ bourse-test:     ## parser and entity-resolution unit tests
 APY := PYTHONPATH=src python3
 
 .PHONY: aalam aalam-fetch aalam-ingest aalam-segment aalam-extract aalam-model \
-        aalam-relations aalam-codebook aalam-validate aalam-gold-draw \
-        aalam-gold-score aalam-test
+        aalam-relations aalam-romanise aalam-codebook aalam-validate \
+        aalam-gold-draw aalam-gold-score aalam-test
 
-aalam: aalam-segment aalam-extract aalam-model aalam-relations aalam-codebook aalam-validate
+aalam: aalam-segment aalam-extract aalam-model aalam-relations aalam-romanise aalam-codebook aalam-validate
 
 aalam-fetch:      ## download the scan and verify it against the pinned digest
 	$(APY) -m aalam.ingest --fetch --limit 0
@@ -141,6 +141,8 @@ aalam-model:      ## model pass: verify committed assertions quote their entry
 	$(APY) -m aalam.llm --strict
 aalam-relations:  ## registers and the layered edge list
 	$(APY) -m aalam.relations
+aalam-romanise:   ## the Latin edition: name_fr and name_ijmes on every table
+	$(APY) -m aalam.romanise
 aalam-codebook:   ## regenerate the codebook from the data and config
 	$(APY) -m aalam.codebook
 aalam-validate:   ## consistency, coverage and the verbatim-quote guard
@@ -150,4 +152,5 @@ aalam-gold-draw:  ## stratified, seeded sample -> coding sheets in gold/
 aalam-gold-score: ## coded sheets -> precision/recall with Wilson intervals
 	$(APY) -m aalam.gold score
 aalam-test:       ## parser and normalisation tests
-	$(APY) -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py tests/test_gold_aalam.py -q
+	$(APY) -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py \
+	  tests/test_gold_aalam.py tests/test_romanise_aalam.py -q

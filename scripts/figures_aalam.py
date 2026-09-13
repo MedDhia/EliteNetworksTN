@@ -1,7 +1,15 @@
 """Publication figures for the A'lam Tunisiyun build.
 
-Four figures, written into ``figures/`` as a 300 dpi PNG and a vector PDF
-each, in the house style shared with the gazette build (``house_style.py``).
+Four figures in two editions -- Arabic labels and Latin ones -- written into
+``figures/`` as a 300 dpi PNG and a vector PDF each, in the house style shared
+with the gazette build (``house_style.py``). The Latin plates take the ``_en``
+suffix and are drawn by the same four functions, so neither edition can drift
+from the other.
+
+The Latin labels are the ``name_ijmes`` column, because everything else on the
+plate is English. ``name_fr`` is the Tunisian French form and is in the tables;
+it is what joins this build to the gazette build, whose 45,634 persons and
+8,803 institutions are all named in French.
 
 What they are allowed to show
 ----------------------------
@@ -36,9 +44,12 @@ PROC = ROOT / "data" / "processed" / "aalam-tunisiyun"
 
 SOURCE = ("Source: Sadok Zmerli, *A'lam Tunisiyun* (Dar al-Gharb al-Islami, 2000), "
           "38 biographical essays, author's extraction. 866 of 873 ties come from a "
-          "model pass over the Arabic text; every one quotes its page verbatim, but "
-          "no gold-standard precision or recall figure exists yet, so counts here are "
-          "lower bounds of unknown tightness. See docs/LIMITATIONS-aalam-tunisiyun.md.")
+          "model pass over the Arabic text and every one quotes its page verbatim. "
+          "On a seeded sample of 206 ties, precision 0.907 (95% CI 0.860-0.940) and "
+          "recall 0.672 (0.550-0.774), so counts here are lower bounds: the coders "
+          "were further instances of the model that wrote the assertions, which makes "
+          "the comparisons between layers meaningful and the headline number not. "
+          "See docs/LIMITATIONS-aalam-tunisiyun.md.")
 
 # The author's own three generations, in his order.
 COHORTS = ["السابقون", "التابعون", "المعاصرون"]
@@ -68,7 +79,11 @@ persons = _read(PROC / "persons.csv")
 edges = _read(PROC / "edges" / "all.csv")
 
 subjects = {r["person_id"]: r for r in persons if r["is_subject"] == "yes"}
-name_of = {r["person_id"]: r["name_ar"] for r in persons}
+# Both editions read the same tables. `name_ijmes` is written by
+# `python -m aalam.romanise`, gated against the Arabic consonant by consonant.
+NAME = {"ar": {r["person_id"]: r["name_ar"] for r in persons},
+        "en": {r["person_id"]: r["name_ijmes"] or r["name_ar"] for r in persons}}
+name_of = NAME["ar"]
 # Nodes the book places only by a relation («الأساتذة الذين ساهموا في تكوينهما»)
 # are real ties to unidentified people, but they are not people to draw.
 described = {r["person_id"] for r in persons if r.get("name_kind") == "described"}
@@ -82,13 +97,6 @@ def _draw_nodes(ax, pos, nodes, *, colour, size, marker="o", zorder=3):
     ax.scatter(xs, ys, s=[size[n] for n in nodes],
                c=[colour[n] if isinstance(colour, dict) else colour for n in nodes],
                marker=marker, linewidths=1.4, edgecolors=PAPER, zorder=zorder)
-
-
-def _label(ax, pos, node, text, *, dy=0.0, size=6.4, colour=INK, weight="normal"):
-    ax.text(pos[node][0], pos[node][1] + dy, text, ha="center", va="center",
-            fontsize=size, color=colour, fontfamily=ARABIC_FONT, weight=weight,
-            zorder=6,
-            bbox=dict(boxstyle="round,pad=0.16", fc=PAPER, ec="none", alpha=0.82))
 
 
 def _separate(pos: dict, min_dist: float = 0.13, rounds: int = 260) -> dict:
@@ -125,24 +133,35 @@ def _separate(pos: dict, min_dist: float = 0.13, rounds: int = 260) -> dict:
     return {n: (x, y) for n, (x, y) in pos.items()}
 
 
-def _place_labels(ax, pos, items, *, size, colour, weight="normal",
-                  span=(0.052, 0.075)) -> None:
+# Half-width of one character, in data units, at font size 6.5. Both numbers
+# are measured off these plates with `get_window_extent`, not guessed: Latin
+# sets 1.65 times as wide as Amiri's Arabic at the same point size, so reusing
+# the Arabic constant on a Latin plate would size every collision box about a
+# third too small and the labels would overprint.
+PER_CHAR = {"ar": 0.0135, "en": 0.0223}
+
+
+def _place_labels(ax, pos, items, *, size, colour, lang="ar", weight="normal",
+                  span=(0.052, 0.075), placed=None) -> None:
     """Label nodes, moving a label that would land on one already placed.
 
     Labels are tried above the node first, then below, then to either side.
     Overlap is measured on a crude box in data units rather than by rendering,
-    which is enough here: the failure being avoided is two long Arabic names
-    written across each other, not a pixel of contact.
+    which is enough here: the failure being avoided is two long names written
+    across each other, not a pixel of contact.
+
+    Pass ``placed`` to carry collision state across calls. Two calls without it
+    know nothing of each other, which is how the subject and alter labels in
+    fig 2 came to be written over one another.
     """
     dx, dy = span
     offsets = [(0, dy), (0, -dy), (0, 1.9 * dy), (0, -1.9 * dy),
                (2.4 * dx, 0.35 * dy), (-2.4 * dx, 0.35 * dy),
                (0, 2.8 * dy), (0, -2.8 * dy)]
-    placed: list[tuple[float, float, float, float]] = []
+    if placed is None:
+        placed = []
     for node, text in items:
-        # Arabic sets narrower than Latin at the same point size; 0.0135 data
-        # units per character is measured off these plates, not guessed.
-        half_w = max(0.055, 0.0135 * len(text) * size / 6.5)
+        half_w = max(0.055, PER_CHAR[lang] * len(text) * size / 6.5)
         half_h = 0.026 * size / 6.5
         x0, y0 = pos[node]
         for ox, oy in offsets:
@@ -156,13 +175,15 @@ def _place_labels(ax, pos, items, *, size, colour, weight="normal",
             x, y = x0, y0 + dy
             placed.append((x - half_w, y - half_h, x + half_w, y + half_h))
         ax.text(x, y, text, ha="center", va="center", fontsize=size,
-                color=colour, fontfamily=ARABIC_FONT, weight=weight, zorder=6,
+                color=colour, weight=weight, zorder=6,
+                # Amiri's Latin is poor, so only the Arabic edition asks for it.
+                **({"fontfamily": ARABIC_FONT} if lang == "ar" else {}),
                 bbox=dict(boxstyle="round,pad=0.16", fc=PAPER, ec="none",
                           alpha=0.85))
 
 
 # --- fig 1: the two-mode network -------------------------------------------
-def fig_two_mode(min_subjects: int = 3) -> None:
+def fig_two_mode(lang: str = "ar", min_subjects: int = 3) -> None:
     """Subjects and the institutions that tie at least two of them together."""
     by_org: dict[str, set[str]] = defaultdict(set)
     org_name: dict[str, str] = {}
@@ -174,7 +195,8 @@ def fig_two_mode(min_subjects: int = 3) -> None:
         if e["to_kind"] in {"office", "work"}:
             continue
         by_org[e["to_id"]].add(e["from_id"])
-        org_name[e["to_id"]] = e["to_name"]
+        org_name[e["to_id"]] = {"ar": e["to_name"],
+                                "en": e["to_ijmes"] or e["to_name"]}
 
     hubs = {o: s for o, s in by_org.items() if len(s) >= min_subjects}
     g = nx.Graph()
@@ -193,7 +215,8 @@ def fig_two_mode(min_subjects: int = 3) -> None:
     orgs_in = [n for n in g if n not in subjects]
 
     pos = _separate(nx.spring_layout(g, k=1.05, iterations=1400, seed=11,
-                                     weight=None), min_dist=0.16)
+                                     weight=None),
+                    min_dist={"ar": 0.16, "en": 0.22}[lang])
 
     fig, ax = plt.subplots(figsize=(9.4, 7.4))
     ax.axis("off")
@@ -209,10 +232,14 @@ def fig_two_mode(min_subjects: int = 3) -> None:
     # Direct-label every institution: they are the finding, and there are few.
     # Biggest first, so a hub keeps the spot nearest its node and a minor body
     # is the one that moves.
+    # The one mixed-direction string on the Arabic plate: an Arabic name with
+    # an ASCII count after it, which bidi reorders so the count reads at the
+    # visual left. The Latin plate has no such problem.
     _place_labels(ax, pos,
-                  [(o, f"{org_name[o]} ({g.degree(o)})")
+                  [(o, f"{org_name[o][lang]} ({g.degree(o)})")
                    for o in sorted(orgs_in, key=lambda o: -g.degree(o))],
-                  size=7.4, colour=ORG, weight="bold")
+                  size=7.4, colour=ORG, lang=lang, weight="bold",
+                  span={"ar": (0.052, 0.075), "en": (0.052, 0.105)}[lang])
     # People carry no labels here. Thirty names would bury the institutions,
     # which are what the figure is about; fig 3 names them instead.
 
@@ -233,11 +260,11 @@ def fig_two_mode(min_subjects: int = 3) -> None:
                 if dropped else ""),
              top=0.995)
     fig.subplots_adjust(top=0.878, bottom=0.045, left=0.02, right=0.98)
-    save(fig, "fig01_aalam_two_mode", SOURCE)
+    save(fig, _name("fig01_aalam_two_mode", lang), SOURCE)
 
 
 # --- fig 2: pedagogical descent --------------------------------------------
-def fig_tutelage() -> None:
+def fig_tutelage(lang: str = "ar") -> None:
     """Who studied under whom: the layer no other build in this repo has."""
     g = nx.DiGraph()
     for e in edges:
@@ -280,10 +307,14 @@ def fig_tutelage() -> None:
                edgecolors=MUTED, linewidths=1.0, zorder=4)
     _draw_nodes(ax, pos, subj_in, colour=colour, size=size, marker="o", zorder=5)
 
-    _place_labels(ax, pos, [(n, name_of.get(n, n)) for n in subj_in],
-                  size=6.1, colour=INK)
-    _place_labels(ax, pos, [(n, name_of.get(n, n)) for n in alter_in],
-                  size=5.6, colour=MUTED)
+    # One collision list across both calls: the subjects claim their slots
+    # first and an alter's label moves out of the way, rather than being
+    # written on top of a name already on the plate.
+    names, placed = NAME[lang], []
+    _place_labels(ax, pos, [(n, names.get(n, n)) for n in subj_in],
+                  size=6.1, colour=INK, lang=lang, placed=placed)
+    _place_labels(ax, pos, [(n, names.get(n, n)) for n in alter_in],
+                  size=5.6, colour=MUTED, lang=lang, placed=placed)
 
     handles = [Line2D([], [], marker="o", ls="none", mfc=COHORT_COLOUR[c],
                       mec=PAPER, ms=8, label=f"Subject — {COHORT_EN[c]}")
@@ -301,11 +332,11 @@ def fig_tutelage() -> None:
              "records them. Hollow circles are people named only as somebody's teacher "
              "or pupil.", top=0.995)
     fig.subplots_adjust(top=0.872, bottom=0.045, left=0.02, right=0.98)
-    save(fig, "fig02_aalam_tutelage", SOURCE)
+    save(fig, _name("fig02_aalam_tutelage", lang), SOURCE)
 
 
 # --- fig 3: the backbone among the 38 --------------------------------------
-def fig_subject_backbone() -> None:
+def fig_subject_backbone(lang: str = "ar") -> None:
     """Ties running between two of the 38, across all four layers."""
     g = nx.Graph()
     g.add_nodes_from(subjects)
@@ -322,11 +353,29 @@ def fig_subject_backbone() -> None:
     isolated = [n for n in g if g.degree(n) == 0]
 
     pos = _separate(nx.spring_layout(g.subgraph(linked), k=0.70, iterations=900,
-                                     seed=3, weight=None), min_dist=0.15)
-    # Park the unconnected along the foot rather than letting the spring throw
-    # them to the corners: they are a finding, not noise.
-    for i, n in enumerate(sorted(isolated)):
-        pos[n] = (-1.16 + 0.255 * i, -1.30)
+                                     seed=3, weight=None),
+                    min_dist={"ar": 0.15, "en": 0.21}[lang])
+    if lang != "ar":
+        # The spring output is not centred on the origin, and in the Arabic
+        # edition the foot row spans the plate and hides it. The Latin foot is
+        # two columns, so the drift shows as a network pinned to one side.
+        mid = sum(pos[n][0] for n in linked) / len(linked)
+        pos = {n: (x - mid, y) for n, (x, y) in pos.items()}
+    # Park the unconnected at the foot rather than letting the spring throw them
+    # to the corners: they are a finding, not noise.
+    #
+    # Ten in a row works in Arabic and cannot work in Latin. "Muhammad al-Fadil
+    # Ibn Ashur" is 27 characters, wider on its own than the whole cell a row of
+    # ten allows, so the Latin edition sets them as two columns of five with the
+    # name beside the dot instead of over it.
+    foot = sorted(isolated)
+    if lang == "ar":
+        for i, n in enumerate(foot):
+            pos[n] = (-1.16 + 0.255 * i, -1.30)
+    else:
+        for i, n in enumerate(foot):
+            col, row = divmod(i, 5)
+            pos[n] = (-1.30 + 1.40 * col, -1.14 - 0.075 * row)
 
     fig, ax = plt.subplots(figsize=(9.4, 7.6))
     ax.axis("off")
@@ -337,6 +386,10 @@ def fig_subject_backbone() -> None:
                     color=MUTED, lw=lw, ls=ls, alpha=0.6, zorder=1,
                     solid_capstyle="round")
 
+    if lang != "ar":
+        # Autoscale would otherwise fit the two foot columns, which occupy the
+        # left of the plate, and push the network into the right third.
+        ax.set_xlim(-1.45, 1.45)
     size = {n: 52 + 34 * g.degree(n) for n in g}
     colour = {n: COHORT_COLOUR.get(cohort_of.get(n, ""), MUTED) for n in g}
     _draw_nodes(ax, pos, linked, colour=colour, size=size, marker="o", zorder=4)
@@ -345,16 +398,23 @@ def fig_subject_backbone() -> None:
                c=[colour[n] for n in isolated], marker="o",
                linewidths=1.4, edgecolors=PAPER, alpha=0.42, zorder=4)
 
-    _place_labels(ax, pos,
-                  [(n, name_of[n]) for n in sorted(g, key=lambda n: -g.degree(n))],
-                  size=6.2, colour=INK)
+    labelled = sorted(g, key=lambda n: -g.degree(n))
+    if lang != "ar":
+        # The foot list is set by hand, so it is kept out of the collision run.
+        labelled = [n for n in labelled if n not in set(foot)]
+        for n in foot:
+            ax.text(pos[n][0] + 0.05, pos[n][1], NAME[lang][n], ha="left",
+                    va="center", fontsize=6.2, color=INK, zorder=6)
+    _place_labels(ax, pos, [(n, NAME[lang][n]) for n in labelled],
+                  size=6.2, colour=INK, lang=lang)
 
     handles = [Line2D([], [], marker="o", ls="none", mfc=COHORT_COLOUR[c],
                       mec=PAPER, ms=8, label=COHORT_EN[c]) for c in COHORTS]
     handles += [Line2D([], [], color=MUTED, ls=LAYER_STYLE[l][0],
                        lw=LAYER_STYLE[l][1], label=LAYER_EN[l])
                 for l in ("tutelage", "office", "kinship", "membership")]
-    ax.legend(handles=handles, loc="upper right", fontsize=7.4, ncol=2)
+    ax.legend(handles=handles, fontsize=7.4, ncol=2,
+              loc={"ar": "upper right", "en": "upper left"}[lang])
 
     headline(fig, "The 38 among themselves",
              f"Pairs of subjects the book ties together: {g.number_of_edges()} pairs "
@@ -363,17 +423,17 @@ def fig_subject_backbone() -> None:
              "Line style is the layer; a pair joined on more than one layer carries more "
              "than one line.", top=0.995)
     fig.subplots_adjust(top=0.884, bottom=0.045, left=0.02, right=0.98)
-    save(fig, "fig03_aalam_subject_backbone", SOURCE)
+    save(fig, _name("fig03_aalam_subject_backbone", lang), SOURCE)
 
 
 # --- fig 4: the lives ------------------------------------------------------
-def fig_lives() -> None:
+def fig_lives(lang: str = "ar") -> None:
     """Not a network: the three generations the author asserts, as life spans."""
     rows = []
     for pid, r in subjects.items():
         if r["birth_year"] and r["death_year"]:
             rows.append((r["cohort"], int(r["birth_year"]), int(r["death_year"]),
-                         r["name_ar"]))
+                         NAME[lang][pid]))
     rows.sort(key=lambda t: (COHORTS.index(t[0]), t[1]))
 
     fig, ax = plt.subplots(figsize=(9.0, 8.2))
@@ -392,7 +452,8 @@ def fig_lives() -> None:
         y -= 0.9
 
     ax.set_yticks(ticks)
-    ax.set_yticklabels(labels, fontsize=6.8, fontfamily=ARABIC_FONT, color=INK)
+    ax.set_yticklabels(labels, fontsize=6.8, color=INK,
+                       **({"fontfamily": ARABIC_FONT} if lang == "ar" else {}))
     ax.set_xlim(1580, 2010)
     ax.set_ylim(y + 0.4, 1.2)
     ax.set_xlabel("Year")
@@ -400,10 +461,13 @@ def fig_lives() -> None:
     ax.spines["left"].set_visible(False)
     ax.tick_params(axis="y", length=0)
 
-    # Upper left is the only empty quarter: the spans all run to the right.
+    # The spans all run to the right, so the left half is empty -- but not at
+    # the top, where the first cohort starts earliest of all and Aziza
+    # Othmana's bar ran under the legend, nor in the middle, where the Latin
+    # names reach furthest right. The foot is clear in both editions.
     ax.legend(handles=[Line2D([], [], color=COHORT_COLOUR[c], lw=5,
                               label=COHORT_EN[c]) for c in COHORTS],
-              loc="upper left", fontsize=7.8)
+              loc="lower left", fontsize=7.8)
 
     headline(fig, "Three generations, as the author divides them",
              "Life spans of the 37 subjects whose birth and death the volume both gives. "
@@ -411,14 +475,27 @@ def fig_lives() -> None:
              "as his judgement, not as an attribute of the people. General Husayn is "
              "absent: the book prints his birth year as an ellipsis. Aziza Othmana sits a "
              "century clear of everyone else.", top=0.995)
-    fig.subplots_adjust(top=0.886, bottom=0.085, left=0.20, right=0.975)
-    save(fig, "fig04_aalam_lives", SOURCE)
+    # The y-tick names live in this margin. "Muhammad al-Tahir Ibn Ashur" is
+    # half as wide again as the Arabic it renders, so the Latin plate needs
+    # more of the plate given over to it.
+    # `bottom` has to clear the axis label as well as the ticks, or "Year"
+    # sets on top of the source note.
+    fig.subplots_adjust(top=0.886, bottom=0.115, right=0.975,
+                        left={"ar": 0.20, "en": 0.28}[lang])
+    save(fig, _name("fig04_aalam_lives", lang), SOURCE)
+
+
+def _name(stem: str, lang: str) -> str:
+    """The Arabic plates keep the names they were published under."""
+    return stem if lang == "ar" else f"{stem}_en"
 
 
 if __name__ == "__main__":
-    fig_two_mode()
-    fig_tutelage()
-    fig_subject_backbone()
-    fig_lives()
+    for lang in ("ar", "en"):
+        print(f"\n--- {lang} ---")
+        fig_two_mode(lang)
+        fig_tutelage(lang)
+        fig_subject_backbone(lang)
+        fig_lives(lang)
     n = len(list((ROOT / "figures").glob("*aalam*")))
     print(f"\ndone — {n} A'lam files in figures/")

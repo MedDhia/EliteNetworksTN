@@ -173,7 +173,63 @@ node, and this volume is full of common names across three centuries. No
 disambiguation by date is possible, because alters carry no life dates. There
 is no measured homonym rate.
 
-## 10. Reproducibility
+## 10. The Latin columns, and what a gloss is worth
+
+`name_fr` and `name_ijmes` are supplied, not derived. Nothing in the data could
+have produced them: `name_translit` is a consonant skeleton built to generate
+identifiers, and Arabic script does not write short vowels, so no procedure
+recovers `Salem` from `SALM`. The vowels were never in the volume.
+
+**The gate.** Each Latin form is reduced to its consonants and compared with
+the same reduction of the Arabic it claims to render, on every row rather than
+a sample (`tests/test_romanise_aalam.py`). The folding is stated as rules with
+a case each: the article whether written, hyphenated or assimilated
+(`خير الدين` is `Khereddine`, with no l surviving); French `ch` against IJMES
+`sh`; `ق` as q, k or the hard g of `Bourguiba`; a French soft g as the sound of
+`ج`; `p` for `باشا`, which Arabic cannot write; `ن` before a labial said and
+written m; ta marbuta silent except where its word governs the next.
+
+This is the counterpart of the verbatim-quote gate in §4, and it fails in the
+same direction. It catches a gloss attached to the wrong name. Run against the
+homonym merge that `GOLD-FINDINGS` §6 found — `مصطفى آغة` glossed as Mustapha
+Radhouane, two men a century apart — it refuses the pair. It equally refuses
+`سالم بو حاجب` as Ali Bou Hajeb, and `محمد الطاهر بن عاشور` as his son
+Mohamed Fadhel.
+
+**What it cannot see is a vowel.** `Salim`, `Salem` and `Sulaym` are one spine.
+The gate has nothing to tell them apart with, because the Arabic does not
+either. A wrong vowel passes silently, and there is no measured rate for it.
+
+**So the rows carry `gloss_tier`.** `verified` is the 112 rows a reader meets —
+the 38 subjects, and the institutions and alters with three or more ties —
+where the form is fixed in the historiography and was checked by hand.
+`romanised` is the long tail, mostly people the book mentions once, where the
+consonants are gated and the vowels are a reading. `described` is the 12 rows
+the register marks as not being names, of which **four turn out to be names
+after all** -- Ibn Sina, Ibn Rushd, Ibn al-Rumi and Ibn Abi Dinar, caught by a
+rule that reads the patronymic `ابن` as "son of". Glossing them is what made it
+visible, and `GOLD-FINDINGS` §16 records it.
+
+**`gloss_mode` says what kind of rendering it is.** `transliterated` is the
+rule. `conventional` marks the French form of a body that had its own French
+name, which is not a rendering of its Arabic one: `المدرسة الصادقية` is
+`Collège Sadiki`, `معهد كارنو` is `Lycée Carnot`. `translated` marks a
+common-noun post or a description, where no transliteration would mean
+anything: `وزير الداخلية` is `Minister of the Interior`, and
+`الأساتذة الذين ساهموا في تكوينهما` is a description of a group, not a person.
+Reading a `translated` row as a proper name is the error the column exists to
+prevent.
+
+`evidence_quote` is not glossed. It is the verbatim gate, and a translated
+quote proves nothing about the page.
+
+`role_descriptor_en` renders the volume's own essay subtitles. Five of the 38
+are not subtitles: OCR took a sentence from the body of the essay instead, and
+the English says what that fragment says rather than repairing it into a clean
+descriptor. Several others carry visible OCR damage (`الموة ظف ا لكبيم` for
+`الموظف الكبير`), rendered by the evident word.
+
+## 11. Reproducibility
 
 The scan is not redistributed. `data/raw/aalam/manifest.csv` carries a sha256
 per page and pins the OCR engine, version and flags, so a re-OCR appears as a

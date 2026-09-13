@@ -412,11 +412,48 @@ now reclassified to `read_work_of`, flagged for review, and a validation check
 fails the build if one survives. The class was found by reading twelve rows at
 random, which is the honest measure of how much else may be there.
 
+### Reading it without Arabic
+
+Every name in the volume is Arabic script, and the column that looks like the
+Latin one is not: `name_translit` is a vowel-less consonant skeleton built to
+generate identifiers, so `سالم بو حاجب` comes out `SALM BW HAJB`. Arabic does
+not write short vowels, and nothing recovers `Salem` from that.
+
+`python -m aalam.romanise` therefore writes two supplied columns on every
+table. **`name_fr`** is Tunisian French orthography (Mohamed Tahar Ben Achour,
+Bechir Sfar), which is how these people are spelled in Tunisian archives and
+what joins this build to the gazette build, whose 45,634 persons and 8,803
+organisations are all named in French. **`name_ijmes`** is the Middle East
+studies convention without diacritics (Muhammad al-Tahir Ibn Ashur). The edge
+tables carry both on both ends.
+
+Neither translates: a newspaper called جريدة الحاضرة is `al-Hadira`, never
+"The Metropolis". Where a row is a common-noun post rather than a name
+(`وزير الداخلية`) it is translated instead, and `gloss_mode` says so, because
+reading `Minister of the Interior` as somebody's name is the error the column
+exists to prevent.
+
+**Every gloss is gated.** A Latin form is reduced to its consonants and
+compared with the same reduction of the Arabic, on every row rather than a
+sample — the counterpart of the verbatim-quote gate on the extraction passes.
+It refuses `مصطفى آغة` glossed as Mustapha Radhouane, which is the exact
+homonym merge the gold coding caught. It cannot see a vowel: `Salim` and
+`Salem` are one spine, because the Arabic never recorded the difference. So
+`gloss_tier` marks the 112 rows a reader actually meets, which were checked by
+hand, apart from the tail, which was not. See
+[`docs/LIMITATIONS-aalam-tunisiyun.md`](docs/LIMITATIONS-aalam-tunisiyun.md)
+§10.
+
+`evidence_quote` stays Arabic. It is the verbatim gate, and a translated quote
+proves nothing about the page.
+
 ### Figures
 
-`python scripts/figures_aalam.py` writes four figures into `figures/`, each a
-300 dpi PNG and a vector PDF, in the house style shared with the gazette build
-(`scripts/house_style.py`):
+`python scripts/figures_aalam.py` writes four figures into `figures/` in two
+editions, one labelled in Arabic and one in Latin, each a 300 dpi PNG and a
+vector PDF, in the house style shared with the gazette build
+(`scripts/house_style.py`). The Latin plates take the `_en` suffix and come
+from the same four functions, so the two editions cannot drift apart:
 
 | Figure | What it shows |
 |---|---|
