@@ -37,6 +37,7 @@ import re
 from collections import defaultdict
 from datetime import date, datetime
 
+from .orgentity import OrgEntityResolver
 from .paths import PROCESSED, ensure_dirs
 from .spells import periods
 
@@ -128,18 +129,30 @@ def org_lifecycle(events: list[dict], resolution: list[dict]) -> tuple[dict, dic
     mention_to_id = {om: next(iter(ids)) for om, ids in candidates.items()
                      if len(ids) == 1}
 
+    # Dated against BOTH id spaces. The vertex universe is entity ids now,
+    # while `resolution` carries seed ids, so keying on the seed id alone left
+    # every non-adopted firm with no constitution and no dissolution date --
+    # `birth_known = 0`, and its risk window silently widened to the whole
+    # panel. Silently is the problem: a structural zero turning into an
+    # observable non-tie changes every degree term and raises no error.
+    org_entity = OrgEntityResolver.load()
     birth: dict[str, date] = {}
     death: dict[str, date] = {}
     for e in events:
-        oid = mention_to_id.get(e.get("org_mention") or "")
+        ids = {mention_to_id.get(e.get("org_mention") or ""),
+               org_entity.for_event(e)}
         d = _d(e.get("event_date") or "")
-        if not oid or not d:
+        if not d:
             continue
         t = e["event_type"]
-        if t == "constituted" and (oid not in birth or d < birth[oid]):
-            birth[oid] = d
-        elif t in ("dissolved", "liquidated") and (oid not in death or d < death[oid]):
-            death[oid] = d
+        for oid in ids:
+            if not oid:
+                continue
+            if t == "constituted" and (oid not in birth or d < birth[oid]):
+                birth[oid] = d
+            elif (t in ("dissolved", "liquidated")
+                  and (oid not in death or d < death[oid])):
+                death[oid] = d
     return birth, death
 
 
@@ -181,15 +194,21 @@ def build(panel: list[dict], spells: list[dict], seed_nodes: list[dict],
     # that is where a model specification can act on it; a merged node does not
     # degrade a covariate, it fabricates a hub, and every degree term is
     # estimated against the distribution it distorts.
+    # Keyed on BOTH the seed id and the entity id. `orgattrs` deliberately
+    # aggregates on the seed node, while the vertex universe is now entity
+    # ids, so joining on one alone returned 0 for every `ORGE_` vertex --
+    # `merge_suspect` would have read zero everywhere and the covariate that
+    # found this bug in the first place would have gone blind rather than
+    # reporting honestly.
     id_values: dict[str, int] = {}
     for r in (org_identifiers or []):
-        oid = r.get("org_id")
         try:
             n_vals = int(r.get("n_values_for_org") or 0)
         except ValueError:
             continue
-        if oid:
-            id_values[oid] = max(id_values.get(oid, 0), n_vals)
+        for oid in (r.get("org_id"), r.get("org_entity_id")):
+            if oid:
+                id_values[oid] = max(id_values.get(oid, 0), n_vals)
 
     node_key = []
     suspect = 0

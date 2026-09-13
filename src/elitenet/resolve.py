@@ -296,6 +296,9 @@ def save_token_specificity(spec: TokenSpecificity) -> None:
 # still being retained as evidence of what the matcher saw.
 IDENTITY_BASES = ("exact", "acronym", "discriminating_fuzzy", "hard_identifier")
 
+# One floor, honoured by every caller. `resolve_org` used to apply it alone.
+THRESHOLD_ORG_IDENTITY = 0.88
+
 
 @dataclass
 class OrgMatch:
@@ -309,7 +312,13 @@ class OrgMatch:
 
     @property
     def is_identity(self) -> bool:
-        return bool(self.org_id) and self.basis in IDENTITY_BASES
+        # The score floor belongs HERE, not only in `resolve_org`. With it
+        # applied in one place and not the other, `orgentity` adopted a seed
+        # id on a 0.52 name match -- two firms with different matricules on
+        # one vertex, created by the stage whose whole purpose is to separate
+        # them, and below the threshold every other stage honours.
+        return (bool(self.org_id) and self.basis in IDENTITY_BASES
+                and self.score >= THRESHOLD_ORG_IDENTITY)
 
 
 def org_match(mention: str, idx: SeedIndex) -> OrgMatch:
@@ -376,7 +385,7 @@ def best_org_match(mention: str, idx: SeedIndex) -> tuple[str, float]:
 def resolve_org(mention: str, idx: SeedIndex) -> tuple[str, float]:
     """Match an organisation mention to a seed organisation."""
     m = org_match(mention, idx)
-    return (m.org_id, m.score) if (m.is_identity and m.score >= 0.88) else ("", m.score)
+    return (m.org_id, m.score) if m.is_identity else ("", m.score)
 
 
 # --------------------------------------------------------------------------- #

@@ -87,6 +87,23 @@ def read_events() -> list[dict]:
     return _read("events.csv")
 
 
+def multi_org_mentions(resolution: list[dict]) -> set[str]:
+    """Mentions that resolve to more than one seed organisation.
+
+    Distinct from a mention the specificity gate merely refused, and the two
+    must not be treated alike. A refused mention identifies nothing *yet* --
+    its entity, keyed on a hard identifier, identifies it perfectly well. A
+    mention resolving to two organisations identifies neither, and attributing
+    its matricule to one of them is the guess this guard exists to refuse.
+    """
+    cands: dict[str, set[str]] = defaultdict(set)
+    for r in resolution:
+        om, oid = r.get("org_mention"), r.get("resolved_org_id")
+        if om and oid:
+            cands[om].add(oid)
+    return {om for om, ids in cands.items() if len(ids) > 1}
+
+
 def mention_to_org(resolution: list[dict]) -> tuple[dict[str, str], dict[str, str]]:
     """The mention-to-id map, minus every mention that is not unique.
 
@@ -111,14 +128,27 @@ def _obs_date(e: dict) -> str:
 
 
 def identifiers(events: list[dict], m2o: dict[str, str],
-                labels: dict[str, str]) -> tuple[list[dict], dict]:
+                labels: dict[str, str],
+                multi_org: set[str] | None = None) -> tuple[list[dict], dict]:
     """One row per (organisation, identifier kind, value)."""
+    multi_org = multi_org or set()
     agg: dict[tuple[str, str, str], dict] = {}
     diag: dict[str, int] = defaultdict(int)
     org_entity = OrgEntityResolver.load()
 
     for e in events:
-        oid = m2o.get(e.get("org_mention") or "")
+        # Fall back to the ENTITY when the mention has no seed id. The gate
+        # blanks `resolved_org_id` for a generic match, and skipping on that
+        # alone deleted every identifier and address observation belonging to
+        # the population this change is about -- data removal under a
+        # no-removal constraint. But a mention resolving to SEVERAL seed
+        # organisations is a different case and keeps its original guard:
+        # there the ambiguity is real and no fallback should paper over it.
+        mention = (e.get("org_mention") or "").strip()
+        if mention in multi_org:
+            diag["skipped_multi_org_mention"] += 1
+            continue
+        oid = m2o.get(mention) or org_entity.for_event(e)
         if not oid:
             continue
         for id_type in ID_TYPES:
@@ -175,7 +205,8 @@ def identifiers(events: list[dict], m2o: dict[str, str],
 
 
 def addresses(events: list[dict], m2o: dict[str, str],
-              labels: dict[str, str]) -> tuple[list[dict], dict]:
+              labels: dict[str, str],
+              multi_org: set[str] | None = None) -> tuple[list[dict], dict]:
     """One row per distinct (organisation, address, kind), dated.
 
     Aggregated on the normalised address rather than the raw string: casing,
@@ -183,11 +214,15 @@ def addresses(events: list[dict], m2o: dict[str, str],
     of the same seat, and keeping the raw strings apart would report a move
     that never happened.
     """
+    multi_org = multi_org or set()
     agg: dict[tuple[str, str, str], dict] = {}
     diag: dict[str, int] = defaultdict(int)
     org_entity = OrgEntityResolver.load()
     for e in events:
-        oid = m2o.get(e.get("org_mention") or "")
+        mention = (e.get("org_mention") or "").strip()
+        if mention in multi_org:
+            continue
+        oid = m2o.get(mention) or org_entity.for_event(e)
         raw = (e.get("org_address") or "").strip()
         if not oid or not raw:
             continue
@@ -401,9 +436,11 @@ def _write(name: str, rows: list[dict], fields: list[str]) -> None:
 def run() -> dict:
     ensure_dirs()
     events = read_events()
-    m2o, labels = mention_to_org(_read("resolution.csv"))
-    ids, d1 = identifiers(events, m2o, labels)
-    addrs, d2 = addresses(events, m2o, labels)
+    resolution = _read("resolution.csv")
+    m2o, labels = mention_to_org(resolution)
+    multi_org = multi_org_mentions(resolution)
+    ids, d1 = identifiers(events, m2o, labels, multi_org)
+    addrs, d2 = addresses(events, m2o, labels, multi_org)
     cons = conflicts(ids)
 
     _write("org_identifiers.csv", ids, FIELDS_ID)

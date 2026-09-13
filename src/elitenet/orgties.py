@@ -31,16 +31,17 @@ import json
 from collections import defaultdict
 from datetime import date, datetime
 
+from .names import parse_org
 from .orgentity import OrgEntityResolver
 from .paths import INTERIM, PROCESSED, ensure_dirs, window
 from .resolve import (THRESHOLD_AMBIGUOUS, THRESHOLD_RESOLVED, SeedIndex,
-                      best_org_match, load_seed, org_match, resolve_org)
+                      best_org_match, load_seed, org_match)
+from .spells import periods
 
 # The score at which an endpoint counts as a member of the layer. Deliberately
 # the same 0.88 the old rule used, so this change moves identity without
 # moving the row set.
 THRESHOLD_MEMBERSHIP = 0.88
-from .spells import periods
 
 # How each relation bears on the interval. `shares_ceded` is the holder giving
 # a stake up, so it closes the tie; `shares_acquired` and a subscription open
@@ -161,6 +162,17 @@ def score_link(holder_match: float, target_match: float, n_obs: int,
 
 # One observation row, shared by the resolved path and the review queue so a
 # queued row carries the same provenance columns a resolved one does.
+def _same_org(a: str, b: str) -> bool:
+    """Two mentions naming one organisation.
+
+    Compared on the normalised key resolution uses for exact matching, not on
+    the raw strings: "la societe Alpha Holding" and "Societe Alpha Holding"
+    differ only by an article.
+    """
+    ka, kb = parse_org(a or "").match_key, parse_org(b or "").match_key
+    return bool(ka) and ka == kb
+
+
 def _obs_row(e: dict, idx: SeedIndex, hid: str, hs: float, tid: str, ts: float,
              hlabel: str, tlabel: str, hbasis: str = "", tbasis: str = "",
              hseed: str = "", tseed: str = "") -> dict:
@@ -223,18 +235,42 @@ def observations(events: list[dict],
         return cache[mention]
 
     def endpoint(mention: str, event: dict | None) -> tuple[str, float, str, str]:
-        """(id, score, basis, seed_id) for one end of a tie."""
+        """(id, score, basis, seed_id) for one end of a tie.
+
+        Membership and identity use the candidate differently, and conflating
+        them is what left the defect mostly unfixed. `cand` is the seed node
+        the mention came closest to, INCLUDING one the specificity gate
+        refused -- so it is the right thing to test 0.88 against, and the
+        worst possible thing to use as an id. Returning it as the id put 897
+        of `CO_TROIS`'s 1,003 endpoints straight back on the hub, in rows that
+        then read `holder_basis = generic_fuzzy` and `holder_seed_id = ""`
+        beside `holder_id = CO_TROIS`.
+        """
         cand, score = rv(mention)
         if not cand or score < THRESHOLD_MEMBERSHIP:
             return "", score, "unresolved", ""
         m = org_match(mention, idx)
         seed_id = m.org_id if m.is_identity else ""
-        # The target's identifiers live on the event; the holder is named in a
-        # clause and has none, so it can only be keyed by name.
+        # The target's identifiers are on the event; a holder is named inside
+        # a clause and has none, so it is keyed by name -- which `orgentity`
+        # now does for holder mentions too, so this lookup actually finds
+        # something.
         ent = (org_entity.for_event(event) if event is not None else "")
         if not ent:
             ent = org_entity.for_mention(mention)
-        return (ent or seed_id or cand), score, m.basis, seed_id
+        # The seed link of the ENTITY, not only of this mention. An entity
+        # adopts a seed id when any mention carrying its key matched at
+        # identity grade, so reading the link off this mention alone printed
+        # rows whose id was a seed node while `*_seed_id` was blank.
+        if ent and not seed_id and ent in idx.orgs:
+            seed_id = ent
+        if not ent and not seed_id:
+            # No entity table and a refused match: there is no identity to
+            # assert. Counted, and sent to the review queue rather than
+            # attached to the node the gate just rejected.
+            diag["endpoint_no_identity"] += 1
+            return "", score, m.basis, ""
+        return (ent or seed_id), score, m.basis, seed_id
 
     # The extractor emits both candidate targets for a clause that states one,
     # sharing an `alt_group`, and the choice belongs here: this is the first
@@ -321,9 +357,14 @@ def observations(events: list[dict],
                 "near_score": round(near_s, 4),
             })
             continue
-        if hid == tid:
-            # The clause named the subject firm as its own party. Usually the
-            # target capture and the holder capture landed on the same name.
+        # A self-tie has to be caught on the NAMES as well as the ids. The two
+        # ends are keyed differently by construction -- a target by its
+        # matricule, a holder only by its name -- so two spellings of one firm
+        # get two entity ids and `hid == tid` misses them. Without this the
+        # layer gains rows: a self-loop between a hub and an entity, which is
+        # invalid in a one-mode network and breaks the guarantee that this
+        # change preserves the observation count exactly.
+        if hid == tid or _same_org(holder_m, target_m):
             diag["self_match_dropped"] += 1
             continue
         out.append(_obs_row(e, idx, hid, hs, tid, ts,

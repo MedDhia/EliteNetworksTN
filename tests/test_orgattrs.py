@@ -10,7 +10,7 @@ stamp an unrelated company with someone else's tax ID.
 from elitenet.grammar import (RE_RC, RE_SIEGE, normalise_address, normalise_rc,
                               trim_address)
 from elitenet.orgattrs import (addresses, conflicts, identifiers,
-                               mention_to_org)
+                               mention_to_org, multi_org_mentions)
 
 
 def res(mention, oid, label=""):
@@ -45,9 +45,17 @@ def test_a_mention_resolving_to_two_organisations_identifies_neither():
     assert m2o["SOCIETE ALPHA"] == "CO_ALPHA"
 
 
-def test_an_ambiguous_mention_contributes_no_identifier():
-    m2o, labels = mention_to_org([res("AMBIG", "CO_A"), res("AMBIG", "CO_B")])
-    rows, diag = identifiers([ev("AMBIG", org_mf="1518656S")], m2o, labels)
+def test_a_mention_resolving_to_two_organisations_contributes_no_identifier():
+    """Distinct from a mention the specificity gate merely refused. A refused
+    mention identifies nothing *yet* and its entity, keyed on a hard
+    identifier, identifies it perfectly well -- so that one falls back to the
+    entity rather than being dropped. This one names two firms, so attributing
+    its matricule to either is a guess."""
+    resolution = [res("AMBIG", "CO_A"), res("AMBIG", "CO_B")]
+    m2o, labels = mention_to_org(resolution)
+    multi = multi_org_mentions(resolution)
+    assert multi == {"AMBIG"}
+    rows, diag = identifiers([ev("AMBIG", org_mf="1518656S")], m2o, labels, multi)
     assert rows == []
     assert diag["identifier_rows"] == 0
 

@@ -66,6 +66,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import gzip
 import hashlib
 import json
 from collections import Counter, defaultdict
@@ -73,16 +74,23 @@ from pathlib import Path
 
 from .grammar import normalise_mf, normalise_rc
 from .names import parse_org
-from .paths import INTERIM, PROCESSED, ensure_dirs, load_config
+from .paths import INTERIM, PROCESSED, ensure_dirs
 from .resolve import build_token_specificity, load_seed, org_match
 
 FIELDS_ENTITY = [
-    "org_entity_id", "entity_basis", "entity_key", "label",
+    "org_entity_id", "entity_basis", "entity_key", "n_keys", "label",
     "n_mentions", "n_events", "first_seen", "last_seen",
     "matricule", "rc",
     "seed_org_id", "seed_org_label", "seed_match_basis", "seed_link_is_identity",
     "is_identity", "issue_uid",
 ]
+# Every key an entity was reached by, not just the first. Adoption collapses
+# several keys onto one seed id, so a single stored key made `for_event`
+# return "" for every other key of that entity -- indistinguishable from an
+# inert resolver, which made each such event silently fall back to the OLD
+# identity. That is the "half-applied identity" the resolver docstring
+# promises cannot happen, and it happened for the normal case.
+FIELDS_KEY = ["entity_key", "org_entity_id", "entity_basis", "n_events"]
 FIELDS_MEMBER = [
     "org_mention", "org_entity_id", "entity_basis", "n_events",
     "mention_is_ambiguous", "n_identifiers_on_mention",
@@ -92,6 +100,20 @@ FIELDS_MEMBER = [
 # An entity basis that is not an identity claim. Kept as data, excluded from
 # anything that asserts two observations are the same firm.
 NON_IDENTITY = ("ambiguous_mention",)
+
+
+def _read_table(name: str) -> list[dict]:
+    """A processed table, following the committed `.gz` when the plain file is
+    absent -- which is the normal state in a fresh clone and in CI."""
+    path = PROCESSED / name
+    if path.exists():
+        with path.open(encoding="utf-8", newline="") as fh:
+            return list(csv.DictReader(fh))
+    gz = PROCESSED / (name + ".gz")
+    if gz.exists():
+        with gzip.open(gz, "rt", encoding="utf-8", newline="") as fh:
+            return list(csv.DictReader(fh))
+    return []
 
 
 def _eid(key: str) -> str:
@@ -108,11 +130,7 @@ def read_events(events_path: Path | None = None) -> list[dict]:
     if raw.exists():
         with raw.open(encoding="utf-8") as fh:
             return [json.loads(line) for line in fh]
-    path = PROCESSED / "events.csv"
-    if not path.exists():
-        return []
-    with path.open(encoding="utf-8", newline="") as fh:
-        return list(csv.DictReader(fh))
+    return _read_table("events.csv")
 
 
 def ambiguous_mentions(events: list[dict]) -> dict[str, int]:
@@ -158,8 +176,8 @@ def entity_key(event: dict, ambiguous: dict[str, int]) -> tuple[str, str]:
 
 
 def build(events: list[dict], idx, ambiguous: dict[str, int] | None = None
-          ) -> tuple[list[dict], list[dict], dict]:
-    """Entities, the mention membership map, and diagnostics."""
+          ) -> tuple[list[dict], list[dict], list[dict], dict]:
+    """Entities, the key index, the mention map, and diagnostics."""
     ambiguous = ambiguous if ambiguous is not None else ambiguous_mentions(events)
     diag: Counter = Counter()
 
@@ -175,25 +193,59 @@ def build(events: list[dict], idx, ambiguous: dict[str, int] | None = None
     agg: dict[str, dict] = {}
     mention_entity: dict[str, Counter] = defaultdict(Counter)
 
+    # Both sides of a tie need an entity. The holder of a shareholding is
+    # named inside a clause and carries no identifier of its own, so if it is
+    # never keyed it has no entity -- and the caller then falls back to
+    # whatever the name matched, which is the merge hub. That left the defect
+    # ~90% unfixed on the side where two thirds of it lived.
+    keyed: list[tuple[dict, str, str, str]] = []
     for e in events:
-        mention = (e.get("org_mention") or "").strip()
-        if not mention:
+        subject = (e.get("org_mention") or "").strip()
+        if subject:
+            key, basis = entity_key(e, ambiguous)
+            if key:
+                keyed.append((e, subject, key, basis))
+        holder = (e.get("counterparty_mention") or "").strip()
+        if holder:
+            # A holder has only its name. `entity_key` on a synthetic row with
+            # no identifier columns gives exactly the NAME:/AMB: key that
+            # `for_mention` will later look up, so the two cannot diverge.
+            hkey, hbasis = entity_key({"org_mention": holder}, ambiguous)
+            if hkey:
+                keyed.append((e, holder, hkey, hbasis))
+                diag["holder_mentions_keyed"] += 1
+
+    # The entity id is decided per KEY, in a pass of its own, before any row is
+    # built. Deciding it per event let the same matricule map to two entities
+    # -- one adopted, one not, depending on which mention was seen -- and then
+    # the key index kept whichever sorted later, so adoption was imposed or
+    # undone by sort order. A hard identifier is a hard identifier: if any
+    # mention carrying it matches a seed organisation at identity grade, every
+    # observation of it is that organisation.
+    key_seed: dict[str, str] = {}
+    for e, mention, key, basis in keyed:
+        if basis in NON_IDENTITY or key in key_seed:
             continue
-        key, basis = entity_key(e, ambiguous)
-        if not key:
-            continue
+        m = seed_of(mention)
+        if m.is_identity:
+            key_seed[key] = m.org_id
+    # Deterministic and total: a key maps to exactly one id, so the key index
+    # cannot be multi-valued and `for_event` can never come back empty for a
+    # key the build saw.
+    key_id = {k: key_seed.get(k) or _eid(k)
+              for k in {key for _e, _m, key, _b in keyed}}
+
+    all_keys: dict[str, Counter] = defaultdict(Counter)
+    for e, mention, key, basis in keyed:
         diag[f"events_{basis}"] += 1
         m = seed_of(mention)
         seed_id = m.org_id if m.is_identity else ""
-
-        # Adoption. A gazette entity that genuinely IS a seed organisation must
-        # sit on the seed node's id, or it lands on a different vertex from its
-        # own seed ties and every dyadic covariate projected from them.
-        ent_id = seed_id if (seed_id and basis not in NON_IDENTITY) else _eid(key)
-        if seed_id and basis not in NON_IDENTITY:
+        ent_id = key_id[key]
+        if ent_id == key_seed.get(key):
             diag["adopted_seed_id"] += 1
 
         mention_entity[mention][ent_id] += 1
+        all_keys[key][ent_id] += 1
         d = (e.get("event_date") or e.get("pub_date") or "")
         row = agg.get(ent_id)
         if row is None:
@@ -235,7 +287,24 @@ def build(events: list[dict], idx, ambiguous: dict[str, int] | None = None
         row["n_mentions"] = len(row.pop("mentions"))
         row.pop("labels")
         entities.append(row)
+    # One row per KEY, so every key an entity was reached by resolves to it.
+    keys = []
+    for key, counts in all_keys.items():
+        ent_id, _n = counts.most_common(1)[0]
+        keys.append({"entity_key": key, "org_entity_id": ent_id,
+                     "entity_basis": agg[ent_id]["entity_basis"],
+                     "n_events": sum(counts.values())})
+    keys.sort(key=lambda r: r["entity_key"])
+    n_keys_per_ent: Counter = Counter(r["org_entity_id"] for r in keys)
+    for row in entities:
+        row["n_keys"] = n_keys_per_ent.get(row["org_entity_id"], 1)
     entities.sort(key=lambda r: (-r["n_events"], r["org_entity_id"]))
+
+    # A key that maps to two entities would make identity depend on sort
+    # order, which is how adoption was silently undone in one direction and
+    # imposed in the other.
+    ambiguous_keys = [k for k, c in all_keys.items() if len(c) > 1]
+    diag["keys_mapping_to_several_entities"] = len(ambiguous_keys)
 
     members = []
     for mention, counts in mention_entity.items():
@@ -272,7 +341,8 @@ def build(events: list[dict], idx, ambiguous: dict[str, int] | None = None
         1 for r in entities if r["n_mentions"] > 1)
     diag["spellings_joined"] = sum(
         r["n_mentions"] for r in entities if r["n_mentions"] > 1)
-    return entities, members, dict(diag)
+    diag["entity_keys"] = len(keys)
+    return entities, keys, members, dict(diag)
 
 
 # --------------------------------------------------------------------------- #
@@ -301,22 +371,25 @@ class OrgEntityResolver:
 
     @classmethod
     def load(cls) -> "OrgEntityResolver":
-        ents = PROCESSED / "org_entities.csv"
-        if not ents.exists():
+        # `.gz` fallback on BOTH tables. This repo has already been burned by
+        # a reader that followed the plain name only: the large tables are
+        # committed gzipped, so in a clone the plain file is absent, and a
+        # validator that silently read [] made a whole CI gate vacuous. Here
+        # the failure would have been worse than vacuous -- `key_to_id` would
+        # load while `ambiguous` came back empty, turning every AMB: key into
+        # a NAME: key and binding 11,818 unattributable events to whichever
+        # firm happened to own that name.
+        keys = _read_table("org_entity_keys.csv")
+        if not keys:
+            # Older builds carried one key per entity row.
+            keys = _read_table("org_entities.csv")
+        if not keys:
             return cls(active=False)
-        key_to_id: dict[str, str] = {}
-        with ents.open(encoding="utf-8", newline="") as fh:
-            for r in csv.DictReader(fh):
-                if r.get("entity_key"):
-                    key_to_id[r["entity_key"]] = r["org_entity_id"]
-        ambiguous: dict[str, int] = {}
-        mem = PROCESSED / "org_entity_members.csv"
-        if mem.exists():
-            with mem.open(encoding="utf-8", newline="") as fh:
-                for r in csv.DictReader(fh):
-                    if r.get("mention_is_ambiguous") == "1":
-                        ambiguous[r["org_mention"]] = int(
-                            r.get("n_identifiers_on_mention") or 2)
+        key_to_id = {r["entity_key"]: r["org_entity_id"] for r in keys
+                     if r.get("entity_key")}
+        ambiguous = {r["org_mention"]: int(r.get("n_identifiers_on_mention") or 2)
+                     for r in _read_table("org_entity_members.csv")
+                     if r.get("mention_is_ambiguous") == "1"}
         return cls(key_to_id, ambiguous, active=bool(key_to_id))
 
     def for_event(self, event: dict) -> str:
@@ -404,16 +477,19 @@ def run(sensitivity: bool = False) -> dict:
     events = read_events()
     spec = build_token_specificity(e.get("org_mention") or "" for e in events)
     idx = load_seed(spec)
-    entities, members, diag = build(events, idx)
+    entities, keys, members, diag = build(events, idx)
 
     _write("org_entities.csv", entities, FIELDS_ENTITY)
+    _write("org_entity_keys.csv", keys, FIELDS_KEY)
     _write("org_entity_members.csv", members, FIELDS_MEMBER)
 
     diag["token_df_threshold"] = spec.threshold
     diag["token_df_corpus_mentions"] = spec.n_mentions
     print("organisation entities")
     for k in ("token_df_corpus_mentions", "token_df_threshold",
-              "entities", "mentions_mapped", "adopted_seed_id",
+              "entities", "entity_keys", "mentions_mapped",
+              "holder_mentions_keyed", "adopted_seed_id",
+              "keys_mapping_to_several_entities",
               "entities_matricule_fiscal", "entities_registre_commerce",
               "entities_name", "entities_ambiguous_mention",
               "name_keyed_share_pct", "ambiguous_mentions",

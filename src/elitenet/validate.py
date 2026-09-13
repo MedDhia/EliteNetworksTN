@@ -539,9 +539,17 @@ def check_org_ties(rep: Report) -> None:
     # legitimately be an `ORGE_` entity rather than a seed node. It may not be
     # neither: a dangling id is still an error, which is what this checks.
     known = {n["node_id"] for n in _read(PROCESSED / "seed_nodes.csv")}
+    have_entities = _table_exists(PROCESSED / "org_entities.csv")
     known |= {e["org_entity_id"] for e in _read(PROCESSED / "org_entities.csv")}
     unknown = [s for s in spells
                if s["holder_id"] not in known or s["target_id"] not in known]
+    if unknown and not have_entities:
+        # Half the node universe is missing, so every entity endpoint reads as
+        # dangling. That is a stage that has not run, not a broken dataset --
+        # the distinction `_skip_stage` exists to preserve.
+        _skip_stage(rep, "org tie endpoints are known nodes",
+                    PROCESSED / "org_entities.csv")
+        return
     rep.add("ERROR" if unknown else "INFO",
             "org tie endpoints are known nodes",
             f"{len(unknown)} ties with an endpoint in neither "
