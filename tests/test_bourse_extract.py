@@ -549,6 +549,27 @@ check("low-confidence speckle is dropped",
       len(_words_from_tsv(_tsv_low, 1, scale=300 / 72.0)), 2)
 
 
+# --- the issuer named after the operation ---------------------------------
+# A prospectus is titled by its operation and names the company at the end.
+# Stripping only the leading document word left the operation standing where
+# the company should be, and those descriptions became firms in the network.
+from bourse.pipeline import issuer_from_title  # noqa: E402
+
+for _title, _want in [
+    ("Prospectus relatif à l'augmentation de capital de la Société Tunis Re", "Tunis Re"),
+    ("Prospectus relatif à l'augmentation de capital de la société Office Plast", "Office Plast"),
+    ("Prospectus Abrégé relatif à l’augmentation de capital en numéraire de Total Tunisie",
+     "Total Tunisie"),
+    ("PROSPECTUS D'EMISSION ET D'ADMISSION EMPRUNT OBLIGATAIRE : UTL", "UTL"),
+    ("PROSPECTUS D'EMISSION AUGMENTATION DE CAPITAL -UBCI", "UBCI"),
+    # Titles that already name the company must come through untouched.
+    ('Document de référence " UBCI 2025 "', "UBCI"),
+    ("SOTUVER 2019 - actualise", "SOTUVER"),
+]:
+    check(f"issuer from {_title[:34]!r}", issuer_from_title(_title)[0], _want)
+check("a generic title yields no issuer", issuer_from_title("Rapport Annuel")[0], None)
+
+
 if __name__ == "__main__":
     if failures:
         print(f"FAILED ({len(failures)}):")

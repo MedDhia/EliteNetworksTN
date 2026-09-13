@@ -221,6 +221,13 @@ def build_edges(res: Resolver) -> tuple[list[dict], dict[str, dict]]:
             firm, _ = res.resolve(rec.get("other_firm_name_raw") or "", hint="firm")
             if not person or not firm:
                 continue
+            # Nobody holds a mandate in themselves. Both sides of this row come
+            # from the same table, and a row that lost its column boundary puts
+            # the same text in both - "annees" from a mandate period, read as
+            # the holder and as the company alike. The ownership layer already
+            # drops its own version of this as treasury shares.
+            if person == firm:
+                continue
             add(layer, person, firm, 1.0, rec, directed=False, role=rec.get("role_raw"))
 
     return edges, listed

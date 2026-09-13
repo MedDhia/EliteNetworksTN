@@ -162,6 +162,19 @@ _ETAT_ACCOUNTING = re.compile(
     r"synthese|solde|compte|tresorerie|charge|produit)"
 )
 
+# A single token that is a French function word or a bare table word is a
+# fragment of a cell, never the name of anything.
+_FRAGMENT_TOKEN = frozenset({
+    "du", "de", "des", "le", "la", "les", "ou", "et", "en", "au", "aux", "par",
+    "pour", "sur", "sous", "dans", "avec", "son", "ses", "leur", "cette", "ce",
+    "holding", "prets", "fonction", "immobiliere", "assistance", "societe",
+    "banque", "groupe", "capital", "finance", "invest", "sicar", "sicav",
+    # Words from the mandate and period columns, which a broken row leaves in
+    # the name column: "annees", "ans", "exercice", "mandat".
+    "annees", "annee", "ans", "exercice", "mandat", "mandats", "duree",
+})
+
+
 def is_not_an_entity(name: str) -> bool:
     """True for cells that name a place, a period or a company organ.
 
@@ -179,6 +192,8 @@ def is_not_an_entity(name: str) -> bool:
     # "Etat de flux de tresorerie", "Etat des engagements hors bilan": the
     # caption of a financial statement, not the State and not an actor.
     if _ETAT_ACCOUNTING.match(n):
+        return True
+    if n in _FRAGMENT_TOKEN:
         return True
     if _CORPORATE_WORD.search(n):
         return False
@@ -204,6 +219,15 @@ def demote_person_hint(name: str, hint: str | None) -> str | None:
     becomes a second node and its stake is counted twice.
     """
     if hint == "person" and has_representative(name):
+        return None
+    # A person needs at least two tokens. classify() already holds that line,
+    # but a column hint short-circuits it, and a board member column yields
+    # plenty of one-token fragments - "DES", "Les", "du", "Holding", "Tunis".
+    # Each became a person, and one of them turned up as a broker holding six
+    # boards together. A single token may still be a firm: corporate members
+    # are often acronyms, so the hint is dropped rather than replaced, and the
+    # name goes through the ordinary rules.
+    if hint == "person" and len(base_normalise(name).split()) < 2:
         return None
     return hint
 
