@@ -17,9 +17,13 @@ people who went on to the presidency.
 
 **The cost of three steps.** Named routes will not carry a ranking at this
 depth — the commonest path into the presidency through two named predecessors
-is walked by nine people — so the organisations are grouped into eight blocs.
-Even then the diagram has a tail: 36 of its 113 left-hand ribbons are fewer
-than five people, and together they carry 7% of the flow. Read the columns and
+is walked by nine people — so the organisations are grouped into nine blocs.
+The two offices are not pooled into one of them: doing that made the middle
+column report a handover between them as though an office were staffing
+itself.
+
+Even then the diagram has a tail: 43 of its 125 left-hand ribbons are fewer
+than five people, and together they carry 8% of the flow. Read the columns and
 the thick bands; the hairlines are there so the totals are honest, not to be
 read individually.
 """
@@ -50,14 +54,23 @@ OFFICES = [PM, PRESIDENCY]
 # protan, 27.9 normal.
 OFFICE_COLOUR = {PM: CAT4[1], PRESIDENCY: CAT4[0]}
 
-CENTRE = "The centre"
+PM_BLOC = "PM's office"
+PR_BLOC = "Presidency"
 UNPLACED = "Other / unplaced"
 
-# Eight blocs. Twenty-eight organisations at three steps gives a diagram whose
-# every cell is one or two people; these are the same groupings the outflow
-# figures use, with the two offices folded together because at this depth the
-# question is what kind of body a career passed through, not which of the two.
-BLOC = {CENTRE: [PM, PRESIDENCY],
+# Nine blocs. Twenty-eight organisations at three steps gives a diagram whose
+# every cell is one or two people, so the rest are grouped as in the outflow
+# figures — but the two offices are kept apart in every column.
+#
+# Folding them into one "centre" bloc, as an earlier draft did, hid the thing
+# worth seeing. Pooled, the middle column showed 74 careers passing through
+# "the centre" on their way to the centre, which reads as an office staffing
+# itself. Split, that 74 is 42 from the prime minister's office to the
+# presidency and 32 the other way, and *none* of it same-office: consecutive
+# posts in one organisation are collapsed, so arriving at an office from
+# itself is not a thing the data can contain. The pooled bloc was reporting a
+# handover between the two offices as if it were self-recruitment.
+BLOC = {PM_BLOC: [PM], PR_BLOC: [PRESIDENCY],
         "Security and territory": ["Interior ministry", "Governorates",
                                    "Municipalities", "Defence"],
         "Economic and public enterprise": ["Finance", "Economy",
@@ -78,7 +91,7 @@ BLOC = {CENTRE: [PM, PRESIDENCY],
                                   "Relations with Parliament"]}
 OF_ORG = {org: bloc for bloc, orgs in BLOC.items() for org in orgs}
 
-ORDER = ["The centre", "Security and territory", "Foreign affairs",
+ORDER = [PM_BLOC, PR_BLOC, "Security and territory", "Foreign affairs",
          "Economic and public enterprise", "Infrastructure and production",
          "Social ministries", "Justice and oversight", UNPLACED]
 
@@ -215,9 +228,21 @@ def fig_centre_paths(spells: pd.DataFrame) -> None:
     # Where the two offices' approaches differ one step further back than the
     # one-step figure could see.
     fa_pr = sum(v for (a, m, d), v in trip.items()
-                if d == PRESIDENCY and "Foreign" in (a + m))
+                if d == PRESIDENCY and "Foreign affairs" in (a, m))
     fa_pm = sum(v for (a, m, d), v in trip.items()
-                if d == PM and "Foreign" in (a + m))
+                if d == PM and "Foreign affairs" in (a, m))
+
+    # The handover between the two offices, which the pooled bloc concealed.
+    hand = {(m, d): sum(v for (_a, mm, dd), v in trip.items()
+                        if mm == m and dd == d)
+            for m in (PM_BLOC, PR_BLOC) for d in OFFICES}
+    back = {(a, d): sum(v for (aa, _m, dd), v in trip.items()
+                        if aa == a and dd == d)
+            for a in (PM_BLOC, PR_BLOC) for d in OFFICES}
+    first_col = Counter()
+    for (a, _m, _d), v in trip.items():
+        first_col[a] += v
+    biggest, biggest_n = first_col.most_common(1)[0]
 
     fig, ax = plt.subplots(figsize=(13.8, 8.4))
     fig.subplots_adjust(top=0.71, bottom=0.10, left=0.215, right=0.80)
@@ -240,21 +265,33 @@ def fig_centre_paths(spells: pd.DataFrame) -> None:
         "of approaches to the presidency against "
         f"{fa_pm / by_office[PM] * 100:.0f}% of those to the prime minister's "
         "office, so the tilt the one-step figure found survives a step further "
-        "back. The centre feeds itself: it is the largest single bloc two posts "
-        "before an arrival.",
+        "back. The two offices are kept apart in every column, which shows what "
+        "pooling them hid: where one is the post immediately before an arrival "
+        "at the other, every one of those careers is a handover between them — "
+        f"{hand[(PM_BLOC, PRESIDENCY)]} from the prime minister's office to the "
+        f"presidency and {hand[(PR_BLOC, PM)]} the other way — while two posts "
+        f"back the centre is mostly returning to itself, {back[(PM_BLOC, PM)]} "
+        "careers leaving the prime minister's office and coming back to it.",
         width=142,
     )
     save(fig, "fig32_centre_three_step",
          SOURCE + "  An approach is a post in one of the two offices with two "
                   "earlier posts in the same career, consecutive posts in one "
                   "organisation collapsed so that what is counted is the "
-                  "crossing. Organisations are grouped into eight blocs because "
+                  f"crossing. Organisations are grouped into {len(ORDER)} blocs "
+                  "because "
                   "at three steps the named routes are single figures — the "
                   "commonest path into the presidency through two named "
-                  "predecessors is walked by nine people — and the two offices "
-                  "are one bloc in the first two columns, where the question is "
-                  "what kind of body a career passed through rather than which "
-                  "office. The diagram has a tail: "
+                  "predecessors is walked by nine people. The two offices are "
+                  "their own blocs in every column. An earlier draft pooled "
+                  "them, which made the middle column report a handover from "
+                  "one office to the other as though an office were staffing "
+                  "itself; no career can arrive at an office from that same "
+                  "office here, because consecutive posts in one organisation "
+                  "are collapsed before the sequence is read. With the centre "
+                  f"split, the largest single bloc two posts before an arrival "
+                  f"is {biggest.lower()} at {biggest_n}, not the centre. "
+                  "The diagram has a tail: "
                   f"{sum(1 for v in trip.values() if v < 5)} of its "
                   f"{len(trip)} left-hand ribbons carry fewer than five people "
                   f"and between them {thin / n * 100:.0f}% of the flow. They are "
