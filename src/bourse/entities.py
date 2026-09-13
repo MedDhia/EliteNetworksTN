@@ -276,6 +276,12 @@ _RUN_ON_FIGURES = re.compile(r"\s\d{1,3}(?:[\s.]\d{3})+")
 # dangling, and the dangling form is a different node from the plain one.
 _QUOTED_SHORT_NAME = re.compile(r"^\s*«\s*([^»]{2,})\s*»?")
 _DANGLING_SHORT_NAME = re.compile(r"\s*«.*$")
+# Group-structure tables number their rows, and the number travels into the
+# name: "1. STB BANK (societe Mere)", "2. STB INVEST". Left in, a firm listed
+# in one such table and named plainly elsewhere becomes two nodes. Both a
+# period (or bracket) and a following space are required, so a name that
+# genuinely opens with digits - "3M", "2 Mars Industries" - is untouched.
+_LIST_NUMBER_PREFIX = re.compile(r"^\s*\d{1,2}\s*[.)]\s+(?=\S)")
 # Wingdings bullets survive extraction as private-use codepoints. A cell that
 # carries one is a bullet of running prose, not a name.
 _PRIVATE_USE = re.compile(r"[-\U000f0000-\U000ffffd]")
@@ -289,7 +295,7 @@ def trim_cell(name: str) -> str:
     that is demonstrably not part of a name is removed; anything ambiguous is
     left for the researcher overrides.
     """
-    s = (name or "").strip()
+    s = _LIST_NUMBER_PREFIX.sub("", (name or "").strip())
     if not s:
         return s
     quoted = _QUOTED_SHORT_NAME.match(s)

@@ -646,6 +646,24 @@ class TestTrimCell:
     def test_run_on_material_is_removed(self, cell, want):
         assert trim_cell(cell) == want
 
+    @pytest.mark.parametrize("cell,want", [
+        # Group-structure tables number their rows and the number travels into
+        # the name, so a firm listed in one and named plainly in another
+        # becomes two nodes.
+        ("1. STB BANK (société Mère)", "STB BANK (société Mère)"),
+        ("2. STB INVEST", "STB INVEST"),
+        ("10. SOCIETE ED DKHILA", "SOCIETE ED DKHILA"),
+        ("3) SOFI ELAN SICAF", "SOFI ELAN SICAF"),
+    ])
+    def test_list_numbering_is_removed(self, cell, want):
+        assert trim_cell(cell) == want
+
+    @pytest.mark.parametrize("cell", ["3M", "2 Mars Industries"])
+    def test_a_name_that_opens_with_digits_survives(self, cell):
+        # The list rule needs a period or bracket *and* a space, so a genuine
+        # numeral at the head of a name is not eaten.
+        assert trim_cell(cell) == cell
+
     @pytest.mark.parametrize("cell", [
         "Usine 2", "SOTUVER 2", "AMEN BANK", "Tunisie Leasing et Factoring",
     ])

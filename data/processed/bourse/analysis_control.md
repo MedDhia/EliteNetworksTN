@@ -5,7 +5,7 @@ relationship, measured on the firms where either could have been seen.
 
 ## Why the unconditioned count misleads
 
-Pooled over all years, 1320 firm-firm dyads carry an equity tie and 4064 carry a board tie; 109 carry both, which is 8.3% of equity dyads.
+Pooled over all years, 1313 firm-firm dyads carry an equity tie and 4065 carry a board tie; 109 carry both, which is 8.3% of equity dyads.
 
 That number is mostly a statement about which filings exist. A firm
 enters the ownership layer when someone files a shareholder table

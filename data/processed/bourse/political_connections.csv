@@ -1,0 +1,561 @@
+entity_id,canonical_name,year,pc_state_ownership,pc_state_board,pc_officeholder,pc_public_bank,pc_political_figure,pc_officeholder_former,pc_public_bank_equity,max_state_stake_pct,pc_narrow,pc_broad,n_evidence,n_evidence_ocr,categories
+Ffd39baa803,"""HOTEL DALIA""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ffe07937b57,"""THALASSA""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fc72a970826,(Créé lors du CA du 02 octobre 2018),2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F857de2d5c6,(ESMERALDA),2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F27513dc710,(créé lors du CA du 12 décembre 2006),2006,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F510e33783f,/e Comité de Nomination,2012,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F11c48a0d6b,ADWYA,2013,1,0,0,0,0,0,0,,0,1,1,1,state_shareholder
+F11c48a0d6b,ADWYA,2016,0,1,0,0,0,0,0,,0,1,1,1,state_organ_seat
+F11c48a0d6b,ADWYA,2018,1,1,0,0,0,0,0,,0,1,2,0,state_organ_seat|state_shareholder
+F11c48a0d6b,ADWYA,2021,0,0,1,0,0,0,0,,1,1,1,0,state_representative
+Fd81c43d168,AFRIQUE ASSISTANCE,2024,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fd81c43d168,AFRIQUE ASSISTANCE,2026,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F8430f99c1c,"AGENCE TUNISIENNE D'INTERNET ""ATI""",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F7cee7fd08c,AIL,2012,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F7cee7fd08c,AIL,2013,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F7cee7fd08c,AIL,2014,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F13ef2f8028,AIR LIQUIDE,2011,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F13ef2f8028,AIR LIQUIDE,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F496f3c4662,ANDALOUS),2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ffd0d4a99b7,"ANIMATION ET TOURISME SAHARIEN ""LES DUNES DE NEFZAOUA""",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F799bff6093,ASSURANCES STAR,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F799bff6093,ASSURANCES STAR,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F799bff6093,ASSURANCES STAR,2021,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fc7d2c2ccea,ATI,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fc7d2c2ccea,ATI,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcde110a85a,ATL,1993,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcde110a85a,ATL,2005,0,0,0,1,0,0,0,,0,1,4,0,public_bank_interlock|public_bank_seat
+Fcde110a85a,ATL,2007,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcde110a85a,ATL,2011,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcde110a85a,ATL,2014,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcde110a85a,ATL,2016,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcde110a85a,ATL,2017,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcde110a85a,ATL,2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcde110a85a,ATL,2020,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcde110a85a,ATL,2022,0,0,0,1,0,0,1,,0,1,3,0,public_bank_equity|public_bank_seat
+Fcde110a85a,ATL,2023,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcde110a85a,ATL,2024,0,0,0,1,0,0,1,,0,1,2,0,public_bank_equity|public_bank_seat
+Fcde110a85a,ATL,2025,0,0,0,1,0,0,1,,0,1,2,0,public_bank_equity|public_bank_seat
+Fed1163a466,ATL2004-1,2004,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Ffed011d406,Agence et Engagements et a réussi leurs,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F27e3e3c57f,Agricoles,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fdc2a0f9ff6,Assurance,2023,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Ff81f5bf1cc,Assurances SALIM,2011,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ff81f5bf1cc,Assurances SALIM,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Faa2413a763,Au 31 décembre 2006,2006,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fa2e5d584f6,B.E.A.T.L,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F46299d17c1,BANQUE D’AFFAIRE DE TUNISIE,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fdd45516bc1,BCH *,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fc4daf78a69,BEL ART INDUSTRIES,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fa91553f43e,BEST LEASE,2024,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fa91553f43e,BEST LEASE,2026,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fb47e5f399c,BH /2,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F5038da9360,BH BANK,2006,0,1,1,0,0,0,0,,1,1,7,0,civil_servant|state_organ_seat
+F5038da9360,BH BANK,2007,0,1,1,0,0,0,0,,1,1,7,0,civil_servant|state_organ_seat
+F5038da9360,BH BANK,2008,0,0,1,0,0,0,0,,1,1,4,4,state_representative
+F5038da9360,BH BANK,2009,0,1,1,0,0,0,0,,1,1,7,0,civil_servant|state_organ_seat
+F5038da9360,BH BANK,2012,1,1,1,0,0,0,0,,1,1,8,0,civil_servant|state_organ_seat|state_shareholder
+F5038da9360,BH BANK,2015,1,1,0,0,0,0,0,,0,1,5,1,state_organ_seat|state_shareholder
+F5038da9360,BH BANK,2017,0,1,1,0,0,1,0,,0,1,3,0,civil_servant|state_organ_seat
+F5038da9360,BH BANK,2018,0,1,1,0,0,1,0,,0,1,4,0,civil_servant|ministerial_adviser|state_organ_seat
+F5038da9360,BH BANK,2021,0,1,1,0,0,0,0,,1,1,3,0,ministerial_adviser|state_organ_seat
+F6e61ff4d56,BH BF *,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F5d94d34b35,BH LEASING,2022,0,0,0,1,0,0,0,,0,1,2,0,public_bank_seat
+F5d94d34b35,BH LEASING,2025,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F8576e881f3,BH TECHNOLOGIE,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F286e0a531c,BHO,2014,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F286e0a531c,BHO,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F96ec05b9bb,BHP,2014,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F96ec05b9bb,BHP,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F7997cc7202,BIAT,2019,0,0,1,0,0,1,0,,0,1,4,0,minister|secretary_of_state
+F7997cc7202,BIAT,2020,0,0,1,0,0,1,0,,0,1,3,0,governor|minister
+Ff23d50c4d4,BIO TECHNOPOLE SIDI THABET,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F81e9d7dc1b,"BIZERTA RESORT""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F1be7caffd0,BM TECHNOLOGIE,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F5ccaee3c36,BNA,2008,1,1,0,1,0,0,0,,0,1,9,0,public_bank_interlock|state_organ_seat|state_shareholder
+F5ccaee3c36,BNA,2013,0,1,0,0,0,0,0,,0,1,4,4,state_organ_seat
+F5ccaee3c36,BNA,2014,0,1,0,0,0,0,0,,0,1,5,5,state_organ_seat
+F5ccaee3c36,BNA,2015,0,0,1,0,0,0,0,,1,1,3,3,state_representative
+F5ccaee3c36,BNA,2016,0,0,1,0,0,0,0,,1,1,6,6,state_representative
+F5ccaee3c36,BNA,2017,1,0,1,0,0,0,0,,1,1,10,4,state_representative|state_shareholder
+Fc781527303,BNA ASSURANCE,2025,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe838dfaeec,BONNA Tunisie,2006,0,0,0,1,0,0,0,,0,1,2,0,public_bank_seat
+Fe838dfaeec,BONNA Tunisie,2007,0,0,0,1,0,0,0,,0,1,2,0,public_bank_seat
+Fd2d677736e,BT,2024,0,0,1,0,0,1,0,,0,1,1,0,governor
+Fdfe226c860,BTE (ADP),2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fdfe226c860,BTE (ADP),2010,0,1,1,0,0,0,0,,1,1,13,0,cabinet_staff|central_bank|ministry_organ|state_organ_seat
+Fdfe226c860,BTE (ADP),2011,0,1,1,0,0,0,0,,1,1,13,0,cabinet_staff|ministry_organ|state_organ_seat
+Fdfe226c860,BTE (ADP),2016,1,1,1,0,0,0,0,,1,1,7,0,cabinet_staff|state_organ_seat|state_shareholder
+Fdfe226c860,BTE (ADP),2017,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe851154c1d,BTK,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe851154c1d,BTK,2011,1,0,1,0,0,0,0,,1,1,4,0,ministry_organ|state_shareholder
+Fe851154c1d,BTK,2014,1,0,1,0,0,0,0,,1,1,6,1,ministry_organ|state_shareholder
+Fe851154c1d,BTK,2016,1,0,1,0,0,0,0,,1,1,5,0,ministry_organ|state_shareholder
+Fe851154c1d,BTK,2024,1,1,1,0,0,0,0,,1,1,5,0,ministry_organ|state_organ_seat|state_shareholder
+Fe851154c1d,BTK,2025,1,1,0,0,0,0,0,,0,1,2,0,state_organ_seat|state_shareholder
+Fe11432a6d8,BTK LEASING,2021,0,0,0,1,0,0,0,,0,1,2,0,public_bank_seat
+F16c513851c,BTQI,1997,0,0,1,0,0,0,0,,1,1,1,0,state_representative
+F0e6e83438c,BUAT,2024,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F0e6e83438c,BUAT,2026,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fa1bfa4d335,"Bourse des Valeurs Mobilières N""gz/s4 du 29 avril lgg2",1990,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F6fb284d35e,C.NS.S,2005,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F4998732b7b,CAPITALE -BS,1996,0,1,0,0,0,0,0,,0,1,2,0,state_organ_seat
+Ff9b9132a52,CARTHAGE CEMENT,2019,1,0,0,0,0,0,0,,0,1,1,0,state_shareholder
+F5c3d78cc15,CDC DEVELOPPEMENT,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F2f31635f4f,"CHERAIET""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F36bd12b853,CIE HOTELIERE DES CENTRES VILLES ( HOTEL ANDALOUS),2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F696d1a681f,"CIE MED. DE TOURISME ""HOTEL DALIA""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fd228d2488b,CIL,2010,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F0590bcb4f4,CLUB),2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F96c49b5f3a,CTAMA,2008,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F901f29da5b,CTAMA IMMOBILIERE,2024,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F901f29da5b,CTAMA IMMOBILIERE,2026,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F8dbbc403f5,Caisse Tunisienne des Assurances Mutuelles Agricoles,2013,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fb5d11c2f49,"Ce comité, composé de 4 membres et de tout",2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F88b7950445,Cette amélioration s'est reflétée sur les indicateurs,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fa733927bd0,Cette cellule est chargée de coordonner,2012,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F8b4a3be494,Chef du Gouvernement chargé des dossiers,2012,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fe123d28fed,Confidentialité,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F2e9c2e7d99,Consignations,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F23211662e7,Consignations - DG de la CDC Gestion,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F23211662e7,Consignations - DG de la CDC Gestion,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F1317a5fc0c,Contribution aux travaux du Conseil,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F6fa987c429,Créé par le Conseil,2016,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F78ed3467a0,D'ADMISSION,1990,0,1,1,0,0,0,0,,1,1,3,0,ministry_organ|state_organ_seat
+F78ed3467a0,D'ADMISSION,1991,0,0,1,0,0,0,0,,1,1,1,0,ministry_organ
+F4ff651ad76,DGA de la Caisse des Dépôts,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4ff651ad76,DGA de la Caisse des Dépôts,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4ff651ad76,DGA de la Caisse des Dépôts,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F65d5c39b58,DIVA SICAR,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fd4ed8d9e06,"DRAHAM ""Col des Ruines""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fce856fbce3,De même et en complément du noyau du nouveau,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F33cc371a1f,ED-DKHILA,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F33cc371a1f,ED-DKHILA,2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe7bf042e96,EL MADINA,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fa6e7b6b51e,ELLOUHOUM,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F3cb8089cff,ESSOUKNA,2022,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Ff9d724d949,El Wifack Leasing,2012,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe13e5061a0,En ce qui concerne les membres indépendants et le,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F4a63e38474,"En conclusion, La STB est bien positionnée aujourd'hui",2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F6b0de7603a,Enseignant à l’école Nationale d’Administration de Tunis,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fe6bcb7b1a5,Epargne Invest SICAF,2011,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe6bcb7b1a5,Epargne Invest SICAF,2014,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F1b32a5ee1c,Ex membre du Conseil d’Administration de la banque ZITOUNA,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F2c329559e8,Ex-Président du Comité des risques,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F248fbaf00b,Ex-Président du Comité des risques -Ex membre du Conseil d’Administration de la banque QNB,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F66810a4933,Ex-président de Conseil d’Administration de la BNA,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fc8b316af1a,Exerci,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F44ace27cfb,Expert International en inclusion financière aux agences des Nations,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F82d6024473,F.C.P - OPTIMA,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fd7db41adf9,F.C.P.RIN ' TECH,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F006b8af0a7,F.I.G,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F843e6e7e87,GARDEN,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fa95cbddbc3,"GOLF""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F123e7c3ff6,Général et demandant des éclaircissements sur les,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F99b2a3ef1f,Gérant de,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fe191937d17,HELYA TOURS,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F936d337da6,HORCHANI FINANCE,2015,0,0,0,1,0,0,1,,0,1,2,0,public_bank_equity
+Fa2ea85c867,HOTEL ITROPICA BEACH,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fb460b84b2d,IBS,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F5445ee6f55,IG,2008,0,0,0,1,0,0,1,,0,1,4,0,public_bank_equity
+F2de5ec6616,IMMOBILIERE MAE,2024,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F2de5ec6616,IMMOBILIERE MAE,2026,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Faaf3379906,INVEST DEVELOPPEMENT SICAR,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Faaf3379906,INVEST DEVELOPPEMENT SICAR,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F9f4ce57244,"Il émet, également, des avis et des",2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Ff098813509,KOWAIT INVESTMENT AUTHORITY,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ff098813509,KOWAIT INVESTMENT AUTHORITY,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F16d4e9e475,KOWEIT INVESTMENT AUTORITY,2007,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F054bd47d0c,Kuwaït Investment Authority,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ff0ca4774c1,L'IMMOBILIERE DE L'AVENUE,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ff0ca4774c1,L'IMMOBILIERE DE L'AVENUE,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ff0ca4774c1,L'IMMOBILIERE DE L'AVENUE,2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fdb1b39e5c5,"LA PROMOTION DE L'INVESTISSEMENT TQUE ""PIT"" (H.MAJESTIC)",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fdba8af1e23,LES JARDINS DE HAMMAMET,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F5637b3612e,LLOYD,2017,0,0,0,1,0,0,1,,0,1,1,1,public_bank_equity
+Faf18d2420c,"La Banque Nationale Agricole, fondée le 1er juin 1959, fête cette",2018,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Ffacd4b4eeb,La Cellule de Bonne Gouvernance,2012,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fa0e85c1f07,La STB entend maintenir son statut d'acteur financier,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F94513d28af,La maison du banquier,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F37be301e67,La nouvelle stratégie basée sur une gouvernance,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F728dfcfdf5,Le s,2022,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Fa50705dcfe,Les principaux agrégats d'activité et de performance,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F4465025c86,Les trois chartes ont été approuvées par,2012,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fe4becc6b5e,M-E,2008,0,0,0,1,0,0,1,,0,1,3,0,public_bank_equity
+F4835bcdce5,M.Abderraouf Klibi,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F846baea8b4,MAE,2019,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F846baea8b4,MAE,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Fc1a636a856,MAISON DU BANQUIER,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fa4e692511a,MEDIBOIS - HORCHANI DATTES - MEDIMETAL - MEDITOM - HORCHANI PECHE - IMMOBILIERE HORCHANI - MEDICAR,2009,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fa4e692511a,MEDIBOIS - HORCHANI DATTES - MEDIMETAL - MEDITOM - HORCHANI PECHE - IMMOBILIERE HORCHANI - MEDICAR,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fa4e692511a,MEDIBOIS - HORCHANI DATTES - MEDIMETAL - MEDITOM - HORCHANI PECHE - IMMOBILIERE HORCHANI - MEDICAR,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fa4e692511a,MEDIBOIS - HORCHANI DATTES - MEDIMETAL - MEDITOM - HORCHANI PECHE - IMMOBILIERE HORCHANI - MEDICAR,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F676c8e9a64,MINISTERE DES FINANCES,2008,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F2d5c846e3d,MODERN LEASING,2006,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F2d5c846e3d,MODERN LEASING,2007,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F2d5c846e3d,MODERN LEASING,2009,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F2d5c846e3d,MODERN LEASING,2011,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F2d5c846e3d,MODERN LEASING,2012,0,0,0,1,0,0,0,,0,1,3,0,public_bank_interlock|public_bank_seat
+F2d5c846e3d,MODERN LEASING,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F2d5c846e3d,MODERN LEASING,2014,0,0,0,1,0,0,1,,0,1,4,0,public_bank_equity|public_bank_seat
+F2d5c846e3d,MODERN LEASING,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F2d5c846e3d,MODERN LEASING,2017,0,0,0,1,0,0,1,,0,1,4,0,public_bank_equity|public_bank_interlock|public_bank_seat
+F91e5f4ddcc,MONASTIR,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F496e99855b,MUTUELLE ASSURANCE DE L'ENSEIGNEMENT,2021,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe0d57f20fa,MUTUELLE ASSURANCE DE L'ENSEIGNEMENT MAE,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F91c1453bd1,MUTUELLE DU SAVOIR,2024,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F91c1453bd1,MUTUELLE DU SAVOIR,2026,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F23217da563,Managing Consultant - Groupe CAPGEMINI,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F23217da563,Managing Consultant - Groupe CAPGEMINI,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F23217da563,Managing Consultant - Groupe CAPGEMINI,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Ff7f7890411,Ministère du,2013,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fb53a7c1c16,Modern Leasing /2,2015,0,0,0,1,0,0,1,,0,1,4,0,public_bank_equity|public_bank_interlock|public_bank_seat
+Ff667dbd63c,Mohamed Safouane Ben Aissa,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F2ab46d6857,Mohamed Safouène Ben Aissa,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F3a21ad1267,Mohamed Salah CHEBBI LAHSAN,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F3e09e1a09c,Moussa,2007,0,0,0,1,0,0,0,,0,1,2,0,public_bank_seat
+F3e09e1a09c,Moussa,2009,0,0,0,1,0,0,0,,0,1,2,0,public_bank_seat
+F6919a62aff,NIDA SA,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Faabaa99c8a,Notice publiée au JORT no 35 du 30 avril,1990,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F76610d7c10,Office des Céréales,2008,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Ff5ed3f22cd,"PALACE""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F71eeaee8e7,PDG de la Sté Vêtements de travail,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F71eeaee8e7,PDG de la Sté Vêtements de travail,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F71eeaee8e7,PDG de la Sté Vêtements de travail,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F71eeaee8e7,PDG de la Sté Vêtements de travail,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F0251988d15,PDG du cabinet HB Consulting,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F0251988d15,PDG du cabinet HB Consulting,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F0251988d15,PDG du cabinet HB Consulting,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F21ac07e3cb,PHEBUS,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcf5579c7d1,PNENICIA SEED FUND FCP,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F771a0363a2,POL.I.TECH.GABES,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcc3f9bcb5f,POLYCLINIQUE DU CAP BON,2024,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fcc3f9bcb5f,POLYCLINIQUE DU CAP BON,2026,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F16a4bd5ec3,PRESICIUM TUNISIE,2024,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F16a4bd5ec3,PRESICIUM TUNISIE,2026,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4ffc88283c,"Parallèlement, La banque a entamé l'instauration d'un",2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Ff5b61aa55b,Poste Obligataire SICAVTANIT,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fd79f014591,"Pour la deuxième année consécutive, la Société",2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F5f38d2ee69,Principales attributions du Conseil d’Administration,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F5c64fd1bec,Propriétaire,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Ffad81a2a8b,RESIDENCE DU CAP BON,2024,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Ffad81a2a8b,RESIDENCE DU CAP BON,2026,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Ff78a12540f,Rapp,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Fdf0e0cd71e,Rapport,2022,0,0,0,1,0,0,0,,0,1,2,0,public_bank_seat
+F90ac15e6bf,Renouvellementdesmandats,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F08e291fe8a,Représentantl’Etat,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Fa982aa7324,Reste à attribuer (Rompus),2017,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fa982aa7324,Reste à attribuer (Rompus),2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fa982aa7324,Reste à attribuer (Rompus),2021,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F341f9eb295,Retail à la Banque Zitouna,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F024caad149,Retraité Ministère des Finances - Ancien PDG de la Régie des Alcools,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F024caad149,Retraité Ministère des Finances - Ancien PDG de la Régie des Alcools,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fc3f3ad0280,Retraité Ministère des finances - ex PDG régie des alcools,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fd795dade41,Règles de nomination et de remplacement des membres,2016,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F8ee3c529f3,Réassurance,2022,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F5024dab53e,Résultat Brut d'Exploitation et le Résultat Net ont,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F4beda87596,S D A,2024,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4beda87596,S D A,2026,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F5e4182eaeb,S.E.D SOUSSE,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F321687da2b,S.E.D SOUSSE NORD,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fad228f7446,S.E.P.T.S,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F84055f7149,"S.H.T. LES BERGES 2000 ""Hôtel l'Atrium""",2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F84055f7149,"S.H.T. LES BERGES 2000 ""Hôtel l'Atrium""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F84055f7149,"S.H.T. LES BERGES 2000 ""Hôtel l'Atrium""",2021,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fb7003295c3,S.I.B.T.E.L,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ff46b915a74,S.I.D.C.O SICAR,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fa085e9fd27,S.O.D.I.N.O - SICAR,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F23d1fed31e,S.O.TU.GAR,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fd3009e5497,S.P.P.I – SICAR,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ffce3da57e3,S.T.C.V VERITAS,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F0ede6fbfcd,S.T.I.M.E.C,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F6cc2fdc754,SGRC,2011,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F6cc2fdc754,SGRC,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F6cc2fdc754,SGRC,2014,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F6cc2fdc754,SGRC,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F991c1c82ca,"SHALIMAR""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F36b4e946a6,SHELTER AFRIQUE **,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fb5294737b8,SICAF Epargne Invest,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fd611b3c37d,SICAV BHP,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fb447b749e2,SICAV L’AVENIR,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fb447b749e2,SICAV L’AVENIR,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F18e0121b9e,SICAV Obligataire,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F4d2a3930ec,SICAV l'INVESTISSEUR,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F3009468f73,SIFIB-BH,2011,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F3009468f73,SIFIB-BH,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F4d35b5b5f8,SIFIB-BH - SALIM,2006,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4d35b5b5f8,SIFIB-BH - SALIM,2007,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4d35b5b5f8,SIFIB-BH - SALIM,2009,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F6de5c41e2b,SIM-SICAR,2011,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F6de5c41e2b,SIM-SICAR,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F6de5c41e2b,SIM-SICAR,2014,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F6de5c41e2b,SIM-SICAR,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe9fbd386a8,SIMPAR,2021,0,1,0,1,0,0,0,,0,1,2,0,public_bank_seat|state_organ_seat
+Fe9fbd386a8,SIMPAR,2022,0,1,0,1,0,0,0,,0,1,2,0,public_bank_seat|state_organ_seat
+Fe9fbd386a8,SIMPAR,2023,0,1,0,1,0,0,0,,0,1,2,0,public_bank_seat|state_organ_seat
+Feea54eb02c,SIVIA,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F835e067e7b,SMT,2011,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F835e067e7b,SMT,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F835e067e7b,SMT,2014,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F835e067e7b,SMT,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ff12087fde3,SNIT CENTRE,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F863743f015,SNIT SUD,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F2abe40bfe9,SNIT.NORD,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F722a6151dc,SOCIETE ACTIVHOTELS,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F722a6151dc,SOCIETE ACTIVHOTELS,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F66f718db78,SOCIETE ARTEMIS HÖTEL NEPTUNIA,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F6aede0e877,SOCIETE EL MANSOUR TABARKA,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F98925277f1,SOCIETE FINANCIERE DE GESTION,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F5438f2b42e,SOCIETE LA GENERALE DES VENTES,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F5438f2b42e,SOCIETE LA GENERALE DES VENTES,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F5438f2b42e,SOCIETE LA GENERALE DES VENTES,2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F3d24ab2373,SOCIETE LELLA HADRIA,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F56d2baa994,SOCIETE NIGERIENNE DE BANQUE,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F6dd10f7585,SOCIETE STAFIM PEUGEOT,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F835de4f83d,SOCIETE TUNISIENNE DE RECOUVREMENT DES CREANCES,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F72818e8dc7,SODEK,2010,0,0,0,1,0,0,1,,0,1,4,0,public_bank_equity|public_bank_seat
+F8fcdfdcdf9,SODEK SICAR,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F9e80cdd945,SODESIB,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F3cf8e69750,SODINO SICAR,2010,1,0,0,1,0,0,1,,0,1,4,0,public_bank_equity|state_shareholder
+F1ba5cbb1bd,SODIS SICAR,2008,1,0,0,1,0,0,1,,0,1,3,0,public_bank_equity|state_shareholder
+F1ba5cbb1bd,SODIS SICAR,2010,1,0,0,1,0,0,1,,0,1,5,0,public_bank_equity|state_shareholder
+F1ba5cbb1bd,SODIS SICAR,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F210e0770a2,SOFI ELAN SICAF,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F210e0770a2,SOFI ELAN SICAF,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F210e0770a2,SOFI ELAN SICAF,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F210e0770a2,SOFI ELAN SICAF,2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe5fd878815,SONEDE INTERNATIONAL,2021,0,1,0,0,0,0,0,,0,1,2,0,state_organ_seat
+Fe5fd878815,SONEDE INTERNATIONAL,2022,1,0,0,0,0,0,0,,0,1,2,0,state_shareholder
+F53c8824d1d,SOPAT,2009,0,1,0,0,0,0,0,,0,1,1,0,state_organ_seat
+F9cc8380d3b,SOPIVEL,2011,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F9cc8380d3b,SOPIVEL,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F9cc8380d3b,SOPIVEL,2014,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F9cc8380d3b,SOPIVEL,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ffd6ca150e0,STAR,2005,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Ffd6ca150e0,STAR,2006,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Ffd6ca150e0,STAR,2009,0,0,0,1,0,0,1,,0,1,2,0,public_bank_equity|public_bank_seat
+Ffd6ca150e0,STAR,2011,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ffd6ca150e0,STAR,2014,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Ffd6ca150e0,STAR,2019,0,0,0,1,0,0,0,,0,1,2,0,public_bank_interlock|public_bank_seat
+Ffd6ca150e0,STAR,2021,0,1,0,1,0,0,0,,0,1,2,0,public_bank_interlock|state_organ_seat
+Fede9a2bb70,STB,2005,0,1,1,0,0,0,0,,1,1,6,6,state_organ_seat|state_representative
+Fede9a2bb70,STB,2006,0,1,1,0,0,0,0,,1,1,6,6,state_organ_seat|state_representative
+Fede9a2bb70,STB,2007,1,0,0,0,0,0,0,,0,1,3,0,state_shareholder
+Fede9a2bb70,STB,2008,1,0,0,1,0,0,1,,0,1,4,0,public_bank_equity|public_bank_interlock|state_shareholder
+Fede9a2bb70,STB,2009,1,1,0,1,0,0,1,,0,1,6,0,public_bank_equity|state_organ_seat|state_shareholder
+Fede9a2bb70,STB,2011,1,0,0,0,0,0,0,,0,1,3,0,state_shareholder
+Fede9a2bb70,STB,2015,1,0,0,0,0,0,0,,0,1,3,0,state_shareholder
+Fede9a2bb70,STB,2017,0,1,0,0,0,0,0,,0,1,1,1,state_organ_seat
+Fede9a2bb70,STB,2019,1,0,0,0,0,0,0,,0,1,1,0,state_shareholder
+Fede9a2bb70,STB,2021,1,1,0,0,0,0,0,,0,1,5,0,state_organ_seat|state_shareholder
+Fede9a2bb70,STB,2022,0,1,0,0,0,0,0,,0,1,1,0,state_organ_seat
+F41b3c4c22b,STB BANK,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F41b3c4c22b,STB BANK,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F3a483f8275,STB BANK (société Mère),2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fd4acf9313a,STB CAPITALIS,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fd4acf9313a,STB CAPITALIS,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F141f7a8e7f,STB FINANCE,2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F5772a2ec68,STB INVEST,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F5772a2ec68,STB INVEST,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F5772a2ec68,STB INVEST,2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fef865711d4,STB MANAGER,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fef865711d4,STB MANAGER,2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F09b36120a8,STB SECURITE ET GARDIENNAGE,2020,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fb46ce71ced,STB SICAR,2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fb46ce71ced,STB SICAR,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fb46ce71ced,STB SICAR,2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F16b121eb0f,STE BOUMAKHLOUF,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F0228d8302d,STE CAP CARTHAGE,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F7dd2b1de2b,"STE CIVILE IMMOBILIERE ""LA MAISON DU BANQUIER""",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fdaa8f5c792,"STE D'ANIMATION ET D'HOTELLERIE DE MAHDIA ""SAHM""",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F93257f0eef,"STE D'ET. & D'AM. TQUE DE SFAX ""SEDATS""",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F2b3e556c9b,"STE D'ET. & DE PROM. TQUE DE HAMMAMET""MAEVA"" SEPTH",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fd6a5c77db1,"STE D'ET. DVPT. & PROM. TQUE. BIZ. ""H. BIZERTA RESORT""",2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F1f78180058,STE D'ETUDE ET DE DEVELOPT TQUE DJERBA LES DUNES,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fef99812ab5,"STE D'ETUDES ET DE DEV. TQUE ""GREEN GOLF""",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F7f88d1540c,"STE D'EXP.& DE DVPT TQUE ""H.THALASSA MAHDIA""",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fbebb1281b1,"STE D'EXPANSION TQUE ""AZUREA""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe6937084b2,"STE D'EXPLOITATION TQUE ""AZUREA""",2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F4c9f81102c,STE DE DEV.ECO. DE KASSERINE SODEK- SICAR,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F326df1749b,STE DE PROMOTION ET DE FINANCT TQUE CARTHAGO,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe7b68ba1df,"STE GLE D'EXPL TQUE ""SOGET SARL"" (HOTEL KSAR AMAZIR)",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fca061027e5,"STE HOT. ET IMMOBILIERE DE TABARKA "" HOTEL LES MIMOSAS""",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fd192b46d95,STE HOTEL HOUDA,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F55342a8265,"STE HOTELIERE ""BEL AIR""",2008,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F55342a8265,"STE HOTELIERE ""BEL AIR""",2009,0,0,0,1,0,0,1,,0,1,2,0,public_bank_equity
+F55342a8265,"STE HOTELIERE ""BEL AIR""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F55342a8265,"STE HOTELIERE ""BEL AIR""",2021,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fa3d9e8185b,"STE HOTELIERE ""DAR DHIAFA""( TROPICANA CLUB)",2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fa3d9e8185b,"STE HOTELIERE ""DAR DHIAFA""( TROPICANA CLUB)",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F7c3b992b31,"STE HOTELIERE ""H. KURIAT PALACE""",2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F7c3b992b31,"STE HOTELIERE ""H. KURIAT PALACE""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fcbe075a3a5,"STE HOTELIERE ""LES LILAS""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F148beee515,"STE HOTELIERE & TQUE ""KARIM""",2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F148beee515,"STE HOTELIERE & TQUE ""KARIM""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F1be876091b,STE HOTELIERE BEL HORIZON SA,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F64c3f7b6e5,"STE HOTELIERE ET TOURISTIQUE DU SAHEL ""H.LIBERTY""",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F17f072b124,STE HOTELIERE ET TQUE LE GRAND MONASTIR SA,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F07767f7367,STE INTER BANK SERVICES,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F694c9c1535,"STE INTLE DE GEST. HOT. ""H. BYBLOS""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe796e99029,"STE INTLE PROM. HOT. ""PALM- INN""",2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe796e99029,"STE INTLE PROM. HOT. ""PALM- INN""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F0ad4fe03a2,STE L'ECRIN DE HAMMAMET,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F6a303d4f8d,STE L'ELDORADO,2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F6a303d4f8d,STE L'ELDORADO,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F29b993632a,"STE LA TURQUOISE "" HOTEL EL MALIA""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F19e8b95d9e,"STE LES FONDERIES DU MAGHREB ""SFM""",2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F49962989e6,STE MARINA HOTELS,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F0ca2047bd6,STE MEDAPLAST,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F8a639fa582,STE MODERNE DE TITRISATION,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fc62e86eada,STE NAT.TELECOM.T,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F865986a954,STE RAMLA TOZEUR,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F4ee439945b,STE SEDS,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F789454ee01,"STE TANIT INTERNATIONAL ""STI""",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F9211d327de,"STE TOURISME & ANIMATION ""RAIS CLUB""",2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F9211d327de,"STE TOURISME & ANIMATION ""RAIS CLUB""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fa8f9c42eed,"STE TQUE DE GESTION HOTELIERE ""THALASSA""",2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F70de447f98,STE TUN.RECOUVR. DES CREANCES “STRC”,2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F5d9b20dcd0,"STE. D'ET. & D'AMENAGEMENT LA MARINA HAMM. SUD ""SEAMHS""",2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fc4aa0998d9,"STE. SMALT INVESTISSEMENT ""LES CYPRES""",2009,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fc4aa0998d9,"STE. SMALT INVESTISSEMENT ""LES CYPRES""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F8496f4b820,STICODEVAM,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F3c3d3d96da,STIMEC,2011,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F3c3d3d96da,STIMEC,2014,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F3c3d3d96da,STIMEC,2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F3561e67c26,STIMEC - SIM-SICAR,2006,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F3561e67c26,STIMEC - SIM-SICAR,2007,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F3561e67c26,STIMEC - SIM-SICAR,2009,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F745bcc118b,STIP,2008,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fcf71a2b399,Secrétariat,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Fd46bac75c6,T F BANK,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fb6fd508b38,T.A.C,2013,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F1a7e9e8bee,TAYSIR MICROFINANCE,2026,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fe7ffe813fc,TECH. BORJ CEDRIA,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F4f064ad326,TECH. GAFSA,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fa6d14ec785,TECHNOPOLE DE SFAX,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F9593f9bf31,TFB,2011,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ffaf70437e8,TFB (ex UTB),2014,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Ffaf70437e8,TFB (ex UTB),2015,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F2ddcdac500,TITF SICAR,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F65c8d5ef6f,TOPIC SA,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F29ce685685,"TOURISTIQUE ""SEPT""",2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F0afb0c57ba,TOURISTIQUE BISAT SA,2019,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F012dffff0e,TUNIS RE,2013,0,1,0,1,0,0,0,,0,1,2,2,public_bank_seat|state_organ_seat
+F012dffff0e,TUNIS RE,2018,0,1,0,0,0,0,0,,0,1,1,0,state_organ_seat
+F012dffff0e,TUNIS RE,2026,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F009a1c823e,TUNISAIR,2016,0,1,1,1,0,0,0,,1,1,11,10,central_bank|ministry_organ|public_bank_interlock|state_organ_seat
+Fda257ec63a,TUNISIE AUTOROUTES,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F19ffdda20a,TUNISIE LAIT,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F6dde26c66a,TUNISIE TELECOM,2010,1,0,0,1,0,0,1,,0,1,6,0,public_bank_equity|state_shareholder
+F275f89d789,TotalEnergies SE réservée aux salariés du groupe TotalEnergies Adhérant au Plan d'Épargne Groupe,2024,0,1,0,0,0,0,0,,0,1,1,0,state_organ_seat
+F275f89d789,TotalEnergies SE réservée aux salariés du groupe TotalEnergies Adhérant au Plan d'Épargne Groupe,2025,0,1,0,0,0,0,0,,0,1,1,0,state_organ_seat
+F0222b62534,Trois chartes ont été élaborées arrêtant,2012,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fcf43458e5a,Tunis,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F07f30dc46b,Tunisienne,2022,0,0,0,1,0,0,0,,0,1,2,0,public_bank_seat
+F913fd9b98a,Tunisienne de Banque a continué ses efforts visant,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F7b03a35adb,Tunisienne de Banque concrétise ses orientations,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Ff9ac195b5f,Tunisienne d’Assurance et de,2022,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Fff1684f925,UBCI,2016,0,1,0,0,0,0,0,,0,1,1,1,state_organ_seat
+F56cf0bf0b6,UIB,2021,1,0,0,0,0,0,0,,0,1,1,0,state_shareholder
+Fd81cea7055,UNIFACTOR,2007,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fd81cea7055,UNIFACTOR,2012,0,0,0,1,0,0,1,,0,1,2,0,public_bank_equity|public_bank_interlock
+Fd81cea7055,UNIFACTOR,2015,0,0,0,1,0,0,1,,0,1,2,0,public_bank_equity|public_bank_interlock
+Fd81cea7055,UNIFACTOR,2017,0,0,0,1,0,0,1,,0,1,1,1,public_bank_equity
+Fd81cea7055,UNIFACTOR,2018,0,0,0,1,0,0,1,,0,1,2,0,public_bank_equity|public_bank_seat
+F437fad1ada,WIFAK BANK,2015,0,1,0,0,0,0,0,,0,1,1,1,state_organ_seat
+F437fad1ada,WIFAK BANK,2016,0,1,0,0,0,0,0,,0,1,1,1,state_organ_seat
+F61828f7b42,WIFAK INTERNATIONAL BANK,2022,1,1,0,0,0,0,0,,0,1,2,0,state_organ_seat|state_shareholder
+Fa912b26bcd,ZARZIS OFFSHORE SITE,2013,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+Fd56e4856e3,a pour mission d'aider Le Conseil d'Administration à,2016,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F9e61f293bd,aux travaux du Conseil d’Administration en,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F30ae7e958c,"contrôle interne, d'assurer le suivi et La supervision",2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F114ce9399e,"d'Exploitation Agricole ""SODEXA"" - Administrateur à la Sté Huilerie d'Olives du Nord",2006,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F114ce9399e,"d'Exploitation Agricole ""SODEXA"" - Administrateur à la Sté Huilerie d'Olives du Nord",2007,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F114ce9399e,"d'Exploitation Agricole ""SODEXA"" - Administrateur à la Sté Huilerie d'Olives du Nord",2009,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F114ce9399e,"d'Exploitation Agricole ""SODEXA"" - Administrateur à la Sté Huilerie d'Olives du Nord",2012,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F114ce9399e,"d'Exploitation Agricole ""SODEXA"" - Administrateur à la Sté Huilerie d'Olives du Nord",2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F114ce9399e,"d'Exploitation Agricole ""SODEXA"" - Administrateur à la Sté Huilerie d'Olives du Nord",2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F114ce9399e,"d'Exploitation Agricole ""SODEXA"" - Administrateur à la Sté Huilerie d'Olives du Nord",2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F9a5d4ac642,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du Nord",2006,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F9a5d4ac642,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du Nord",2007,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F9a5d4ac642,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du Nord",2009,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F9a5d4ac642,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du Nord",2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F9a5d4ac642,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du Nord",2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F9a5d4ac642,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du Nord",2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F9a5d4ac642,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du Nord",2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F7d169b2846,d'Offre à Prix Ferme,2009,1,0,0,1,0,0,1,,0,1,4,0,public_bank_equity|state_shareholder
+F7d169b2846,d'Offre à Prix Ferme,2010,1,0,0,1,0,0,1,,0,1,6,0,public_bank_equity|state_shareholder
+Fdd99ea4bce,d'Offre à Prix Ferme OPF et d'admission au marché principal de la cote de la Bourse de la société,2010,0,0,0,1,0,0,1,,0,1,3,0,public_bank_equity
+Fff3ba127fa,"d'essence, Téléphone etc…)",2008,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F3f2c9a02e9,de départ volontaire à la retraite et La concrétisation,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fdd1dbbcd58,de la Banque articulée autour de sept pôles par,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F6df05c38c4,"de la clientèle. S'agissant des emplois, la Société",2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F9a10c3ff92,de loisirs,2012,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F9a10c3ff92,de loisirs,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F9a10c3ff92,de loisirs,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F9a10c3ff92,de loisirs,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F6b1a82c1eb,de loisirs. Et il est gérant de la Sté Jumeaux,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fb002478382,de loisirs. Et il est gérant de la Sté Jumeaux Immobilière,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fb002478382,de loisirs. Et il est gérant de la Sté Jumeaux Immobilière,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fb002478382,de loisirs. Et il est gérant de la Sté Jumeaux Immobilière,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F5a870bf21d,de l’Éducation (MAE),2023,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Fb6f4b0d83e,"de résultats. En effet, le Produit Net Bancaire, le",2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F6b3a91c93d,différents risques de la Banque et de s'assurer du,2016,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fb754b2198b,du 31/10/2023 et le CA 21/12/2023,2023,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+Ff0de14aa54,du cabinet de formation AMEF Training,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Ff0de14aa54,du cabinet de formation AMEF Training,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F78f0b918c7,d’Assurance et de Réassurance,2023,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F763df5b9b1,e Mme Fawzia Moussa Saayid,2008,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fdd6d554290,emprunt obligataire,2016,0,0,0,1,0,0,1,,0,1,2,0,public_bank_equity
+Fdd6d554290,emprunt obligataire,2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F09bc5049a3,emprunt obligataire subordonné,2019,0,1,0,0,0,0,0,,0,1,1,0,state_organ_seat
+Fec97a5df8c,en place de la stratégie et du Business Plan de la,2016,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F08f37337c9,entre les Services du Ministre auprès du,2012,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Feac8eac82b,et de l’environnement par la FONDATION BNA,2018,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F0eb6c2c7a4,fondamentale du Comité est de veiller à la mise,2016,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F0eb6c2c7a4,fondamentale du Comité est de veiller à la mise,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F47cca32421,gouvernementdu29/01/2021etlettreduMinistèredesFinancesdu18/02/2021),2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F54224d8ffb,générés par l'activité de la Banque notamment,2012,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F09c2a4ed63,"judiciaire, la STB veillera à La mise en œuvre des",2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fb8699f94c3,la Sté ETATHMEER Holding,2006,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fb8699f94c3,la Sté ETATHMEER Holding,2007,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fb8699f94c3,la Sté ETATHMEER Holding,2009,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fb8699f94c3,la Sté ETATHMEER Holding,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Febcb1fae80,la Sté ETTAYSSIR,2006,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Febcb1fae80,la Sté ETTAYSSIR,2007,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Febcb1fae80,la Sté ETTAYSSIR,2009,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fce953b2c78,la Sté N2M Company,2006,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fce953b2c78,la Sté N2M Company,2007,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fce953b2c78,la Sté N2M Company,2009,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fce953b2c78,la Sté N2M Company,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F28db9305da,la Sté SMVDA,2006,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F28db9305da,la Sté SMVDA,2007,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F28db9305da,la Sté SMVDA,2009,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4fa721cd44,la Sté TRABELSI Service,2006,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4fa721cd44,la Sté TRABELSI Service,2007,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4fa721cd44,la Sté TRABELSI Service,2009,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4fa721cd44,la Sté TRABELSI Service,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4fa721cd44,la Sté TRABELSI Service,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4fa721cd44,la Sté TRABELSI Service,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F4fa721cd44,la Sté TRABELSI Service,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F2e40926b57,la Sté de Développement,2006,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F2e40926b57,la Sté de Développement,2007,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F2e40926b57,la Sté de Développement,2009,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F2e40926b57,la Sté de Développement,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F2e40926b57,la Sté de Développement,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F2e40926b57,la Sté de Développement,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+F2e40926b57,la Sté de Développement,2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
+Fb562354173,la circulaire de la BCT n° 2011-06 du 20.05.2011 portant,2016,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fb007af87b0,marché des PME constituant le tissu économique le,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F574d5f8708,p Casd’interdiction/Conflitsd’intérêts,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F8384e53b2e,pour permettre La mise en œuvre d'une politique,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F45ae34c9a1,questionnant de manière constructive le Directeur,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F1e40ce7805,radiation et de cession à la STRC des créances,2022,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
+F86ab84f678,relatif à l'augmentation du capital,2007,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
+F86ab84f678,relatif à l'augmentation du capital,2008,1,0,0,1,0,0,1,,0,1,3,0,public_bank_equity|state_shareholder
+F5c04e91f9b,rendements d'actif (ROA] et de capital,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fef1e7ee3e3,représenté par M. Saïdi Fethi,2013,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+Fca4edcde5f,représenté par son P.D.G,2006,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F531edc5d93,à adopter par le Conseil,2015,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
+F8f899df9e3,"à leurs niveaux enregistrés à fin 2016. En effet, du",2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat

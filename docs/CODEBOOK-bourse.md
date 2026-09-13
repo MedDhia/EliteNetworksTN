@@ -184,6 +184,53 @@ decisions but not board seats; filter on `role` to separate them.
 accounts and grant discharge. Those produce no rows, which is why the table is
 much smaller than the number of filings.
 
+## 4e. `political_connections.csv` — the coded connection variable
+
+One row per (firm, year) for which *some* connection was observed. Absent
+firm-years are not written: a zero here would say "not connected", and what
+the corpus supports is only "not seen connected".
+
+| Variable | Description |
+|---|---|
+| `entity_id`, `canonical_name`, `year` | The firm-year. |
+| `pc_state_ownership` | A state body holds equity in the firm (Boubakri, Cosset and Saffar 2008). |
+| `pc_state_board` | A state body holds a board seat. |
+| `pc_officeholder` | A director's printed title names a political or senior bureaucratic office (Faccio 2006). |
+| `pc_officeholder_former` | That office is held in the past tense — "Ex-ministre" (Hillman 2005). Subset of the above. |
+| `pc_public_bank` | Board or equity tie to a majority state-owned bank (Khwaja and Mian 2005; Diwan et al. 2020). |
+| `pc_public_bank_equity` | That tie is an equity stake rather than a shared director. Subset of the above. |
+| `pc_political_figure` | A director matches the named roster (Rijkers, Freund and Nucifora 2017). **Structurally zero — the roster ships empty.** |
+| `max_state_stake_pct` | Largest state stake stated that year; blank where a filing named the holder but not the size. |
+| `pc_narrow` | Faccio applied strictly: a *sitting* officeholder, a roster match, or a state stake ≥ 10%. |
+| `pc_broad` | Any channel at all. |
+| `n_evidence`, `n_evidence_ocr` | Supporting records, and how many came from OCR'd pages. |
+| `categories` | Pipe-separated categories behind the flags, e.g. `civil_servant\|public_bank_equity`. |
+
+Every coding rule is in `config/bourse_political_connections.csv`, not in
+code, with the literature each follows. Change a line there and rebuild.
+
+`political_connection_evidence.csv` is the long form: one row per supporting
+record, each with `doc_url` and `page`, so every coded 1 reads back to the
+filing that produced it. `political_connections.md` reports the counts and the
+limits.
+
+**The variable measures *disclosed* connection.** A board table that prints a
+director's occupation reveals a ministry post; one that prints only names does
+not, and both are common. The gap is not random — a firm with more to disclose
+may disclose less — so this is a lower bound, and differences across firms may
+be differences in disclosure practice.
+
+**`pc_officeholder` is close to a bank indicator here.** Almost all the firms
+carrying it are banks, because Tunisian bank boards seat ministry officials
+and say so. That is a real feature of the sector, not a coding artefact, but
+it means the channel should not be entered alongside a sector control without
+checking what survives.
+
+**No sitting minister appears on any board in this corpus.** The strongest
+personal ties are a handful of former ministers, former central-bank deputy
+governors and chiefs of cabinet. `pc_narrow` is consequently thin, and rests
+mostly on the 10% state-stake arm rather than on officeholding.
+
 ## 5. `multiplex_edges_panel.csv.gz` — the balanced panel
 
 Same columns as the observed edge list, plus:
