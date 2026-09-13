@@ -72,7 +72,9 @@ import json
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from .grammar import normalise_mf, normalise_rc
+from rapidfuzz import fuzz
+
+from .grammar import normalise_address, normalise_mf, normalise_rc
 from .names import parse_org
 from .paths import INTERIM, PROCESSED, ensure_dirs
 from .resolve import build_token_specificity, load_seed, org_match
@@ -175,6 +177,123 @@ def entity_key(event: dict, ambiguous: dict[str, int]) -> tuple[str, str]:
     return f"NAME:{key}", "name"
 
 
+# --------------------------------------------------------------------------- #
+# the address tier
+# --------------------------------------------------------------------------- #
+
+# How many distinct name-keyed firms may share an address before it stops
+# saying anything. The measured distribution over 187,365 distinct normalised
+# addresses is steep -- 170,956 carry one firm, 10,438 carry two, 2,761 three,
+# 1,165 four -- and then there is a long tail of domiciliation addresses that
+# carry 253, 219 and 99. Four is the knee, and it is a judgement: the
+# sensitivity of the merge count to it is reported rather than asserted away.
+ADDR_MAX_FIRMS = 4
+
+# An address shorter than this is a bare town name ("a Tunis", "Sfax") and
+# corroborates nothing.
+ADDR_MIN_LEN = 12
+
+# `token_sort_ratio`, not `token_set_ratio`: the set ratio treats containment
+# as identity, which is what built the merge hubs in the first place. Two firms
+# at one address are commonly a parent and its subsidiary sharing a stem
+# ("Poulina" and "Poulina Group Holding"), and merging those would be the same
+# error in a new place.
+ADDR_LABEL_FLOOR = 0.85
+
+
+def _merge_on_address(keyed: list[tuple[dict, str, str, str]],
+                      key_id: dict[str, str], key_seed: dict[str, str],
+                      diag: Counter) -> tuple[int, set[str]]:
+    """Give two name-keyed entities one id where the seat corroborates the name.
+
+    Mutates `key_id` in place. Returns how many keys were remapped and the
+    entity ids that absorbed a merge, so those rows can carry
+    `address_corroborated` as their basis rather than passing as plain `name`.
+
+    Four conditions, all necessary:
+
+    1. Both keys are name-keyed. A key carrying a matricule or an RC number is
+       already identified, and two *different* identifiers at one address are
+       two firms sharing a building -- the commonest thing in the corpus.
+    2. They share a normalised address of at least ADDR_MIN_LEN characters.
+    3. That address is borne by at most ADDR_MAX_FIRMS name-keyed firms, so
+       the domiciliation addresses corroborate nothing.
+    4. Their labels agree at ADDR_LABEL_FLOOR on a containment-safe metric.
+       The address is corroboration, never identity on its own: two brothers'
+       firms at the family address are two firms.
+
+    A key that adopted a seed organisation's id keeps it, and the other key
+    joins it rather than the reverse, so a merge can add spellings to a seed
+    node but never rename one.
+    """
+    addrs: dict[str, set[str]] = defaultdict(set)   # key -> normalised addresses
+    labels: dict[str, Counter] = defaultdict(Counter)
+    for e, mention, key, basis in keyed:
+        if basis != "name":
+            continue
+        labels[key][mention] += 1
+        a = normalise_address(e.get("org_address") or "")
+        if len(a) >= ADDR_MIN_LEN:
+            addrs[key].add(a)
+
+    by_addr: dict[str, set[str]] = defaultdict(set)
+    for key, aset in addrs.items():
+        for a in aset:
+            by_addr[a].add(key)
+
+    # Union-find over the keys an address is allowed to join.
+    parent: dict[str, str] = {}
+
+    def find(x: str) -> str:
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a: str, b: str) -> None:
+        ra, rb = find(a), find(b)
+        if ra == rb:
+            return
+        # A key that adopted a seed id wins, so the merged entity keeps the
+        # seed node's id. Otherwise the lexicographically smaller key wins,
+        # which makes the result independent of iteration order.
+        if key_seed.get(rb) and not key_seed.get(ra):
+            ra, rb = rb, ra
+        elif not key_seed.get(ra) and not key_seed.get(rb) and rb < ra:
+            ra, rb = rb, ra
+        parent[rb] = ra
+
+    considered = 0
+    for a, keys_here in by_addr.items():
+        if len(keys_here) < 2 or len(keys_here) > ADDR_MAX_FIRMS:
+            diag["address_groups_too_broad"] += int(len(keys_here) > ADDR_MAX_FIRMS)
+            continue
+        ordered = sorted(keys_here)
+        for i, k1 in enumerate(ordered):
+            l1 = labels[k1].most_common(1)[0][0]
+            for k2 in ordered[i + 1:]:
+                considered += 1
+                l2 = labels[k2].most_common(1)[0][0]
+                if (fuzz.token_sort_ratio(parse_org(l1).match_key,
+                                          parse_org(l2).match_key) / 100.0
+                        >= ADDR_LABEL_FLOOR):
+                    union(k1, k2)
+                else:
+                    diag["address_pairs_refused_on_label"] += 1
+    diag["address_pairs_considered"] = considered
+
+    remapped = 0
+    merged_ids: set[str] = set()
+    for key in list(parent):
+        root = find(key)
+        if root != key and key_id.get(root):
+            key_id[key] = key_id[root]
+            merged_ids.add(key_id[root])
+            remapped += 1
+    return remapped, merged_ids
+
+
 def build(events: list[dict], idx, ambiguous: dict[str, int] | None = None
           ) -> tuple[list[dict], list[dict], list[dict], dict]:
     """Entities, the key index, the mention map, and diagnostics."""
@@ -235,6 +354,14 @@ def build(events: list[dict], idx, ambiguous: dict[str, int] | None = None
     key_id = {k: key_seed.get(k) or _eid(k)
               for k in {key for _e, _m, key, _b in keyed}}
 
+    # The seat corroborates what the name alone leaves open. This is the only
+    # tier that MERGES rather than splits, and it exists to attack the residual
+    # error the identifier tiers cannot: two spellings of one identifier-less
+    # firm stay apart, which understates degree.
+    addr_merged, addr_merged_ids = _merge_on_address(keyed, key_id, key_seed, diag)
+    diag["keys_merged_on_address"] = addr_merged
+    diag["entities_merged_on_address"] = len(addr_merged_ids)
+
     all_keys: dict[str, Counter] = defaultdict(Counter)
     for e, mention, key, basis in keyed:
         diag[f"events_{basis}"] += 1
@@ -283,6 +410,11 @@ def build(events: list[dict], idx, ambiguous: dict[str, int] | None = None
 
     entities = []
     for row in agg.values():
+        # An entity that absorbed a merge is no longer identified by its name
+        # alone, and says so. Without this the tier would be invisible in
+        # `org_entities.csv` and undroppable by anyone reading it.
+        if row["org_entity_id"] in addr_merged_ids and row["entity_basis"] == "name":
+            row["entity_basis"] = "address_corroborated"
         row["label"] = row["labels"].most_common(1)[0][0]
         row["n_mentions"] = len(row.pop("mentions"))
         row.pop("labels")
@@ -472,6 +604,46 @@ def _write(name: str, rows: list[dict], fields: list[str]) -> None:
             w.writerow({k: r.get(k, "") for k in fields})
 
 
+def address_sensitivity(events: list[dict], idx,
+                        caps=(2, 3, 4, 6, 10)) -> list[dict]:
+    """How many merges each setting of ADDR_MAX_FIRMS buys.
+
+    The cap is a judgement. The measured distribution of firms per address is
+    steep -- 170,956 addresses carry one firm, 10,438 two, 2,761 three, 1,165
+    four -- and then there is a domiciliation tail carrying 253, 219 and 99.
+    Four is the knee, but the knee is not a proof, so the count is reported at
+    five settings instead of one being asserted.
+    """
+    global ADDR_MAX_FIRMS
+    ambiguous = ambiguous_mentions(events)
+    keyed: list[tuple[dict, str, str, str]] = []
+    for e in events:
+        mention = (e.get("org_mention") or "").strip()
+        if not mention:
+            continue
+        key, basis = entity_key(e, ambiguous)
+        if key:
+            keyed.append((e, mention, key, basis))
+    original = ADDR_MAX_FIRMS
+    out = []
+    try:
+        for cap in caps:
+            ADDR_MAX_FIRMS = cap
+            key_id = {k: _eid(k) for _e, _m, k, _b in keyed}
+            diag: Counter = Counter()
+            n, merged = _merge_on_address(keyed, key_id, {}, diag)
+            out.append({
+                "max_firms_per_address": cap, "keys_merged": n,
+                "entities_merged": len(merged),
+                "pairs_considered": diag["address_pairs_considered"],
+                "pairs_refused_on_label": diag["address_pairs_refused_on_label"],
+                "entities_after": len(set(key_id.values())),
+            })
+    finally:
+        ADDR_MAX_FIRMS = original
+    return out
+
+
 def run(sensitivity: bool = False) -> dict:
     ensure_dirs()
     events = read_events()
@@ -494,7 +666,10 @@ def run(sensitivity: bool = False) -> dict:
               "entities_name", "entities_ambiguous_mention",
               "name_keyed_share_pct", "ambiguous_mentions",
               "mentions_spanning_entities",
-              "entities_joining_spellings", "spellings_joined"):
+              "entities_joining_spellings", "spellings_joined",
+              "keys_merged_on_address", "entities_merged_on_address",
+              "address_pairs_considered", "address_pairs_refused_on_label",
+              "address_groups_too_broad", "entities_address_corroborated"):
         if k in diag:
             print(f"  {k:<30} {diag[k]:>10,}")
 
@@ -506,6 +681,13 @@ def run(sensitivity: bool = False) -> dict:
                   f"identity={r['mentions_identity_matched']:>7,} "
                   f"nodes>=10ids={r['nodes_with_10plus_identifiers']:>5,} "
                   f"worst={r['worst_node_identifiers']:>5,}")
+        print("\n  address cap sensitivity (the knee is not a proof):")
+        for r in address_sensitivity(events, idx):
+            print(f"    max_firms<={r['max_firms_per_address']:<3} "
+                  f"keys_merged={r['keys_merged']:>7,} "
+                  f"entities_merged={r['entities_merged']:>7,} "
+                  f"pairs={r['pairs_considered']:>8,} "
+                  f"refused_on_label={r['pairs_refused_on_label']:>7,}")
     return diag
 
 

@@ -59,6 +59,9 @@ TABLES = {
     "org_ties": PROCESSED / "org_ties.csv",
     "org_tie_spells": PROCESSED / "org_tie_spells.csv",
     "panel_org_ties_yearly": PROCESSED / "panel_org_ties_yearly.csv",
+    "person_ties": PROCESSED / "person_ties.csv",
+    "person_tie_spells": PROCESSED / "person_tie_spells.csv",
+    "panel_person_ties_yearly": PROCESSED / "panel_person_ties_yearly.csv",
     "org_entities": PROCESSED / "org_entities.csv",
     "org_entity_members": PROCESSED / "org_entity_members.csv",
     "org_identifiers": PROCESSED / "org_identifiers.csv",
@@ -94,6 +97,17 @@ VIEWS = {
         "AND link_status='resolved'",
     "v_org_panel_yearly":
         "SELECT * FROM panel_org_ties_yearly WHERE is_ownership='1'",
+    # The kinship layer. Marriage is separated from the natal-surname link
+    # carried alongside it: "nee X" is the same woman's birth name, not a
+    # husband, and an analysis that counted it as a marriage would be wrong
+    # about both the tie and the direction.
+    "v_marriages":
+        "SELECT person_id, person_label, kin_id, kin_label, relation, "
+        "onset_hi AS first_seen, terminus, right_censored, evidence_tier, "
+        "confidence FROM person_tie_spells WHERE is_marriage='1'",
+    "v_marriages_named":
+        "SELECT * FROM person_tie_spells WHERE is_marriage='1' "
+        "AND evidence_tier='kinship_dated'",
     "v_person_year_degree":
         "SELECT panel_id, from_node_id AS person_id, COUNT(*) AS degree "
         "FROM panel_edges_yearly WHERE evidence_tier='gazette_dated' "
@@ -383,7 +397,7 @@ GZIP_TABLES = ["events.csv", "blocks_index.csv", "resolution.csv",
                # address per observation over 10,528 firms is 17 MB, and the
                # org-tie queue carries 10,586 rows with their evidence quotes.
                "org_addresses.csv", "org_identifiers.csv",
-               "org_ties_review_queue.csv",
+               "org_ties_review_queue.csv", "person_ties_review_queue.csv",
                # 39 MB, 15 MB and 27 MB respectively at full corpus size.
                "org_entities.csv", "org_entity_keys.csv",
                "org_entity_members.csv"]

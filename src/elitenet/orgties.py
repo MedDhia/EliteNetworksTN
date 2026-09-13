@@ -48,12 +48,18 @@ THRESHOLD_MEMBERSHIP = 0.88
 # one. The rest prove the tie was live at that date without dating its start.
 OPENING = {"shares_acquired", "capital_subscribed"}
 CLOSING = {"shares_ceded"}
-CONFIRMING = {"shareholder_confirmed", "auditor", "branch"}
+CONFIRMING = {"shareholder_confirmed", "auditor", "branch", "subsidiary_of"}
 
 # Ownership proper, as against the professional-service and structural
 # relations carried alongside it. Exports default to this.
+#
+# `subsidiary_of` is ownership: a filiale is held by its parent, and the
+# capture runs parent -> subsidiary, the same direction as `shares_acquired`
+# (holder holds a stake in target). `branch` is deliberately *not* ownership --
+# a succursale has no legal personality, so the relation is structural and the
+# two ends are not two firms.
 OWNERSHIP = {"shares_acquired", "shares_ceded", "shareholder_confirmed",
-             "capital_subscribed"}
+             "capital_subscribed", "subsidiary_of"}
 
 FIELDS_TIES = [
     "org_tie_obs_id", "holder_id", "holder_label", "target_id", "target_label",

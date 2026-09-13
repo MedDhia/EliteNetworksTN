@@ -12,6 +12,7 @@ import unicodedata
 from datetime import date
 from functools import lru_cache
 
+from .names import parse_person
 from .paths import load_config
 
 # Uppercase and lowercase letter classes covering the accented French range.
@@ -36,9 +37,51 @@ _NOT_NAME = (r"(?!(?i:Commissaire|G[ée]rant|G[ée]rante|G[ée]rants|Administrat
              r"Actionnaire|Cog[ée]rant|Co)\b)")
 NAME = (rf"(?:{_TOK}|{PARTICLE})"
         rf"(?:[ \-]{_NOT_NAME}(?:{_TOK}|{PARTICLE})){{0,4}}")
-SPOUSE = rf"(?:\s+(?:[ée]pouse|[ée]p\.|n[ée]e|veuve|vve)\s+(?P<spouse>{NAME}))?"
+# Two different relations hide behind one surface shape. "Fatma Trabelsi
+# epouse Ben Ali" is a marriage; "Fatma Ben Ali nee Trabelsi" is the same woman
+# giving her natal surname. Folding them together -- which the single SPOUSE
+# group did -- makes a spousal tie out of a birth name. They are captured
+# together, because the grammar is the same, and told apart by the marker.
+#
+# Bare "EP" without the period is included: it is rare (122 blocks) and
+# ambiguous in isolation -- "Raison sociale : EP Technology" is a firm, not a
+# marriage -- but harmless here, because the group only ever matches in the
+# position immediately after a person name.
+SPOUSE_MARKERS = r"[ée]pouse|[ée]p\.|EP\.|EP|veuve|vve"
+MAIDEN_MARKERS = r"n[ée]e"
+_NAME_LINK = rf"(?P<link>{SPOUSE_MARKERS}|{MAIDEN_MARKERS})"
+SPOUSE = rf"(?:\s+{_NAME_LINK}\s+(?P<spouse>{NAME}))?"
+
+# Which relation a captured marker states. Returns "" for anything else so a
+# caller can treat an unrecognised marker as no claim rather than as a marriage.
+_SPOUSE_KIND = {"epouse": "spouse_of", "ep.": "spouse_of", "ep": "spouse_of",
+                "veuve": "widow_of", "vve": "widow_of",
+                "nee": "maiden_name_of", "ne": "maiden_name_of"}
+
+
+def name_link_kind(marker: str) -> str:
+    """The relation a spousal/maiden marker asserts, or "" if unrecognised."""
+    return _SPOUSE_KIND.get(strip_accents(marker or "").strip().lower(), "")
+
 
 RE_PERSON = re.compile(rf"{TITLE}\s+(?P<name>{NAME}){SPOUSE}", re.UNICODE)
+
+# The same pair without requiring a title in front. Two thirds of the corpus's
+# spousal markers sit in prose that never titles the woman -- "la nommee Fekria
+# Bent Mohamed Osman epouse Ben Salem", "sa mere M'na Bent M'barek Ben Guiza
+# veuve Najar Ben Ali Khai" -- so a title-anchored pattern sees 984 of them
+# against 41,088 in the text. Precision is carried by `clean_name`, which
+# rejects both single tokens and boilerplate: it discards 35,123 of the 41,088
+# raw captures ("Son epouse Khadija" among them) and leaves 5,965 where both
+# ends are full multi-token names.
+RE_NAME_LINK = re.compile(
+    rf"(?P<name>{NAME})\s+{_NAME_LINK}\s+(?P<spouse>{NAME})", re.UNICODE)
+
+# Without a title anchor to consume it, a leading "Mme"/"Mr" lands inside the
+# name capture, and "Mme Sihem Temimi" then resolves as a different person from
+# "Sihem Temimi". NAME_STOPWORDS catches the spelt-out forms but not the
+# abbreviations, which is what the gazette almost always uses.
+_RE_LEAD_TITLE = re.compile(rf"^{TITLE}\s+")
 
 # Words that follow a title in boilerplate but are not names. Without this the
 # label "M." in "M. Siege social" and similar produce spurious people.
@@ -188,6 +231,20 @@ RE_ORG_AUDITOR = re.compile(
 RE_ORG_BRANCH = re.compile(
     rf"succursale\s+(?:de\s+|d[eu]\s+)?(?P<org>{ORG_NAMED})", re.IGNORECASE)
 
+# "filiale de la societe X" -- a subsidiary, which is an ownership relation and
+# not merely a structural one: the parent holds the subsidiary. Kept separate
+# from `branch` because a succursale has no legal personality of its own and so
+# cannot be a distinct node, where a filiale can and usually is.
+#
+# Only the possessive form counts. "creation d'une filiale commerciale" and
+# "ouverture d'une filiale" name no parent and no child, so a pattern that did
+# not require "de <org>" would emit a tie with one end invented. The
+# `du/de la/des` alternation is spelled out rather than folded into ORG_NAMED
+# because ORG_NAMED already absorbs a leading article.
+RE_ORG_SUBSIDIARY = re.compile(
+    rf"filiales?\s+(?:de\s+|du\s+|d[eu]\s+|des\s+)?(?P<org>{ORG_NAMED})",
+    re.IGNORECASE)
+
 
 # In a transfer clause the company whose shares move is named explicitly --
 # "de sa participation au capital de la societe Mehari Beach" -- and that, not
@@ -316,6 +373,76 @@ _SECOND_ADDRESS = re.compile(
     re.IGNORECASE)
 
 
+# A person's stated residence: "demeurant a la plage - Soliman", "domiciliee
+# au 12 rue de Rome Tunis". Extracted for the same reason a firm's seat is: an
+# address is the only discriminator in the corpus that separates two people who
+# share a name, and merged homonyms are the largest remaining error in the
+# person layer. It is deliberately *not* an identity claim on its own -- two
+# brothers share a house -- which is why it lands in its own column and is
+# scored, not matched.
+RE_RESIDENCE = re.compile(
+    r"\b(?:demeurant(?:e|es|s)?|domicili[ée]e?s?|r[ée]sidant(?:e|es|s)?)\s+"
+    r"(?:[àa]u?x?\s+|[àa]\s+|en\s+|de\s+)?"
+    # The capture must not run through the *next* party's residence marker.
+    # An unconstrained span does, and `finditer` then never reaches the second
+    # clause at all -- a notice with two parties yielded one address, and the
+    # one it yielded was the two concatenated.
+    r"(?P<addr>(?:(?!\bdemeurant|\bdomicili|\br[ée]sidant)[^\n]){6,90})",
+    re.IGNORECASE)
+
+# "elisant domicile en l'etude de son avocat" is a procedural election of
+# address at a lawyer's office, not where the person lives. Admitting it would
+# put every litigant in a case at the same address and make them homonyms of
+# each other -- the exact error the residence column exists to fix.
+_ELECTED_DOMICILE = re.compile(
+    r"^(?:en\s+)?l[ae']?\s*(?:[ée]tude|cabinet)\b|^chez\s+(?:M|Me|Ma[îi]tre)\b",
+    re.IGNORECASE)
+
+# What follows a residence in the gazette's sentence order. `_SIEGE_STOP` is
+# tuned to what follows a company seat and misses all of these: an identity
+# document, an election of address, a further party, or the end of the
+# sentence. Left uncut, a capture runs from the street through the CIN number
+# and into the next clause, and the address then never matches another
+# printing of itself.
+_RESIDENCE_STOP = re.compile(
+    r"\s*(?:\btitulaire\b|\bporteu(?:r|se)\b|\bC\.?\s?I\.?N\b"
+    r"|\bcarte\s+d['’]identit[ée]\b|\bpasseport\b"
+    r"|\b[ée]lisant\b|\bayant\s+[ée]lu\b|\brepr[ée]sent[ée]e?\b"
+    r"|\bagissant\b|\bn[ée]e?\s+le\b|\bde\s+nationalit[ée]\b"
+    r"|\b(?:et|[àa])\s+(?:M|Mr|Me|Mme|Mlle|Monsieur|Madame|Mademoiselle)\b"
+    # The sentence resumes with what the party did. These are the verbs the
+    # transaction notices actually use, and without them a capture runs from
+    # the street through the whole clause and into the next party's address.
+    r"|\ba\s+(?:vendu|c[ée]d[ée]|lou[ée]|achet[ée]|donn[ée]|apport[ée]|"
+    r"d[ée]clar[ée]|constitu[ée]|nomm[ée])\b"
+    r"|\b(?:a\s+vendu|ont\s+vendu|a\s+c[ée]d[ée]|ont\s+c[ée]d[ée])\b"
+    r"|\bdemeurant\b|\bdomicili|\br[ée]sidant\b"
+    # The object of the sale, where no comma separates it from the address.
+    r"|\bla\s+totalit[ée]\b|\btout\s+le\b|\btous\s+les\b|\ble\s+fonds\b"
+    r"|\.\s|\.$)",
+    re.IGNORECASE)
+
+# A general cut where the enumerated heads run out. An address continues after
+# a comma with a place name or a number ("l'avenue Habib Bourguiba, Sidi
+# Bouzid", "34 rue de Marseille, 1001 Tunis"); prose continues with a
+# lowercase word ("Tunis, la totalite du fonds", "Tunis, gerant"). The
+# exception list is the handful of lowercase words that really do open an
+# address component. This costs the tail of an address written ", la Marsa",
+# which keeps its head and still matches on it.
+# The trailing class is deliberately case-sensitive -- a capitalised word after
+# a comma is a place name and keeps the address going -- so the exception list
+# carries its own inline flag rather than the pattern being IGNORECASE.
+_RESIDENCE_TAIL = re.compile(
+    r",\s+(?!(?i:rue|avenue|av\.|boulevard|bd|impasse|route|zone|z\.?\s?i"
+    r"|cit[ée]|immeuble|imm\.|km|place|passage|lotissement|bloc|appartement"
+    # "la" and "le" are deliberately absent: ", la totalite du fonds" is far
+    # commoner in these notices than ", la Marsa", and the second keeps its
+    # head either way.
+    r"|app\.|[ée]tage|villa|r[ée]sidence|el|sidi|borj|bordj"
+    r"|a[ïi]n|beb|bab|menzel|hammam|dar)\b)[a-zà-ÿ]",
+    re.UNICODE)
+
+
 def trim_address(raw: str) -> str:
     """Cut a captured address at the first clause boundary after it."""
     s = " ".join((raw or "").split())
@@ -325,6 +452,61 @@ def trim_address(raw: str) -> str:
             s = s[:m.start()]
     s = s.strip(" .,;:«»\"'-")
     return "" if _NOT_AN_ADDRESS.match(s) or len(s) < 4 else s
+
+
+def trim_residence(raw: str) -> str:
+    """Cut a captured residence at the first clause boundary after it.
+
+    `_NOT_AN_ADDRESS`, which `trim_address` applies, rejects a capture opening
+    with a bare preposition because for a *seat* that shape means the transfer
+    form. A residence has no transfer form, and "demeurant a la Marsa" is
+    ordinary, so the leading preposition is consumed by the pattern instead.
+    """
+    s = " ".join((raw or "").split())
+    for pat in (_RESIDENCE_STOP, _RESIDENCE_TAIL):
+        m = pat.search(s)
+        if m:
+            s = s[:m.start()]
+    # The capture keeps a leading preposition whenever dropping it would leave
+    # the address below the pattern's minimum length ("demeurant a Tunis"), so
+    # it is stripped here instead.
+    s = re.sub(r"^(?:[àa]u?x?|en|de|d[eu])\s+", "", s, flags=re.IGNORECASE)
+    s = trim_address(s)
+    return "" if not s or _ELECTED_DOMICILE.match(s) or len(s) < 6 else s
+
+
+def find_residences(text: str) -> list[tuple[str, str, int]]:
+    """(person, residence, offset) for every stated residence in a block.
+
+    Each residence is attributed to the nearest person named before it, which
+    is the order the gazette prints: "Madame Hajer Ben Ahmed Sehili epouse Ben
+    Mahmoud, demeurant a la plage - Soliman". A residence with no person before
+    it in the block belongs to nobody and is dropped -- attributing it to
+    whoever comes next would put people at addresses they were never given.
+    """
+    people = [(m.start(), m.end(), clean_name(_RE_LEAD_TITLE.sub("", m.group("name"))))
+              for m in RE_NAME_LINK.finditer(text)]
+    people += [(m.start(), m.end(), clean_name(m.group("name")))
+               for m in RE_PERSON.finditer(text)]
+    people = sorted((s, e, n) for s, e, n in people if n)
+    if not people:
+        return []
+    out: list[tuple[str, str, int]] = []
+    for m in RE_RESIDENCE.finditer(text):
+        addr = trim_residence(m.group("addr"))
+        if not addr:
+            continue
+        # The nearest person whose mention ends before this clause opens.
+        prior = [p for p in people if p[1] <= m.start()]
+        if not prior:
+            continue
+        # A residence more than a sentence away from the name it would attach
+        # to is a different party's.
+        start, end, name = prior[-1]
+        if m.start() - end > 120:
+            continue
+        out.append((name, addr, m.start()))
+    return out
 
 
 def normalise_address(raw: str) -> str:
@@ -553,6 +735,30 @@ def find_persons(text: str) -> list[tuple[str, str, int]]:
         name = clean_name(m.group("name"))
         if name:
             out.append((name, clean_name(m.group("spouse") or ""), m.start()))
+    return out
+
+
+def find_name_links(text: str) -> list[tuple[str, str, str, str, int]]:
+    """Every marriage or maiden-name claim: (person, other, relation, marker, offset).
+
+    `relation` is one of `spouse_of`, `widow_of`, `maiden_name_of`. Both ends
+    are put through `clean_name`, so a pair is returned only when each side is
+    a plausible multi-token name -- a bare surname ("epouse Bouricha") is not
+    an identifiable second person and yields nothing here. It survives in the
+    `person_married_name` column on the role event, which is unchanged.
+    """
+    out: list[tuple[str, str, str, str, int]] = []
+    for m in RE_NAME_LINK.finditer(text):
+        relation = name_link_kind(m.group("link"))
+        if not relation:
+            continue
+        person = clean_name(_RE_LEAD_TITLE.sub("", m.group("name")))
+        other = clean_name(_RE_LEAD_TITLE.sub("", m.group("spouse")))
+        # A capture that resolves to the same name on both sides is OCR
+        # doubling, not a marriage to oneself.
+        if not person or not other or parse_person(person).match_key == parse_person(other).match_key:
+            continue
+        out.append((person, other, relation, m.group("link"), m.start()))
     return out
 
 

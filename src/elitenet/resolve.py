@@ -41,6 +41,7 @@ W_MF = 0.10
 # than describing it. Both are registration numbers, so both are usable as an
 # identity spine; the weight W_MF applies to either.
 HARD_IDS = ("org_mf", "org_rc")
+
 W_COOCCUR = 0.15
 W_ROLE = 0.05
 
@@ -55,6 +56,20 @@ AMBIGUITY_MARGIN = 0.05      # rivals this close force review regardless of leve
 # the organisation and matricule signals only count once the name is at least
 # plausibly the same name.
 NAME_FLOOR_FOR_ORG = 0.70
+
+# Event types whose counterparty is a second *person* rather than an
+# organisation. For these the counterparty needs a person node too, so both
+# ends of the tie `personties` builds can be named.
+KINSHIP = {"spouse_of", "widow_of", "maiden_name_of"}
+
+
+def _persons_of(e: dict) -> list[str]:
+    """Every person mention on an event row, subject first."""
+    out = [e["person_mention"]] if e.get("person_mention") else []
+    if e.get("event_type") in KINSHIP and e.get("counterparty_mention"):
+        out.append(e["counterparty_mention"])
+    return out
+
 
 # Seed edge roles that make a given gazette role plausible for that person.
 ROLE_AFFINITY: dict[str, set[str]] = {
@@ -89,6 +104,10 @@ RESOLUTION_FIELDS = [
     # row itself, without going back to the pipeline
     "role_observed", "issue_uid", "folio_page", "source_url", "pdf_url",
     "candidate_orgs", "decided_by",
+    # Which snowball pass first named this row, and by which rule. 0 is the
+    # single-pass resolution every earlier build produced, so filtering to
+    # `resolve_pass == 0` reproduces it exactly.
+    "resolve_pass", "snowball_basis",
 ]
 
 OVERRIDES = "overrides/entity_decisions.csv"
@@ -288,6 +307,65 @@ def save_token_specificity(spec: TokenSpecificity) -> None:
 
 
 # --------------------------------------------------------------------------- #
+# name rarity, and inference from it
+# --------------------------------------------------------------------------- #
+# The same principle the organisation gate rests on, applied to people: an
+# identity claim has to rest on DISCRIMINATING evidence. For an organisation
+# that was the document frequency of the label's tokens. For a person it is how
+# many people bear the name.
+#
+# Resolution is dyad-anchored -- a person is credited only where the
+# organisation agrees -- because "Mohamed Trabelsi" matches over 1,500 gazette
+# pages and a name-only link there would merge dozens of people into one
+# vertex. That guard is right, and it is also why 2,563 seed persons who are
+# visibly named in print reach nothing: their block's organisation never
+# resolved, so no anchor was available at any price.
+#
+# But the danger is not uniform. Measured over those 2,563: 2,517 (98%) bear a
+# name held by exactly ONE seed person and matching exactly ONE gazette
+# candidate, and only 15 bear a name shared by more than one seed person. For
+# the unique ones a name is an identifier, and refusing it buys no safety.
+#
+# So a name-only match is accepted where the name is unique on both sides --
+# and it is recorded as `inferred`, never as `resolved`. That distinction is
+# load-bearing: the validator asserts that no RESOLVED link lacks organisation
+# agreement, which stays true, and any consumer can drop the inferred tier in
+# one filter. Coverage rises without the guarantee weakening.
+
+# How rare a name must be on each side for it to identify a person by itself.
+MAX_SEED_HOMONYMS = 1       # exactly one seed person may bear the name
+MAX_GAZETTE_VARIANTS = 1    # matching exactly one gazette candidate key
+INFERRED_NAME_FLOOR = 0.90  # and the names must still agree closely
+
+
+@dataclass
+class NameRarity:
+    """Who else bears a name, on the seed side and in the gazette."""
+
+    seed_count: dict[str, int] = field(default_factory=dict)
+    gazette_count: dict[str, int] = field(default_factory=dict)
+
+    def is_unique(self, key: str) -> bool:
+        return (self.seed_count.get(key, 0) <= MAX_SEED_HOMONYMS
+                and self.gazette_count.get(key, 0) <= MAX_GAZETTE_VARIANTS)
+
+
+def build_name_rarity(idx: SeedIndex, mentions: Iterable[str]) -> NameRarity:
+    seed = {k: len(v) for k, v in idx.by_match_key.items()}
+    gz: Counter = Counter()
+    seen: set[str] = set()
+    for m in mentions:
+        m = (m or "").strip()
+        if not m or m in seen:
+            continue
+        seen.add(m)
+        k = parse_person(m).match_key
+        if k:
+            gz[k] += 1
+    return NameRarity(seed_count=seed, gazette_count=dict(gz))
+
+
+# --------------------------------------------------------------------------- #
 # organisation resolution
 # --------------------------------------------------------------------------- #
 
@@ -386,6 +464,210 @@ def resolve_org(mention: str, idx: SeedIndex) -> tuple[str, float]:
     """Match an organisation mention to a seed organisation."""
     m = org_match(mention, idx)
     return (m.org_id, m.score) if m.is_identity else ("", m.score)
+
+
+# --------------------------------------------------------------------------- #
+# multi-seed snowballing
+# --------------------------------------------------------------------------- #
+
+# How well a mention must match one of a *named person's own* seed
+# organisations to be credited as that organisation. Lower than the global
+# identity floor on purpose, and defensible for one reason: the search space
+# has collapsed from ~10,000 seed organisations to the handful this person is
+# actually tied to, so the same string similarity carries far more information.
+SNOWBALL_ORG_FLOOR = 0.80
+
+# `token_sort_ratio`, not `token_set_ratio`. The set ratio treats CONTAINMENT
+# as identity -- it is what built the merge hubs -- and inside a small
+# candidate set the specificity gate has no corpus statistics to work with. The
+# sort ratio requires both token sequences to line up, so "comptoir tunisien de
+# batiment" does not become "batiment" however few rivals there are.
+SNOWBALL_METRIC_FLOOR = 0.75
+
+# How many seed people a shared organisation must be attested by before it is
+# used as a co-membership anchor. One named colleague is a coincidence; two
+# who are tied to the same firm in the seed is a board.
+SNOWBALL_COMEMBERS = 2
+
+MAX_SNOWBALL_PASSES = 3
+
+# Statuses that name a node, and so can seed the next pass.
+NAMING = {"resolved", "inferred", "snowball", "manual"}
+
+
+def org_match_within(mention: str, org_ids: set[str],
+                     idx: SeedIndex) -> tuple[str, float]:
+    """The best match for a mention among a *restricted* set of organisations.
+
+    Both metrics must clear their floor. See the two constants above for why
+    the sort ratio is the one that does the real work here.
+    """
+    if not mention or not org_ids:
+        return "", 0.0
+    key = parse_org(mention).match_key
+    if not key:
+        return "", 0.0
+    best, best_s = "", 0.0
+    for oid in org_ids:
+        row = idx.orgs.get(oid)
+        if not row:
+            continue
+        label = row["label_normalised"] or row["label"]
+        if not label:
+            continue
+        sort_s = fuzz.token_sort_ratio(key, label) / 100.0
+        if sort_s < SNOWBALL_METRIC_FLOOR:
+            continue
+        s = min(fuzz.token_set_ratio(key, label) / 100.0, sort_s + 0.15)
+        if s > best_s:
+            best, best_s = oid, s
+    return (best, best_s) if best_s >= SNOWBALL_ORG_FLOOR else ("", best_s)
+
+
+def snowball(out_rows: list[dict], dyads: dict, idx: SeedIndex,
+             block_people: dict[str, set[str]],
+             max_passes: int = MAX_SNOWBALL_PASSES) -> dict:
+    """Use what the first pass named as anchors for what it could not.
+
+    Resolution is dyad-anchored: a person is credited only where the
+    organisation agrees. That leaves a large population unreachable in one
+    pass, not because the evidence is absent but because it arrives in the
+    wrong order -- the firm is identified in one filing and the person in
+    another. Snowballing runs the anchor in both directions and repeats until
+    nothing new is named:
+
+    1. **A named person names their firm.** Where the person resolved but the
+       organisation did not, the person's own seed organisations are the
+       candidate set, and the match is made within it.
+    2. **A newly named firm names its people.** Every mention of that firm now
+       carries an anchor, so the dyads that failed for want of one are
+       re-scored.
+    3. **Named colleagues name a person.** Where a block has no usable
+       organisation at all, two or more co-mentions tied to one seed
+       organisation supply the anchor instead.
+
+    Nothing here is ever downgraded, and pass 0 is left exactly as it was. Each
+    upgraded row is stamped `link_status = "snowball"` with the pass number and
+    the rule that did it, so the whole tier -- and any single round of it -- is
+    droppable in one filter. That matters more here than anywhere else in the
+    pipeline: a snowball propagates its own errors, and the pass number is what
+    makes the propagation measurable instead of merely suspected.
+    """
+    by_key = {r["mention_key"]: r for r in out_rows}
+    stats: dict[str, int] = defaultdict(int)
+
+    # Which mentions have a named organisation, and which a named person.
+    anchor_of: dict[str, str] = {}
+    for r in out_rows:
+        if r["resolved_org_id"] and r["org_mention"]:
+            anchor_of.setdefault(r["org_mention"], r["resolved_org_id"])
+    person_of: dict[str, str] = {}
+    for r in out_rows:
+        if r["link_status"] in NAMING and r["resolved_person_id"]:
+            person_of.setdefault(r["person_mention"], r["resolved_person_id"])
+
+    for p in range(1, max_passes + 1):
+        changed = 0
+
+        # --- 1. a named person names their firm -------------------------- #
+        for r in out_rows:
+            if r["resolved_org_id"] or not r["org_mention"]:
+                continue
+            pid = r["resolved_person_id"] if r["link_status"] in NAMING else ""
+            if not pid:
+                continue
+            oid, score = org_match_within(
+                r["org_mention"], set(idx.person_orgs.get(pid, ())), idx)
+            if not oid:
+                continue
+            r["resolved_org_id"] = oid
+            r["resolved_org_label"] = idx.orgs[oid]["label"]
+            r["org_match_score"] = round(score, 4)
+            r["org_match_basis"] = "person_anchored"
+            r["resolve_pass"] = p
+            r["snowball_basis"] = "person_names_org"
+            anchor_of.setdefault(r["org_mention"], oid)
+            stats["org_named_by_person"] += 1
+            changed += 1
+
+        # --- 2. a newly named firm names its people ---------------------- #
+        # and 3. named colleagues name a person, where no firm is available.
+        for (person, org_men), d in dyads.items():
+            r = by_key.get(f"{person}||{org_men}")
+            if not r or r["link_status"] in NAMING:
+                continue
+            anchor, basis = anchor_of.get(org_men, ""), "org_names_person"
+            if not anchor:
+                anchor, basis = _comember_anchor(d, person, block_people,
+                                                 person_of, idx), "colleagues_name_person"
+            if not anchor:
+                continue
+            role = next(iter(d["roles"]), "")
+            co_mentions: set[str] = set()
+            for b in d["blocks"]:
+                co_mentions |= (block_people.get(b, set()) - {person})
+            scored = [score_pair(person, c, anchor, 1.0, False, co_mentions,
+                                 role, idx)
+                      for c in candidates_for(person, anchor, idx)]
+            scored.sort(key=lambda x: -x["score"])
+            if not scored or scored[0]["score"] < THRESHOLD_RESOLVED:
+                continue
+            top = scored[0]
+            runner = scored[1] if len(scored) > 1 else None
+            margin = top["score"] - (runner["score"] if runner else 0.0)
+            # The same ambiguity rule pass 0 applies. A snowball that guesses
+            # between two equally good candidates propagates the guess.
+            if runner and margin < AMBIGUITY_MARGIN and runner["score"] >= THRESHOLD_AMBIGUOUS:
+                stats["snowball_blocked_by_ambiguity"] += 1
+                continue
+            r["resolved_person_id"] = top["person_id"]
+            r["resolved_person_label"] = idx.persons[top["person_id"]]["label"]
+            r["score"] = round(top["score"], 4)
+            for k in ("s_name", "s_org", "s_mf", "s_cooccur", "s_role"):
+                r[k] = round(top[k], 3)
+            r["margin_to_runner_up"] = round(margin, 4)
+            r["link_status"] = "snowball"
+            r["resolve_pass"] = p
+            r["snowball_basis"] = basis
+            if not r["resolved_org_id"] and anchor in idx.orgs:
+                r["resolved_org_id"] = anchor
+                r["resolved_org_label"] = idx.orgs[anchor]["label"]
+                r["org_match_basis"] = r["org_match_basis"] or "snowball_anchor"
+            person_of.setdefault(person, top["person_id"])
+            stats[basis] += 1
+            changed += 1
+
+        stats[f"pass_{p}_links"] = changed
+        if not changed:
+            break
+    return dict(stats)
+
+
+def _comember_anchor(d: dict, person: str, block_people: dict[str, set[str]],
+                     person_of: dict[str, str], idx: SeedIndex) -> str:
+    """The one seed organisation that this mention's named colleagues share.
+
+    Returns "" unless a single organisation is attested by at least
+    SNOWBALL_COMEMBERS distinct named co-mentions. A tie between two
+    organisations is no anchor: taking either would be a coin toss recorded as
+    evidence.
+    """
+    counts: dict[str, int] = defaultdict(int)
+    for b in d["blocks"]:
+        for other in block_people.get(b, set()) - {person}:
+            pid = person_of.get(other)
+            if not pid:
+                continue
+            for oid in idx.person_orgs.get(pid, ()):
+                counts[oid] += 1
+    if not counts:
+        return ""
+    ranked = sorted(counts.items(), key=lambda kv: -kv[1])
+    if ranked[0][1] < SNOWBALL_COMEMBERS:
+        return ""
+    if len(ranked) > 1 and ranked[1][1] == ranked[0][1]:
+        return ""
+    return ranked[0][0]
 
 
 # --------------------------------------------------------------------------- #
@@ -537,37 +819,43 @@ def run(events_path: Path | None = None) -> dict:
     spec = build_token_specificity(e.get("org_mention") or "" for e in rows)
     save_token_specificity(spec)
     idx = load_seed(spec)
+    # How rare each name is, on the seed side and across the corpus. Used only
+    # to decide whether a name can identify a person with no organisation to
+    # anchor it.
+    rarity = build_name_rarity(idx, (p for e in rows for p in _persons_of(e)))
 
     for e in rows:
-        if e.get("person_mention"):
-            block_people[e["block_uid"]].add(e["person_mention"])
+        for who in _persons_of(e):
+            block_people[e["block_uid"]].add(who)
 
+    # Both ends of a kinship event are people, so both need a node id before
+    # `personties` can make a tie of them. Every other event type has one
+    # person and one organisation, which is why the counterparty column was
+    # only ever read as an organisation until now.
     for e in rows:
-        person = e.get("person_mention")
-        if not person:
-            continue
         org_men = e.get("org_mention") or ""
-        key = (person, org_men)
-        d = dyads.setdefault(key, {
-            "person_mention": person, "org_mention": org_men,
-            "org_mf": e.get("org_mf") or "",
-            "org_rc": e.get("org_rc") or "", "n_events": 0,
-            "dates": [], "roles": set(), "blocks": set(),
-            "quote": e.get("evidence_quote") or "",
-            "issue_uid": e.get("issue_uid") or "",
-            "folio_page": e.get("folio_page") or "",
-            "collection": e.get("collection") or "",
-            "year": e.get("year") or "", "issue": e.get("issue") or "",
-        })
-        d["n_events"] += 1
-        if e.get("event_date"):
-            d["dates"].append(e["event_date"])
-        if e.get("role_canonical"):
-            d["roles"].add(e["role_canonical"])
-        d["blocks"].add(e["block_uid"])
-        for col in HARD_IDS:
-            if not d[col] and e.get(col):
-                d[col] = e[col]
+        for person in _persons_of(e):
+            key = (person, org_men)
+            d = dyads.setdefault(key, {
+                "person_mention": person, "org_mention": org_men,
+                "org_mf": e.get("org_mf") or "",
+                "org_rc": e.get("org_rc") or "", "n_events": 0,
+                "dates": [], "roles": set(), "blocks": set(),
+                "quote": e.get("evidence_quote") or "",
+                "issue_uid": e.get("issue_uid") or "",
+                "folio_page": e.get("folio_page") or "",
+                "collection": e.get("collection") or "",
+                "year": e.get("year") or "", "issue": e.get("issue") or "",
+            })
+            d["n_events"] += 1
+            if e.get("event_date"):
+                d["dates"].append(e["event_date"])
+            if e.get("role_canonical"):
+                d["roles"].add(e["role_canonical"])
+            d["blocks"].add(e["block_uid"])
+            for col in HARD_IDS:
+                if not d[col] and e.get(col):
+                    d[col] = e[col]
 
     # Hard identifier -> resolved org, learned from unambiguous dyads. Two are
     # printed beside a company name and both are registration numbers rather
@@ -681,6 +969,19 @@ def run(events_path: Path | None = None) -> dict:
             status = "ambiguous"
         else:
             status = "unresolved"
+
+        # Inference from name rarity, for the population that no anchor can
+        # reach. Deliberately a SEPARATE tier: `resolved` continues to mean
+        # "the organisation agreed", which is the invariant the validator
+        # enforces and the reason the person layer survived the merge-hub
+        # defect that wrecked the organisation layer.
+        if (status != "resolved" and top
+                and not org_anchor
+                and top["s_name"] >= INFERRED_NAME_FLOOR
+                and rarity.is_unique(parse_person(person).match_key)):
+            status = "inferred"
+            stats["inferred_by_name_rarity"] = stats.get(
+                "inferred_by_name_rarity", 0) + 1
         # Ambiguity, not low confidence, is what needs a human: two equally
         # plausible candidates are worse than one middling candidate.
         if top and runner and margin < AMBIGUITY_MARGIN and runner["score"] >= THRESHOLD_AMBIGUOUS:
@@ -774,7 +1075,18 @@ def run(events_path: Path | None = None) -> dict:
             "source_url": viewer, "pdf_url": pdf,
             "candidate_orgs": "; ".join(top_orgs[:4]),
             "decided_by": decided_by,
+            "resolve_pass": 0, "snowball_basis": "",
         })
+
+    # Snowball: what the first pass named becomes the anchor for what it could
+    # not. Runs after every pass-0 row exists, and only ever upgrades one.
+    sb = snowball(out_rows, dyads, idx, block_people)
+    for k, v in sb.items():
+        stats[f"snowball_{k}"] = v
+    for r in out_rows:
+        if r["link_status"] == "snowball":
+            stats["snowball"] = stats.get("snowball", 0) + 1
+            stats["unresolved"] = max(0, stats.get("unresolved", 0) - 1)
 
     _write(PROCESSED / "resolution.csv", out_rows, RESOLUTION_FIELDS)
 

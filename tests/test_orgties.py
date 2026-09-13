@@ -447,3 +447,40 @@ def test_an_alt_group_falls_back_to_the_subject_firm():
     assert len(obs) == 1
     assert obs[0]["target_label"] == "BETA INDUSTRIES"
     assert diag["alt_group_fell_back_to_subject"] == 1
+
+
+# --- subsidiaries -------------------------------------------------------- #
+
+def test_subsidiary_clause_names_the_parent():
+    """"filiale de la Banque de l'Habitat" -- the parent is the holder, the
+    subject firm the target, which is the same direction as shares_acquired."""
+    import re
+    from elitenet import grammar as G
+    m = G.RE_ORG_SUBSIDIARY.search(
+        "societe d'investissement a capital risque SIM-SICAR (filiale de la "
+        "Banque de l'Habitat) pour un montant")
+    assert m and "Banque de l'Habitat" in G.trim_org_party(m.group("org"))
+    m2 = G.RE_ORG_SUBSIDIARY.search("la societe est une filiale du groupe Poulina SA")
+    assert m2 and "Poulina" in G.trim_org_party(m2.group("org"))
+
+
+def test_subsidiary_needs_a_named_parent():
+    """"ouverture d'une filiale" and "creation d'une filiale commerciale" name
+    neither parent nor child. A pattern that did not require "de <org>" would
+    emit a tie with one end invented."""
+    from elitenet import grammar as G
+    assert not G.RE_ORG_SUBSIDIARY.search(
+        "Extension de l'activite, ouverture d'une filiale, cession des parts")
+    assert not G.RE_ORG_SUBSIDIARY.search(
+        "pour deliberer sur l'ordre du jour : creation d'une filiale commerciale.")
+
+
+def test_subsidiary_is_ownership_but_a_branch_is_not():
+    """A filiale is held by its parent. A succursale has no legal personality,
+    so the relation is structural and the two ends are not two firms."""
+    from elitenet import orgties as OT
+    assert "subsidiary_of" in OT.OWNERSHIP
+    assert "branch" not in OT.OWNERSHIP
+    # Neither dates an onset: both only confirm the structure at a filing date.
+    assert "subsidiary_of" in OT.CONFIRMING
+    assert "subsidiary_of" not in OT.OPENING and "subsidiary_of" not in OT.CLOSING

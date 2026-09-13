@@ -108,6 +108,33 @@ TABLE_DOCS: dict[str, str] = {
     "panel_org_ties_yearly.csv":
         "The org-org layer by calendar year, the input to "
         "`R/build_org_ownership.R`.",
+    "person_ties.csv":
+        "One row per kinship claim in print: a marriage (`spouse_of`), a "
+        "widowhood (`widow_of`) or a natal surname (`maiden_name_of`), read "
+        "off the `epouse` / `ep.` / `EP` / `veuve` / `nee` markers. "
+        "`is_marriage` is 0 for `maiden_name_of`: \"nee X\" is the same "
+        "woman's birth name, not a husband, and counting it as a marriage "
+        "would be wrong about both the tie and its direction. Both ends carry "
+        "a person id; where only one end could be named the observation is in "
+        "`person_ties_review_queue.csv` rather than dropped. `org_mention` is "
+        "the block the claim was read from -- the resolver's anchor -- and is "
+        "NOT a claim that either party holds office in that firm.",
+    "person_tie_spells.csv":
+        "The kinship layer as intervals. A **separate, one-mode** layer over "
+        "persons, for the same reason the org-org layer is separate: a "
+        "person-person tie in `spells.csv` would silently break every "
+        "two-mode term in the TERGM panel. Every onset is left-censored "
+        "without exception -- the gazette does not publish weddings -- so "
+        "`onset` is empty and `onset_hi` is the first date the tie was seen "
+        "in print. Only a `widow_of` marker bounds a terminus. See "
+        "`docs/INFERENCE-TIERS-multiplex.md`.",
+    "panel_person_ties_yearly.csv":
+        "The kinship layer by calendar year. Every row is `probable` at best: "
+        "a period counts as active from the first date the tie was printed, "
+        "not from the marriage, which is unknown.",
+    "person_ties_review_queue.csv":
+        "Kinship observations retained but not tied, because one or both ends "
+        "could not be named. `failed_end` and `failed_mention` say which.",
     "org_ties_review_queue.csv":
         "Org-org observations a human has to settle. `queue_reason` separates "
         "a dyad whose link score landed in the ambiguous band from the far "
@@ -198,8 +225,33 @@ COLUMN_NOTES: dict[str, str] = {
     "certainty": "`certain` both endpoints dated; `probable` inside the certain core but an "
                  "endpoint is censored; `possible` only inside the outer envelope; `undated` a "
                  "seed tie with no time information.",
-    "link_status": "`resolved` (score >= 0.70), `ambiguous` (0.45-0.70, or a rival within 0.05), "
+    "link_status": "`resolved` (score >= 0.70, the organisation agreed), `ambiguous` (0.45-0.70, "
+                   "or a rival within 0.05), `inferred` (no anchor, but the name is unique on "
+                   "both the seed side and across the corpus), `snowball` (named by a later pass "
+                   "from an anchor the first pass produced -- see `resolve_pass`), "
                    "`unresolved` (< 0.45, retained as a candidate new person).",
+    "resolve_pass": "Which snowball pass first named this row. 0 is the single dyad-anchored "
+                    "pass; filtering to `resolve_pass == 0` reproduces the pre-snowball build "
+                    "exactly. A snowball propagates its own errors, so this column is what "
+                    "makes the propagation measurable.",
+    "snowball_basis": "Which rule named a snowballed row: `person_names_org` (a named person's "
+                      "own seed organisations were the candidate set), `org_names_person` (an "
+                      "organisation a previous pass named supplied the anchor), or "
+                      "`colleagues_name_person` (two or more named co-mentions tied to one "
+                      "seed organisation).",
+    "entity_basis": "How an organisation entity is keyed: `matricule_fiscal`, "
+                    "`registre_commerce`, `address_corroborated` (two name-keyed spellings "
+                    "joined by a shared, discriminating seat), `name`, or "
+                    "`ambiguous_mention` (the mention carries several identifiers and so "
+                    "identifies none of them -- explicitly not an identity).",
+    "person_address": "A stated residence, verbatim. NOT an identity claim: two brothers share "
+                      "a house. It is the discriminator the corpus otherwise lacks for telling "
+                      "two people of one name apart. An election of address at a lawyer's "
+                      "office is excluded.",
+    "person_married_name": "The other surname a spousal or natal marker attaches to this "
+                           "person. Ambiguous by itself -- see `person_ties.csv`, which "
+                           "separates a marriage from a birth name.",
+    "is_marriage": "1 for `spouse_of` and `widow_of`, 0 for `maiden_name_of`.",
     "s_org": "Organisation agreement. Required for a resolution: a name-only link is not an "
              "identification.",
     "s_name": "Name similarity. The surname gates the score and the given names decide it, so a "

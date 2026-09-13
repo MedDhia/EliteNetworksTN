@@ -257,6 +257,24 @@ def check_resolution(rep: Report) -> None:
             f"{len(no_org)} resolved links lack organisation agreement "
             f"(a name-only link is not an identification)")
 
+    # The inferred tier is reported separately and never folded into the line
+    # above. It rests on the name being unique on both sides rather than on the
+    # organisation agreeing, which is weaker in KIND, not in degree -- so the
+    # invariant over `resolved` stays absolute and a consumer can drop the
+    # inference with one filter on `link_status` or on the `gazette_inferred`
+    # evidence tier in the spells and panel tables.
+    inferred = [r for r in res if r["link_status"] == "inferred"]
+    if inferred:
+        people = len({r["resolved_person_id"] for r in inferred
+                      if r["resolved_person_id"]})
+        rep.add("WARN", "links inferred from name rarity",
+                f"{len(inferred)} links over {people} persons rest on the name "
+                f"being borne by one seed person and matching one gazette "
+                f"candidate, with no organisation to anchor them. They are "
+                f"NOT counted as resolved. Exclude them for any claim that "
+                f"needs dyad-anchored identification; include them for "
+                f"coverage.")
+
     # A person holding an implausible number of simultaneous posts is usually
     # several people merged into one, so it is an automatic homonym detector.
     per_person = Counter(r["resolved_person_id"] for r in resolved)
@@ -573,6 +591,138 @@ def check_org_ties(rep: Report) -> None:
             f"right_censored={rc} ({rc / max(1, len(dated)):.0%})")
 
 
+def check_person_ties(rep: Report) -> None:
+    """The kinship layer.
+
+    Its errors read as findings too, and one of them is worse than the org-tie
+    equivalents: a `née` marker counted as a marriage invents a husband out of
+    a woman's birth name, and the resulting tie is entirely plausible on
+    inspection. So the marriage/maiden split is checked at ERROR level, not
+    reported as a count.
+    """
+    spells = _read(PROCESSED / "person_tie_spells.csv")
+    if not spells:
+        _skip_stage(rep, "person ties", PROCESSED / "person_tie_spells.csv")
+        return
+
+    rep.add("INFO", "person ties",
+            f"{len(spells)} kinship dyads; "
+            f"{sum(1 for s in spells if s['is_marriage'] == '1')} marriages, "
+            f"{sum(1 for s in spells if s['relation'] == 'maiden_name_of')} "
+            f"natal-surname links")
+    rep.add("INFO", "person tie relations",
+            ", ".join(f"{k}={v}" for k, v in
+                      Counter(s["relation"] for s in spells).most_common(6)))
+
+    mislabelled = [s for s in spells
+                   if (s["relation"] == "maiden_name_of") == (s["is_marriage"] == "1")]
+    rep.add("ERROR" if mislabelled else "INFO",
+            "a natal surname is not a marriage",
+            f"{len(mislabelled)} spells whose relation and is_marriage disagree")
+
+    loops = [s for s in spells if s["person_id"] == s["kin_id"]]
+    rep.add("ERROR" if loops else "INFO", "kinship ties are not self-loops",
+            f"{len(loops)} ties whose two ends are the same person")
+
+    # The gazette does not publish weddings. An onset here would be invented,
+    # and a duration analysis would then read filing frequency as marriage
+    # tenure.
+    onsets = [s for s in spells if s["onset"]]
+    rep.add("ERROR" if onsets else "INFO", "no marriage onset is asserted",
+            f"{len(onsets)} spells assert an onset the sources cannot date")
+    not_lc = [s for s in spells if s["left_censored"] != "True"]
+    rep.add("ERROR" if not_lc else "INFO", "kinship onsets are left-censored",
+            f"{len(not_lc)} spells not flagged left-censored")
+
+    # Only `widow_of` dates a boundary. A terminus on anything else is a
+    # boundary the sources do not state.
+    bad_term = [s for s in spells if s["terminus"] and s["relation"] != "widow_of"]
+    rep.add("ERROR" if bad_term else "INFO", "only a widow marker ends a tie",
+            f"{len(bad_term)} non-widow spells carry a terminus")
+
+    # A closed-world check on the person side, against the same two
+    # authorities the org side uses: a seed node, or a resolution row that
+    # named the mention.
+    known = {n["node_id"] for n in _read(PROCESSED / "seed_nodes.csv")
+             if n["node_type"] == "PERSON"}
+    if known:
+        unknown = [s for s in spells
+                   if s["person_id"] not in known or s["kin_id"] not in known]
+        rep.add("ERROR" if unknown else "INFO",
+                "kinship endpoints are known persons",
+                f"{len(unknown)} ties with an endpoint outside seed_nodes.csv")
+
+    inferred = [s for s in spells if s["evidence_tier"] == "kinship_inferred"]
+    if inferred:
+        rep.add("WARN", "kinship ties resting on an inferred endpoint",
+                f"{len(inferred)} of {len(spells)} dyads have at least one end "
+                f"named by name rarity rather than by an organisation agreeing; "
+                f"they carry evidence_tier=kinship_inferred and are excluded "
+                f"from any filter on kinship_dated")
+
+    queue = _read(PROCESSED / "person_ties_review_queue.csv")
+    if queue:
+        reasons = Counter(r["queue_reason"] for r in queue)
+        rep.add("INFO", "person tie review queue",
+                f"{len(queue)} observations retained but not tied: "
+                + ", ".join(f"{k}={v}" for k, v in reasons.most_common()))
+
+
+def check_snowball(rep: Report) -> None:
+    """The snowball tier: that it is labelled, bounded and separable.
+
+    A snowball propagates its own errors, so what is checked here is not
+    whether the links are right -- no invariant can settle that -- but whether
+    a reader can find and drop them. If `resolve_pass` were absent or wrong,
+    the tier would be indistinguishable from first-pass resolution, and that is
+    the failure that matters.
+    """
+    rows = _read(PROCESSED / "resolution.csv")
+    if not rows:
+        _skip_stage(rep, "snowball passes", PROCESSED / "resolution.csv")
+        return
+    if "resolve_pass" not in rows[0]:
+        rep.add("ERROR", "snowball passes are recorded",
+                "resolution.csv has no resolve_pass column, so a snowballed "
+                "link cannot be told from a first-pass one")
+        return
+
+    sb = [r for r in rows if r["link_status"] == "snowball"]
+    by_pass = Counter(r["resolve_pass"] for r in sb)
+    by_basis = Counter(r["snowball_basis"] for r in sb)
+    rep.add("INFO", "snowball links",
+            f"{len(sb)} of {len(rows)} mentions named by a later pass"
+            + (f" ({', '.join(f'pass {k}={v}' for k, v in sorted(by_pass.items()))})"
+               if sb else ""))
+    if sb:
+        rep.add("INFO", "snowball bases",
+                ", ".join(f"{k}={v}" for k, v in by_basis.most_common()))
+
+    # Every snowballed row must say which pass and which rule named it.
+    unlabelled = [r for r in sb
+                  if not r["snowball_basis"] or r["resolve_pass"] in ("", "0")]
+    rep.add("ERROR" if unlabelled else "INFO",
+            "every snowballed link names its pass and rule",
+            f"{len(unlabelled)} rows with link_status=snowball but no "
+            f"pass number or basis")
+
+    # And no first-pass row may claim to have been snowballed.
+    mislabelled = [r for r in rows
+                   if r["resolve_pass"] not in ("", "0")
+                   and r["link_status"] not in ("snowball", "resolved", "manual")]
+    rep.add("ERROR" if mislabelled else "INFO",
+            "a pass number implies a named link",
+            f"{len(mislabelled)} rows carry a pass number without a named link")
+
+    if sb:
+        rep.add("WARN", "resolution rests partly on snowballed anchors",
+                f"{len(sb)} links were made from an anchor a later pass "
+                f"supplied rather than from the organisation agreeing. They "
+                f"carry link_status=snowball and evidence_tier="
+                f"gazette_snowball downstream; filter resolve_pass==0 to "
+                f"reproduce the single-pass build exactly")
+
+
 def check_tergm_panel(rep: Report) -> None:
     """The invariants R/build_tergm_panel.R relies on, at ERROR level.
 
@@ -684,6 +834,8 @@ def run(fail_on_error: bool = False) -> int:
     check_org_ties(rep)
     check_org_entities(rep)
     check_org_attrs(rep)
+    check_person_ties(rep)
+    check_snowball(rep)
     check_tergm_panel(rep)
 
     DOCS.mkdir(parents=True, exist_ok=True)
