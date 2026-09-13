@@ -354,6 +354,35 @@ class TestConsecutiveMovesCarriesTheNextPost:
         assert r.to_org == "y"
         assert r.to_form == "ministere"
 
+    def test_the_next_rank_comes_through(self):
+        f = self._frame([
+            ("P1", "2000-01-01", 80, "territorial", "min_interieur", "x", "ministere"),
+            ("P1", "2004-01-01", 55, None, "min_finances", "y", "ministere"),
+        ])
+        r = consecutive_moves(f).iloc[0]
+        assert r.rank_score == 80
+        assert r.to_rank_score == 55
+        assert r.to_rank_score < r.rank_score          # a demotion
+
+    def test_an_unranked_destination_stays_nan_not_zero(self):
+        # A zero would sit at the bottom of the scale and make every move to an
+        # unranked post look like the steepest demotion in the table.
+        import math
+        f = self._frame([
+            ("P1", "2000-01-01", 80, "territorial", "min_interieur", "x", "ministere"),
+            ("P1", "2004-01-01", None, None, "min_finances", "y", "ministere"),
+        ])
+        r = consecutive_moves(f).iloc[0]
+        assert math.isnan(r.to_rank_score)
+
+    def test_the_next_start_comes_through(self):
+        f = self._frame([
+            ("P1", "2000-01-01", 50, "interior", "min_interieur", "x", "ministere"),
+            ("P1", "2004-06-01", 50, None, "min_finances", "y", "ministere"),
+        ])
+        r = consecutive_moves(f).iloc[0]
+        assert r.to_start == pd.Timestamp("2004-06-01")
+
     def test_an_absent_next_name_becomes_an_empty_string(self):
         # The classifiers take strings; a NaN here would raise inside a regex.
         f = self._frame([

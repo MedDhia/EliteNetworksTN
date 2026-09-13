@@ -264,9 +264,9 @@ def consecutive_moves(spells, branch_col: str = "branch"):
     body — which is most of them. It left one figure showing 904 of 2,333
     interior moves, and the diagram looked entirely reasonable.
 
-    Returns the frame with the next post's branch, portfolio, name and form
-    added as `to_branch`, `to_portfolio`, `to_org`, `to_form`, and only rows
-    that have a next post. Callers decide what an absent `to_branch` means for
+    Returns the frame with the next post's branch, portfolio, name, form, rank
+    and start date added as `to_branch`, `to_portfolio`, `to_org`, `to_form`,
+    `to_rank_score` and `to_start`, and only rows that have a next post. Callers decide what an absent `to_branch` means for
     them. The name and form come back as empty strings rather than NaN, so that
     the classifiers, which take strings, can be applied without further
     cleaning.
@@ -274,7 +274,14 @@ def consecutive_moves(spells, branch_col: str = "branch"):
     import pandas as pd  # noqa: F401  (imported here to keep the rules stdlib-only)
 
     s = spells.sort_values(["person_id", "start", "rank_score"])
-    s = s.loc[s.groupby(["person_id", "start"]).rank_score.idxmax()]
+    # Pick the senior post per person-date. The sort key stands in for the
+    # rank so that a date on which every post is unranked still has a winner:
+    # `idxmax` on an all-NaN group raises, which meant the function only worked
+    # for callers who had already dropped unranked posts, and crashed for the
+    # rest. An unranked post sorts below every ranked one and is chosen only
+    # when there is nothing else.
+    s = s.loc[s.assign(_k=s.rank_score.fillna(-1))
+              .groupby(["person_id", "start"])._k.idxmax()]
     s = s.sort_values(["person_id", "start"])
     nxt = s.groupby("person_id").shift(-1)
     # The three describing columns are optional so that a caller who only
@@ -284,6 +291,12 @@ def consecutive_moves(spells, branch_col: str = "branch"):
         to_portfolio=nxt["org_portfolio"] if "org_portfolio" in nxt else None,
         to_org=nxt["org_name"].fillna("") if "org_name" in nxt else "",
         to_form=nxt["org_form"].fillna("") if "org_form" in nxt else "",
+        # The next post's rank, so a caller can ask whether a move went down.
+        # It stays NaN where the next post carries no rank rather than being
+        # filled with zero, which would read as the bottom of the scale and
+        # turn every unranked destination into a demotion.
+        to_rank_score=nxt["rank_score"] if "rank_score" in nxt else None,
+        to_start=nxt["start"],
         _has_next=nxt.start.notna(),
     )
     return out[out._has_next].drop(columns="_has_next")
