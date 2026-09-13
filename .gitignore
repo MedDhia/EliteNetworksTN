@@ -70,6 +70,8 @@ data/processed/multiplex/exports/**/*.rds
 # and elitenet.validate reports them as not-checked rather than failing when
 # they are absent.
 data/processed/multiplex/exports/tergm/*.csv
+data/processed/multiplex/org_entities.csv
+data/processed/multiplex/org_entity_keys.csv
 data/processed/multiplex/org_entity_members.csv
 
 # --- aalam-tunisiyun --------------------------------------------------------

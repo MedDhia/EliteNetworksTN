@@ -101,7 +101,8 @@ BLOCKS = INTERIM / "blocks.jsonl"
 _REBUILD_WITH = {"blocks.jsonl": "segment", "act_citations.csv": "extract"}
 _STAGE_FOR = {"node_key.csv": "tergm", "org_tie_spells.csv": "orgties",
               "org_identifiers.csv": "orgattrs",
-              "org_entities.csv": "orgentity"}
+              "org_entities.csv": "orgentity",
+              "org_entity_members.csv": "orgentity"}
 
 
 def _skip(rep: Report, check: str, needs: Path) -> None:
@@ -355,6 +356,7 @@ def check_org_entities(rep: Report) -> None:
         return
     ents = _read(PROCESSED / "org_entities.csv")
     members = _read(PROCESSED / "org_entity_members.csv")
+    have_members = _table_exists(PROCESSED / "org_entity_members.csv")
 
     by_basis = Counter(e["entity_basis"] for e in ents)
     rep.add("INFO", "organisation entities",
@@ -363,15 +365,24 @@ def check_org_entities(rep: Report) -> None:
 
     # The no-data-lost guard, machine-checked rather than asserted in a commit
     # message.
-    events = _read(PROCESSED / "events.csv")
-    mentions = {(e.get("org_mention") or "").strip() for e in events}
-    mentions.discard("")
-    mapped = {m["org_mention"] for m in members}
-    missing = mentions - mapped
-    rep.add("ERROR" if missing else "INFO", "every org mention has an entity",
-            f"{len(missing)} of {len(mentions)} organisation mentions in "
-            f"events.csv reach no entity"
-            + (f", e.g. {sorted(missing)[0][:60]!r}" if missing else ""))
+    if not have_members:
+        # Without the map there is no coverage to check, and reporting every
+        # mention as unmapped would be a false ERROR rather than a finding --
+        # the same "stage produced nothing" versus "stage has not run"
+        # distinction the skip helpers exist for.
+        _skip_stage(rep, "every org mention has an entity",
+                    PROCESSED / "org_entity_members.csv")
+    else:
+        events = _read(PROCESSED / "events.csv")
+        mentions = {(e.get("org_mention") or "").strip() for e in events}
+        mentions.discard("")
+        mapped = {m["org_mention"] for m in members}
+        missing = mentions - mapped
+        rep.add("ERROR" if missing else "INFO",
+                "every org mention has an entity",
+                f"{len(missing)} of {len(mentions)} organisation mentions in "
+                f"events.csv reach no entity"
+                + (f", e.g. {sorted(missing)[0][:60]!r}" if missing else ""))
 
     # The residual error, stated with its direction. Name-keyed entities split
     # one firm across spellings, which is the mirror image of the merge this

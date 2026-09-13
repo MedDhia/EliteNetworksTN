@@ -383,7 +383,10 @@ GZIP_TABLES = ["events.csv", "blocks_index.csv", "resolution.csv",
                # address per observation over 10,528 firms is 17 MB, and the
                # org-tie queue carries 10,586 rows with their evidence quotes.
                "org_addresses.csv", "org_identifiers.csv",
-               "org_ties_review_queue.csv", "org_entity_members.csv"]
+               "org_ties_review_queue.csv",
+               # 39 MB, 15 MB and 27 MB respectively at full corpus size.
+               "org_entities.csv", "org_entity_keys.csv",
+               "org_entity_members.csv"]
 
 
 def gzip_large_tables() -> dict:
