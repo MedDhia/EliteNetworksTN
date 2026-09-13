@@ -156,11 +156,13 @@ controlled vocabulary the verbatim form is kept and the event flagged
 `needs_review`, rather than being forced into the nearest category.
 
 **The generic-name merge was a matcher defect, and the cause has been found
-and fixed.** The symptom was large. 383 organisation nodes carried ten or more
-values of a single hard identifier; the worst, `LA CONSULTING`, carried **1,606
-distinct matricules fiscaux** over 3,739 observations, and short generic
-fragments — `SOCIETE GENERALE` (647 values), `BATIMENT +` (635), `SA
-CONFECTION` (532) — collected every firm whose name began with those words.
+and fixed.** The symptom was large. 288 organisations — 383 counting each
+organisation once per identifier kind, which is how `make validate` reports it —
+carried ten or more values of a single hard identifier; the worst,
+`LA CONSULTING`, carried **1,606 distinct matricules fiscaux** over 3,739
+observations, and short generic fragments — `SOCIETE GENERALE` (647 values),
+`BATIMENT +` (635), `SA CONFECTION` (532) — collected every firm whose name
+began with those words.
 Such a node does not degrade a variable; it **fabricates a hub**, and any
 degree, centrality or closure statistic computed over it is meaningless. Of
 4,248 identifier conflicts measured on that view, 3,638 read as merges and only
