@@ -38,7 +38,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from figstyle import (  # noqa: E402
     INK, MUTED, PROC, SOURCE, headline, plt, save,
 )
-from interior import in_interior_apparatus  # noqa: E402
+from apparatus import in_interior_apparatus  # noqa: E402
 from matplotlib.patches import Patch, PathPatch  # noqa: E402
 from matplotlib.path import Path as MplPath  # noqa: E402
 

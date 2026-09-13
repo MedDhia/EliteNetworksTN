@@ -160,6 +160,74 @@ def destination(portfolio, org: str, form: str) -> str:
     return "not identifiable"
 
 
+# ---------------------------------------------------------------------------
+# the security apparatus
+# ---------------------------------------------------------------------------
+# Not the same body as the interior apparatus, and the difference is the point
+# of treating it separately: it takes in defence and military justice, and it
+# leaves out the municipalities. A commune's technical services are local
+# government, not a coercive institution, so a governor moving to a town hall
+# is leaving the security apparatus even though they never left the interior
+# ministry's remit.
+#
+# The branches follow the security-branch figure already in this repository, so
+# that the two describe the same body. What is added here is the portfolio test
+# and the governorate-attachment test, which that figure reads off the
+# organisation's name alone.
+_DEFENCE = re.compile(r"d[ée]fense nationale|tribunal militaire|arm[ée]e", re.I)
+_GOVERNORATE_ATTACHED = re.compile(r"au gouvernorat d", re.I)
+
+SECURITY_STAYS = "stays in the security apparatus"
+
+
+def _attached_to_governorate(org: str, form: str) -> bool:
+    """As `attached_to_local_body`, but governorates only.
+
+    The commune half of that rule has to be dropped here: municipalities are
+    outside the security apparatus, so a body hanging off one is outside it too.
+    """
+    if form not in ("direction", "autre"):
+        return False
+    m = _GOVERNORATE_ATTACHED.search(org)
+    return bool(m) and _UNDER_MINISTRY.search(org, m.end()) is None
+
+
+def security_branch(portfolio, org: str, form: str) -> str | None:
+    """Which arm of the security apparatus a post sits in, or None if outside.
+
+    Order matters: the interior test runs first, so a post that names both the
+    interior ministry and a governorate is read as the ministry's.
+    """
+    d = portfolio_domains(portfolio)
+    if "interieur" in d or _INTERIOR_CORE.search(org):
+        return "interior"
+    if "defense" in d or _DEFENCE.search(org):
+        return "defence"
+    if form == "gouvernorat" or _attached_to_governorate(org, form):
+        return "territorial"
+    return None
+
+
+def in_security_apparatus(portfolio, org: str, form: str) -> bool:
+    return security_branch(portfolio, org, form) is not None
+
+
+def security_destination(portfolio, org: str, form: str) -> str:
+    """Where a post sits, from the security apparatus's point of view.
+
+    Everything outside it is classified exactly as for the interior, with one
+    addition: bodies that are interior-but-not-security — the municipalities and
+    what hangs off them — are named as their own destination rather than folded
+    into the residual, because a move from a governorate to a town hall is a
+    specific and legible career step and not an unclassifiable one.
+    """
+    if in_security_apparatus(portfolio, org, form):
+        return SECURITY_STAYS
+    if in_interior_apparatus(portfolio, org, form):
+        return "municipal government"
+    return destination(portfolio, org, form)
+
+
 def wilson(k: int, n: int) -> tuple[float, float]:
     """Wilson interval for a proportion, in percentage points.
 

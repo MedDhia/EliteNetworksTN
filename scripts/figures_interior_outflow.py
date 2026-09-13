@@ -31,7 +31,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from figures_sankey import PLACEBO_LAGS, RECORD_ENDS, RUPTURES  # noqa: E402
-from interior import (  # noqa: E402
+from apparatus import (  # noqa: E402
     BLOCS, STAYS, destination, in_interior_apparatus, wilson,
 )
 from figstyle import (  # noqa: E402

@@ -5,7 +5,7 @@ those rows rather than invented strings. That matters here because the two
 guards on the local-attachment rule each exist for one real pattern in the
 gazette, and a paraphrase would not exercise either.
 
-The rules live in ``scripts/interior.py`` rather than in the figure scripts so
+The rules live in ``scripts/apparatus.py`` rather in the figure scripts so
 that this module imports no drawing library: matplotlib is not a dependency of
 this project, and a test that needed it would be skipped in CI, which is the
 one place these rules most need checking.
@@ -16,8 +16,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from interior import (  # noqa: E402
-    attached_to_local_body, destination, in_interior_apparatus, wilson,
+from apparatus import (  # noqa: E402
+    SECURITY_STAYS, attached_to_local_body, destination, in_interior_apparatus,
+    in_security_apparatus, security_branch, security_destination, wilson,
 )
 
 
@@ -138,3 +139,75 @@ class TestWilson:
 
     def test_an_empty_cohort_does_not_divide_by_zero(self):
         assert wilson(0, 0) == (0.0, 0.0)
+
+
+class TestSecurityApparatus:
+    """A different body from the interior apparatus, and the difference matters.
+
+    It adds defence and military justice; it drops the municipalities. A
+    governor moving to a town hall has left the security apparatus without
+    leaving the interior ministry's remit, and the two figures built on these
+    rules disagree about that move on purpose.
+    """
+
+    def test_interior_and_governorates_are_security(self):
+        assert in_security_apparatus("min_interieur", "", "ministere")
+        assert in_security_apparatus(None, "Gouvernorat de Bizerte", "gouvernorat")
+        assert in_security_apparatus(None, "garde nationale", "autre")
+
+    def test_defence_is_security_but_not_interior(self):
+        for port, org in (("min_defense", ""),
+                          (None, "ministère de la défense nationale"),
+                          (None, "tribunal militaire de Tunis")):
+            assert in_security_apparatus(port, org, "ministere")
+            assert not in_interior_apparatus(port, org, "ministere")
+
+    def test_municipalities_are_interior_but_not_security(self):
+        assert in_interior_apparatus(None, "Commune de Sfax", "commune")
+        assert not in_security_apparatus(None, "Commune de Sfax", "commune")
+
+    def test_a_commune_attached_body_is_not_security(self):
+        # The governorate half of the local-attachment rule applies here; the
+        # commune half must not.
+        name = "direction générale des services techniques à la commune de Tunis"
+        assert in_interior_apparatus(None, name, "direction")
+        assert not in_security_apparatus(None, name, "direction")
+
+    def test_a_governorate_attached_body_is_security(self):
+        assert in_security_apparatus(
+            None, "conseil régional au gouvernorat de Bizerte", "autre")
+
+    def test_a_ministry_named_later_still_wins(self):
+        name = ("hôpital régional catégorie « B » à Sbeïtla au gouvernorat du "
+                "Kasserine au ministère de l'équipement, de l'habitat et de "
+                "l'aménagement du territoire")
+        assert not in_security_apparatus(None, name, "direction")
+
+    def test_the_interior_test_runs_before_the_territorial_one(self):
+        # A post naming both is the ministry's, not the governorate's.
+        assert security_branch(
+            "min_interieur", "services au gouvernorat de Sousse",
+            "direction") == "interior"
+
+    def test_branches_are_named(self):
+        assert security_branch("min_interieur", "", "ministere") == "interior"
+        assert security_branch("min_defense", "", "ministere") == "defence"
+        assert security_branch(None, "", "gouvernorat") == "territorial"
+        assert security_branch("min_finances", "", "ministere") is None
+
+
+class TestSecurityDestination:
+    def test_staying_inside_is_not_an_exit(self):
+        assert security_destination(None, "", "gouvernorat") == SECURITY_STAYS
+        assert security_destination("min_defense", "", "ministere") == SECURITY_STAYS
+
+    def test_a_town_hall_is_its_own_destination(self):
+        # Not folded into the residual: it is a legible career step.
+        assert security_destination(
+            None, "Commune de Sfax", "commune") == "municipal government"
+
+    def test_outside_bodies_classify_as_for_the_interior(self):
+        assert (security_destination(None, "direction générale des impôts",
+                                     "direction")
+                == destination(None, "direction générale des impôts", "direction")
+                == "finance and economy")

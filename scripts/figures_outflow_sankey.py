@@ -31,7 +31,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from figures_sankey import (  # noqa: E402
     PLACEBO_LAGS, RECORD_ENDS, RUPTURES, _label_positions, ribbon,
 )
-from interior import STAYS, destination, in_interior_apparatus  # noqa: E402
+from apparatus import STAYS, destination, in_interior_apparatus  # noqa: E402
 from figstyle import (  # noqa: E402
     CAT4, INK, MUTED, PAPER, PROC, SOURCE, headline, plt, save,
 )
