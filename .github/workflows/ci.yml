@@ -136,3 +136,35 @@ jobs:
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           head -n 20 data/processed/bourse/validation_report.md >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+  # The A'lam Tunisiyun build. Like bourse-dataset this rebuilds from committed
+  # inputs and diffs the result, which is possible because the per-page OCR
+  # text is committed and every gzipped table is written with the mtime pinned.
+  # It also runs the verbatim-quote guard over every edge rather than a sample:
+  # a model pass produced most of them, and an assertion that cannot be quoted
+  # is the exact shape a fabricated tie would take.
+  aalam-dataset:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -e ".[dev]" -r requirements.txt
+      - name: Tests
+        run: PYTHONPATH=src python -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py -q
+      - name: Rebuild the dataset
+        run: make aalam-segment aalam-extract aalam-model aalam-relations
+      - name: Validate
+        run: make aalam-validate
+      - name: Committed tables match the rebuild
+        run: |
+          if ! git diff --exit-code -- data/processed/aalam-tunisiyun/; then
+            echo "::error::Rebuilding produced different tables than those committed."
+            echo "Run 'make aalam' and commit the result."
+            exit 1
+          fi
+      - name: Coverage summary
+        if: always()
+        run: head -n 25 docs/VALIDATION-aalam-tunisiyun.md >> "$GITHUB_STEP_SUMMARY"

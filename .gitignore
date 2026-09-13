@@ -5,7 +5,10 @@ __pycache__/
 
 # Raw mirror of the JORT OCR corpus (~6.4k gzipped issues, re-downloadable
 # with `python -m eltn.cli harvest`). Never committed.
-data/raw/
+# Excluded as `/*` rather than `/` so that individual files below can be
+# re-included: git does not descend into an excluded directory, so a negation
+# inside one never fires.
+data/raw/*
 data/interim/
 
 # Local tooling only (used to preview the explorer)
@@ -68,3 +71,21 @@ data/processed/multiplex/exports/**/*.rds
 # they are absent.
 data/processed/multiplex/exports/tergm/*.csv
 data/processed/multiplex/org_entity_members.csv
+
+# --- aalam-tunisiyun --------------------------------------------------------
+# The scanned volume (~12 MB) and the per-page OCR images are not
+# redistributed. data/raw/ is already ignored above; the page text and the
+# manifest are the exceptions, and they are deliberate:
+#
+#   manifest.csv   carries a sha256 per page, which is what makes the raw
+#                  layer verifiable without shipping the book;
+#   pages/*.txt    are committed (~455 KB) so that CI can rebuild the tables
+#                  and byte-diff them without installing an OCR engine, and so
+#                  the verbatim-quote guard can run on every row in CI.
+!data/raw/aalam/
+data/raw/aalam/*
+!data/raw/aalam/manifest.csv
+!data/raw/aalam/pages/
+data/raw/aalam/pages/*
+!data/raw/aalam/pages/*.txt
+data/interim/aalam/

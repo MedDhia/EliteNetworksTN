@@ -67,10 +67,14 @@ clean-derived: ## remove everything derived, keeping the raw mirror
 BPY := PYTHONPATH=src python3
 
 .PHONY: bourse bourse-spine bourse-crawl bourse-resolve bourse-fetch \
-        bourse-extract bourse-build bourse-export bourse-validate bourse-test
+        bourse-extract bourse-ocr bourse-movements bourse-resolutions \
+        bourse-build bourse-export bourse-validate bourse-test
 
+# bourse-ocr is deliberately out of the default chain: it needs tesseract-ocr
+# with the French model installed, and it takes hours. Run it explicitly.
 bourse: bourse-spine bourse-crawl bourse-resolve bourse-fetch bourse-extract \
-        bourse-build bourse-export bourse-validate
+        bourse-movements bourse-resolutions bourse-build bourse-export \
+        bourse-validate
 
 bourse-spine:    ## BVMT listed-securities roster (firm identity spine)
 	$(BPY) -m bourse.bvmt
@@ -81,11 +85,28 @@ bourse-crawl:    ## list CMF filings into the document registry
 bourse-resolve:  ## resolve each filing's PDF link (slow; resumable)
 	$(BPY) -m bourse.cmf_crawl --resolve
 
-bourse-fetch:    ## download registration-document PDFs (~2 GB)
+bourse-fetch:    ## download registration documents and movement notices
 	$(BPY) -m bourse.fetch_docs --doc-types document_de_reference
+	$(BPY) -m bourse.fetch_docs --doc-types offre_publique \
+	        operation_sur_capital augmentation_de_capital
+	$(BPY) -m bourse.fetch_docs --doc-types resolutions_ag
+	$(BPY) -m bourse.fetch_docs --doc-types rapport_annuel
+	$(BPY) -m bourse.fetch_docs --doc-types prospectus
 
 bourse-extract:  ## parse tables into typed records (slow; parallel)
 	$(BPY) -m bourse.pipeline --doc-types document_de_reference
+	$(BPY) -m bourse.pipeline --doc-types rapport_annuel --skip-processed
+	$(BPY) -m bourse.pipeline --doc-types prospectus --skip-processed
+
+bourse-ocr:      ## read the scanned filings by OCR (very slow; needs tesseract)
+	$(BPY) -m bourse.pipeline --ocr --only-scanned --skip-processed \
+	        --doc-types document_de_reference rapport_annuel prospectus
+
+bourse-movements: ## parse dated operations out of CMF notices
+	$(BPY) -m bourse.movements_pipeline
+
+bourse-resolutions: ## parse dated board decisions out of AGM resolutions
+	$(BPY) -m bourse.resolutions_pipeline
 
 bourse-build:    ## assemble entities and multiplex edge lists
 	$(BPY) -m bourse.build_dataset
@@ -99,3 +120,38 @@ bourse-validate: ## integrity checks -> validation_report.md
 
 bourse-test:     ## parser and entity-resolution unit tests
 	$(BPY) tests/test_bourse_extract.py
+
+# --- aalam-tunisiyun --------------------------------------------------------
+# A fourth build, independent of the three above and sharing only the data/
+# root. Source: Sadok Zmerli, *A'lam Tunisiyun* (Dar al-Gharb al-Islami, 2000),
+# 38 biographical essays on the Tunisian elite of roughly 1606-1973.
+#
+# Unlike the other three this one reads a printed book, so the first stage is
+# an OCR pass rather than an HTTP mirror. The scan is not redistributed:
+# `aalam-fetch` pulls it from the Internet Archive and checks it against a
+# pinned sha256 before anything downstream runs.
+APY := PYTHONPATH=src python3
+
+.PHONY: aalam aalam-fetch aalam-ingest aalam-segment aalam-extract aalam-model \
+        aalam-relations aalam-codebook aalam-validate aalam-test
+
+aalam: aalam-segment aalam-extract aalam-model aalam-relations aalam-codebook aalam-validate
+
+aalam-fetch:      ## download the scan and verify it against the pinned digest
+	$(APY) -m aalam.ingest --fetch --limit 0
+aalam-ingest:     ## OCR every page at native resolution, write the page manifest
+	$(APY) -m aalam.ingest
+aalam-segment:    ## cut the volume into its 38 entries using the printed contents
+	$(APY) -m aalam.segment
+aalam-extract:    ## rule pass: cue table over clause-sized spans
+	$(APY) -m aalam.extract
+aalam-model:      ## model pass: verify committed assertions quote their entry
+	$(APY) -m aalam.llm --strict
+aalam-relations:  ## registers and the layered edge list
+	$(APY) -m aalam.relations
+aalam-codebook:   ## regenerate the codebook from the data and config
+	$(APY) -m aalam.codebook
+aalam-validate:   ## consistency, coverage and the verbatim-quote guard
+	$(APY) -m aalam.validate --strict
+aalam-test:       ## parser and normalisation tests
+	$(APY) -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py -q
