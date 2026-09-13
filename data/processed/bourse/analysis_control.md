@@ -5,7 +5,7 @@ relationship, measured on the firms where either could have been seen.
 
 ## Why the unconditioned count misleads
 
-Pooled over all years, 965 firm-firm dyads carry an equity tie and 3924 carry a board tie; 100 carry both, which is 10.4% of equity dyads.
+Pooled over all years, 1020 firm-firm dyads carry an equity tie and 3912 carry a board tie; 102 carry both, which is 10.0% of equity dyads.
 
 That number is mostly a statement about which filings exist. A firm
 enters the ownership layer when someone files a shareholder table
@@ -17,9 +17,9 @@ board tie *available* to coincide with.
 
 | Equity channel | Firms | Equity dyads | Also board-tied | P(board \| equity) | Base rate | Lift |
 |---|---:|---:|---:|---:|---:|---:|
-| blockholder ownership | 129 | 127 | 82 | 64.6% | 1.87% | 35× |
-| group participation | 94 | 82 | 27 | 32.9% | 2.72% | 12× |
-| any equity tie | 182 | 200 | 100 | 50.0% | 1.55% | 32× |
+| blockholder ownership | 137 | 135 | 84 | 62.2% | 1.70% | 37× |
+| group participation | 97 | 84 | 28 | 33.3% | 2.62% | 13× |
+| any equity tie | 189 | 209 | 102 | 48.8% | 1.50% | 32× |
 
 Base rate is the share of all possible pairs among those same firms
 that carry a board tie, so the lift is the factor by which an equity

@@ -98,11 +98,12 @@ def seed_evidence(res: Resolver) -> None:
             v = rec.get(field)
             if v:
                 res.add_evidence(v, etype)
-    # Listed issuers are firms by definition.
+    # Listed issuers are firms by definition, and their tickers name them.
     if BVMT_CSV.exists():
         with BVMT_CSV.open(encoding="utf-8") as fh:
             for row in csv.DictReader(fh):
                 res.add_evidence(row["name_fr"], "firm")
+                res.add_ticker_alias(row["ticker"], row["name_fr"])
 
 
 # --------------------------------------------------------------------------

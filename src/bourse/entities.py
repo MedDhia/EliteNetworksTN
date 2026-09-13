@@ -172,6 +172,13 @@ _FRAGMENT_TOKEN = frozenset({
     # Words from the mandate and period columns, which a broken row leaves in
     # the name column: "annees", "ans", "exercice", "mandat".
     "annees", "annee", "ans", "exercice", "mandat", "mandats", "duree",
+    # Field labels from a contact block. Trimming a run-on cell can leave the
+    # label alone ("Fax 71.902.723" -> "Fax"), and a bare label is the worst
+    # kind of node: every filing has one, so they would all merge into it.
+    "fax", "tel", "telephone", "adresse", "email", "e mail", "site", "web",
+    # "Total" and "Autres" are deliberately absent: they are aggregate labels
+    # with their own handling, not fragments.
+    "rubrique", "nom", "prenom", "qualite",
 })
 
 
@@ -182,6 +189,12 @@ def is_not_an_entity(name: str) -> bool:
     "Le Conseil d'Administration de la Societe X" names the board of X, not a
     company that could hold a seat or a stake.
     """
+    # A Wingdings bullet reaches us as a private-use codepoint, and marks the
+    # cell as a line of the "faits marquants" prose that prospectuses set in
+    # bulleted lists next to their tables. It is a sentence, not a name, and it
+    # carries corporate words that would otherwise protect it below.
+    if _PRIVATE_USE.search(name or ""):
+        return True
     n = base_normalise(name)
     if not n:
         return True
@@ -250,6 +263,51 @@ def _drop_redundant_acronym(toks: list[str]) -> list[str]:
     if last == initials or initials.endswith(last):
         return toks[:-1]
     return toks
+
+
+_HAS_LOWER = re.compile(r"[a-zà-þ]")
+
+# A name column that was never split from the figure columns beside it, so the
+# cell reads "SIBTEL 46 200 100 4 620 000". A thousands group is required, so a
+# figure is never confused with a number that belongs to the name ("Usine 2").
+_RUN_ON_FIGURES = re.compile(r"\s\d{1,3}(?:[\s.]\d{3})+")
+# Guillemets introduce a company's short name: `Tunisie Leasing et Factoring
+# « TLF »`. When the closing mark falls outside the cell the acronym is left
+# dangling, and the dangling form is a different node from the plain one.
+_QUOTED_SHORT_NAME = re.compile(r"^\s*«\s*([^»]{2,})\s*»?")
+_DANGLING_SHORT_NAME = re.compile(r"\s*«.*$")
+# Wingdings bullets survive extraction as private-use codepoints. A cell that
+# carries one is a bullet of running prose, not a name.
+_PRIVATE_USE = re.compile(r"[-\U000f0000-\U000ffffd]")
+
+
+def trim_cell(name: str) -> str:
+    """Strip what a mis-split table cell carried in beside the name.
+
+    Applied at resolution rather than extraction so that records already read
+    out of 1,800 filings are cleaned without re-reading them. Only material
+    that is demonstrably not part of a name is removed; anything ambiguous is
+    left for the researcher overrides.
+    """
+    s = (name or "").strip()
+    if not s:
+        return s
+    quoted = _QUOTED_SHORT_NAME.match(s)
+    # A cell that is *entirely* a quoted short name is that name.
+    s = quoted.group(1).strip() if quoted else _DANGLING_SHORT_NAME.sub("", s)
+    fig = _RUN_ON_FIGURES.search(s)
+    if fig and fig.start():
+        s = s[:fig.start()]
+    return s.strip(" .,;:-–—\t")
+
+
+def _ticker_key(name: str) -> str:
+    """The bare letters of a cell, so 'A T L' and 'ATL' are one ticker.
+
+    Deliberately not ``org_key``: no legal form is dropped, because a ticker is
+    short enough that dropping one can turn a different company's name into it.
+    """
+    return base_normalise(name).replace(" ", "")
 
 
 def org_key(name: str) -> str:
@@ -417,6 +475,27 @@ class Resolver:
         self._types: dict[str, str] = {}
         self._aliases: dict[str, set[str]] = defaultdict(set)
         self._evidence: dict[str, Counter] = defaultdict(Counter)
+        self._ticker: dict[str, str] = {}
+
+    def add_ticker_alias(self, ticker: str, name: str) -> None:
+        """Record a BVMT ticker as another spelling of the company's name.
+
+        The CMF titles a registration document by the issuer's ticker -
+        ``Document de référence " HL 2018 "`` - so the acronym and the company
+        name reach the resolver as two unrelated strings and become two nodes.
+        Nothing in either spelling says they are the same firm; the listing
+        roster is the outside authority that says so, and this is where it gets
+        consulted.
+
+        The match is on the letters actually printed in the cell, before legal
+        forms are dropped, because dropping them is what makes a ticker
+        dangerous: 'Ab-corporation' reduces to the same key as the ticker AB,
+        and is not Amen Bank. Requiring the whole cell to be the ticker, in
+        capitals, keeps the rewrite to cells that are unambiguously one.
+        """
+        t, n = _ticker_key(ticker), _ticker_key(name)
+        if t and n and t != n:
+            self._ticker[t] = name
 
     def add_evidence(self, raw: str, etype: str) -> None:
         """Record a type observed from table *structure* rather than spelling.
@@ -451,6 +530,12 @@ class Resolver:
             return None, None
 
         ov = self.overrides.get(base_normalise(name))
+        # The override is looked up on the spelling the researcher wrote down,
+        # which is the spelling the filing used, so trimming comes after it.
+        if ov is None:
+            name = trim_cell(name)
+            if not name:
+                return None, None
         # An override is a researcher's judgement and always wins, including
         # over the not-an-entity test.
         if ov is None and is_not_an_entity(name):
@@ -465,6 +550,14 @@ class Resolver:
             return eid, etype
 
         etype = (ov.get("entity_type") if ov else None) or self._typed(name, hint)
+        # A cell holding nothing but a listed company's ticker is that company.
+        # Resolve under the roster spelling, but keep the ticker in the alias
+        # table: which spelling a filing used is part of the provenance.
+        seen = name
+        if etype != "person" and not _HAS_LOWER.search(name):
+            expanded = self._ticker.get(_ticker_key(name))
+            if expanded:
+                name, etype = expanded, "firm"
         key = matching_key(name, etype)
         if not key:
             return None, None
@@ -474,7 +567,7 @@ class Resolver:
             self._by_key[(etype, key)] = eid
         self._types[eid] = etype
         self._display[eid][name] += 1
-        self._aliases[eid].add(name)
+        self._aliases[eid].add(seen)
         return eid, etype
 
     def canonical_name(self, eid: str) -> str:

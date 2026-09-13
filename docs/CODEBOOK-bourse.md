@@ -35,6 +35,30 @@ to link in outside sources that use a different spelling.
 | `alias_raw` | The spelling exactly as printed in the filing. |
 | `matching_key` | Normalised key that caused the merge. Identical keys merge. |
 
+Two merges are not visible in `matching_key`, because they happen before a key
+is taken. Both are recorded here so that an audit of the crosswalk is not
+puzzled by aliases that share no normal form.
+
+**Tickers.** The CMF titles a registration document by the issuer's ticker —
+`Document de référence " HL 2018 "` — so the acronym and the company name
+arrive as two unrelated strings. Nothing in either spelling says they are the
+same firm; the BVMT listing roster is the outside authority that says so, and
+it is consulted for exactly this. A cell is read as a ticker only when it is
+*entirely* the ticker and in capitals. Both conditions matter: `Ab-corporation`
+reduces to the same key as the ticker `AB` once its legal form is dropped, and
+is not Amen Bank. This join is what makes `HL` and `HANNIBAL LEASE` one firm
+rather than two, and it moves 1,046 ties. Only the 75 currently listed
+securities are covered, so a delisted issuer's ticker (`TLF`, `MIC`, `WIC`)
+still stands as its own node — see §6.14.
+
+**Run-on cells.** Where a table's name column was never split from what sits
+beside it, the surplus is stripped before matching: a trailing figure run
+(`SIBTEL 46 200 100 4 620 000` → `SIBTEL`), and a dangling short name left by a
+guillemet whose closing mark fell outside the cell (`Tunisie Leasing et
+Factoring « TLF` → `Tunisie Leasing et Factoring`). A figure run must carry a
+thousands group, so a digit belonging to the name is never removed (`Usine 2`
+survives). `alias_raw` keeps the cell as printed, so the trim is auditable.
+
 ## 3. `multiplex_edges_observed.csv.gz` — the edge list
 
 **The main analytic file.** One row per tie *as reported by one filing*. A tie
@@ -322,6 +346,21 @@ These are properties of the sources, and should be stated in any write-up.
     the regulator published. An earlier draft of this codebook reported no
     annual reports at all for FY2012–2014 for exactly this reason; there are
     195.
+14. **A delisted issuer's ticker is still a separate node.** §2 describes the
+    join that reads a bare ticker as the company it belongs to. Its authority
+    is the BVMT roster, which is a snapshot of the *currently* listed cote — 75
+    securities. An issuer that has since delisted or merged is not in it, so
+    where the CMF titled its filings by ticker the acronym stands as a node of
+    its own: `TLF` (221 ties) beside `Tunisie Leasing et Factoring` (237), and
+    `MIC`, `WIC`, `FIC`, `CRJ` with no expansion anywhere in the corpus. This
+    inflates the firm count and splits the degree of the firms affected, so
+    **actor-level measures on firms — degree, centrality, brokerage — are still
+    understated for delisted issuers**, while dyad-level structural claims are
+    unaffected. The fix is a historical roster, or a researcher judgement per
+    ticker in `config/bourse_entity_overrides.csv`; neither is done here,
+    because guessing which firm an unexpanded three-letter acronym names is
+    exactly the judgement a coder should make explicitly rather than a matcher
+    silently.
 
 ## 6.1 Defects the source check found, and what they mean for earlier builds
 

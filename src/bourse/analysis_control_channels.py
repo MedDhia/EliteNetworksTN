@@ -8,13 +8,15 @@ dataset exists to answer, and it is not answerable from either layer alone.
 
 The measurement problem is coverage, not method. A firm enters the ownership
 layer when someone files a shareholder table naming it, and the board layers
-when someone files a board table. Most firms are in one and not the other, so a
-naive overlap count is a statement about which filings exist:
+when someone files a board table. Most firms are in one and not the other, so
+the naive overlap - the share of equity dyads that also carry a board tie - is
+a statement about which filings exist. It comes out under a tenth, and reads as
+though the channels were nearly disjoint.
 
-    equity dyads 1,401, board dyads 5,237, both 96 -> 6.9%
-
-and reads as though the channels were nearly disjoint. Conditioning on the
-firms visible in *both* channels removes the artefact and reverses the answer.
+Conditioning on the firms visible in *both* channels removes the artefact and
+reverses the answer. (The counts themselves are computed at run time and
+written to the report; they are not repeated here, because they move with every
+extraction pass.)
 The comparison is then between dyads that could in principle have shown up in
 either layer, against the base rate of a board tie among those same firms.
 

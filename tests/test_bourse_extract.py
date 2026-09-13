@@ -14,7 +14,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from bourse.entities import (
-    Resolver, base_normalise, classify, demote_person_hint,
+    Resolver, base_normalise, classify, demote_person_hint, trim_cell,
     has_representative, is_not_an_entity, org_key, person_key,
 )
 from bourse.extract.records import (
@@ -626,6 +626,113 @@ class TestDottedInitialism:
 
     def test_distinct_firms_stay_distinct(self):
         assert org_key("COTIF SICAR") != org_key("COTIF SICAF")
+
+
+class TestTrimCell:
+    """What a mis-split table cell carried in beside the name."""
+
+    @pytest.mark.parametrize("cell,want", [
+        # Guillemets introduce a short name; the closing mark fell outside.
+        ("Sté. Tunisienne d’Automobiles « STA", "Sté. Tunisienne d’Automobiles"),
+        ("Tunisie Leasing et Factoring « TLF", "Tunisie Leasing et Factoring"),
+        # A cell that is entirely a quoted short name is that name.
+        ("« Serenity Capital Finance Holding » nommée en qualité",
+         "Serenity Capital Finance Holding"),
+        # Name column never split from the figure columns beside it.
+        ("SIBTEL 46 200 100 4 620 000", "SIBTEL"),
+        ("BTE – SICAR 300 000 10 3 000 000", "BTE – SICAR"),
+        ("Mosbah HELALI 2 000", "Mosbah HELALI"),
+    ])
+    def test_run_on_material_is_removed(self, cell, want):
+        assert trim_cell(cell) == want
+
+    @pytest.mark.parametrize("cell", [
+        "Usine 2", "SOTUVER 2", "AMEN BANK", "Tunisie Leasing et Factoring",
+    ])
+    def test_a_clean_name_is_untouched(self, cell):
+        # A digit that belongs to the name has no thousands group, so it is
+        # never mistaken for a figure column.
+        assert trim_cell(cell) == cell
+
+    def test_the_trimmed_form_matches_the_plain_one(self):
+        r = Resolver()
+        assert (r.resolve("Tunisie Leasing et Factoring « TLF", hint="firm")[0]
+                == r.resolve("Tunisie Leasing et Factoring", hint="firm")[0])
+
+
+class TestBulletProse:
+    """Wingdings bullets survive extraction as private-use codepoints."""
+
+    @pytest.mark.parametrize("cell", [
+        " L’entrée en production de la cimenterie Carthage Cement en 2019",
+        " Administrateur",
+    ])
+    def test_a_bulleted_sentence_is_not_an_entity(self, cell):
+        # These carry corporate words, so the rule has to fire before the
+        # corporate-word test rescues them.
+        assert is_not_an_entity(cell)
+
+    def test_a_real_company_still_resolves(self):
+        assert not is_not_an_entity("Société Tunisienne de Banque")
+
+
+class TestTickerAliases:
+    """A CMF filing titled `Document de référence " HL 2018 "` is Hannibal Lease.
+
+    The listing roster is the only thing that says so, so these guard both that
+    it is consulted and that it is not over-applied.
+    """
+
+    @staticmethod
+    def _resolver():
+        r = Resolver()
+        r.add_ticker_alias("HL", "HANNIBAL LEASE")
+        r.add_ticker_alias("AB", "AMEN BANK")
+        return r
+
+    @pytest.mark.parametrize("ticker_spelling", ["HL", "H L", "H.L."])
+    def test_ticker_resolves_to_the_listed_company(self, ticker_spelling):
+        r = self._resolver()
+        eid, _ = r.resolve(ticker_spelling, hint="firm")
+        assert eid == r.resolve("HANNIBAL LEASE", hint="firm")[0]
+
+    def test_the_company_name_wins_the_display_vote(self):
+        r = self._resolver()
+        eid, _ = r.resolve("HL", hint="firm")
+        assert r.canonical_name(eid) == "HANNIBAL LEASE"
+
+    def test_the_ticker_is_kept_as_an_alias(self):
+        r = self._resolver()
+        eid, _ = r.resolve("HL", hint="firm")
+        assert "HL" in r._aliases[eid]
+
+    def test_a_longer_name_reducing_to_a_ticker_is_left_alone(self):
+        # "Ab-corporation" only becomes the key "ab" once the legal form is
+        # dropped. It is not Amen Bank, and a ticker must not capture it.
+        r = self._resolver()
+        assert (r.resolve("Ab-corporation", hint="firm")[0]
+                != r.resolve("AMEN BANK", hint="firm")[0])
+        assert (r.resolve("AB CORPORATION", hint="firm")[0]
+                != r.resolve("AMEN BANK", hint="firm")[0])
+
+    def test_a_lower_case_cell_is_not_read_as_a_ticker(self):
+        r = self._resolver()
+        assert (r.resolve("Hl", hint="firm")[0]
+                != r.resolve("HANNIBAL LEASE", hint="firm")[0])
+
+    def test_a_name_typed_as_a_person_is_never_rewritten_to_a_ticker(self):
+        # A single-token cell is demoted out of "person" before the rewrite is
+        # reached, so the guard only ever bites on a name long enough to stay a
+        # person - one whose initials happen to spell a ticker.
+        r = self._resolver()
+        r.add_ticker_alias("MBS", "MONOPRIX")
+        assert (r.resolve("M B S", hint="person")[0]
+                != r.resolve("MONOPRIX", hint="firm")[0])
+
+    def test_a_ticker_equal_to_its_name_is_not_registered(self):
+        r = Resolver()
+        r.add_ticker_alias("ATL", "ATL")
+        assert r._ticker == {}
 
 
 class TestFootnoteMarkers:
