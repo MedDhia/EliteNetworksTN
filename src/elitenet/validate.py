@@ -753,13 +753,36 @@ def check_snowball(rep: Report) -> None:
             f"{len(unlabelled)} rows with link_status=snowball but no "
             f"pass number or basis")
 
-    # And no first-pass row may claim to have been snowballed.
-    mislabelled = [r for r in rows
-                   if r.get("resolve_pass") not in ("", "0")
-                   and r.get("link_status") not in ("snowball", "resolved", "manual")]
-    rep.add("ERROR" if mislabelled else "INFO",
-            "a pass number implies a named link",
-            f"{len(mislabelled)} rows carry a pass number without a named link")
+    # A pass number has to be explained, but NOT necessarily by a named
+    # person. The rules that name an ORGANISATION -- a known identifier, or
+    # the person's own seed organisations -- stamp the pass on a row whose
+    # person may still be unresolved, and that is the intended behaviour: the
+    # firm was identified by a later pass even though the individual was not.
+    #
+    # The first version of this check assumed a pass could only ever name a
+    # person, and fired on 878 rows doing exactly what rules 0 and 1 are for.
+    # The invariant actually wanted is narrower and is split in three.
+    ORG_RULES = {"identifier_names_org", "person_names_org"}
+    PERSON_RULES = {"org_names_person", "colleagues_name_person"}
+    stamped = [r for r in rows if r.get("resolve_pass") not in ("", "0")]
+
+    unexplained = [r for r in stamped if not r.get("snowball_basis")]
+    rep.add("ERROR" if unexplained else "INFO",
+            "a pass number names the rule that earned it",
+            f"{len(unexplained)} rows carry a pass number with no snowball_basis")
+
+    no_org = [r for r in stamped
+              if r.get("snowball_basis") in ORG_RULES and not r.get("resolved_org_id")]
+    rep.add("ERROR" if no_org else "INFO",
+            "an organisation-naming pass leaves an organisation named",
+            f"{len(no_org)} rows name an organisation rule but carry no resolved_org_id")
+
+    no_person = [r for r in stamped
+                 if r.get("snowball_basis") in PERSON_RULES
+                 and r.get("link_status") != "snowball"]
+    rep.add("ERROR" if no_person else "INFO",
+            "a person-naming pass leaves link_status=snowball",
+            f"{len(no_person)} rows name a person rule without link_status=snowball")
 
     if sb:
         rep.add("WARN", "resolution rests partly on snowballed anchors",

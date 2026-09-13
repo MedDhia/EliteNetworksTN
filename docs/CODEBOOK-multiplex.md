@@ -150,7 +150,7 @@ One row per announcement block or state act, with its printed folio page for cit
 
 ### `events.csv`
 
-689,169 rows.
+781,233 rows.
 
 The core table: one row per dated relational assertion, with up to four separate dates, a controlled event type and role, a verbatim quote and a page citation. Person and organisation names here are **surface mentions**, not resolved identities; join to `resolution.csv` for those.
 
@@ -167,7 +167,9 @@ The core table: one row per dated relational assertion, with up to four separate
 | `folio_page` | Printed page number, as cited in scholarship. Not the OCR page index. |
 | `ocr_page` |  |
 | `person_mention` |  |
-| `person_married_name` |  |
+| `person_married_name` | The other surname a spousal or natal marker attaches to this person. Ambiguous by itself -- see `person_ties.csv`, which separates a marriage from a birth name. |
+| `person_address` | A stated residence, verbatim. NOT an identity claim: two brothers share a house. It is the discriminator the corpus otherwise lacks for telling two people of one name apart. An election of address at a lawyer's office is excluded. |
+| `person_address_normalised` |  |
 | `org_mention` |  |
 | `org_mf` |  |
 | `org_rc` |  |
@@ -201,7 +203,7 @@ The core table: one row per dated relational assertion, with up to four separate
 
 ### `resolution.csv`
 
-389,141 rows.
+462,177 rows.
 
 One row per (person mention, organisation mention) dyad, with the score components behind its link. Nothing is dropped: `unresolved` dyads are retained so the dataset can be re-thresholded.
 
@@ -221,7 +223,7 @@ One row per (person mention, organisation mention) dyad, with the score componen
 | `resolved_org_id` |  |
 | `resolved_org_label` |  |
 | `score` |  |
-| `link_status` | `resolved` (score >= 0.70), `ambiguous` (0.45-0.70, or a rival within 0.05), `unresolved` (< 0.45, retained as a candidate new person). |
+| `link_status` | `resolved` (score >= 0.70, the organisation agreed), `ambiguous` (0.45-0.70, or a rival within 0.05), `inferred` (no anchor, but the name is unique on both the seed side and across the corpus), `snowball` (named by a later pass from an anchor the first pass produced -- see `resolve_pass`), `unresolved` (< 0.45, retained as a candidate new person). |
 | `s_name` | Name similarity. The surname gates the score and the given names decide it, so a shared surname alone cannot produce a match. |
 | `s_org` | Organisation agreement. Required for a resolution: a name-only link is not an identification. |
 | `s_mf` |  |
@@ -247,10 +249,12 @@ One row per (person mention, organisation mention) dyad, with the score componen
 | `pdf_url` |  |
 | `candidate_orgs` |  |
 | `decided_by` |  |
+| `resolve_pass` | Which snowball pass first named this row. 0 is the single dyad-anchored pass; filtering to `resolve_pass == 0` reproduces the pre-snowball build exactly. A snowball propagates its own errors, so this column is what makes the propagation measurable. |
+| `snowball_basis` | Which rule named a snowballed row: `person_names_org` (a named person's own seed organisations were the candidate set), `org_names_person` (an organisation a previous pass named supplied the anchor), or `colleagues_name_person` (two or more named co-mentions tied to one seed organisation). |
 
 ### `review_queue.csv`
 
-3,875 rows.
+3,689 rows.
 
 Ambiguous dyads ordered by how consequential they are (seed degree and event count), for hand coding. These are cases the matcher declines to decide, not cases it got wrong.
 
@@ -270,7 +274,7 @@ Ambiguous dyads ordered by how consequential they are (seed degree and event cou
 | `resolved_org_id` |  |
 | `resolved_org_label` |  |
 | `score` |  |
-| `link_status` | `resolved` (score >= 0.70), `ambiguous` (0.45-0.70, or a rival within 0.05), `unresolved` (< 0.45, retained as a candidate new person). |
+| `link_status` | `resolved` (score >= 0.70, the organisation agreed), `ambiguous` (0.45-0.70, or a rival within 0.05), `inferred` (no anchor, but the name is unique on both the seed side and across the corpus), `snowball` (named by a later pass from an anchor the first pass produced -- see `resolve_pass`), `unresolved` (< 0.45, retained as a candidate new person). |
 | `s_name` | Name similarity. The surname gates the score and the given names decide it, so a shared surname alone cannot produce a match. |
 | `s_org` | Organisation agreement. Required for a resolution: a name-only link is not an identification. |
 | `s_mf` |  |
@@ -296,10 +300,12 @@ Ambiguous dyads ordered by how consequential they are (seed degree and event cou
 | `pdf_url` |  |
 | `candidate_orgs` |  |
 | `decided_by` |  |
+| `resolve_pass` | Which snowball pass first named this row. 0 is the single dyad-anchored pass; filtering to `resolve_pass == 0` reproduces the pre-snowball build exactly. A snowball propagates its own errors, so this column is what makes the propagation measurable. |
+| `snowball_basis` | Which rule named a snowballed row: `person_names_org` (a named person's own seed organisations were the candidate set), `org_names_person` (an organisation a previous pass named supplied the anchor), or `colleagues_name_person` (two or more named co-mentions tied to one seed organisation). |
 
 ### `gazette_only_persons.csv`
 
-244,570 rows.
+306,344 rows.
 
 People named in the gazette who match no seed person. The seed sheet is an elite snapshot while the gazette covers every registered company, so these are mostly non-elite — but they are also where new elite entrants would appear, which is why they are kept.
 
@@ -315,7 +321,7 @@ People named in the gazette who match no seed person. The seed sheet is an elite
 
 ### `spells.csv`
 
-50,688 rows.
+50,375 rows.
 
 Person-organisation-role ties as intervals. `onset`/`terminus` are point estimates; the `_lo`/`_hi` columns carry what is actually known. The certain core of a spell is [onset_hi, terminus_lo].
 
@@ -349,13 +355,13 @@ Person-organisation-role ties as intervals. `onset`/`terminus` are point estimat
 | `duration_hi` |  |
 | `evidence_n` |  |
 | `evidence_tier` | `gazette_dated` for ties with gazette evidence; `seed_undated` for seed ties carried through with no dates. Exclude the latter from survival models. |
-| `link_status` | `resolved` (score >= 0.70), `ambiguous` (0.45-0.70, or a rival within 0.05), `unresolved` (< 0.45, retained as a candidate new person). |
+| `link_status` | `resolved` (score >= 0.70, the organisation agreed), `ambiguous` (0.45-0.70, or a rival within 0.05), `inferred` (no anchor, but the name is unique on both the seed side and across the corpus), `snowball` (named by a later pass from an anchor the first pass produced -- see `resolve_pass`), `unresolved` (< 0.45, retained as a candidate new person). |
 | `confidence` |  |
 | `needs_review` |  |
 
 ### `spell_observations.csv`
 
-26,209 rows.
+25,910 rows.
 
 Every dated observation attached to a spell. An `obs_kind` of `confirmation` or `renewal` proves the tie existed at that moment without asserting when it began.
 
@@ -369,7 +375,7 @@ Every dated observation attached to a spell. An `obs_kind` of `confirmation` or 
 
 ### `panel_edges_yearly.csv`
 
-139,571 rows.
+136,533 rows.
 
 Ties active in each calendar year, with an explicit `certainty`.
 
@@ -389,7 +395,7 @@ Ties active in each calendar year, with an explicit `certainty`.
 
 ### `panel_edges_monthly.csv`
 
-332,895 rows.
+324,637 rows.
 
 As above at monthly resolution, because the January 2011 rupture is invisible at annual resolution.
 
@@ -409,7 +415,7 @@ As above at monthly resolution, because the January 2011 rupture is invisible at
 
 ### `org_ties.csv`
 
-3,996 rows.
+4,083 rows.
 
 Organisation-to-organisation observations, one row per resolved (holder, target, relation) assertion. Both endpoints must resolve to **distinct** seed organisations; a mention resolving to the subject firm is a self-tie and is dropped rather than counted.
 
@@ -430,7 +436,7 @@ Organisation-to-organisation observations, one row per resolved (holder, target,
 | `holder_match` |  |
 | `target_match` |  |
 | `score` |  |
-| `link_status` | `resolved` (score >= 0.70), `ambiguous` (0.45-0.70, or a rival within 0.05), `unresolved` (< 0.45, retained as a candidate new person). |
+| `link_status` | `resolved` (score >= 0.70, the organisation agreed), `ambiguous` (0.45-0.70, or a rival within 0.05), `inferred` (no anchor, but the name is unique on both the seed side and across the corpus), `snowball` (named by a later pass from an anchor the first pass produced -- see `resolve_pass`), `unresolved` (< 0.45, retained as a candidate new person). |
 | `evidence_quote` | Verbatim text supporting the record. Validation asserts it occurs in the block. |
 | `event_id` |  |
 | `block_uid` |  |
@@ -444,7 +450,7 @@ Organisation-to-organisation observations, one row per resolved (holder, target,
 
 ### `org_tie_spells.csv`
 
-8,174 rows.
+8,164 rows.
 
 The org-org layer as intervals, in the same vocabulary as `spells.csv`. It is a **separate, one-mode, directed** layer: adding these rows to `spells.csv` would silently break every two-mode term in the TERGM panel. `evidence_tier` separates gazette-dated spells from the undated seed ties carried alongside them. Read `docs/ORG-TIES-multiplex.md` before modelling: the dominant clause confirms a standing holding rather than dating its start, so onsets here are overwhelmingly left-censored.
 
@@ -473,13 +479,13 @@ The org-org layer as intervals, in the same vocabulary as `spells.csv`. It is a 
 | `duration_days` |  |
 | `evidence_n` |  |
 | `evidence_tier` | `gazette_dated` for ties with gazette evidence; `seed_undated` for seed ties carried through with no dates. Exclude the latter from survival models. |
-| `link_status` | `resolved` (score >= 0.70), `ambiguous` (0.45-0.70, or a rival within 0.05), `unresolved` (< 0.45, retained as a candidate new person). |
+| `link_status` | `resolved` (score >= 0.70, the organisation agreed), `ambiguous` (0.45-0.70, or a rival within 0.05), `inferred` (no anchor, but the name is unique on both the seed side and across the corpus), `snowball` (named by a later pass from an anchor the first pass produced -- see `resolve_pass`), `unresolved` (< 0.45, retained as a candidate new person). |
 | `confidence` |  |
 | `needs_review` |  |
 
 ### `panel_org_ties_yearly.csv`
 
-65,506 rows.
+65,333 rows.
 
 The org-org layer by calendar year, the input to `R/build_org_ownership.R`.
 
@@ -498,9 +504,130 @@ The org-org layer by calendar year, the input to `R/build_org_ownership.R`.
 | `evidence_tier` | `gazette_dated` for ties with gazette evidence; `seed_undated` for seed ties carried through with no dates. Exclude the latter from survival models. |
 | `org_spell_id` |  |
 
+### `person_ties.csv`
+
+18 rows.
+
+One row per kinship claim in print: a marriage (`spouse_of`), a widowhood (`widow_of`) or a natal surname (`maiden_name_of`), read off the `epouse` / `ep.` / `EP` / `veuve` / `nee` markers. `is_marriage` is 0 for `maiden_name_of`: "nee X" is the same woman's birth name, not a husband, and counting it as a marriage would be wrong about both the tie and its direction. Both ends carry a person id; where only one end could be named the observation is in `person_ties_review_queue.csv` rather than dropped. `org_mention` is the block the claim was read from -- the resolver's anchor -- and is NOT a claim that either party holds office in that firm.
+
+| column | note |
+| --- | --- |
+| `kin_obs_id` |  |
+| `person_id` |  |
+| `person_label` |  |
+| `kin_id` |  |
+| `kin_label` |  |
+| `relation` |  |
+| `is_marriage` | 1 for `spouse_of` and `widow_of`, 0 for `maiden_name_of`. |
+| `obs_kind` |  |
+| `obs_date` |  |
+| `date_precision` | `exact` where a real act date was found; `pub_only` where the event is interval-censored and only bounded above by publication. |
+| `person_mention` |  |
+| `kin_mention` |  |
+| `person_status` |  |
+| `kin_status` |  |
+| `marker` |  |
+| `undirected_key` |  |
+| `evidence_quote` | Verbatim text supporting the record. Validation asserts it occurs in the block. |
+| `event_id` |  |
+| `block_uid` |  |
+| `issue_uid` |  |
+| `folio_page` | Printed page number, as cited in scholarship. Not the OCR page index. |
+| `org_mention` |  |
+| `extract_confidence` |  |
+
+### `person_tie_spells.csv`
+
+14 rows.
+
+The kinship layer as intervals. A **separate, one-mode** layer over persons, for the same reason the org-org layer is separate: a person-person tie in `spells.csv` would silently break every two-mode term in the TERGM panel. Every onset is left-censored without exception -- the gazette does not publish weddings -- so `onset` is empty and `onset_hi` is the first date the tie was seen in print. Only a `widow_of` marker bounds a terminus. See `docs/INFERENCE-TIERS-multiplex.md`.
+
+| column | note |
+| --- | --- |
+| `kin_spell_id` |  |
+| `person_id` |  |
+| `person_label` |  |
+| `kin_id` |  |
+| `kin_label` |  |
+| `relation` |  |
+| `is_marriage` | 1 for `spouse_of` and `widow_of`, 0 for `maiden_name_of`. |
+| `layer` |  |
+| `undirected_key` |  |
+| `onset` |  |
+| `terminus` |  |
+| `onset_lo` |  |
+| `onset_hi` |  |
+| `terminus_lo` |  |
+| `terminus_hi` |  |
+| `last_seen` | The last date a kinship tie was seen in print. NOT a terminus -- the marriage was not observed to end -- but the only bound available for truncating a panel that otherwise runs a 1960 marriage through to the end of the window. Nothing in the sources resolves that, so the rows are emitted and the bound is carried: dropping them would assert the opposite, that the marriage ended when the printing stopped. |
+| `left_censored` | The tie was already running when observation began; onset unknown. |
+| `right_censored` | The tie was still running when observation ended; terminus unknown. |
+| `onset_rule` |  |
+| `terminus_rule` | How the spell closed. `displaced_by` means another person was appointed to the same single-holder post; `withdrawn_inconsistent` means a parsed end preceded the start and was withdrawn rather than guessed at. |
+| `evidence_n` |  |
+| `evidence_tier` | `gazette_dated` for ties with gazette evidence; `seed_undated` for seed ties carried through with no dates. Exclude the latter from survival models. |
+| `confidence` |  |
+| `needs_review` |  |
+
+### `panel_person_ties_yearly.csv`
+
+216 rows.
+
+The kinship layer by calendar year. Every row is `probable` at best: a period counts as active from the first date the tie was printed, not from the marriage, which is unknown.
+
+| column | note |
+| --- | --- |
+| `panel_id` |  |
+| `granularity` |  |
+| `period_start` |  |
+| `period_end` |  |
+| `from_node_id` |  |
+| `to_node_id` |  |
+| `relation` |  |
+| `is_marriage` | 1 for `spouse_of` and `widow_of`, 0 for `maiden_name_of`. |
+| `layer` |  |
+| `certainty` | `certain` both endpoints dated; `probable` inside the certain core but an endpoint is censored; `possible` only inside the outer envelope; `undated` a seed tie with no time information. |
+| `evidence_tier` | `gazette_dated` for ties with gazette evidence; `seed_undated` for seed ties carried through with no dates. Exclude the latter from survival models. |
+| `kin_spell_id` |  |
+
+### `person_ties_review_queue.csv`
+
+8,749 rows.
+
+Kinship observations retained but not tied, because one or both ends could not be named. `failed_end` and `failed_mention` say which.
+
+| column | note |
+| --- | --- |
+| `kin_obs_id` |  |
+| `person_id` |  |
+| `person_label` |  |
+| `kin_id` |  |
+| `kin_label` |  |
+| `relation` |  |
+| `is_marriage` | 1 for `spouse_of` and `widow_of`, 0 for `maiden_name_of`. |
+| `obs_kind` |  |
+| `obs_date` |  |
+| `date_precision` | `exact` where a real act date was found; `pub_only` where the event is interval-censored and only bounded above by publication. |
+| `person_mention` |  |
+| `kin_mention` |  |
+| `person_status` |  |
+| `kin_status` |  |
+| `marker` |  |
+| `undirected_key` |  |
+| `evidence_quote` | Verbatim text supporting the record. Validation asserts it occurs in the block. |
+| `event_id` |  |
+| `block_uid` |  |
+| `issue_uid` |  |
+| `folio_page` | Printed page number, as cited in scholarship. Not the OCR page index. |
+| `org_mention` |  |
+| `extract_confidence` |  |
+| `queue_reason` |  |
+| `failed_end` |  |
+| `failed_mention` |  |
+
 ### `org_ties_review_queue.csv`
 
-10,571 rows.
+10,622 rows.
 
 Org-org observations a human has to settle. `queue_reason` separates a dyad whose link score landed in the ambiguous band from the far larger set with **one end resolved**: there the resolved end anchors the dyad and only a single name is in question, so `failed_mention`, `near_org_label` and `near_score` carry what the coder needs.
 
@@ -521,7 +648,7 @@ Org-org observations a human has to settle. `queue_reason` separates a dyad whos
 | `holder_match` |  |
 | `target_match` |  |
 | `score` |  |
-| `link_status` | `resolved` (score >= 0.70), `ambiguous` (0.45-0.70, or a rival within 0.05), `unresolved` (< 0.45, retained as a candidate new person). |
+| `link_status` | `resolved` (score >= 0.70, the organisation agreed), `ambiguous` (0.45-0.70, or a rival within 0.05), `inferred` (no anchor, but the name is unique on both the seed side and across the corpus), `snowball` (named by a later pass from an anchor the first pass produced -- see `resolve_pass`), `unresolved` (< 0.45, retained as a candidate new person). |
 | `evidence_quote` | Verbatim text supporting the record. Validation asserts it occurs in the block. |
 | `event_id` |  |
 | `block_uid` |  |
@@ -541,21 +668,21 @@ Org-org observations a human has to settle. `queue_reason` separates a dyad whos
 
 ### `org_entities.csv`
 
-230,041 rows.
+235,052 rows.
 
 **The unit of analysis for an organisation.** One row per firm as this corpus can distinguish it, keyed in priority order on the normalised matricule fiscal, then the registre-de-commerce number, then the normalised mention. Identity used to be *the seed node a mention fuzzy-matched*, and `fuzz.token_set_ratio` treats containment as identity, so a seed firm whose label normalised to `TROIS` -- the French for three -- absorbed every mention containing that word and became the highest-degree organisation in the org-org layer. Keying on a hard identifier splits those hubs and simultaneously *joins* spelling variants, since one matricule often covers several. `seed_org_id` retains the seed link and `seed_match_basis` says what it rests on, so the previous view is exactly reproducible. `is_identity = 0` marks an entity that is retained but claims to identify nothing -- a mention carrying several matricules with no identifier on this event.
 
 | column | note |
 | --- | --- |
 | `org_entity_id` |  |
-| `entity_basis` |  |
+| `entity_basis` | How an organisation entity is keyed: `matricule_fiscal`, `registre_commerce`, `address_corroborated` (two name-keyed spellings joined by a shared, discriminating seat), `name`, or `ambiguous_mention` (the mention carries several identifiers and so identifies none of them -- explicitly not an identity). |
 | `entity_key` |  |
 | `n_keys` |  |
 | `label` |  |
 | `n_mentions` |  |
 | `n_events` |  |
 | `first_seen` |  |
-| `last_seen` |  |
+| `last_seen` | The last date a kinship tie was seen in print. NOT a terminus -- the marriage was not observed to end -- but the only bound available for truncating a panel that otherwise runs a 1960 marriage through to the end of the window. Nothing in the sources resolves that, so the rows are emitted and the bound is carried: dropping them would assert the opposite, that the marriage ended when the printing stopped. |
 | `matricule` |  |
 | `rc` |  |
 | `seed_org_id` |  |
@@ -567,7 +694,7 @@ Org-org observations a human has to settle. `queue_reason` separates a dyad whos
 
 ### `org_entity_members.csv`
 
-296,795 rows.
+302,716 rows.
 
 Mention to entity, one row per distinct organisation mention, so every mention is accounted for and none is silently orphaned — the validator checks exactly that. The map is **modal** where a mention spans several entities (`n_entities_on_mention > 1`); the per-event key in `orgentity.entity_key` is authoritative.
 
@@ -575,7 +702,7 @@ Mention to entity, one row per distinct organisation mention, so every mention i
 | --- | --- |
 | `org_mention` |  |
 | `org_entity_id` |  |
-| `entity_basis` |  |
+| `entity_basis` | How an organisation entity is keyed: `matricule_fiscal`, `registre_commerce`, `address_corroborated` (two name-keyed spellings joined by a shared, discriminating seat), `name`, or `ambiguous_mention` (the mention carries several identifiers and so identifies none of them -- explicitly not an identity). |
 | `n_events` |  |
 | `mention_is_ambiguous` |  |
 | `n_identifiers_on_mention` |  |
@@ -585,7 +712,7 @@ Mention to entity, one row per distinct organisation mention, so every mention i
 
 ### `org_identifiers.csv`
 
-123,515 rows.
+123,464 rows.
 
 Hard identifiers per organisation: the matricule fiscal and the registre-de-commerce number, one row per (organisation, kind, value). These are **stable** attributes -- a firm keeps them -- which is why `is_conflicting = 1` is a defect rather than a change over time: it means the node holds two values of an identifier a firm has one of. A one-character difference is OCR; a wholly different value is an organisation-resolution merge, and every tie on that node is then suspect. See `docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md`.
 
@@ -600,7 +727,7 @@ Hard identifiers per organisation: the matricule fiscal and the registre-de-comm
 | `n_observations` |  |
 | `n_issues` |  |
 | `first_seen` |  |
-| `last_seen` |  |
+| `last_seen` | The last date a kinship tie was seen in print. NOT a terminus -- the marriage was not observed to end -- but the only bound available for truncating a panel that otherwise runs a 1960 marriage through to the end of the window. Nothing in the sources resolves that, so the rows are emitted and the bound is carried: dropping them would assert the opposite, that the marriage ended when the printing stopped. |
 | `is_conflicting` |  |
 | `n_values_for_org` |  |
 | `issue_uid` |  |
@@ -609,7 +736,7 @@ Hard identifiers per organisation: the matricule fiscal and the registre-de-comm
 
 ### `org_addresses.csv`
 
-230,868 rows.
+230,066 rows.
 
 Stated seats, one row per (organisation, normalised address, kind), dated. **Time-varying**, unlike the identifiers: `obs_kind` is `moved_to` where the address is the destination named in a transfer clause and `stated` where it is the seat as printed. Aggregated on the normalised form, because casing, accents and the street abbreviation vary between two printings of one address and comparing raw strings would report a move that never happened.
 
@@ -626,7 +753,7 @@ Stated seats, one row per (organisation, normalised address, kind), dated. **Tim
 | `obs_kind` |  |
 | `n_observations` |  |
 | `first_seen` |  |
-| `last_seen` |  |
+| `last_seen` | The last date a kinship tie was seen in print. NOT a terminus -- the marriage was not observed to end -- but the only bound available for truncating a panel that otherwise runs a 1960 marriage through to the end of the window. Nothing in the sources resolves that, so the rows are emitted and the bound is carried: dropping them would assert the opposite, that the marriage ended when the printing stopped. |
 | `issue_uid` |  |
 | `folio_page` | Printed page number, as cited in scholarship. Not the OCR page index. |
 | `block_uid` |  |
@@ -639,7 +766,7 @@ Written by `make tergm`. These are the yearly panel re-indexed for a temporal ER
 
 ### `node_key.csv`
 
-13,095 rows.
+12,910 rows.
 
 **Mode-blocked** vertex key for the TERGM panel: persons take ids 1..n1 and organisations n1+1..n, which is what makes `bipartite = n1` a true statement about the ordering. `label_suspect` marks a vertex whose name is not a firm name (an address, a role fragment, a clause) and which should probably be excluded.
 
@@ -657,7 +784,7 @@ Written by `make tergm`. These are the yearly panel re-indexed for a temporal ER
 
 ### `edges_yearly.csv`
 
-127,262 rows.
+124,517 rows.
 
 The yearly panel re-indexed to bipartite vertex ids and reduced to **binary** ties: two roles in one firm in one year is two panel rows and one tie, with the roles preserved pipe-joined. `dissolution_observed` marks the minority of ties actually seen to end, as opposed to right-censored.
 
@@ -668,12 +795,12 @@ The yearly panel re-indexed to bipartite vertex ids and reduced to **binary** ti
 | `head` |  |
 | `role_canonical` |  |
 | `certainty` | `certain` both endpoints dated; `probable` inside the certain core but an endpoint is censored; `possible` only inside the outer envelope; `undated` a seed tie with no time information. |
-| `link_status` | `resolved` (score >= 0.70), `ambiguous` (0.45-0.70, or a rival within 0.05), `unresolved` (< 0.45, retained as a candidate new person). |
+| `link_status` | `resolved` (score >= 0.70, the organisation agreed), `ambiguous` (0.45-0.70, or a rival within 0.05), `inferred` (no anchor, but the name is unique on both the seed side and across the corpus), `snowball` (named by a later pass from an anchor the first pass produced -- see `resolve_pass`), `unresolved` (< 0.45, retained as a candidate new person). |
 | `dissolution_observed` |  |
 
 ### `vertex_activity_yearly.csv`
 
-916,650 rows.
+903,700 rows.
 
 The risk set. An organisation is active between its constitution and dissolution, widened where needed to cover a period in which it demonstrably holds a tie, so activity is always one contiguous interval. `birth_known = 0` means left-censored and at risk from the window start. Persons are active throughout: the gazette records appointments, not births.
 
@@ -689,7 +816,7 @@ The risk set. An organisation is active between its constitution and dissolution
 
 ### `node_attrs_yearly.csv`
 
-916,650 rows.
+903,700 rows.
 
 Per-period nodal covariates, rectangular by construction (every vertex appears in every period, isolates included). Use `cum_degree_lag` rather than `cum_degree` in `nodecov`: degree measured at t is a function of the ties being modelled at t.
 
@@ -711,7 +838,7 @@ Per-period nodal covariates, rectangular by construction (every vertex appears i
 
 ### `dyad_cov_yearly.csv`
 
-297,041 rows.
+286,243 rows.
 
 Dyadic covariates as **sparse triplets** -- dense would be 2,592 x 2,915 per covariate per period. Projected from the seed sheet's undated kinship and shareholding ties, which is what makes them exogenous. `kin_in_org`, `owner_of` and `prior_comembership` are lagged to t-1 and so are absent in the first period; `is_shareholder` needs no lag and is present in all of them.
 
@@ -853,28 +980,32 @@ The 5-character suffix of an announcement's reference code (`2010G02623`**`SANB1
 | --- | --- |
 | `appointed` | 275,919 |
 | `constituted` | 150,066 |
+| `resides_at` | 83,123 |
 | `charged_with_functions` | 62,783 |
 | `capital_increased` | 43,163 |
 | `shares_transferred` | 39,464 |
-| `org_tie` | 30,161 |
+| `org_tie` | 30,333 |
 | `resigned` | 25,972 |
 | `headquarters_moved` | 18,171 |
 | `liquidated` | 11,568 |
 | `renewed` | 11,274 |
 | `dissolved` | 8,704 |
+| `spouse_of` | 6,787 |
 | `renamed` | 3,128 |
 | `capital_decreased` | 2,439 |
 | `terminated` | 1,895 |
 | `delegated_to_body` | 1,788 |
 | `revoked` | 1,518 |
 | `represented_by` | 1,137 |
+| `widow_of` | 999 |
+| `maiden_name_of` | 983 |
 | `retired` | 19 |
 
 ### Events by role
 
 | role_canonical | n |
 | --- | --- |
-| `(none)` | 315,232 |
+| `(none)` | 407,124 |
 | `gerant` | 172,102 |
 | `chef_de_service` | 21,901 |
 | `commissaire_aux_comptes` | 18,801 |

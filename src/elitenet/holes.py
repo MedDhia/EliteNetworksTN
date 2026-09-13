@@ -96,6 +96,30 @@ def person_org_edges(dated_only: bool = True) -> set[tuple[str, str]]:
     return out
 
 
+def declined_person_org_edges_in(lo_year: int, hi_year: int
+                                 ) -> set[tuple[str, str]]:
+    """Declined person-organisation edges datable to a window.
+
+    An era slice has to slice BOTH sides. Comparing a pre-2011 observed
+    network against an all-years declined set adds post-2011 edges to a
+    pre-2011 graph, which is how the 1957-2010 slice came out at 222.9%
+    exposure: most of what it was "closing" had not happened yet.
+    """
+    out: set[tuple[str, str]] = set()
+    for r in _read("review_queue.csv"):
+        pid = r.get("resolved_person_id") or r.get("runner_up_person_id") or ""
+        oid = r.get("resolved_org_id") or r.get("org_candidate_id") or ""
+        if not (pid and oid):
+            continue
+        lo = (r.get("first_event_date") or "")[:4]
+        hi = (r.get("last_event_date") or "")[:4]
+        a = int(lo) if lo.isdigit() else 0
+        b = int(hi) if hi.isdigit() else 9999
+        if a <= hi_year and b >= lo_year:
+            out.add((pid, oid))
+    return out
+
+
 def declined_person_org_edges() -> tuple[set[tuple[str, str]], dict[str, int]]:
     """Candidate person-organisation edges the pipeline would not assert.
 
@@ -114,6 +138,145 @@ def declined_person_org_edges() -> tuple[set[tuple[str, str]], dict[str, int]]:
             out.add((pid, oid))
             why["ambiguous_dyad"] += 1
     return out, dict(why)
+
+
+def one_mode_adjacency(edges: set[tuple[str, str]]) -> dict[str, set[str]]:
+    """Adjacency for a layer that is ALREADY one-mode (org-org, kinship).
+
+    No projection: the tie is the edge. Kept separate from `project_persons`
+    because conflating them would apply the merge-hub exclusion -- which is
+    about how many officers one firm can plausibly have -- to a layer where
+    it means nothing.
+    """
+    adj: dict[str, set[str]] = defaultdict(set)
+    for a, b in edges:
+        if a and b and a != b:
+            adj[a].add(b)
+            adj[b].add(a)
+    return adj
+
+
+def layer_exposure(name: str, adj_obs: dict[str, set[str]],
+                   adj_pot: dict[str, set[str]],
+                   queue_rows: int = 0, usable_declined: int = 0) -> dict:
+    """The hole bound for one part of the network.
+
+    Reported per layer because the layers fail differently and an aggregate
+    would hide that. The person-organisation panel is dense and mostly
+    name-resolved; the ownership layer admits only dyads where BOTH ends are
+    seed organisations, so its sparsity is largely a membership rule rather
+    than an absence of ownership; the kinship layer is sparse because a
+    marriage needs two identifiable people. A single exposure figure across
+    all three would average a measurement artefact together with a design
+    decision.
+    """
+    comp_obs, comp_pot = components(adj_obs), components(adj_pot)
+    pairs_obs = sum(n * (n - 1) // 2 for n in comp_obs)
+    pairs_pot = sum(n * (n - 1) // 2 for n in comp_pot)
+    # The two sides must describe the same node set. If the potential graph
+    # has nodes the observed one does not, the difference is not a closed
+    # hole -- it is a node that was never in the network being measured, and
+    # counting its pairs reports the node-set gap as an exposure.
+    extra = set(adj_pot) - set(adj_obs)
+    return {
+        "layer": name,
+        "nodes": len(adj_obs),
+        "components_observed": len(comp_obs),
+        "components_potential": len(comp_pot),
+        "largest_observed": comp_obs[0] if comp_obs else 0,
+        "largest_potential": comp_pot[0] if comp_pot else 0,
+        "connected_pairs_observed": pairs_obs,
+        "connected_pairs_potential": pairs_pot,
+        "pairs_on_the_boundary": pairs_pot - pairs_obs,
+        "exposure_pct": (round(100 * (pairs_pot - pairs_obs) / pairs_obs, 1)
+                         if pairs_obs else ""),
+        "nodes_only_in_potential": len(extra),
+        "comparable": "yes" if not extra else "no: node sets differ",
+        "queue_rows": queue_rows,
+        "usable_declined_edges": usable_declined,
+        # 0% exposure means two opposite things and they must not share a
+        # cell. If the queue is empty, nothing was declined and the sparsity
+        # is real. If the queue is full but no row carries ids for BOTH ends,
+        # the method cannot see the holes at all -- and reporting that as 0%
+        # would turn "we cannot measure this" into "there is nothing here",
+        # which is the strongest claim in the report and the least supported.
+        "verdict": ("no declined links" if not queue_rows else
+                    "UNMEASURABLE: queue has no row with both endpoint ids"
+                    if not usable_declined else "measured"),
+    }
+
+
+def spell_year_bounds(s: dict) -> tuple[int, int]:
+    """The years a spell can have been live in, from whatever dates it carries."""
+    lo = (s.get("onset") or s.get("onset_hi") or s.get("onset_lo") or "")[:4]
+    hi = (s.get("terminus") or s.get("terminus_hi") or "")[:4]
+    return (int(lo) if lo.isdigit() else 0,
+            int(hi) if hi.isdigit() else 9999)
+
+
+def person_org_edges_in(lo_year: int, hi_year: int) -> set[tuple[str, str]]:
+    """Person-organisation edges whose spell can have been live in a window.
+
+    An era slice is where a false hole matters most: the substantive claims
+    about this network are about the pre-2011 configuration, and a hole
+    manufactured there is a false claim about the old regime rather than a
+    blemish on a summary statistic.
+    """
+    out: set[tuple[str, str]] = set()
+    for s in _read("spells.csv"):
+        if s.get("evidence_tier") not in (
+                "gazette_dated", "gazette_inferred", "gazette_snowball"):
+            continue
+        if not (s.get("person_id") and s.get("org_id")):
+            continue
+        a, b = spell_year_bounds(s)
+        if a <= hi_year and b >= lo_year:
+            out.add((s["person_id"], s["org_id"]))
+    return out
+
+
+def org_ownership_edges() -> tuple[set[tuple[str, str]], set[tuple[str, str]]]:
+    """The ownership layer, asserted and declined.
+
+    The declined set here is large and mostly a MEMBERSHIP rule rather than a
+    resolution failure: the layer admits a dyad only where both ends resolve
+    to distinct seed organisations, so 10,622 one-end-resolved observations
+    sit out by design. They still bound the hole count, and that is the point
+    of reporting both -- but the interval is wide for a reason that is not an
+    error, and the report says so.
+    """
+    obs: set[tuple[str, str]] = set()
+    for r in _read("org_tie_spells.csv"):
+        if r.get("holder_id") and r.get("target_id"):
+            obs.add((r["holder_id"], r["target_id"]))
+    dec: set[tuple[str, str]] = set()
+    for r in _read("org_ties_review_queue.csv"):
+        # `near_org_id` is deliberately NOT used: it is what a failed match
+        # came CLOSEST to, recorded so a coder can adjudicate, and treating it
+        # as a claimed endpoint manufactures ties out of near-misses -- which
+        # is the merge-hub error in a new place.
+        h = r.get("holder_id") or r.get("holder_seed_id") or ""
+        t = r.get("target_id") or r.get("target_seed_id") or ""
+        if h and t:
+            dec.add((h, t))
+    return obs, dec
+
+
+def kinship_edges() -> tuple[set[tuple[str, str]], set[tuple[str, str]]]:
+    """The kinship layer, asserted and declined."""
+    obs = {(r["person_id"], r["kin_id"]) for r in _read("person_tie_spells.csv")
+           if r.get("person_id") and r.get("kin_id")}
+    dec: set[tuple[str, str]] = set()
+    for r in _read("person_ties_review_queue.csv"):
+        # IDS ONLY. Falling back to the raw mention string, which an earlier
+        # version of this did, puts name strings and node ids in one graph:
+        # the potential side then gains thousands of nodes the observed side
+        # does not have, and the "exposure" it reports is the size of that
+        # node-set difference rather than any hole. It printed 279,300%.
+        a, b = r.get("person_id") or "", r.get("kin_id") or ""
+        if a and b:
+            dec.add((a, b))
+    return obs, dec
 
 
 def project_persons(edges: set[tuple[str, str]]) -> dict[str, set[str]]:
@@ -316,6 +479,37 @@ def run() -> dict:
         s["suspect_id"] = f"SH_{i:07d}"
     _write("suspect_holes.csv", suspects, FIELDS_SUSPECT)
 
+    # --- every part of the network, measured the same way ---------------- #
+    # One aggregate figure would average a measurement artefact together with
+    # a design decision, and the layers fail differently enough that the
+    # average would be meaningless. Era slices are included because the
+    # substantive claims about this network are about the pre-2011
+    # configuration: a hole manufactured there is a false claim about the old
+    # regime, not a blemish on a summary statistic.
+    n_queue = len(_read("review_queue.csv"))
+    layers = [layer_exposure("person-organisation (all years)",
+                             adj_obs, adj_pot, n_queue, len(declined))]
+    for label, lo, hi in (("person-organisation 1957-2010", 0, 2010),
+                          ("person-organisation 2011-2026", 2011, 9999)):
+        obs_e = person_org_edges_in(lo, hi)
+        dec_e = declined_person_org_edges_in(lo, hi)
+        layers.append(layer_exposure(
+            label, project_persons(obs_e),
+            project_persons(obs_e | dec_e), n_queue, len(dec_e)))
+    o_obs, o_dec = org_ownership_edges()
+    if o_obs:
+        layers.append(layer_exposure(
+            "organisation ownership", one_mode_adjacency(o_obs),
+            one_mode_adjacency(o_obs | o_dec),
+            len(_read("org_ties_review_queue.csv")), len(o_dec)))
+    k_obs, k_dec = kinship_edges()
+    if k_obs:
+        layers.append(layer_exposure(
+            "kinship", one_mode_adjacency(k_obs),
+            one_mode_adjacency(k_obs | k_dec),
+            len(_read("person_ties_review_queue.csv")), len(k_dec)))
+    _write("hole_exposure_by_layer.csv", layers, list(layers[0].keys()))
+
     bridging = sum(int(s["would_connect_persons"] or 0) for s in splits_org)
     diag = {
         "person_org_edges_asserted": len(observed),
@@ -337,16 +531,27 @@ def run() -> dict:
             100 * (pairs_pot - pairs_obs) / pairs_obs, 1)
 
     print("structural holes: how much of the sparsity is real")
+    print(f"  {'layer':<32} {'nodes':>7} {'comps':>7} {'->':>7} "
+          f"{'pairs':>11} {'->':>11} {'exposure':>9}")
+    for L in layers:
+        print(f"  {L['layer']:<32} {L['nodes']:>7,} "
+              f"{L['components_observed']:>7,} {L['components_potential']:>7,} "
+              f"{L['connected_pairs_observed']:>11,} "
+              f"{L['connected_pairs_potential']:>11,} "
+              f"{(str(L['exposure_pct']) + '%') if L['verdict'] == 'measured' else '--':>9}"
+              f"  {L['verdict'] if L['verdict'] != 'measured' else ''}")
+    print()
     for k, v in diag.items():
         print(f"  {k:<34} {v:>12,}" if isinstance(v, int)
               else f"  {k:<34} {v:>12}")
     for k, v in why.items():
         print(f"  declined because {k:<18} {v:>12,}")
-    _report(diag, suspects)
+    _report(diag, suspects, layers)
     return diag
 
 
-def _report(diag: dict, suspects: list[dict]) -> None:
+def _report(diag: dict, suspects: list[dict],
+            layers: list[dict] | None = None) -> None:
     top = sorted(suspects, key=lambda s: -int(s["would_connect_persons"] or 0))[:15]
     lines = [
         "# Structural holes: real, or made by resolution?",
@@ -386,6 +591,28 @@ def _report(diag: dict, suspects: list[dict]) -> None:
         "interval between them is the honest statement, and it is printed so a",
         "reader can see its width before treating any particular hole as a",
         "finding.",
+        "",
+        "## Every part of the network, measured the same way",
+        "",
+        "| layer | nodes | components | if admitted | connected pairs | if admitted | exposure |",
+        "|---|---|---|---|---|---|---|",
+    ] + [
+        f"| {L['layer']} | {L['nodes']:,} | {L['components_observed']:,} | "
+        f"{L['components_potential']:,} | {L['connected_pairs_observed']:,} | "
+        f"{L['connected_pairs_potential']:,} | {L['exposure_pct']}% |"
+        for L in (layers or [])
+    ] + [
+        "",
+        "The layers are reported separately on purpose. The",
+        "person-organisation panel is dense and mostly name-resolved, so its",
+        "exposure is close to a pure measurement artefact. The ownership",
+        "layer's is not: that layer admits a dyad only where **both** ends",
+        "resolve to distinct seed organisations, so most of its declined set",
+        "sits out by design rather than by failure, and its interval is wide",
+        "for a reason that is not an error. The kinship layer is sparse",
+        "because a marriage needs two identifiable people. One averaged",
+        "figure across the three would mix an artefact with a design",
+        "decision and mean nothing.",
         "",
         "## Where the suspect holes are",
         "",

@@ -1,0 +1,6 @@
+layer,nodes,components_observed,components_potential,largest_observed,largest_potential,connected_pairs_observed,connected_pairs_potential,pairs_on_the_boundary,exposure_pct,nodes_only_in_potential,comparable,queue_rows,usable_declined_edges,verdict
+person-organisation (all years),7815,4343,4236,2513,2737,3158073,3745875,587802,18.6,75,no: node sets differ,3689,2996,measured
+person-organisation 1957-2010,3865,2597,2572,754,834,284924,348634,63710,22.4,66,no: node sets differ,3689,1163,measured
+person-organisation 2011-2026,7610,4405,4334,2192,2332,2403413,2720016,316603,13.2,49,no: node sets differ,3689,2042,measured
+organisation ownership,8335,1600,1600,4296,4296,9240971,9240971,0,0.0,0,yes,10622,0,UNMEASURABLE: queue has no row with both endpoint ids
+kinship,28,14,14,2,2,14,14,0,0.0,0,yes,8749,0,UNMEASURABLE: queue has no row with both endpoint ids
