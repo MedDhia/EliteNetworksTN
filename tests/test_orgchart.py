@@ -124,6 +124,28 @@ class TestSplitParent:
         assert split_parent("tribunal de première instance de Djerba")[1] is None
         assert split_parent("commune de El Ksar")[1] is None
 
+    def test_a_judicial_post_is_not_a_containment(self):
+        # "Cour d'Appel de Sfax, Conseiller à la Cour de Cassation" is a judge
+        # at Sfax appointed counsellor to the Cassation court. Neither court
+        # contains the other, and read as containment the register makes each
+        # the other's parent.
+        assert split_parent(
+            "Cour d'Appel de Sfax, Conseiller à la Cour de Cassation")[1] is None
+        assert split_parent(
+            "Cour de Cassation, Président de Chambre à la Cour d'Appel de Tunis"
+        )[1] is None
+        assert split_parent(
+            "Tribunal de Première Instance de Tunis, Juge au Tribunal Immobilier"
+        )[1] is None
+
+    def test_a_real_attachment_with_a_comma_still_splits(self):
+        # The guard must not swallow ordinary names that happen to carry a
+        # comma before the separator.
+        _, parent = split_parent(
+            "direction générale des services communs, des affaires "
+            "financières au ministère de l'équipement")
+        assert parent == "ministère de l'équipement"
+
     def test_a_body_is_not_its_own_parent(self):
         assert split_parent("ministère au ministère")[1] is None
 
