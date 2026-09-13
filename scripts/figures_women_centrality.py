@@ -1,0 +1,186 @@
+"""Women in the Tunisian listed-company board network, 2005-2026.
+
+Three panels, in the order the argument has to be made.
+
+**A. Participation is estimable and it rose.** The share of gendered directors
+who are women, per year. One series, so the title names it and no legend box is
+needed.
+
+**B. The brokerage pool did not follow.** Counts of directors holding more than
+one board seat, which are the only people who can have non-zero betweenness.
+This panel exists to show the reader *why* panel A cannot be repeated for
+centrality: the women's bar is 0 to 6 people. Drawing a mean over that as a
+line would hand the reader a shape to interpret that the data does not carry.
+
+**C. Pooled over the whole window, where n supports it.** Two separate
+single-measure panels rather than one with two y-scales.
+
+Colour follows the person, not the rank: women carry the house PERSON hue and
+men the ORG hue, a two-slot categorical pair validated together (CVD dE 23.6
+protan, 26.6 tritan, 27.9 normal vision, all above the floor). "Gender not
+recorded" is deliberately the neutral grey and deliberately fails a categorical
+chroma check - it is absent information, not a third category, and should
+recede.
+
+Run with::
+
+    PYTHONPATH=src python scripts/figures_women_centrality.py
+"""
+
+from __future__ import annotations
+
+import csv
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT / "scripts"))
+
+import numpy as np
+
+from house_style import CAT4, INK, MUTED, RULE, headline, plt, save
+
+from bourse.analysis_women_centrality import FIRST_YEAR, LAST_YEAR, pooled, read_seats
+from bourse.gender import load as load_gender
+
+WOMEN = CAT4[0]      # #A03B2C
+MEN = CAT4[1]        # #1B5FC1
+UNKNOWN = MUTED      # neutral: absent information, not a category
+
+DATA = ROOT / "data" / "processed" / "bourse" / "women_centrality.csv"
+
+
+def read_series() -> list[dict]:
+    with DATA.open(encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
+    for r in rows:
+        for k, v in r.items():
+            if k == "year":
+                r[k] = int(v)
+            elif v == "":
+                r[k] = None
+            else:
+                r[k] = float(v)
+    return rows
+
+
+def panel_participation(ax, rows) -> None:
+    yr = [r["year"] for r in rows]
+    pct = [r["pct_women_of_gendered"] for r in rows]
+    ax.grid(axis="y", linewidth=0.6, alpha=0.7)
+    ax.set_axisbelow(True)
+    ax.plot(yr, pct, color=WOMEN, linewidth=2.0, zorder=3)
+    # Marker area carries the denominator. A share of 19 people and a share of
+    # 130 are not the same claim, and printing the count under every point --
+    # the first attempt -- collided with the baseline and broke the rule
+    # against a number on every mark. Size says it without words; the exact
+    # counts are a column in women_centrality.csv.
+    n = np.array([r["women"] + r["men"] for r in rows], dtype=float)
+    ax.scatter(yr, pct, s=18 + 90 * n / n.max(), color=WOMEN, zorder=4,
+               edgecolor="white", linewidth=0.9)
+    ax.set_ylim(0, max(p for p in pct if p is not None) * 1.35)
+    ax.set_ylabel("% of gendered directors")
+    ax.set_title("A.  Women's share of directors rose — this part is well measured")
+
+    # Direct labels at the ends only: a number on every point is noise.
+    for r in (rows[0], rows[-1]):
+        ax.annotate(f"{r['pct_women_of_gendered']:.0f}%",
+                    (r["year"], r["pct_women_of_gendered"]),
+                    textcoords="offset points", xytext=(0, 11),
+                    ha="center", fontsize=8.5, fontweight="bold", color=WOMEN)
+
+    ax.annotate("marker area = directors whose gender is recorded that year "
+                f"({int(n.min())}–{int(n.max())})",
+                (0.995, 0.06), xycoords="axes fraction", ha="right",
+                fontsize=6.8, color=MUTED)
+
+
+def panel_pool(ax, rows) -> None:
+    yr = np.array([r["year"] for r in rows])
+    w = np.array([r["women_multi_board"] for r in rows])
+    m = np.array([r["men_multi_board"] for r in rows])
+    u = np.array([r["unknown_multi_board"] for r in rows])
+    ax.grid(axis="y", linewidth=0.6, alpha=0.7)
+    ax.set_axisbelow(True)
+    # A 2px surface gap between adjacent bars, so the groups read as groups.
+    width = 0.27
+    ax.bar(yr - width, m, width * 0.92, color=MEN, label="Men", zorder=3)
+    ax.bar(yr, u, width * 0.92, color=UNKNOWN, label="Gender not recorded",
+           zorder=3, alpha=0.55)
+    ax.bar(yr + width, w, width * 0.92, color=WOMEN, label="Women", zorder=3)
+    ax.set_ylabel("directors on >1 board")
+    ax.set_title("B.  But almost no women hold the second seat that brokerage requires")
+    ax.legend(loc="upper left", ncol=3, fontsize=7.6)
+
+    # Label the women's bar every year: these are the numbers the claim rests
+    # on, and they are small enough that every one of them matters.
+    for x, v in zip(yr, w):
+        ax.annotate("0" if v == 0 else f"{v:.0f}", (x + width, v),
+                    textcoords="offset points", xytext=(0, 2.5), ha="center",
+                    fontsize=6.4, color=WOMEN if v else MUTED,
+                    fontweight="bold" if v else "normal")
+
+
+def panel_pooled(ax, pool, key, title, fmt, ylabel) -> None:
+    vals = [pool["women"][key], pool["men"][key]]
+    ax.grid(axis="y", linewidth=0.6, alpha=0.7)
+    ax.set_axisbelow(True)
+    bars = ax.bar(["Women", "Men"], vals, width=0.52, color=[WOMEN, MEN], zorder=3)
+    ax.set_ylim(0, max(vals) * 1.32)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title, fontsize=9)
+    for b, v in zip(bars, vals):
+        ax.annotate(fmt(v), (b.get_x() + b.get_width() / 2, v),
+                    textcoords="offset points", xytext=(0, 4), ha="center",
+                    fontsize=9, fontweight="bold", color=INK)
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels([f"Women\nn={pool['women']['n']}",
+                        f"Men\nn={pool['men']['n']}"], color=INK, fontsize=8.5)
+
+
+def main() -> None:
+    rows = read_series()
+    gender = load_gender()
+    pool = pooled(read_seats(), gender)
+
+    fig = plt.figure(figsize=(7.6, 8.8))
+    gs = fig.add_gridspec(3, 2, height_ratios=[1.05, 1.0, 0.78],
+                          hspace=0.52, wspace=0.30,
+                          top=0.875, bottom=0.125, left=0.093, right=0.975)
+    ax_a = fig.add_subplot(gs[0, :])
+    ax_b = fig.add_subplot(gs[1, :], sharex=ax_a)
+    ax_c1 = fig.add_subplot(gs[2, 0])
+    ax_c2 = fig.add_subplot(gs[2, 1])
+
+    panel_participation(ax_a, rows)
+    panel_pool(ax_b, rows)
+    panel_pooled(ax_c1, pool, "pct_nonzero",
+                 "C.  Share who broker between firms at all",
+                 lambda v: f"{v:.0f}%", "% with betweenness > 0")
+    panel_pooled(ax_c2, pool, "mean",
+                 "D.  Mean betweenness, pooled 2005–2026",
+                 lambda v: f"{v:.4f}", "mean betweenness")
+
+    for ax in (ax_a, ax_b):
+        ax.set_xlim(FIRST_YEAR - 0.8, LAST_YEAR + 0.8)
+        ax.set_xticks(range(FIRST_YEAR, LAST_YEAR + 1, 2))
+
+    headline(
+        fig,
+        "Women entered Tunisian boards. They did not enter the brokerage.",
+        "Directors of BVMT-listed companies, 2005–2026. Gender is read from the "
+        "honorific the filer printed (M./Mme), never guessed from the given name; "
+        "the 27–70% of directors carrying no honorific are counted as unknown, "
+        "never as men.",
+    )
+    save(fig, "fig01_bourse_women_centrality",
+         "Betweenness is computed on the bipartite director–firm graph, where it "
+         "is non-zero only for a director sitting on more than one board. Panel B "
+         "is why no yearly centrality series is drawn: the women's bar is 0–6 "
+         "people and zero in 8 of 22 years. Source: CMF filings, 1,887 documents. "
+         "Code: scripts/figures_women_centrality.py")
+
+
+if __name__ == "__main__":
+    main()

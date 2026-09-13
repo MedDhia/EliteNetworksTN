@@ -57,13 +57,14 @@ BPY := PYTHONPATH=src python3
 .PHONY: bourse bourse-spine bourse-crawl bourse-resolve bourse-fetch \
         bourse-extract bourse-ocr bourse-movements bourse-resolutions \
         bourse-build bourse-export bourse-validate bourse-verify bourse-analysis \
-        bourse-political bourse-centrality bourse-test
+        bourse-political bourse-centrality bourse-gender bourse-women \
+        bourse-figures bourse-test
 
 # bourse-ocr is deliberately out of the default chain: it needs tesseract-ocr
 # with the French model installed, and it takes hours. Run it explicitly.
 bourse: bourse-spine bourse-crawl bourse-resolve bourse-fetch bourse-extract \
         bourse-movements bourse-resolutions bourse-build bourse-export \
-        bourse-validate bourse-political
+        bourse-validate bourse-political bourse-gender bourse-women
 
 bourse-spine:    ## BVMT listed-securities roster (firm identity spine)
 	$(BPY) -m bourse.bvmt
@@ -118,6 +119,15 @@ bourse-analysis: ## do equity and board ties carry the same control relation?
 
 bourse-centrality: ## are politically connected firms more central?
 	$(BPY) -m bourse.analysis_connection_centrality
+
+bourse-gender:   ## read director gender off the honorifics filings printed
+	$(BPY) -m bourse.gender
+
+bourse-women:    ## women's participation and brokerage over time
+	$(BPY) -m bourse.analysis_women_centrality
+
+bourse-figures:  ## draw the bourse figures
+	$(BPY) scripts/figures_women_centrality.py
 
 bourse-test:     ## parser and entity-resolution unit tests
 	$(BPY) tests/test_bourse_extract.py
