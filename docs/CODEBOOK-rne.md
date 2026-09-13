@@ -6,11 +6,36 @@ This dataset compiles registry entries from the Tunisian **Registre National des
 
 ## 1. Scope & Coverage
 
-| Table | File | Rows | Compressed Size | Description |
-|---|---|---|---|---|
-| **Entreprises** | `data/processed/rne/entreprises.csv.gz` | **393,788** | ~12.4 MB | Legal entities (sociétés, SARL, SUARL, SA, associations, public institutions) |
-| **Personnes Physiques** | `data/processed/rne/personnes_physiques.csv.gz` | **615,659** | ~12.3 MB | Natural persons registered as sole proprietors, merchants (commerçants), craftspeople |
-| **Total** | | **1,009,447** | **~24.7 MB** | Complete consolidated business register |
+| Table | File | Rows | **Distinct entities** | Compressed Size | Description |
+|---|---|---|---|---|---|
+| **Entreprises** | `data/processed/rne/entreprises.csv.gz` | 393,788 | **203,788** | ~12.4 MB | Legal entities (sociétés, SARL, SUARL, SA, associations, public institutions) |
+| **Personnes Physiques** | `data/processed/rne/personnes_physiques.csv.gz` | 615,659 | **315,659** | ~12.3 MB | Natural persons registered as sole proprietors, merchants (commerçants), craftspeople |
+| **Total** | | 1,009,447 | **519,447** | **~24.7 MB** | Complete consolidated business register |
+
+> ### Both tables contain duplicate rows. Use the entity column.
+>
+> **The row count is not an entity count.** `entreprises.csv.gz` holds
+> **203,788 companies** across 393,788 rows: 180,000 companies appear more
+> than once, byte-identically on every content column, and the file's own
+> `total` column reads `203788`. `personnes_physiques.csv.gz` is duplicated
+> the same way — 615,659 rows over **315,659 people**.
+>
+> The excess is 190,000 company rows and 300,000 person rows, both suspiciously
+> round, which points at an overlap during the scrape's paging rather than
+> anything in the register itself.
+>
+> De-duplicate on `numRegistre` (companies) or on
+> `(numRegistre, identifiantUnique)` (persons) before counting anything.
+> `elitenet.rne.load_register` does this and reports
+> `duplicate_register_rows`. Two consequences worth knowing:
+>
+> * Every French-name share quoted from the row count was wrong. Corrected:
+>   **169,084 of 203,788 companies (83.0%)** carry a French name, and
+>   **4 of 315,659 people (0.00%)** do — not 7.
+> * A per-row conflict counter double-counts. "Identifier appears on two
+>   register rows with different names" fell from 2,952 to **1,455** once
+>   duplicates were removed: the same genuine conflict was being counted
+>   once per duplicate row.
 
 All files are stored as UTF-8 encoded, compressed `csv.gz` tables readable directly with `pandas.read_csv(...)` or `readr::read_csv(...)`.
 

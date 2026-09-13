@@ -105,6 +105,8 @@ _STAGE_FOR = {"node_key.csv": "tergm", "org_tie_spells.csv": "orgties",
               "org_entities.csv": "orgentity",
               "org_entity_members.csv": "orgentity",
               "person_tie_spells.csv": "personties",
+              "rne_company_forms.csv": "legalform",
+              "rne_company_persons.csv": "legalform",
               "resolution.csv": "resolve"}
 
 
@@ -793,6 +795,98 @@ def check_snowball(rep: Report) -> None:
                 f"reproduce the single-pass build exactly")
 
 
+def check_company_forms(rep: Report) -> None:
+    """Legal form per registered company, and the people attached to them.
+
+    The invariant worth machine-checking here is not a count but a
+    *prohibition*: an undetermined legal form must never be written down as a
+    determined one. Everything in this table asserts SARL, SUARL or SA, so a
+    blank or out-of-vocabulary form is a claim the sources do not support and
+    is an ERROR. The 76% of the register whose form is unknown is reported as
+    a bound, and is absent from the table by construction rather than
+    recorded as "not SARL/SA".
+    """
+    forms = _read(PROCESSED / "rne_company_forms.csv")
+    if not forms:
+        _skip_stage(rep, "company legal forms",
+                    PROCESSED / "rne_company_forms.csv")
+        return
+
+    allowed = {"SARL", "SUARL", "SA"}
+    counts = Counter(r.get("legal_form", "") for r in forms)
+    rep.add("INFO", "company legal forms",
+            f"{len(forms)} register-listed companies with a determined form; "
+            + ", ".join(f"{k}={v}" for k, v in counts.most_common()))
+    rep.add("INFO", "company form basis",
+            ", ".join(f"{k}={v}" for k, v in Counter(
+                r.get("form_basis", "") for r in forms).most_common()))
+
+    bad = [r for r in forms if r.get("legal_form") not in allowed]
+    rep.add("ERROR" if bad else "INFO",
+            "every company in the form table has a determined form",
+            f"{len(bad)} rows whose legal_form is blank or out of vocabulary")
+
+    # A conversion is a claim about order, so it needs a date. Asserting one
+    # without a date would let a reader plot a transformation that has no
+    # position in time.
+    undated = [r for r in forms
+               if r.get("is_conversion") == "1" and not r.get("conversion_date")]
+    conv = sum(1 for r in forms if r.get("is_conversion") == "1")
+    rep.add("ERROR" if undated else "INFO", "every conversion carries a date",
+            f"{conv} companies changed legal form; {len(undated)} without a date")
+
+    # A conversion must not rest on a single filing on either side. This is
+    # the regression guard for the rule that read HANNIBAL LEASE as a SARL on
+    # one filing against 47 of the other form.
+    thin = []
+    for r in forms:
+        if r.get("is_conversion") != "1":
+            continue
+        stated = dict(
+            (p.split(":", 1)[0], int(p.split(":", 1)[1]))
+            for p in (r.get("forms_stated") or "").split("|") if ":" in p)
+        if min(stated.get(r.get("legal_form_first"), 0),
+               stated.get(r.get("legal_form"), 0)) < 2:
+            thin.append(r)
+    rep.add("ERROR" if thin else "INFO",
+            "a conversion is sustained on both sides",
+            f"{len(thin)} conversions where one form has a single filing")
+
+    persons = _read(PROCESSED / "rne_company_persons.csv")
+    if not persons:
+        _skip_stage(rep, "company officers",
+                    PROCESSED / "rne_company_persons.csv")
+        return
+    grades = Counter(r.get("link_grade", "") for r in persons)
+    seed = sum(1 for r in persons if r.get("is_seed_elite") == "1")
+    rep.add("INFO", "company officers",
+            f"{len(persons)} person-company links over "
+            f"{len({r.get('person_key', '') for r in persons})} people; "
+            + ", ".join(f"{k}={v}" for k, v in grades.most_common()))
+    rep.add("INFO", "company officers from the seed roster",
+            f"{seed} of {len(persons)} links reach a seed elite "
+            f"({100 * seed / max(len(persons), 1):.1f}%); the rest are named "
+            "in print but outside the 13,630-name roster")
+
+    # Closed world: every person link must be to a company the form table
+    # admits. A link to a company that is not in scope would mean the two
+    # tables disagree about what the population is.
+    known = {r.get("company_key", "") for r in forms}
+    dangling = [r for r in persons if r.get("company_key", "") not in known]
+    rep.add("ERROR" if dangling else "INFO",
+            "every officer link is to a company in the form table",
+            f"{len(dangling)} links whose company is not in scope")
+
+    # A seed-elite flag and a gazette_only grade are contradictory: the flag
+    # is what tells an analyst the link can be joined to the seed roster.
+    mismatch = [r for r in persons
+                if (r.get("link_grade") == "gazette_only")
+                == (r.get("is_seed_elite") == "1")]
+    rep.add("ERROR" if mismatch else "INFO",
+            "a gazette-only officer is not flagged as a seed elite",
+            f"{len(mismatch)} links whose grade and seed flag disagree")
+
+
 def check_tergm_panel(rep: Report) -> None:
     """The invariants R/build_tergm_panel.R relies on, at ERROR level.
 
@@ -906,6 +1000,7 @@ def run(fail_on_error: bool = False) -> int:
     check_org_attrs(rep)
     check_person_ties(rep)
     check_snowball(rep)
+    check_company_forms(rep)
     check_tergm_panel(rep)
 
     DOCS.mkdir(parents=True, exist_ok=True)

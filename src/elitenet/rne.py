@@ -8,7 +8,7 @@ pipeline, and it is worth being precise about what it can and cannot do here.
 What it does
 ------------
 
-It names firms. 325,619 of 393,788 register entries carry a French
+It names firms. 169,084 of 203,788 companies carry a French
 denomination, and 76.4% of the matricule values this pipeline scraped out of
 the gazette are present in the register. So for a large share of JORT filings
 the firm's *official* name is now knowable even where the printed name was
@@ -24,8 +24,8 @@ by way of the companies they appear in, not by naming them.
 What it cannot do
 -----------------
 
-**It cannot name individuals directly.** The 615,659 `personnes physiques` are
-Arabic-only: **7** of them carry a French name. This pipeline is entirely
+**It cannot name individuals directly.** The 315,659 `personnes physiques` are
+Arabic-only: **4** of them carry a French name. This pipeline is entirely
 French-side, so matching that table against the seed roster would require
 cross-script transliteration of hundreds of thousands of names -- exactly the
 fuzzy matching that produced the merge hubs, at ten times the scale and with
@@ -89,6 +89,19 @@ def _read(name: str) -> list[dict]:
     return []
 
 
+def _iter(name: str):
+    """Stream a table rather than load it. events.csv is 781,233 rows."""
+    path = PROCESSED / name
+    if path.exists():
+        with path.open(encoding="utf-8", newline="") as fh:
+            yield from csv.DictReader(fh)
+        return
+    gz = PROCESSED / (name + ".gz")
+    if gz.exists():
+        with gzip.open(gz, "rt", encoding="utf-8", newline="") as fh:
+            yield from csv.DictReader(fh)
+
+
 def _write(name: str, rows: list[dict], fields: list[str]) -> None:
     path = PROCESSED / name
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -113,24 +126,42 @@ def load_register() -> tuple[dict[str, dict], dict[str, dict], dict]:
     by_rc: dict[str, dict] = {}
     conflict_mf: set[str] = set()
     conflict_rc: set[str] = set()
+    # The register file carries duplicate rows: 393,788 rows cover 203,788
+    # companies, 180,000 of them repeated byte-identically on every content
+    # column, and the file's own `total` column reads 203788. So a row count
+    # is not a company count, and reporting one as the other overstates the
+    # register by 93%. De-duplicated on numRegistre, the register's own key.
+    seen_rows: set[str] = set()
 
     for row in _read_gz(RNE / "entreprises.csv.gz"):
         diag["register_rows"] += 1
+        row_key = (row.get("registres.numRegistre") or "").strip()
+        if row_key:
+            if row_key in seen_rows:
+                diag["duplicate_register_rows"] += 1
+                continue
+            seen_rows.add(row_key)
+        diag["register_companies"] += 1
         fr = ((row.get("registres.denominationFr") or "").strip()
               or (row.get("registres.nomCommercialFr") or "").strip()
               or (row.get("registres.nomAssociationFr") or "").strip())
         ar = ((row.get("registres.denominationAr") or "").strip()
               or (row.get("registres.nomCommercialAr") or "").strip()
               or (row.get("registres.nomAssociationAr") or "").strip())
+        mf = normalise_mf((row.get("registres.identifiantUnique") or "").strip())
+        rc = normalise_rc((row.get("registres.numRegistre") or "").strip())
         rec = {
             "rne_name_fr": fr, "rne_name_ar": ar,
             "rne_category": (row.get("registres.categorie") or "").strip(),
             "rne_year_creation": (row.get("year.creation") or "").strip(),
+            # Both of the row's own identifiers, so a caller can tell that a
+            # matricule and an RC number are the *same company*. 99.0% of
+            # register rows carry both, and keying a company on one identifier
+            # at a time counts such a company twice.
+            "rne_matricule": mf, "rne_num_registre": rc,
         }
         if fr:
             diag["with_french_name"] += 1
-        mf = normalise_mf((row.get("registres.identifiantUnique") or "").strip())
-        rc = normalise_rc((row.get("registres.numRegistre") or "").strip())
         for key, store, conflicts in ((mf, by_mf, conflict_mf),
                                       (rc, by_rc, conflict_rc)):
             if not key:
@@ -156,15 +187,27 @@ def load_register() -> tuple[dict[str, dict], dict[str, dict], dict]:
 def person_register_summary() -> dict:
     """What the natural-person table holds, and why it is not matched.
 
-    Reported rather than used. 615,659 rows and 7 French names: matching this
+    Reported rather than used. 315,659 people and 4 French names: matching this
     against a French seed roster means transliterating Arabic names at scale,
     with no identifier on the person side to discipline the result. That is
     the merge-hub failure mode with the safeguards removed, so the honest
     output is the count and the reason.
     """
     diag: Counter = Counter()
+    # Duplicated the same way the company table is: 615,659 rows cover
+    # 315,659 people. The French-name count is what decides whether this
+    # table can be matched at all, so it has to be a person count.
+    seen: set[tuple[str, str]] = set()
     for row in _read_gz(RNE / "personnes_physiques.csv.gz"):
         diag["person_rows"] += 1
+        key = ((row.get("numRegistre") or "").strip(),
+               (row.get("identifiantUnique") or "").strip())
+        if any(key):
+            if key in seen:
+                diag["duplicate_person_rows"] += 1
+                continue
+            seen.add(key)
+        diag["persons"] += 1
         if ((row.get("nomFr") or "").strip() or (row.get("prenomFr") or "").strip()):
             diag["with_french_name"] += 1
         if (row.get("nomAr") or "").strip() or (row.get("prenomAr") or "").strip():
@@ -187,14 +230,42 @@ def link_identifiers(by_mf: dict[str, dict], by_rc: dict[str, dict],
     diag: Counter = Counter()
     jort: dict[tuple[str, str], set[str]] = defaultdict(set)
     labels: dict[tuple[str, str], set[str]] = defaultdict(set)
-    for r in _read("org_identifiers.csv"):
-        v = (r.get("value_normalised") or "").strip()
-        if not v:
-            continue
-        key = (r.get("id_type", ""), v)
-        jort[key].add(r.get("org_id", ""))
-        if r.get("org_label"):
-            labels[key].add(r["org_label"])
+    # Read from `events.csv`, not `org_identifiers.csv`.
+    #
+    # This used to read the latter, which `orgattrs` writes -- and `orgattrs`
+    # runs *after* `resolve`, which consumes this stage's output. That is a
+    # cycle, and on a clean clone its consequence is not a one-build lag but
+    # a silent absence: `rne` would find no input, write no links, and the
+    # register tier would simply not exist on a first build while every
+    # committed table still showed it working.
+    #
+    # `events.csv` comes from `extract`, which runs before this stage, so the
+    # dependency now runs one way. It is also the wider source: every
+    # identifier the gazette printed, rather than only those on mentions that
+    # resolution had already matched to an organisation.
+    # `extract` already normalised these columns, and `normalise_mf` is NOT
+    # idempotent: it strips leading zeros and requires a minimum input
+    # length, so normalising an already-normalised value maps 2,524 of them
+    # to "". Re-normalising here broke 1,467 register matches that a register
+    # value of `0017174J` and a gazette value of `17174J` make correctly.
+    # The column is the canonical form; use it as it stands.
+    for r in _iter("events.csv"):
+        for col, id_type in (("org_mf", "matricule_fiscal"),
+                             ("org_rc", "registre_commerce")):
+            v = (r.get(col) or "").strip()
+            if not v:
+                continue
+            key = (id_type, v)
+            # Register the identifier whether or not the event carries a
+            # label. An identifier printed on an event whose org_mention the
+            # extractor could not read is still an identifier the gazette
+            # printed; requiring a label first silently dropped 2,132 of them.
+            seen_labels = jort[key]
+            mention = (r.get("org_mention") or "").strip()
+            if mention:
+                seen_labels.add(mention)
+                if len(labels[key]) < 3:
+                    labels[key].add(mention)
 
     cache: dict[str, object] = {}
 
@@ -281,25 +352,27 @@ def run() -> dict:
     named = sum(1 for r in links if r["is_identity"])
     diag = {**d_reg, **d_link,
             "person_rows": d_person.get("person_rows", 0),
+            "persons": d_person.get("persons", 0),
             "person_rows_with_french_name": d_person.get("with_french_name", 0),
             "org_links_written": len(links),
             "seed_orgs_named_by_register": len(
                 {r["seed_org_id"] for r in links if r["seed_org_id"]}),
             "identity_grade_links": named}
     print("national business register as an identity spine")
-    for k in ("register_rows", "with_french_name", "identifiers_matricule",
+    for k in ("register_rows", "duplicate_register_rows", "register_companies",
+              "with_french_name", "identifiers_matricule",
               "identifiers_rc", "identifier_conflicts_inside_register",
               "jort_identifier_values", "in_register", "not_in_register",
               "register_entry_has_no_french_name",
               "register_name_identifies_a_seed_org",
               "register_name_matches_no_seed_org",
               "identity_grade_links", "seed_orgs_named_by_register",
-              "person_rows", "person_rows_with_french_name"):
+              "person_rows", "persons", "person_rows_with_french_name"):
         if k in diag:
             print(f"  {k:<38} {diag[k]:>10,}")
     print("  -- the natural-person table is loaded and NOT matched: "
           f"{diag.get('person_rows_with_french_name', 0)} of "
-          f"{diag.get('person_rows', 0)} rows carry a French name, and "
+          f"{diag.get('persons', 0)} people carry a French name, and "
           "transliterating the rest would be the merge-hub failure mode "
           "without its safeguards")
     return diag

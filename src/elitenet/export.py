@@ -71,6 +71,8 @@ TABLES = {
     "org_entity_members": PROCESSED / "org_entity_members.csv",
     "org_identifiers": PROCESSED / "org_identifiers.csv",
     "org_addresses": PROCESSED / "org_addresses.csv",
+    "rne_company_forms": PROCESSED / "rne_company_forms.csv",
+    "rne_company_persons": PROCESSED / "rne_company_persons.csv",
 }
 
 VIEWS = {
@@ -405,7 +407,10 @@ GZIP_TABLES = ["events.csv", "blocks_index.csv", "resolution.csv",
                "org_ties_review_queue.csv", "person_ties_review_queue.csv",
                # 39 MB, 15 MB and 27 MB respectively at full corpus size.
                "org_entities.csv", "org_entity_keys.csv",
-               "org_entity_members.csv"]
+               "org_entity_members.csv",
+               # 96,002 companies and 113,400 officer links, the latter
+               # carrying an evidence quote per row.
+               "rne_company_forms.csv", "rne_company_persons.csv"]
 
 
 def gzip_large_tables() -> dict:

@@ -359,7 +359,8 @@ name being unique corpus-wide and cannot propagate; a snowball can.
 
 The Registre National des Entreprises publishes what the gazette does not: the
 matricule fiscal and the RC number as **primary keys**, each with the firm's
-registered name beside it. 393,788 entity rows, 82.7% carrying a French name.
+registered name beside it. **203,788 companies** (from 393,788 rows -- see
+below), 83.0% carrying a French name.
 
 The gazette already prints these numbers; what it does not give is an
 authority on which firm a number belongs to. Until now that authority was
@@ -416,8 +417,8 @@ previously papered over. A refusal here is a merge hub not built.
 
 ### The person table is deliberately not matched
 
-The register's natural-person table has **615,659 rows and 7 French names
-(0.0%)**. It is Arabic-only. Transliterating 615,659 Arabic names against a
+The register's natural-person table has **315,659 people and 4 French names
+(0.00%)**. It is Arabic-only. Transliterating 315,659 Arabic names against a
 French seed roster, with no identifier on the person side to check the result
 against, is precisely the merge-hub failure mode with its one safeguard
 removed. `rne.person_register_summary` therefore **counts and reports**; it
