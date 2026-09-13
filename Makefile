@@ -56,13 +56,14 @@ BPY := PYTHONPATH=src python3
 
 .PHONY: bourse bourse-spine bourse-crawl bourse-resolve bourse-fetch \
         bourse-extract bourse-ocr bourse-movements bourse-resolutions \
-        bourse-build bourse-export bourse-validate bourse-verify bourse-test
+        bourse-build bourse-export bourse-validate bourse-verify bourse-analysis \
+        bourse-political bourse-centrality bourse-test
 
 # bourse-ocr is deliberately out of the default chain: it needs tesseract-ocr
 # with the French model installed, and it takes hours. Run it explicitly.
 bourse: bourse-spine bourse-crawl bourse-resolve bourse-fetch bourse-extract \
         bourse-movements bourse-resolutions bourse-build bourse-export \
-        bourse-validate
+        bourse-validate bourse-political
 
 bourse-spine:    ## BVMT listed-securities roster (firm identity spine)
 	$(BPY) -m bourse.bvmt
@@ -108,6 +109,15 @@ bourse-validate: ## integrity checks -> validation_report.md
 
 bourse-verify:   ## re-read the filings and check every record against the page it cites
 	$(BPY) -m bourse.verify_source
+
+bourse-political: ## code political connections -> firm-year panel + evidence
+	$(BPY) -m bourse.political_connections
+
+bourse-analysis: ## do equity and board ties carry the same control relation?
+	$(BPY) -m bourse.analysis_control_channels
+
+bourse-centrality: ## are politically connected firms more central?
+	$(BPY) -m bourse.analysis_connection_centrality
 
 bourse-test:     ## parser and entity-resolution unit tests
 	$(BPY) tests/test_bourse_extract.py
