@@ -448,13 +448,19 @@ def check_org_attrs(rep: Report) -> None:
     for r in ids:
         if r["is_conflicting"] == "1":
             per_org[(r["org_id"], r["org_label"], r["id_type"])] += 1
+    # Counted two ways on purpose. `per_org` is keyed on (node, identifier
+    # kind), so a node holding both a bad matricule and a bad RC number
+    # appears twice -- reporting that total as a count of NODES overstated it
+    # by a third, 383 against 288.
     severe = [(k, n) for k, n in per_org.items() if n >= 10]
+    severe_nodes = {k[0] for k, _n in severe}
     if per_org:
         worst = max(per_org.items(), key=lambda kv: kv[1])
         rep.add("WARN" if severe else "INFO", "organisation merge hubs",
-                f"{len(severe)} nodes carry 10 or more values of one hard "
-                f"identifier and are near-certainly several firms merged into "
-                f"one; worst is {worst[0][1] or worst[0][0]} with "
+                f"{len(severe_nodes)} organisations ({len(severe)} "
+                f"organisation-identifier pairs) hold 10 or more values of a "
+                f"single hard identifier and are near-certainly several firms "
+                f"merged into one; worst is {worst[0][1] or worst[0][0]} with "
                 f"{worst[1]} distinct {worst[0][2].replace('_', ' ')} values. "
                 f"Exclude these before computing organisation-level structure "
                 f"— `org_identifiers.csv` carries `n_values_for_org`, and "

@@ -334,9 +334,17 @@ def write_conflict_doc(cons: list[dict], diag: dict) -> None:
         tot = diag.get(f"orgs_with_{id_type}", 0)
         share = f"{n / tot:.0%}" if tot else "—"
         lines.append(f"| {id_type} | {n} of {tot} carrying one ({share}) |")
+    # Conflicts are counted per (organisation, identifier kind), so a node
+    # holding both a bad matricule and a bad RC number is two conflicts and
+    # one organisation. Both totals are stated, because reporting the pair
+    # count as a node count overstates the affected population by a third.
+    n_nodes = len({c["org_id"] for c in cons})
     lines += ["",
-              f"Of {len(cons)} conflicts, **{len(merges)} read as merges** and "
-              f"{len(ocr)} as OCR damage.", ""]
+              f"Of {len(cons)} conflicts over **{n_nodes} organisations**, "
+              f"**{len(merges)} read as merges** and {len(ocr)} as OCR "
+              f"damage. A conflict is one (organisation, identifier kind) "
+              f"pair, so a node with a bad matricule *and* a bad RC number "
+              f"counts twice here and once in that organisation total.", ""]
     if worst:
         w = worst[0]
         lines += [

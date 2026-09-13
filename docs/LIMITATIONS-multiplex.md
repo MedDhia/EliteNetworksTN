@@ -155,35 +155,104 @@ number in a paper.
 controlled vocabulary the verbatim form is kept and the event flagged
 `needs_review`, rather than being forced into the nearest category.
 
-**The dominant organisation-resolution failure is the generic-name merge, and
-it is large.** 383 organisation nodes carry ten or more values of a single hard
-identifier; the worst, `LA CONSULTING`, carries **1,606 distinct matricules
-fiscaux** over 3,739 observations. These are not fuzzy-match noise. They are
-short, generic name fragments — `SOCIETE GENERALE` (647 values), `BATIMENT +`
-(635), `SA CONFECTION` (532) — that every firm beginning with those words has
-resolved onto. Such a node does not degrade a variable; it **fabricates a hub**,
-and any degree, centrality or closure statistic computed over it is
-meaningless. `exports/tergm/node_key.csv` carries `merge_suspect` and
-`org_identifiers.csv` carries `n_values_for_org`: treat those as a blocklist
-and exclude or split the nodes before using organisation-level structure.
-Of 4,248 identifier conflicts, 3,638 read as merges and only 610 as OCR
-damage — so this is the rule in the conflicting set, not the exception.
+**The generic-name merge was a matcher defect, and the cause has been found
+and fixed.** The symptom was large. 383 organisation nodes carried ten or more
+values of a single hard identifier; the worst, `LA CONSULTING`, carried **1,606
+distinct matricules fiscaux** over 3,739 observations, and short generic
+fragments — `SOCIETE GENERALE` (647 values), `BATIMENT +` (635), `SA
+CONFECTION` (532) — collected every firm whose name began with those words.
+Such a node does not degrade a variable; it **fabricates a hub**, and any
+degree, centrality or closure statistic computed over it is meaningless. Of
+4,248 identifier conflicts measured on that view, 3,638 read as merges and only
+610 as OCR damage.
 
-**Organisation resolution is the weaker half, and it now has an independent
+The cause was not a property of the sources or of the seed sheet. Two ordinary
+decisions compounded. `resolve.best_org_match` scored its fuzzy tier with
+`fuzz.token_set_ratio`, which treats **containment** as identity: it returns
+about 1.0 whenever the seed label's token set is a subset of the mention's,
+however much else the mention says —
+`token_set_ratio("comptoir tunisien de batiment", "batiment") == 1.000`. And
+`seed.py` mints an organisation id from the label with legal-form words
+stripped, so a seed firm called "SOCIETE TROIS" became `CO_TROIS` with
+`label_normalised = "TROIS"` — the French for three, at seed degree 1. It then
+absorbed every mention containing that word, including the address `Route de
+Sidi Mansour km 6 Sfax` and the clause fragment `pour une periode limitee de
+trois ans`, and ended as the highest-degree organisation in the org–org layer
+at 1,003 tie endpoints.
+
+**The fix removes no data.** It has two parts, both set out in
+`docs/ORG-IDENTITY-multiplex.md`. First, a token-specificity gate: a fuzzy
+match must rest on at least one token with low document frequency in the
+corpus. Over the 199,608 distinct organisation mentions, CONSULTING appears in
+4,738 and SFBT in 3. Token count is not the signal — most single-token seed
+labels are proper names (SFBT, TUNISAIR, CONECT) where containment matching is
+exactly right — so the gate is on document frequency, configured in
+`config/scope.yaml` as `org_identity.discriminating_df_share`. That threshold
+is a judgement, not a boundary found in the data: the narrowest observed gap is
+TROIS at 143 against TUNISAIR at 22, about 6x. Second, a new organisation
+**entity** layer (`make orgentity`, `data/processed/org_entities.csv`) keyed
+matricule fiscal → RC number → normalised mention. The matricule both splits
+hubs and joins spelling variants: 19,795 matricules cover more than one
+spelling, folding 52,683 spellings into single firms, so the entity key raises
+coverage rather than lowering it. Nothing was dropped — the seed link and the
+basis that produced it are retained on every entity, so the previous view is
+exactly reproducible, and a validator ERROR check asserts that every
+organisation mention in `events.csv` reaches an entity. Organisation nodes
+still carrying ten or more values of a single hard identifier after the
+rebuild: TODO(rebuild).
+
+**The two layers were affected very unevenly, and the person side is largely
+unaffected.** Only 258 of 10,844 resolved person–organisation dyads (2.4%) were
+anchored on a hub, because person resolution is dyad-anchored: a person is
+resolved only where the organisation agrees, so a generic organisation match
+rarely carried a person match with it. The org–org layer was the casualty, at
+2,034 of 3,104 observations (65.5%), because `orgties.py` has no dyad to anchor
+an endpoint and resolves each one on its own. So the bipartite panel was little
+distorted by the defect and is little changed by the fix; the org–org layer is
+where the difference lies. Resolved org–org observations after the rebuild:
+TODO(rebuild).
+
+**Name-keyed entities split one firm across spellings, which is the residual
+organisation-identity error.** It is the mirror image of the merge. Only about
+a third of events carry a matricule and a sixth an RC number, so most entities
+are keyed on the mention, and two spellings of one identifier-less firm stay
+separate. Where the merge **overstated** degree, this **understates** it. Treat
+organisation degree and centrality as a lower bound over the name-keyed
+population, and check whether a result depends on entities with no hard
+identifier. Three further residuals stand alongside it. 1.6% of mentions carry
+more than one hard identifier — the worst, `Societe de Promotion Immobiliere`,
+carries 78 — and an identifier-less event on such a mention is retained as an
+`ambiguous_mention` entity that identifies nothing, so those rows must be
+excluded from anything asserting that two observations are the same firm.
+Seed-sheet collisions persist: distinct seed firms whose labels normalise
+identically still share a node id under `seed.py`, with the losers in
+`alt_names`, wherever no hard identifier separates them. And the specificity
+gate could itself cost legitimate matches; a test asserts that
+`"Société SFBT Tunisie"` still matches seed `SFBT`, but the net effect on
+resolved dyads is a measured quantity, not an assumption: TODO(rebuild).
+
+**Organisation resolution remains the weaker half, and it has an independent
 check.** A matricule fiscal and a registre-de-commerce number are hard
 identifiers: a firm has one of each. So an organisation node carrying two
 values of one of them is a defect, and `make orgattrs` reports those into
 `docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md`, ordered by how far apart the
 values are — a one-character difference is OCR damage, a wholly different
 number is a **resolution merge**, and every tie on a merged node is suspect.
-This is the only signal in the pipeline that can see a merge: a merge
-otherwise looks exactly like a well-corroborated match, because both names
-really do appear beside the same kind of clause. It is the counterpart to the
-merged-homonym warning on the person side, and it is reported rather than
-fixed, because some conflicts are genuine re-registrations.
+This is the signal that exposed the hubs, and it is what the entity key is
+audited against, so it is still the check to read before using
+organisation-level structure: a merge otherwise looks exactly like a
+well-corroborated match, because both names really do appear beside the same
+kind of clause. Conflicts are reported rather than resolved, because some are
+genuine re-registrations. `exports/tergm/node_key.csv` still carries
+`merge_suspect` and `org_identifiers.csv` still carries `n_values_for_org`;
+they are now diagnostics on the entity layer rather than a blocklist standing
+in for a fix. This is the counterpart to the merged-homonym warning on the
+person side.
 
 Firm names are matched on normalised forms, acronyms and token-blocked fuzzy
-comparison, and both hard identifiers are used where present — with the
+comparison — the fuzzy tier now conditional on a discriminating token, with a
+refused match recorded as `generic_fuzzy` and kept inspectable rather than
+discarded — and both hard identifiers are used where present, with the
 deliberate exception that where the two disagree, neither is trusted, since
 that disagreement is the merge signal itself. `SICAR`, `SICAF`, `SICAV`, `HOLDING` and `GROUPE`
 are deliberately *not* stripped as generic suffixes, because in Tunisian

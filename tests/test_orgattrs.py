@@ -282,3 +282,17 @@ def test_merges_are_ordered_before_ocr_and_worst_merge_first():
     cons = conflicts(rows)
     assert [c["org_id"] for c in cons] == ["CO_HUB", "CO_SMALL", "CO_OK"]
     assert cons[-1]["likely"] == "ocr"
+
+
+def test_conflicts_are_counted_per_identifier_kind_not_per_organisation():
+    """One organisation with a bad matricule AND a bad RC number is two
+    conflicts and one organisation. Reporting the pair count as a node count
+    overstated the affected population by a third -- 383 against 288."""
+    m2o, labels = mention_to_org([res("ALPHA", "CO_ALPHA", "ALPHA SA")])
+    rows, _d = identifiers([
+        ev("ALPHA", org_mf="1518656S"), ev("ALPHA", org_mf="7240001W"),
+        ev("ALPHA", org_rc="B133371997"), ev("ALPHA", org_rc="B999991999"),
+    ], m2o, labels)
+    cons = conflicts(rows)
+    assert len(cons) == 2, "two identifier kinds, so two conflicts"
+    assert len({c["org_id"] for c in cons}) == 1, "but one organisation"
