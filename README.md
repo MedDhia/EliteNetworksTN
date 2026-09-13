@@ -359,8 +359,10 @@ college (8), the newspaper *al-Hadira* (7), the Khaldouniyya and the Young
 Tunisians (6 each).
 
 **Read [`docs/LIMITATIONS-aalam-tunisiyun.md`](docs/LIMITATIONS-aalam-tunisiyun.md)
-before using any of it.** In particular: there is **no gold-standard score**, so
-every count is a lower bound of unknown tightness; 709 of the 873 ties carry no
+before using any of it.** In particular: there is **no gold-standard score yet**
+— the sample is drawn and waiting to be coded (206 ties and 60 passages in
+`gold/`, seeded so it reproduces), so every count is a lower bound of unknown
+tightness; 709 of the 873 ties carry no
 date, because a biography states that a relation existed far more often than it
 says when; and 866 of 873 ties come from the model pass rather than the rule
 table, for the reason given below.
@@ -397,11 +399,20 @@ fails the build if one survives. The class was found by reading twelve rows at
 random, which is the honest measure of how much else may be there.
 
 ```bash
-make aalam-fetch     # download the scan, verified against a pinned sha256
-make aalam-ingest    # OCR 384 pages at native resolution (~6 min)
-make aalam           # segment -> extract -> model -> relations -> codebook -> validate
+make aalam-fetch       # download the scan, verified against a pinned sha256
+make aalam-ingest      # OCR 384 pages at native resolution (~6 min)
+make aalam             # segment -> extract -> model -> relations -> codebook -> validate
+make aalam-gold-draw   # seeded stratified sample -> coding sheets in gold/
+make aalam-gold-score  # coded sheets -> precision/recall with Wilson intervals
 make aalam-test
 ```
+
+The gold pass is two sheets because precision and recall are not answerable
+from the same unit. Precision is judged per tie, stratified by layer and by
+extractor so the rule pass and the model pass are scored apart. Recall is
+judged per passage: a tie the extractor never found is not in the table to be
+sampled, so a coder reads paragraphs of the book and counts what they state
+against what came back.
 
 Code is `src/aalam/`, outputs are `data/processed/aalam-tunisiyun/`. See
 [`docs/CODEBOOK-aalam-tunisiyun.md`](docs/CODEBOOK-aalam-tunisiyun.md) for

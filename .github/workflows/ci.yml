@@ -153,11 +153,21 @@ jobs:
       - name: Install dependencies
         run: pip install -e ".[dev]" -r requirements.txt
       - name: Tests
-        run: PYTHONPATH=src python -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py -q
+        run: PYTHONPATH=src python -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py tests/test_gold_aalam.py -q
       - name: Rebuild the dataset
         run: make aalam-segment aalam-extract aalam-model aalam-relations
       - name: Validate
         run: make aalam-validate
+      - name: The gold sample is still the one that was drawn
+        run: |
+          make aalam-gold-draw
+          if ! git diff --exit-code -- gold/aalam_sample_edges.csv gold/aalam_sample_passages.csv; then
+            echo "::error::Redrawing the gold sample produced a different sample."
+            echo "The draw is seeded so a reviewer can check it was not chosen"
+            echo "after seeing the results; if the corpus changed, redraw and"
+            echo "recode deliberately rather than letting it drift."
+            exit 1
+          fi
       - name: Committed tables match the rebuild
         run: |
           if ! git diff --exit-code -- data/processed/aalam-tunisiyun/; then

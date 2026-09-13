@@ -121,7 +121,8 @@ bourse-test:     ## parser and entity-resolution unit tests
 APY := PYTHONPATH=src python3
 
 .PHONY: aalam aalam-fetch aalam-ingest aalam-segment aalam-extract aalam-model \
-        aalam-relations aalam-codebook aalam-validate aalam-test
+        aalam-relations aalam-codebook aalam-validate aalam-gold-draw \
+        aalam-gold-score aalam-test
 
 aalam: aalam-segment aalam-extract aalam-model aalam-relations aalam-codebook aalam-validate
 
@@ -141,5 +142,9 @@ aalam-codebook:   ## regenerate the codebook from the data and config
 	$(APY) -m aalam.codebook
 aalam-validate:   ## consistency, coverage and the verbatim-quote guard
 	$(APY) -m aalam.validate --strict
+aalam-gold-draw:  ## stratified, seeded sample -> coding sheets in gold/
+	$(APY) -m aalam.gold draw
+aalam-gold-score: ## coded sheets -> precision/recall with Wilson intervals
+	$(APY) -m aalam.gold score
 aalam-test:       ## parser and normalisation tests
-	$(APY) -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py -q
+	$(APY) -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py tests/test_gold_aalam.py -q

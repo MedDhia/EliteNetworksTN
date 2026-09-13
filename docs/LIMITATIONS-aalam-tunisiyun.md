@@ -6,10 +6,18 @@ tables themselves.
 
 ## 1. Precision and recall are not measured
 
-There is **no gold-standard score for this build**. All 38 entries have now
-been read and the tables carry 873 ties, but nobody has drawn a stratified
-sample and coded it against the printed pages, so there is no precision
-figure and no recall figure.
+There is **no gold-standard score for this build**. All 38 entries have been
+read and the tables carry 873 ties, but nobody has coded a sample against the
+printed pages, so there is no precision figure and no recall figure.
+
+The sample is drawn and waiting: **206 ties and 60 passages** in `gold/`,
+seeded at `20260913` so redrawing reproduces them exactly. Ties are stratified
+by layer x extractor, with all seven rule-pass ties taken whole, so the rule
+and model passes can be scored apart. Passages are stratified by cohort and
+scored separately because recall cannot be judged from the ties we found — a
+tie never extracted is not in the table to sample. `python -m aalam.gold score`
+turns coded sheets into precision and recall with Wilson intervals; run against
+the blank sheets it reports the absence rather than a number.
 
 What exists instead is weaker and should not be mistaken for it: every row
 quotes its entry verbatim (§4), the seven rule-pass ties were checked by hand
