@@ -344,8 +344,95 @@ returns in seconds.
 The edge and node lists are written alongside the figure so the graph can
 be re-drawn in Gephi, igraph or networkx without re-running the filter.
 
+## Two centres, not one — `fig13`
+
+`python scripts/figure_core_periphery.py` →
+`figures/fig13_core_periphery.{png,pdf}` and
+`data/processed/multiplex/elite_graph_centrality.csv`
+
+The same six-category graph as `fig12`, restricted to its largest connected
+component (**23,274 entities, 31,457 ties**), with two changes: node area is
+proportional to **betweenness** rather than degree, and the layout *states*
+the core-periphery structure rather than leaving it to a force algorithm —
+radius is coreness (equal-width rings), angle is Louvain community (107
+communities, modularity 0.899).
+
+Putting brokerage on a radius set by cohesion lets the two disagree, and
+they do. **The largest nodes are not in the centre.**
+
+| ring | nodes | peak betweenness | ring median | composition |
+|---|---|---|---|---|
+| k=1 | 16,254 | 1.3M | 0 | 66% company |
+| k=2 | 4,567 | 3.0M | 28,615 | 50% company |
+| k=3 | 1,389 | 6.5M | 75,917 | 52% company |
+| k=4 | 737 | 30.8M | 183,458 | 56% company |
+| **k=5** | **256** | **37.4M** | **330,025** | **68% company** |
+| k=6 | 63 | 2.9M | 148,969 | 49% company, **0% state** |
+| k=7 | 8 | 4.3M | 55,926 | **100% individual** |
+
+Betweenness climbs to a ridge at **k=5** and then collapses ninefold in the
+two rings inside it. Not one of the thirty largest brokers sits at k≥6 — they
+are all at k=3–5 — and the best-brokering member of the k=7 core ranks only
+41st. So the network has two centres, and they are different entities:
+
+* the **k=5 brokerage ridge** — the banks (BIAT, STB, BNA, Amen, UBCI), the
+  SICAR investment vehicles and État Tunisien. These are the bridges.
+* the **k≥6 cohesive nucleus** — 71 nodes of private business family, with
+  **no state body, no party and no association at all**, and eight people
+  and nothing else at k=7.
+
+The mechanism is density. Inside the nucleus the surname blocks are
+near-complete cliques, and inside a clique every path has an alternative, so
+no member lies on a unique shortest path. Cohesion and brokerage are not the
+same property, and here they are held by different entities. This is the same
+inversion `fig11` found at decision rank, reached independently: the state's
+apparent dominance is a feature of the *periphery's* wiring, not the core's.
+
+### Surname blocks are reported one by one, because pooling would lie
+
+A shared surname is **not** evidence of a family, so each block in the
+nucleus is scored on the share of possible person-person pairs that carry an
+actual tie:
+
+| block | members | pairs tied | one connected block? |
+|---|---|---|---|
+| Ben Yedder | 6 | 15 / 15 | 6 / 6 |
+| Driss | 5 | 10 / 10 | 5 / 5 |
+| Abdelkefi | 8 | 27 / 28 | 8 / 8 |
+| Elloumi | 9 | 28 / 36 | 8 / 9 |
+| Bouchamaoui | 5 | 3 / 10 | 4 / 5 |
+| **Slama** | 5 | **0 / 10** | **1 / 5** |
+
+Four are kinship cliques. **Slama is not**: its five members share a surname
+and nothing else — no extracted kinship tie between any pair, and they do not
+form one connected block. They reach k≥6 through shared company boards
+(Slama Huiles, Slama Frères, Nejma Huiles are all in the nucleus). Pooling
+the blocks into one "family nucleus" bar would have published that as
+kinship. The figure names the exception instead.
+
+This is the same discipline that killed an earlier "top brokers" bar chart
+for `fig10`: 100% of the top five were named *Mohamed* against a 46% base
+rate, which would have made a homonym artefact the headline.
+
+### Two rendering decisions worth recording
+
+* **Rings are equal width, not area-proportional to population.** Sizing each
+  annulus to its population was tried first and collapses the 8-node k=7 core
+  to 2% of the radius, which defeats the purpose of the figure.
+* **Area is ∝ √betweenness above a visible floor.** Betweenness is exactly
+  **zero for 14,250 of 23,274 nodes (61.2%)**; strict proportionality would
+  erase three nodes in five, so the floor is used and the zero share is
+  stated on the figure rather than hidden by it.
+* **Brokers are numbered on the map and named in the margin.** In-situ labels
+  all landed in the same few rings as one unreadable knot.
+
 ## Known limitations
 
+* **Coreness ≠ importance, and neither does betweenness alone.** The two
+  disagree here by construction of the data: a family that co-owns its own
+  firms generates a dense clique, which maximises coreness and minimises
+  betweenness. Reporting either number alone would support the opposite
+  conclusion about who is central, which is why `fig13` shows both.
 * **Gazette-only people are mention clusters, not verified individuals.** Two
   spellings of one man can be two nodes; two men of one name can be one node.
   `suspect_holes.csv` flags 4,220 person pairs and 23,414 organisation pairs
