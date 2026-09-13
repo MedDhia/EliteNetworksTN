@@ -39,7 +39,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import numpy as np
 
-from house_style import CAT4, INK, MUTED, RULE, headline, plt, save
+from house_style import CAT4, INK, MUTED, headline, plt, save
 
 from bourse.analysis_women_centrality import FIRST_YEAR, LAST_YEAR, pooled, read_seats
 from bourse.gender import load as load_gender
