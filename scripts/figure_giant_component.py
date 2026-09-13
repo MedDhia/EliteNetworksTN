@@ -265,16 +265,17 @@ def private_firms() -> set[str]:
     return out
 
 
-def place_labels(ax, items, *, fontsize=6.2, weight="normal"):
+def place_labels(ax, items, *, fontsize=6.2, weight="normal", placed=None):
     """Annotate nodes, skipping any label that would collide.
 
-    Taken from scripts/figures.py: a stack of overlapping names is worse than
-    naming fewer institutions.
+    `placed` is threaded between calls: two independent calls each kept their
+    own list, so a second pass drew over the first.
     """
     fig = ax.figure
     fig.canvas.draw()
     renderer = fig.canvas.get_renderer()
-    placed: list[tuple[float, float, float, float]] = []
+    if placed is None:
+        placed = []
     for text, (x, y) in items:
         for dx, dy in ((0, 10), (0, -12), (24, 3), (-24, 3), (0, 20), (0, -22)):
             ann = ax.annotate(
@@ -292,6 +293,7 @@ def place_labels(ax, items, *, fontsize=6.2, weight="normal"):
                 continue
             placed.append(box)
             break
+    return placed
 
 
 def _fold_name(text: str) -> list[str]:

@@ -909,7 +909,8 @@ def check_projection(rep: Report) -> None:
         return
 
     for r in summary:
-        rep.add("INFO", f"projection: {r['tier']}",
+        rep.add("INFO",
+                f"projection: {r['tier']} / {r.get('state_floor', 'none')}",
                 f"{int(r['individuals']):,} individuals + "
                 f"{int(r['organisations']):,} organisations = "
                 f"{int(r['nodes']):,} nodes, {int(r['edges']):,} edges; "
@@ -945,14 +946,38 @@ def check_projection(rep: Report) -> None:
 
     # The tiers are defined as nested unions, so a count that falls between
     # them means a tier dropped something a narrower tier had -- which would
-    # make the whole comparison meaningless.
+    # make the whole comparison meaningless. Grouped by `state_floor`,
+    # because that is a FILTER rather than a tier: the decision-level family
+    # is nested within itself, and is expected to be smaller than the
+    # unfiltered one at every tier.
     order = {t: i for i, t in enumerate(PROJECTION_TIERS)}
-    ranked = sorted(summary, key=lambda r: order.get(r["tier"], 99))
+    by_floor: dict[str, list[dict]] = defaultdict(list)
+    for r in summary:
+        by_floor[r.get("state_floor", "none")].append(r)
     regress = []
-    for prev, cur in zip(ranked, ranked[1:]):
-        for k in ("nodes", "edges", "individuals", "organisations"):
-            if int(cur[k]) < int(prev[k]):
-                regress.append(f"{k} {prev['tier']}->{cur['tier']}")
+    ranked = []
+    for floor, rows in sorted(by_floor.items()):
+        rows = sorted(rows, key=lambda r: order.get(r["tier"], 99))
+        if floor == "none":
+            ranked = rows
+        for prev, cur in zip(rows, rows[1:]):
+            for k in ("nodes", "edges", "individuals", "organisations"):
+                if int(cur[k]) < int(prev[k]):
+                    regress.append(f"{k} {prev['tier']}->{cur['tier']} "
+                                   f"({floor})")
+    ranked = ranked or sorted(summary, key=lambda r: order.get(r["tier"], 99))
+
+    # A filter can only remove, so at matching tiers the decision-level
+    # family must never be larger than the unfiltered one.
+    paired = {(r["tier"], r.get("state_floor", "none")): r for r in summary}
+    bigger = [t for t in PROJECTION_TIERS
+              if (t, "decision") in paired and (t, "none") in paired
+              and int(paired[(t, "decision")]["nodes"])
+              > int(paired[(t, "none")]["nodes"])]
+    rep.add("ERROR" if bigger else "INFO",
+            "the decision-level floor only removes",
+            f"{len(bigger)} tiers where the filtered graph is larger than the "
+            f"unfiltered one" + (f": {', '.join(bigger)}" if bigger else ""))
     rep.add("ERROR" if regress else "INFO",
             "the projection tiers are nested",
             f"{len(regress)} counts that fall as the tier widens"
@@ -969,7 +994,7 @@ def check_projection(rep: Report) -> None:
             "no projected node is both a person and an organisation",
             f"{len(conflict)} nodes whose type is unresolved or contradictory")
 
-    widest = ranked[-1]
+    widest = ranked[-1]  # the unfiltered widest tier
     if len(nodes) != int(widest["nodes"]):
         rep.add("ERROR", "the node table covers the widest tier",
                 f"{len(nodes)} rows against {int(widest['nodes'])} nodes "

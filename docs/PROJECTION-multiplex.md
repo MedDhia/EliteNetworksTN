@@ -143,9 +143,102 @@ reader's call. At ERROR level:
 * the node table's row count and its degree-0 count match the widest tier's
   reported figures
 
-## The figure
+## The decision-level state floor
+
+`state_floor` is a second, **orthogonal** dimension to the tiers. At
+`decision`, a tie to a **state body** counts only where the stated rank is
+one of: minister or above (`chef_du_gouvernement`, `minister`,
+`secretary_of_state`), the minister's own cabinet chief (`chef_de_cabinet`),
+a governor, the head of a public establishment, or board level of a
+state-owned entity (`administrateur`, `administrateur_delegue`,
+`president_ca`, `pdg`, `dg`, `ceo`, `chairman`, `president`,
+`premier_responsable`).
+
+**The private sector is not filtered at all.** A *gérant* of a SARL is the
+decision-maker of his own firm, so every corporate role is kept.
+Organisation-to-organisation ties and kinship are untouched too: a rank
+floor is about office, and an ownership tie or a sibling tie has no rank.
+
+| tier | floor | individuals | organisations | nodes | edges | giant |
+|---|---|---|---|---|---|---|
+| `seed_anchored` | none | 13,630 | 26,755 | 40,385 | 46,579 | 27,002 |
+| `seed_anchored` | **decision** | 13,630 | 26,711 | 40,341 | 45,211 | 26,213 |
+| `officer_layer` | none | 80,868 | 68,650 | 149,518 | 135,358 | 63,307 |
+| `officer_layer` | **decision** | 80,856 | 68,603 | 149,459 | 133,957 | 62,690 |
+| `all_sources` | none | 631,754 | 324,687 | 956,441 | 394,113 | 200,991 |
+| `all_sources` | **decision** | 599,456 | 324,554 | 924,010 | 338,136 | **156,584** |
+
+`validate` checks at ERROR level that a filter can only remove: at matching
+tiers the `decision` family is never larger than `none`.
+
+### What the floor does, and the inversion it produces
+
+**It drops five person-to-state ties in six** — 8,985 clear the floor,
+61,287 fall below it. The biggest single category is `chef_de_service`
+(18,900), then no role stated (22,570) and `sous_directeur` (7,229).
+
+**The ministry hubs lose 91% of their ties.** The Ministry of the Interior
+falls from 5,600 to 423, Finances from 3,877 to 710.
+
+**And the cohesive core inverts.** Unfiltered, the state's share of core
+organisations climbs to 82% at k≥7. At decision level it stays flat and
+reaches **0%**: no state body survives in the k≥6 core at all.
+
+So the state's apparent dominance of the network was **an artefact of
+rank** — a ministry looks like a hub because it appoints thousands of
+people, most of them well below any decision-making level.
+
+### What is left is family capitalism
+
+The decision-level k≥6 core is **one interlocked block of 176 nodes** — 78
+individuals and 98 organisations, 732 ties — plus an 11-node Bouchamaoui
+island. Its 78 individuals carry only **30 surnames**, and the seven
+largest carry 48 of them:
+
+| family | individuals in the core |
+|---|---|
+| Ben Yedder | 12 |
+| Elloumi | 9 |
+| Abdelkefi | 8 |
+| Bayahi | 5 |
+| Slama | 5 |
+| Driss | 5 |
+| Bouricha | 4 |
+
+The firms are Tunisia's private blue chips — Poulina Group Holding, Amen
+Bank, Tunisie Leasing, Magasin Général, Ennakl Automobiles, Meublatex,
+Electrostar, TPR — held through family groups that interlock into a single
+block.
+
+### Two caveats that bound this
+
+**These are a lower bound, not a census.** 22,570 person-to-state ties
+state no rank at all, and an unstated rank cannot be shown to clear the
+floor, so it is dropped. Some genuine decision-makers are therefore
+missing.
+
+**Two judgement calls are recorded rather than hidden.** Secretaries of
+state and governors are counted as decision-makers; a ministry's
+*directeur général* and *secrétaire général* are not — they are senior
+civil servants, below both minister and board. `STATE_DECISION_ROLES` in
+`src/elitenet/project.py` is the whole list, in one place, to be re-cut.
+
+**Removing the real hubs promotes the junk.** With the ministries gone, the
+top of the degree distribution fills with extraction noise: 390
+organisation nodes have labels of three characters or fewer — "S" at 536
+ties, "M" at 431, "A" at 303 — and the rubric heading "Associations,
+partis, syndicats et syndics" at 1,488 becomes the single largest node.
+The figure excludes them and says so; they were always there, masked by
+the ministries.
+
+## The figures
 
 `python scripts/figure_giant_component.py` → `figures/fig10_giant_component.{png,pdf}`
+`python scripts/figure_decision_core.py` → `figures/fig11_decision_core.{png,pdf}`
+
+**fig11 is the one to read if you care about decision-makers**, and it
+reverses fig10's headline for the reason above. fig10 is the unfiltered
+view and is kept because the contrast between them *is* the finding.
 
 Five panels on the `all_sources` giant component, and three findings the
 tables above do not carry:

@@ -301,18 +301,19 @@ def test_run_writes_all_three_tables(tmp_path, monkeypatch):
              companies=[{"registres.numRegistre": "B1231999",
                          "registres.identifiantUnique": "111111A"}])
     diag = PJ.run()
-    assert diag["tiers"] == 3
+    assert diag["rows"] == len(PJ.TIERS) * len(PJ.STATE_FLOORS)
     for name in ("projection_summary.csv", "projection_isolates.csv",
                  "projection_nodes.csv"):
         assert (tmp_path / name).exists(), name
     summary = list(csv.DictReader(
         (tmp_path / "projection_summary.csv").open(encoding="utf-8")))
-    assert [r["tier"] for r in summary] == list(PJ.TIERS)
-    # Only the widest tier's node table is written, so its row count is the
-    # widest tier's node count rather than the sum of all three.
+    unfiltered = [r for r in summary if r["state_floor"] == "none"]
+    assert [r["tier"] for r in unfiltered] == list(PJ.TIERS)
+    # The node table is written once, for the UNFILTERED widest tier, with
+    # each row also carrying its position under the decision floor.
     nodes = list(csv.DictReader(
         (tmp_path / "projection_nodes.csv").open(encoding="utf-8")))
-    assert len(nodes) == int(summary[-1]["nodes"])
+    assert len(nodes) == int(unfiltered[-1]["nodes"])
 
 
 def test_an_absent_register_still_produces_the_narrow_tiers(
@@ -325,3 +326,142 @@ def test_an_absent_register_still_produces_the_narrow_tiers(
     assert g.kind["CO_ALPHA"] == "ORGANISATION"
     row, _iso, _n = PJ.summarise("all_sources", g)
     assert row["nodes"] == 3
+
+
+# --- the decision-level state floor --------------------------------------- #
+
+def test_a_state_body_is_recognised_by_its_label():
+    assert PJ.is_state_body("GOV_ANYTHING", "")
+    assert PJ.is_state_body("ORGE_x", "MINISTERE DES FINANCES")
+    assert PJ.is_state_body("ORGE_x", "PRESIDENCE DE LA REPUBLIQUE")
+    assert not PJ.is_state_body("ORGE_x", "POULINA GROUP HOLDING")
+    assert not PJ.is_state_body("RNE_B1231999", "STE ALPHA SARL")
+
+
+def test_the_floor_is_board_member_and_above():
+    assert PJ.clears_state_floor({"minister"})
+    assert PJ.clears_state_floor({"administrateur"})
+    assert PJ.clears_state_floor({"chef_de_cabinet"})
+    assert PJ.clears_state_floor({"pdg"})
+    # below it
+    assert not PJ.clears_state_floor({"chef_de_service"})
+    assert not PJ.clears_state_floor({"sous_directeur"})
+    assert not PJ.clears_state_floor({"secretaire_general"})
+    assert not PJ.clears_state_floor({"dga"})
+    assert not PJ.clears_state_floor({"conseiller"})
+
+
+def test_the_best_rank_ever_stated_decides_the_tie():
+    """A person can appear at a body as a minister in one decree and with no
+    rank in a later filing. The tie is judged on the best rank stated."""
+    assert PJ.clears_state_floor({"chef_de_service", "minister"})
+
+
+def test_an_unstated_rank_does_not_clear_the_floor():
+    """33% of person-to-state co-mention rows state no role. An unstated rank
+    is not evidence of seniority, so the decision-level counts are a lower
+    bound rather than a census -- which is why the figure says so."""
+    assert not PJ.clears_state_floor(set())
+
+
+def _state_fixture(tmp_path, monkeypatch, role):
+    monkeypatch.setattr(PJ, "PROCESSED", tmp_path)
+    monkeypatch.setattr(PJ, "RNE", tmp_path / "no-register")
+    _write(tmp_path, "seed_nodes.csv", ["node_id", "label", "node_type"],
+           [{"node_id": "PERSON_A", "node_type": "PERSON"},
+            {"node_id": "GOV_MIN", "label": "MINISTERE DES FINANCES",
+             "node_type": "GOVERNMENT"},
+            {"node_id": "CO_FIRM", "label": "POULINA GROUP HOLDING",
+             "node_type": "COMPANY"}])
+    _write(tmp_path, "spells.csv",
+           ["person_id", "org_id", "org_label", "role_canonical"],
+           [{"person_id": "PERSON_A", "org_id": "GOV_MIN",
+             "org_label": "MINISTERE DES FINANCES", "role_canonical": role},
+            {"person_id": "PERSON_A", "org_id": "CO_FIRM",
+             "org_label": "POULINA GROUP HOLDING", "role_canonical": "gerant"}])
+    for name, cols in (("org_tie_spells.csv", ["holder_id", "target_id"]),
+                       ("person_tie_spells.csv", ["person_id", "kin_id"]),
+                       ("org_entity_members.csv",
+                        ["org_mention", "org_entity_id"]),
+                       ("rne_company_persons.csv",
+                        ["person_key", "company_key", "org_entity_id",
+                         "roles"]),
+                       ("resolution.csv",
+                        ["resolved_person_id", "mention_cluster_id",
+                         "org_mention", "role_observed"]),
+                       ("org_entities.csv", ["org_entity_id", "label"]),
+                       ("org_identifiers.csv",
+                        ["value_normalised", "org_entity_id"])):
+        _write(tmp_path, name, cols, [])
+
+
+def test_a_minister_keeps_the_tie_to_the_ministry(tmp_path, monkeypatch):
+    _state_fixture(tmp_path, monkeypatch, "minister")
+    g, diag = PJ.build("seed_anchored", "decision")
+    assert "GOV_MIN" in g.adj["PERSON_A"]
+    assert diag["state_tie_clears_the_floor"] == 1
+
+
+def test_a_chef_de_service_loses_the_tie_to_the_ministry(tmp_path, monkeypatch):
+    """The rank that makes a ministry look like a hub: 18,900 such ties."""
+    _state_fixture(tmp_path, monkeypatch, "chef_de_service")
+    g, diag = PJ.build("seed_anchored", "decision")
+    assert "GOV_MIN" not in g.adj["PERSON_A"]
+    assert diag["state_tie_below_the_floor"] == 1
+
+
+def test_the_private_sector_is_never_filtered(tmp_path, monkeypatch):
+    """`gerant` is below the state floor, but a gerant of a SARL is the
+    decision-maker of his own firm, so the floor must not touch it."""
+    _state_fixture(tmp_path, monkeypatch, "chef_de_service")
+    g, _d = PJ.build("seed_anchored", "decision")
+    assert "CO_FIRM" in g.adj["PERSON_A"], "a private tie was filtered"
+
+
+def test_the_floor_leaves_the_unfiltered_graph_alone(tmp_path, monkeypatch):
+    _state_fixture(tmp_path, monkeypatch, "chef_de_service")
+    g, diag = PJ.build("seed_anchored", "none")
+    assert "GOV_MIN" in g.adj["PERSON_A"]
+    assert "state_tie_below_the_floor" not in diag
+
+
+def test_kinship_is_not_subject_to_a_rank_floor(tmp_path, monkeypatch):
+    """A rank floor is about office. A sibling tie has no rank, and dropping
+    it because it states none would delete the seed sheet's family layer."""
+    _state_fixture(tmp_path, monkeypatch, "minister")
+    _write(tmp_path, "seed_nodes.csv", ["node_id", "label", "node_type"],
+           [{"node_id": "PERSON_A", "node_type": "PERSON"},
+            {"node_id": "PERSON_B", "node_type": "PERSON"}])
+    _write(tmp_path, "spells.csv",
+           ["person_id", "org_id", "org_label", "role_canonical"],
+           [{"person_id": "PERSON_A", "org_id": "PERSON_B",
+             "role_canonical": "sibling_of"}])
+    g, diag = PJ.build("seed_anchored", "decision")
+    assert "PERSON_B" in g.adj["PERSON_A"]
+    assert diag["seed_person_person"] == 1
+
+
+def test_the_summary_carries_the_floor_it_was_built_at(tmp_path, monkeypatch):
+    _state_fixture(tmp_path, monkeypatch, "minister")
+    g, _d = PJ.build("seed_anchored", "decision")
+    row, iso, _n = PJ.summarise("seed_anchored", g, "decision")
+    assert row["state_floor"] == "decision"
+    assert "decision-making rank" in row["edge_definition"]
+    assert all(r["state_floor"] == "decision" for r in iso)
+
+
+def test_run_writes_a_row_per_tier_and_floor(tmp_path, monkeypatch):
+    _state_fixture(tmp_path, monkeypatch, "minister")
+    diag = PJ.run()
+    assert diag["rows"] == len(PJ.TIERS) * len(PJ.STATE_FLOORS)
+    rows = list(csv.DictReader(
+        (tmp_path / "projection_summary.csv").open(encoding="utf-8")))
+    assert {r["state_floor"] for r in rows} == set(PJ.STATE_FLOORS)
+    # A filter can only remove.
+    by = {(r["tier"], r["state_floor"]): int(r["nodes"]) for r in rows}
+    for tier in PJ.TIERS:
+        assert by[(tier, "decision")] <= by[(tier, "none")]
+    # The node table carries both views.
+    nodes = list(csv.DictReader(
+        (tmp_path / "projection_nodes.csv").open(encoding="utf-8")))
+    assert nodes and all("degree_decision" in n for n in nodes)
