@@ -268,13 +268,83 @@ def split_label_and_figures(line: str) -> tuple[str, list[str]] | None:
     return (label, figures) if label else None
 
 
-def _page_cell_lines(page, gap_factor: float = 2.2, min_gap: float = 4.0):
+def _cell_gap_threshold(
+    gaps: list[float],
+    gap_factor: float = 2.2,
+    min_gap: float = 4.0,
+    jump_ratio: float = 3.0,
+) -> float:
+    """Inter-word gap above which a break separates two *columns*, not words.
+
+    Scaling the line's median gap is stable while a line has many words, but a
+    short table row does not: ``PIRECO 750 000 750 000 3,00%`` contributes five
+    gaps, three of which are column breaks, so the median lands on a column gap
+    and the threshold it yields exceeds every gap on the line. The row then
+    survives as a single cell, and the two adjacent figures are read as one
+    number - a share count of 750,000,750,000.
+
+    Column gaps are sharply bimodal against word gaps, so look for that split
+    first: sort the gaps and cut at the largest ratio step. The step must be a
+    real jump rather than the ordinary variation of justified spacing, which is
+    what ``jump_ratio`` tests; prose lines fail it and fall back to the median
+    rule.
+    """
+    pos = sorted(g for g in gaps if g > 0)
+    if not pos:
+        return min_gap
+    median = pos[len(pos) // 2]
+    fallback = max(min_gap, median * gap_factor)
+
+    best_lo = best_hi = best_ratio = 0.0
+    for lo, hi in zip(pos, pos[1:]):
+        ratio = hi / lo
+        if ratio > best_ratio:
+            best_ratio, best_lo, best_hi = ratio, lo, hi
+    if best_ratio >= jump_ratio and best_hi >= min_gap:
+        # Cut strictly above the widest word gap, so every gap in the upper
+        # cluster splits and none in the lower one does.
+        return best_lo
+    return fallback
+
+
+def _is_glue(left: str, right: str, gap: float, glue_gap: float) -> bool:
+    """True when two words are one token that the extractor split in two.
+
+    Requires digits on both sides of the gap as well as a gap too narrow to be a
+    space. Restricting it to figures is what keeps the rule from welding company
+    names together: a name split across a hairline gap still reads correctly
+    with the space left in, whereas a figure does not.
+    """
+    return bool(gap <= glue_gap and left and right
+                and left[-1].isdigit() and right[0].isdigit())
+
+
+def _page_cell_lines(
+    page, gap_factor: float = 2.2, min_gap: float = 4.0, glue_gap: float = 0.6
+):
     """Reconstruct lines as *cells*, splitting on inter-word gaps.
 
     Flattening a line to a single string loses the column structure, and that
     loss is not recoverable by regex: "975 000 975 000" is equally readable as
     one figure or as two. Word coordinates settle it - a column break is a gap
     much wider than the line's ordinary word spacing.
+
+    Three gap sizes, therefore, not two. Beyond the column threshold a new cell
+    begins. Below ``glue_gap`` the two words are not separated on the page at
+    all: pdfplumber has cut one token in two, which it does inside figures often
+    enough to matter ("2 666 921" arriving as "2", "6", "66", "921" with a
+    zero-width gap between the "6" and the "66"). Joining those without a space
+    is what keeps such a figure from being read as 2. Anything between the two
+    is an ordinary word space.
+
+    Gap width alone cannot carry that last decision, which is why ``_is_glue``
+    also looks at what sits either side of it. Spacing is set per font, not per
+    corpus: on one filing's shareholder table a word space measures 0.40pt and a
+    space *inside* a figure measures 0.93pt - the word space is the narrower of
+    the two, and one pair of glyphs in a company name overlaps outright at
+    -0.06pt. No absolute width separates "COTIF SICAR" from a split figure
+    there. What does separate them is that a figure broken in two has digits on
+    both sides of the break.
     """
     try:
         words = page.extract_words(use_text_flow=False)
@@ -291,21 +361,44 @@ def _page_cell_lines(page, gap_factor: float = 2.2, min_gap: float = 4.0):
             continue
         gaps = [b["x0"] - a["x1"] for a, b in zip(ws, ws[1:])]
         if gaps:
-            ordinary = sorted(g for g in gaps if g > 0)
-            median = ordinary[len(ordinary) // 2] if ordinary else 0.0
-            threshold = max(min_gap, median * gap_factor)
+            threshold = _cell_gap_threshold(gaps, gap_factor, min_gap)
         else:
             threshold = min_gap
-        cells, cur = [], [ws[0]["text"]]
-        for (a, b), gap in zip(zip(ws, ws[1:]), gaps):
+        cells, cur = [], ws[0]["text"]
+        for b, gap in zip(ws[1:], gaps):
             if gap > threshold:
-                cells.append(" ".join(cur))
-                cur = [b["text"]]
+                cells.append(cur)
+                cur = b["text"]
             else:
-                cur.append(b["text"])
-        cells.append(" ".join(cur))
+                glued = _is_glue(cur, b["text"], gap, glue_gap)
+                cur += ("" if glued else " ") + b["text"]
+        cells.append(cur)
         out.append((min(w["top"] for w in ws), cells))
     return out
+
+
+def explode_row(row: list) -> list[list]:
+    """Split one ruled row that actually holds several stacked rows.
+
+    Where a table's only ruling lines box the whole body, pdfplumber reports it
+    as a single row whose every cell carries the column's values stacked with
+    newlines. Flattening that gives one shareholder named "STE ASSURANCES COMAR
+    STE PGI HOLDING STE ENNAKL AUTOMOBILES ..." holding the concatenation of
+    their six stakes.
+
+    The stacking is only unwound where it is unambiguous: every cell that holds
+    anything must hold the *same* number of lines, which is what says they are
+    the same rows seen column by column. Ragged counts mean something else is
+    going on - a wrapped header, a spanning label - and the row is left alone.
+    """
+    parts = [[ln for ln in (c or "").split("\n") if ln.strip()] for c in row]
+    counts = {len(p) for p in parts if p}
+    if len(counts) != 1:
+        return [row]
+    (n,) = counts
+    if n < 2:
+        return [row]
+    return [[(p[i] if p else "") for p in parts] for i in range(n)]
 
 
 def synth_rows_from_text(page, top: float, bottom: float) -> list[list[str]]:
@@ -686,7 +779,8 @@ def extract_tables(pdf, max_pages: int | None = None,
                 continue
             if _is_noise(tbl):
                 continue
-            rows = [[_clean_cell(c) for c in row] for row in tbl]
+            rows = [[_clean_cell(c) for c in r]
+                    for row in tbl for r in explode_row(row)]
             header = rows[0]
             body = rows[1:]
 

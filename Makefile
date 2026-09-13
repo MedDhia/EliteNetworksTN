@@ -56,7 +56,7 @@ BPY := PYTHONPATH=src python3
 
 .PHONY: bourse bourse-spine bourse-crawl bourse-resolve bourse-fetch \
         bourse-extract bourse-ocr bourse-movements bourse-resolutions \
-        bourse-build bourse-export bourse-validate bourse-test
+        bourse-build bourse-export bourse-validate bourse-verify bourse-test
 
 # bourse-ocr is deliberately out of the default chain: it needs tesseract-ocr
 # with the French model installed, and it takes hours. Run it explicitly.
@@ -105,6 +105,9 @@ bourse-export:   ## write muxViz edge lists and yearly GraphML
 
 bourse-validate: ## integrity checks -> validation_report.md
 	$(BPY) -m bourse.validate
+
+bourse-verify:   ## re-read the filings and check every record against the page it cites
+	$(BPY) -m bourse.verify_source
 
 bourse-test:     ## parser and entity-resolution unit tests
 	$(BPY) tests/test_bourse_extract.py
