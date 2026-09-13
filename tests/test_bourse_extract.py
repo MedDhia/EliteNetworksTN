@@ -638,10 +638,40 @@ class TestNotAnEntity:
     def test_real_actors_are_kept(self, name):
         assert not is_not_an_entity(name)
 
+    @pytest.mark.parametrize("cell", [
+        # An organ of a company is not a party to anything. These reached the
+        # network as companies holding board seats in real firms.
+        "Le Conseil d'Administration",
+        "PRESIDENT DU CONSEIL D’ADMINISTRATION",
+        "Directeur Général",
+        "Membres du Conseil d’Administration",
+        "Comité Permanent d’Audit Interne",
+        "Lui-même",
+        "Direction Générale",
+        # A numbered governance heading, read as a row by row recovery.
+        "3)Rôle de chaque organe d'administration et de direction",
+        "2. Composition du conseil",
+        # A mandate description rather than the name of the firm it mentions.
+        "Administrateur à la Sté STIMEC - Administrateur à la Sté SIM-SICAR",
+    ])
+    def test_company_organs_are_not_entities(self, cell):
+        assert is_not_an_entity(cell)
+
+    @pytest.mark.parametrize("name", [
+        # A leading number is also how a company can begin, so the item-number
+        # strip must not swallow one.
+        "1 Holding SA", "3M Tunisie",
+        # Bodies whose names merely contain an organ word.
+        "Groupe Chimique Tunisien", "Compagnie d'Assurances",
+    ])
+    def test_organ_rule_does_not_swallow_companies(self, name):
+        assert not is_not_an_entity(name)
+
     def test_the_resolver_declines_a_non_entity(self):
         r = Resolver()
         assert r.resolve("Zénith, 2eme étage") == (None, None)
         assert r.resolve("2024 – 2026**") == (None, None)
+        assert r.resolve("Le Conseil d'Administration") == (None, None)
 
     def test_an_override_still_wins_over_rejection(self):
         r = Resolver()

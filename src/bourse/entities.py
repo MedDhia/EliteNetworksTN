@@ -120,10 +120,39 @@ _CORPORATE_WORD = re.compile(
 )
 
 
+# An organ of a company, or the sentence describing one, is not a party to
+# anything. Governance chapters are written in prose around their tables, and
+# row recovery picks the prose up: "Le Conseil d'Administration", "Directeur
+# General", "3) Role de chaque organe d'administration". Left in, each becomes
+# a node holding board seats in real companies - 458 of the 3,222 corporate
+# seats, before this. The single-word forms are already caught at extraction;
+# these are the phrases, which are only recognisable from how they open.
+_ORGAN_PHRASE = re.compile(
+    r"^(le|la|les|l|un|une|nos|notre|leur)?\s*"
+    r"(conseil|president|presidente|presidence|directeur|directrice|direction|"
+    r"membre|membres|administrateur|administrateurs|comite|commission|"
+    r"organe|organes|role|assemblee|bureau\s+du|secretaire|gerance|"
+    r"composition|nomination|revocation|mandat\s+d|directoire|censeur|"
+    r"lui\s*meme|elle\s*meme|eux\s*memes)\b"
+)
+# "3) Role de ...", "2. Composition du conseil" reach us as "3 role de ..."
+# once punctuation is normalised to spaces. The number is stripped before the
+# organ test rather than matched on its own: a leading digit is also how
+# "1 Holding SA" and "3M Tunisie" begin.
+_LEADING_ITEM_NUMBER = re.compile(r"^\d{1,2}\s+(?=[a-z])")
+
+
 def is_not_an_entity(name: str) -> bool:
-    """True for cells that name a place or a period rather than an actor."""
+    """True for cells that name a place, a period or a company organ.
+
+    An organ phrase is rejected even when it carries a corporate word, because
+    "Le Conseil d'Administration de la Societe X" names the board of X, not a
+    company that could hold a seat or a stake.
+    """
     n = base_normalise(name)
     if not n:
+        return True
+    if _ORGAN_PHRASE.match(n) or _ORGAN_PHRASE.match(_LEADING_ITEM_NUMBER.sub("", n)):
         return True
     if _CORPORATE_WORD.search(n):
         return False
