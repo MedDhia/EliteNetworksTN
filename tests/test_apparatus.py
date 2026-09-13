@@ -19,8 +19,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import pandas as pd  # noqa: E402
 
 from apparatus import (  # noqa: E402
-    SECURITY_STAYS, attached_to_local_body, consecutive_moves, destination,
-    in_interior_apparatus, in_security_apparatus, security_branch,
+    MINISTRY_ENGLISH, SECURITY_STAYS, attached_to_local_body,
+    consecutive_moves, destination, in_interior_apparatus,
+    in_security_apparatus, ministry_destination, ministry_of, security_branch,
     security_destination, wilson,
 )
 
@@ -267,3 +268,100 @@ class TestConsecutiveMoves:
         m = consecutive_moves(f)
         assert len(m) == 1
         assert (m.iloc[0].branch, m.iloc[0].to_branch) == ("interior", "defence")
+
+
+class TestMinistryNaming:
+    """Naming the ministry a destination belongs to.
+
+    A portfolio-only rule leaves 28% of the interior's and defence's
+    destinations unplaced, because roughly half the directorates carry no
+    portfolio; reading the body's own name brings that to 8%.
+    """
+
+    def test_a_portfolio_names_its_ministry(self):
+        assert ministry_of("min_finances", "") == "finances"
+        assert ministry_of("min_sante", "") == "sante"
+
+    def test_a_compound_portfolio_resolves_to_its_lead_domain(self):
+        # A convention, not a fact: a person takes one post, so counting the
+        # move into every merged domain would make flows exceed people.
+        assert ministry_of("min_finances+plan", "") == "finances"
+        assert ministry_of("min_commerce+tourisme", "") == "commerce"
+
+    def test_an_unportfolioed_body_is_named_from_its_own_name(self):
+        assert ministry_of(None, "direction générale des impôts") == "finances"
+        assert ministry_of(
+            None, "commissariat régional au développement agricole de Sousse"
+        ) == "agriculture"
+        assert ministry_of(
+            None, "direction des affaires au ministère de la santé") == "sante"
+
+    def test_an_unplaceable_body_returns_nothing(self):
+        assert ministry_of(None, "centre national du cuir et de la chaussure") is None
+
+    def test_every_named_domain_has_an_english_name(self):
+        # A domain the naming table does not cover would silently fall through
+        # to "Not identifiable" and be read as a gap in the record.
+        for key, _pat in __import__("apparatus")._MINISTRY_BY_NAME:
+            assert key in MINISTRY_ENGLISH
+
+
+class TestMinistryDestination:
+    def test_the_security_branches_keep_their_own_names(self):
+        # A move inside the apparatus must never read as a move to "Interior"
+        # as though it were any other ministry.
+        assert ministry_destination("min_interieur", "", "ministere") == "Interior ministry"
+        assert ministry_destination("min_defense", "", "ministere") == "Defence"
+        assert ministry_destination(None, "", "gouvernorat") == "Governorates"
+
+    def test_a_ministry_is_named_in_english(self):
+        assert ministry_destination("min_finances", "", "ministere") == "Finance"
+        assert ministry_destination(
+            None, "direction générale des impôts", "direction") == "Finance"
+
+    def test_bodies_that_are_not_ministries_are_kept_apart(self):
+        assert ministry_destination(None, "Commune de Sfax", "commune") == "Municipalities"
+        assert ministry_destination(
+            None, "office des terres domaniales", "entreprise_publique") in (
+                "Public enterprise", "Agriculture")
+        assert ministry_destination(
+            None, "cour des comptes", "juridiction") == "Courts"
+
+    def test_what_cannot_be_placed_says_so(self):
+        assert ministry_destination(
+            None, "centre national du cuir et de la chaussure",
+            "autre") == "Not identifiable"
+
+
+class TestConsecutiveMovesCarriesTheNextPost:
+    @staticmethod
+    def _frame(rows):
+        f = pd.DataFrame(rows, columns=["person_id", "start", "rank_score",
+                                        "branch", "org_portfolio", "org_name",
+                                        "org_form"])
+        f["start"] = pd.to_datetime(f.start)
+        return f
+
+    def test_the_next_posts_attributes_come_through(self):
+        f = self._frame([
+            ("P1", "2000-01-01", 50, "interior", "min_interieur", "x", "ministere"),
+            ("P1", "2004-01-01", 50, None, "min_finances", "y", "ministere"),
+        ])
+        m = consecutive_moves(f)
+        assert len(m) == 1
+        r = m.iloc[0]
+        assert r.to_portfolio == "min_finances"
+        assert r.to_org == "y"
+        assert r.to_form == "ministere"
+
+    def test_an_absent_next_name_becomes_an_empty_string(self):
+        # The classifiers take strings; a NaN here would raise inside a regex.
+        f = self._frame([
+            ("P1", "2000-01-01", 50, "interior", "min_interieur", "x", "ministere"),
+            ("P1", "2004-01-01", 50, None, None, None, None),
+        ])
+        m = consecutive_moves(f)
+        assert m.iloc[0].to_org == ""
+        assert m.iloc[0].to_form == ""
+        assert ministry_destination(m.iloc[0].to_portfolio, m.iloc[0].to_org,
+                                    m.iloc[0].to_form) == "Not identifiable"

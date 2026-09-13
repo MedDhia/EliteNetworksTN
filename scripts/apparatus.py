@@ -264,8 +264,12 @@ def consecutive_moves(spells, branch_col: str = "branch"):
     body — which is most of them. It left one figure showing 904 of 2,333
     interior moves, and the diagram looked entirely reasonable.
 
-    Returns the frame with `to_branch` added and only rows that have a next
-    post. Callers decide what an absent `to_branch` means for them.
+    Returns the frame with the next post's branch, portfolio, name and form
+    added as `to_branch`, `to_portfolio`, `to_org`, `to_form`, and only rows
+    that have a next post. Callers decide what an absent `to_branch` means for
+    them. The name and form come back as empty strings rather than NaN, so that
+    the classifiers, which take strings, can be applied without further
+    cleaning.
     """
     import pandas as pd  # noqa: F401  (imported here to keep the rules stdlib-only)
 
@@ -273,5 +277,137 @@ def consecutive_moves(spells, branch_col: str = "branch"):
     s = s.loc[s.groupby(["person_id", "start"]).rank_score.idxmax()]
     s = s.sort_values(["person_id", "start"])
     nxt = s.groupby("person_id").shift(-1)
-    out = s.assign(to_branch=nxt[branch_col], _has_next=nxt.start.notna())
+    # The three describing columns are optional so that a caller who only
+    # needs the branch transition - or a test - can pass a narrower frame.
+    out = s.assign(
+        to_branch=nxt[branch_col],
+        to_portfolio=nxt["org_portfolio"] if "org_portfolio" in nxt else None,
+        to_org=nxt["org_name"].fillna("") if "org_name" in nxt else "",
+        to_form=nxt["org_form"].fillna("") if "org_form" in nxt else "",
+        _has_next=nxt.start.notna(),
+    )
     return out[out._has_next].drop(columns="_has_next")
+
+
+# ---------------------------------------------------------------------------
+# naming the ministry a post belongs to
+# ---------------------------------------------------------------------------
+MINISTRY_ENGLISH = {
+    "presidence_gouvernement": "Prime Minister's Office",
+    "presidence_republique": "Presidency of the Republic",
+    "interieur": "Interior", "justice": "Justice",
+    "affaires_etrangeres": "Foreign Affairs", "defense": "Defence",
+    "finances": "Finance", "domaines_etat": "State Property",
+    "equipement": "Public Works", "transport": "Transport",
+    "agriculture": "Agriculture", "commerce": "Trade",
+    "industrie": "Industry", "energie": "Energy", "tourisme": "Tourism",
+    "developpement": "Development", "environnement": "Environment",
+    "sante": "Health", "education": "Education",
+    "enseignement_superieur": "Higher Education",
+    "affaires_sociales": "Social Affairs", "culture": "Culture",
+    "jeunesse_sport": "Youth and Sport", "information": "Information",
+    "affaires_religieuses": "Religious Affairs",
+    "emploi": "Employment", "economie": "Economy", "plan": "Planning",
+    "femme_famille": "Women and Family", "technologies": "Technologies",
+    "fonction_publique": "Public Service", "droits_homme": "Human Rights",
+}
+
+# Where a post carries no portfolio, its own name is read for the ministry it
+# hangs off. Two shapes appear: the name says "au ministère de X" outright, or
+# the body is one of a handful of standing directorates-general whose ministry
+# is not in doubt.
+_MINISTRY_BY_NAME = [
+    ("finances", re.compile(
+        r"minist[eè]re des finances|direction g[ée]n[ée]rale des imp[ôo]ts|"
+        r"contr[ôo]le fiscal|comptabilit[ée] publique|"
+        r"direction g[ée]n[ée]rale des douanes|"
+        r"direction g[ée]n[ée]rale des participations", re.I)),
+    ("domaines_etat", re.compile(r"domaines de l'etat", re.I)),
+    ("economie", re.compile(r"minist[eè]re de l'[ée]conomie", re.I)),
+    ("plan", re.compile(r"minist[eè]re du plan", re.I)),
+    ("agriculture", re.compile(
+        r"minist[eè]re de l'agriculture|d[ée]veloppement agricole|"
+        r"r[ée]forme agraire|terres domaniales", re.I)),
+    ("equipement", re.compile(
+        r"minist[eè]re de l'[ée]quipement|ponts et chauss[ée]es|"
+        r"agence fonci[eè]re", re.I)),
+    ("transport", re.compile(r"minist[eè]re du transport", re.I)),
+    ("industrie", re.compile(r"minist[eè]re de l'industrie", re.I)),
+    ("energie", re.compile(r"minist[eè]re de l'[ée]nergie", re.I)),
+    ("commerce", re.compile(r"minist[eè]re du commerce", re.I)),
+    ("tourisme", re.compile(r"minist[eè]re du tourisme", re.I)),
+    ("environnement", re.compile(r"minist[eè]re de l'environnement", re.I)),
+    ("sante", re.compile(r"minist[eè]re de la sant[ée]", re.I)),
+    ("education", re.compile(
+        r"minist[eè]re de l'[ée]ducation|"
+        r"commissariat r[ée]gional de l'[ée]ducation", re.I)),
+    ("enseignement_superieur", re.compile(r"enseignement sup[ée]rieur", re.I)),
+    ("affaires_sociales", re.compile(r"affaires sociales", re.I)),
+    ("emploi", re.compile(
+        r"minist[eè]re de l'emploi|formation professionnelle", re.I)),
+    ("culture", re.compile(r"minist[eè]re de la culture", re.I)),
+    ("affaires_religieuses", re.compile(r"affaires religieuses", re.I)),
+    ("jeunesse_sport", re.compile(
+        r"minist[eè]re de la jeunesse|minist[eè]re des sports", re.I)),
+    ("affaires_etrangeres", re.compile(r"affaires [ée]trang[eè]res", re.I)),
+    ("justice", re.compile(r"minist[eè]re de la justice", re.I)),
+    ("presidence_gouvernement", re.compile(
+        r"pr[ée]sidence du gouvernement|premier minist[eè]re", re.I)),
+    ("presidence_republique", re.compile(
+        r"pr[ée]sidence de la r[ée]publique|"
+        r"secr[ée]tariat d'etat [aà] la pr[ée]sidence", re.I)),
+]
+
+# Destinations that are not ministries and should not be forced into one. A
+# public enterprise, a court and a town hall are each a different kind of place
+# to land, and calling them all "other" would throw away the distinction the
+# figure is for.
+NOT_A_MINISTRY = {
+    "commune": "Municipalities",
+    "entreprise_publique": "Public enterprise",
+    "banque": "Public enterprise",
+    "juridiction": "Courts",
+    "universite": "Universities and hospitals",
+    "etablissement_sante": "Universities and hospitals",
+    "instance_independante": "Independent authorities",
+}
+
+
+def ministry_of(portfolio, org: str) -> str | None:
+    """The domain key of the ministry a post belongs to, or None.
+
+    A compound portfolio names several ministries because the portfolios were
+    merged; a person nonetheless goes to exactly one post, so the lead domain
+    stands for it. That is a convention and not a fact — but compounds are 9%
+    of destinations here, and the alternative, counting one move into several
+    destinations, would make the flows sum to more than the people.
+    """
+    d = portfolio_domains(portfolio)
+    if d:
+        return d[0]
+    for key, pat in _MINISTRY_BY_NAME:
+        if pat.search(org):
+            return key
+    return None
+
+
+def ministry_destination(portfolio, org: str, form: str) -> str:
+    """Where a post sits, named to the ministry where that is possible.
+
+    Security-apparatus branches are returned first and by their own names, so
+    that a move inside the apparatus is never reported as a move to "Interior"
+    as though it were any other ministry.
+    """
+    branch = security_branch(portfolio, org, form)
+    if branch == "interior":
+        return "Interior ministry"
+    if branch == "defence":
+        return "Defence"
+    if branch == "territorial":
+        return "Governorates"
+    key = ministry_of(portfolio, org)
+    if key and key in MINISTRY_ENGLISH:
+        return MINISTRY_ENGLISH[key]
+    if form in NOT_A_MINISTRY:
+        return NOT_A_MINISTRY[form]
+    return "Not identifiable"

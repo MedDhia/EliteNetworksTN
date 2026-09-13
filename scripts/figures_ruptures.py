@@ -39,6 +39,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from apparatus import MINISTRY_ENGLISH  # noqa: E402
 from figstyle import (  # noqa: E402
     CAT4, FIGS, INK, MUTED, PAPER, PROC, RANK_RAMP, RULE, RUPTURE_COLOUR,
     SOURCE, headline, plt, save,
@@ -949,24 +950,6 @@ def fig_demotion() -> None:
 # that draws its uncertainty. A difference of two proportions on n = 60 carries a
 # 95% interval of roughly +/- 12 points, and without that drawn a reader would
 # rank ministries that are not distinguishable from one another.
-MINISTRY_ENGLISH = {
-    "presidence_gouvernement": "Prime Minister's Office",
-    "presidence_republique": "Presidency of the Republic",
-    "interieur": "Interior", "justice": "Justice",
-    "affaires_etrangeres": "Foreign Affairs", "defense": "Defence",
-    "finances": "Finance", "domaines_etat": "State Property",
-    "equipement": "Public Works", "transport": "Transport",
-    "agriculture": "Agriculture", "commerce": "Trade",
-    "industrie": "Industry", "energie": "Energy", "tourisme": "Tourism",
-    "developpement": "Development", "environnement": "Environment",
-    "sante": "Health", "education": "Education",
-    "enseignement_superieur": "Higher Education",
-    "affaires_sociales": "Social Affairs", "culture": "Culture",
-    "jeunesse_sport": "Youth and Sport", "information": "Information",
-    "affaires_religieuses": "Religious Affairs",
-}
-
-
 def demotion_by_ministry(t0: pd.Timestamp, years: int = 3):
     """Demotion counts per domain of the post a person held before the rupture.
 
