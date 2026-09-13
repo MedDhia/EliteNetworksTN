@@ -6,8 +6,8 @@ each check should be read.
 | Level | Check | Count | Detail |
 |---|---|---:|---|
 | WARN | `undated_edges` | 7 | edges with no usable year; excluded from every yearly export |
-| WARN | `ownership_sum_over_100` | 26 | firm-years whose declared blockholder stakes exceed 100% (Fb7a6a6f5de@2013=307.9%; F04e53b051e@2007=301.4%; Fdcf03fb575@2008=241.2%; Fce68d4be28@2011=233.9%; Fe851154c1d@2016=180.0%) |
-| WARN | `unclassified_entities` | 20 | entities whose type could not be determined; add them to config/entity_overrides.csv |
+| WARN | `ownership_sum_over_100` | 30 | firm-years whose declared blockholder stakes exceed 100% (F04e53b051e@2007=337.4%; Fb7a6a6f5de@2013=307.9%; Fdcf03fb575@2008=241.2%; Fce68d4be28@2011=233.9%; F5695f2b42a@2012=214.9%) |
+| WARN | `unclassified_entities` | 52 | entities whose type could not be determined; add them to config/entity_overrides.csv |
 | WARN | `movements_without_target` | 7 | operations whose company could not be resolved; they carry no edge and no listing event |
 | WARN | `movements_dated_by_filing` | 305 | operations dated only by when the notice was filed, which is an upper bound on when they happened |
 | WARN | `capital_increase_not_increasing` | 1 | capital increases whose stated after-value does not exceed the before-value; check the notice |
@@ -15,30 +15,30 @@ each check should be read.
 | WARN | `board_events_dated_by_filing` | 15 | decisions dated by the filing rather than by the meeting itself |
 | WARN | `mandate_ends_before_it_starts` | 3 | mandates whose stated expiry precedes the meeting that granted them; check the resolution |
 | WARN | `board_event_year_gaps` | 14 | years inside the observed span with no board event at all: 2002-2004, 2011-2017, 2022-2025. This is a gap in the CMF's publication, not evidence of board stability |
-| WARN | `thin_years` | 4 | years with fewer than 10 observed edges: [1996, 1998, 2002, 2004] |
-| INFO | `size` |  | 6030 entities, 17745 observed edges, 44799 panel rows |
+| WARN | `thin_years` | 1 | years with fewer than 10 observed edges: [1998] |
+| INFO | `size` |  | 7129 entities, 19165 observed edges, 49881 panel rows |
 | INFO | `referential_integrity` |  | all edge endpoints resolve to an entity |
-| INFO | `ownership_sum_distribution` |  | median declared blockholder coverage: 76.0% of capital |
-| INFO | `duplicate_edges` | 1346 | identical ties reported by more than one filing (expected; keep for provenance) |
-| INFO | `entity_types` |  | aggregate=19, firm=3829, fund=71, person=2046, state=45, unknown=20 |
-| INFO | `alias_merging` |  | 812 entities merged from >1 spelling |
+| INFO | `ownership_sum_distribution` |  | median declared blockholder coverage: 76.2% of capital |
+| INFO | `duplicate_edges` | 1394 | identical ties reported by more than one filing (expected; keep for provenance) |
+| INFO | `entity_types` |  | aggregate=22, firm=4495, fund=71, person=2430, state=59, unknown=52 |
+| INFO | `alias_merging` |  | 878 entities merged from >1 spelling |
 | INFO | `bvmt_linkage` |  | 75 entities matched to a BVMT-listed security |
 | INFO | `movements` |  | 400 dated operations extracted |
 | INFO | `movement_date_precision` |  | filing_date=305, decision_date=64, close_date=30, delisting_date=1 |
 | INFO | `listing_events` |  | admission=28, radiation=1 |
 | INFO | `board_events` |  | 606 governance decisions from AGM resolutions |
 | INFO | `board_event_types` |  | appointment=256, renewal=151, cooptation_ratified=66, cooptation=57, termination=44, mandate_expiry=32 |
-| INFO | `temporal_span` |  | 1993-2026 (31 distinct years) |
+| INFO | `temporal_span` |  | 1990-2026 (35 distinct years) |
 | INFO | `layer:board_appointment` |  | 2001-2026, 12 years, 454 edges |
-| INFO | `layer:board_interlock` |  | 1994-2026, 24 years, 5461 edges |
-| INFO | `layer:board_seat` |  | 1994-2026, 27 years, 3307 edges |
-| INFO | `layer:board_seat_corporate` |  | 1994-2025, 26 years, 2380 edges |
+| INFO | `layer:board_interlock` |  | 1994-2026, 24 years, 5503 edges |
+| INFO | `layer:board_seat` |  | 1990-2026, 34 years, 3848 edges |
+| INFO | `layer:board_seat_corporate` |  | 1990-2026, 35 years, 3081 edges |
 | INFO | `layer:board_succession` |  | 2006-2026, 9 years, 36 edges |
 | INFO | `layer:concert_party` |  | 2009-2026, 7 years, 76 edges |
-| INFO | `layer:coownership` |  | 2008-2025, 18 years, 64 edges |
-| INFO | `layer:declared_executive` |  | 1997-2026, 22 years, 1067 edges |
-| INFO | `layer:declared_mandate` |  | 1997-2026, 22 years, 1448 edges |
-| INFO | `layer:group_participation` |  | 1993-2026, 22 years, 1479 edges |
-| INFO | `layer:ownership` |  | 1993-2026, 24 years, 1546 edges |
+| INFO | `layer:coownership` |  | 2008-2025, 18 years, 65 edges |
+| INFO | `layer:declared_executive` |  | 1997-2026, 22 years, 1068 edges |
+| INFO | `layer:declared_mandate` |  | 1997-2026, 22 years, 1477 edges |
+| INFO | `layer:group_participation` |  | 1991-2026, 24 years, 1499 edges |
+| INFO | `layer:ownership` |  | 1993-2026, 26 years, 1631 edges |
 | INFO | `layer:ownership_director` |  | 2008-2025, 17 years, 371 edges |
 | INFO | `layer:tender_offer` |  | 2008-2026, 9 years, 56 edges |

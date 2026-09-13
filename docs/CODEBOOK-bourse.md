@@ -61,6 +61,7 @@ observation per dyad-year is wanted.
 | `shared_actors` | string | Derived layers only: the `entity_id`s that generate the tie. |
 | `doc_node_key`, `doc_type`, `doc_url`, `page` | string/int | Provenance: the filing and the page the tie was read from. |
 | `doc_sha256` | string | Hash of the retrieved PDF, so a later re-publication of the same URL is detectable. |
+| `from_ocr` | 0/1 | The source page carried no text layer and was read by OCR. Weaker evidence — see §6.11. |
 
 ## 4. Layers and their weights
 
@@ -198,11 +199,23 @@ These are properties of the sources, and should be stated in any write-up.
    roster snapshot, not at each year. A firm delisted in 2014 is not flagged as
    listed. Entries and exits can be recovered from the `offre_publique` filings
    already in the registry (OPF ≈ entry, OPR ≈ exit).
-4. **Coverage is uneven across firms and years.** Registration documents are
-   filed by issuers raising capital or as required, not annually by everyone.
-   Banks and leasing companies are over-represented. Check
-   `layer_year_coverage.csv` before making any claim about change over time —
-   a rise in observed ties can be a rise in filings.
+4. **Coverage is uneven across firms and years, and the unevenness is
+   sourced.** Three filing types feed the network and each selects differently:
+   registration documents are filed by issuers raising capital or as required;
+   annual reports by many more companies but with the scanned-archive problem
+   in limitation 11; prospectuses only when a company is *in the market*, which
+   is not a random sample of the cote. Banks and leasing companies are
+   over-represented throughout. Observed ties by year:
+
+   | | 1990–99 | 2000–04 | 2005–09 | 2010–14 | 2015–19 | 2020–26 |
+   |---|---|---|---|---|---|---|
+   | Ties | 393 | 231 | 2,316 | 4,776 | 4,703 | 6,739 |
+
+   Treat the usable panel as roughly **2005–2026**. Before 2005 the series is
+   thin and prospectus-driven, so a firm appears in the year it raised money
+   and vanishes otherwise — that is a property of the source, not of the
+   network. Check `layer_year_coverage.csv` before any claim about change over
+   time: a rise in observed ties can be a rise in filings.
 5. **Declared mandates are self-reported and "most significant".** The interlock
    layer is what directors chose to disclose, so it under-counts.
 6. **Extraction is automated.** Table classification and row parsing are rule-
@@ -271,7 +284,17 @@ These are properties of the sources, and should be stated in any write-up.
     percentage column. An aggregate carries no edge, so a wrong number there
     would be pure loss.
 
-12. **Date an annual report by its file name, not by its text.** The CMF names
+12. **Some tables are rebuilt from word positions, not read off a grid.**
+    Many filings — most pre-2007 prospectuses, and more than half the annual
+    reports — typeset their tables without ruling lines. Those are
+    reconstructed from where the words sit on the page, and the rows carry
+    **`from_words = 1`** (every OCR'd row does too, since OCR produces nothing
+    else). It is a weaker reading than a ruled grid: column boundaries are
+    inferred from inter-word gaps, so a very narrow gap between two figures can
+    merge them. The percentage is unaffected — it is identified by its `%` sign
+    — which is why `weight` is sound where `n_shares` looks implausible.
+
+13. **Date an annual report by its file name, not by its text.** The CMF names
     these files with the financial year, and for a scanned report that is the
     only year available before OCR. Counting coverage from extracted text makes
     the scanned years look empty — a fact about the text layer, not about what

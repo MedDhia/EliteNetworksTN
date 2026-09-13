@@ -273,17 +273,27 @@ Why the CMF filings:
 - **boards are dated too.** Adopted AGM resolutions date every appointment,
   co-optation and renewal to the meeting that took it, and name the departing
   director a co-optation replaces — a handover the source states rather than
-  one inferred from consecutive snapshots.
+  one inferred from consecutive snapshots;
+- **three filing types, not one.** Registration documents are the richest but
+  the rarest. Annual reports are filed by far more issuers, and prospectuses
+  are the only source with real depth before 2005 — they state who controls a
+  company because a buyer needs to know. All three go through the same
+  extractor, which keys on table headers rather than section numbering.
 
-Current build: **213 registration documents, 400 operation notices and 529
-adopted-resolution filings → 3,285 entities → 12,604 observed ties across
-thirteen layers**, 1994–2026, with 75 entities linked to a BVMT security by
+Current build: **1,882 filings — 213 registration documents, 1,027 annual
+reports and 642 prospectuses, plus 400 operation notices and 529
+adopted-resolution filings → 7,129 entities → 19,165 observed ties across
+thirteen layers**, 1990–2026, with 75 entities linked to a BVMT security by
 ISIN, plus 400 dated operations, 606 dated board decisions and 29 listing
 events. Ownership weights are percentages of capital as reported; interlock
-weights are counts of shared directors. Coverage thins sharply before ~2008 —
-treat the usable panel as roughly 2008–2026 and check
-`data/processed/bourse/layer_year_coverage.csv` before reading any time trend,
-because a rise in observed ties can be a rise in filings.
+weights are counts of shared directors.
+
+A third of that corpus was scanned from paper and carries no text layer at
+all, so it is read with OCR and fed to the same table extractor; 1,920 ties
+come from those pages and are flagged `from_ocr = 1` so the scanned stratum
+can be weighted or dropped. Treat the usable panel as roughly 2005–2026, and
+check `data/processed/bourse/layer_year_coverage.csv` before reading any time
+trend, because a rise in observed ties can still be a rise in filings.
 
 Read [`docs/CODEBOOK-bourse.md`](docs/CODEBOOK-bourse.md) for variable
 definitions and [`docs/SOURCES-bourse.md`](docs/SOURCES-bourse.md) for what each
@@ -294,8 +304,17 @@ the panel is an assumption rather than an observation.
 ```bash
 make bourse          # spine -> crawl -> resolve -> fetch -> extract -> movements
                      # -> resolutions -> build -> export -> validate
+make bourse-ocr      # read the scanned third of the archive (slow; needs
+                     # tesseract-ocr and tesseract-ocr-fra installed)
 make bourse-test
 ```
+
+The source corpus is larger than a typical working disk (~27 GB), so
+`bourse-fetch` and `bourse-extract` are resumable: `--skip-processed` and
+`--skip-extracted` let a batch be extracted and its PDFs deleted before the
+next is fetched. `bourse.fetch_parallel` downloads over a few connections at
+once for the large annual reports, where the cost is transfer rather than the
+delay between requests.
 
 CI (`.github/workflows/ci.yml`) runs the test suite on Python 3.11 and 3.12, and
 rebuilds this dataset from the committed extraction records to check that the
