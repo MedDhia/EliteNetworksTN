@@ -1,0 +1,142 @@
+# Relation types and the Arabic cues that assert them.
+#
+# Cues are data, not code, following config/vocab_events.yaml. Each carries a
+# pattern_id so that a finding in the gold pass names the rule that produced
+# it, and every rule can be scored separately from the model pass.
+#
+# The four layers are built with equal weight. `tutelage` is the one no other
+# build in this repository has, and in this stratum it is the main channel
+# through which position transmits: a man's teachers place him more reliably
+# than his formal appointments do.
+
+layers:
+  tutelage:     "Pedagogical descent: who studied under whom, and in what"
+  office:       "Holding, taking up or leaving a post"
+  kinship:      "Descent, marriage and affinity"
+  membership:   "Belonging to a body: a school, a paper, a society, a party"
+
+relation_types:
+  studied_under:    "Subject read with, or was the pupil of, the counterparty"
+  taught:           "Subject taught the counterparty"
+  licensed_by:      "Subject received an ijaza from the counterparty"
+  appointed_to:     "Subject took up a named post"
+  left_post:        "Subject resigned, was dismissed, or otherwise left a post"
+  succeeded:        "Subject took over a post from the counterparty"
+  child_of:         "Subject is the child of the counterparty"
+  sibling_of:       "Subject is the sibling of the counterparty"
+  married_to:       "Subject married the counterparty"
+  kin_of:           "Kin, relation unspecified or more distant"
+  member_of:        "Subject belonged to a named body"
+  founded:          "Subject founded a named body"
+  headed:           "Subject presided over a named body"
+  wrote_for:        "Subject edited or wrote for a named publication"
+  studied_at:       "Subject was educated at a named institution"
+  authored:         "Subject wrote a named work"
+  taught_at:        "Subject held a teaching post at a named institution"
+  commissioned_by:  "Subject was charged with a named mission by the counterparty"
+  patronised_by:    "Counterparty advanced, protected or favoured the subject"
+  patronised:       "Subject advanced, protected or favoured the counterparty"
+  opposed_by:       "Counterparty worked against the subject; rivalry the text states"
+  recommended:      "Subject proposed the counterparty for a post"
+  colleague_of:     "Named as a friend, associate or fellow of the counterparty"
+  eulogised_by:     "Counterparty publicly praised or mourned the subject"
+  read_work_of:     "Subject studied the writings of the counterparty, who is not
+                     a contemporary and did not teach them in person"
+
+# Directed relation pairs. Where the text states one, the converse holds of the
+# counterparty; recording it once and naming the inverse keeps the edge list
+# from asserting the same tie twice in opposite directions.
+inverses:
+  studied_under: taught
+  patronised_by: patronised
+  recommended: recommended_by
+  opposed_by: opposed
+  child_of: parent_of
+  appointed_to: ""
+  succeeded: succeeded_by
+
+# Surface cues.
+#
+# `binding` is what decides whether the rule pass may fire at all, and it
+# encodes a property of Arabic rather than a tuning knob. Arabic is
+# verb-subject-object, so in «ارتقى الأمير مصطفى باي إلى العرش» the name
+# following the verb is the man doing the ascending -- the clause's *subject*.
+# A cue matched on a bare verb therefore cannot tell the counterparty from the
+# subject, and reading such a clause as an assertion about the man whose entry
+# it sits in attributed the Bey's accession to his court chaplain.
+#
+#   prepositional  the counterparty is the object of a preposition
+#                  («قرأ على الشيخ أحمد الأبي») and the elided subject is the
+#                  entry's subject. Safe.
+#   possessive     the counterparty is bound by a possessive pronoun that
+#                  refers back to the entry's subject («شيخه», «والده»). Safe.
+#   vso            a bare verb. The following noun phrase is the subject, not
+#                  the counterparty. Left to the model pass.
+#
+# Only prepositional and possessive cues are emitted by the rule pass. The vso
+# entries are kept because they are the right cues -- they are simply not
+# resolvable by pattern matching alone, and naming them here is what lets the
+# model pass be scored against a stated target rather than an open field.
+#
+# `direction` says whether the counterparty is the superior
+# (`from_counterparty`) or the subject (`to_counterparty`) of the relation.
+cues:
+  tutelage:
+    - {id: TUT01, re: "قرأ\\s+على",            relation: studied_under, direction: from_counterparty, binding: prepositional}
+    - {id: TUT02, re: "تتلمذ\\s+(?:على|لـ?)",  relation: studied_under, direction: from_counterparty, binding: prepositional}
+    - {id: TUT03, re: "أخذ\\s+عن",             relation: studied_under, direction: from_counterparty, binding: prepositional}
+    - {id: TUT04, re: "درس\\s+على",            relation: studied_under, direction: from_counterparty, binding: prepositional}
+    - {id: TUT05, re: "تخرج\\s+على\\s+يد",     relation: studied_under, direction: from_counterparty, binding: prepositional}
+    - {id: TUT06, re: "لازم",                  relation: studied_under, direction: from_counterparty, binding: vso}
+    - {id: TUT07, re: "تلميذ",                 relation: studied_under, direction: from_counterparty, binding: vso}
+    - {id: TUT08, re: "شيخه",                  relation: studied_under, direction: from_counterparty, binding: possessive}
+    - {id: TUT09, re: "عهد\\s+إليه\\s+.{0,20, binding: vso}بتعليم", relation: taught,  direction: to_counterparty}
+    - {id: TUT10, re: "الإجازة",               relation: licensed_by,   direction: from_counterparty, binding: vso}
+    - {id: TUT11, re: "تعلم\\s+في|تعلم\\s+ب",  relation: studied_at,    direction: to_counterparty, binding: prepositional}
+    - {id: TUT12, re: "التحق\\s+ب",            relation: studied_at,    direction: to_counterparty, binding: prepositional}
+  office:
+    - {id: OFF01, re: "عين",                   relation: appointed_to,  direction: to_counterparty, binding: vso}
+    - {id: OFF02, re: "تولى",                  relation: appointed_to,  direction: to_counterparty, binding: vso}
+    - {id: OFF03, re: "أسند\\s+إليه",          relation: appointed_to,  direction: to_counterparty, binding: vso}
+    - {id: OFF04, re: "تقلد",                  relation: appointed_to,  direction: to_counterparty, binding: vso}
+    - {id: OFF05, re: "نصب",                   relation: appointed_to,  direction: to_counterparty, binding: vso}
+    - {id: OFF06, re: "خلف",                   relation: succeeded,     direction: from_counterparty, binding: vso}
+    - {id: OFF07, re: "استقال",                relation: left_post,     direction: to_counterparty, binding: vso}
+    - {id: OFF08, re: "أعفي|عزل",              relation: left_post,     direction: to_counterparty, binding: vso}
+    - {id: OFF09, re: "رقي|ارتقى",             relation: appointed_to,  direction: to_counterparty, binding: vso}
+  kinship:
+    - {id: KIN01, re: "والده|أبوه",            relation: child_of,      direction: from_counterparty, binding: possessive}
+    - {id: KIN02, re: "ابنه|نجله",             relation: child_of,      direction: to_counterparty, binding: possessive}
+    - {id: KIN03, re: "أخوه|شقيقه",            relation: sibling_of,    direction: from_counterparty, binding: possessive}
+    - {id: KIN04, re: "صهر",                   relation: kin_of,        direction: from_counterparty, binding: vso}
+    - {id: KIN05, re: "تزوج",                  relation: married_to,    direction: to_counterparty, binding: vso}
+    - {id: KIN06, re: "حفيد",                  relation: kin_of,        direction: from_counterparty, binding: vso}
+    - {id: KIN07, re: "عمه|خاله",              relation: kin_of,        direction: from_counterparty, binding: possessive}
+  membership:
+    - {id: MEM01, re: "انخرط\\s+في",           relation: member_of,     direction: to_counterparty, binding: prepositional}
+    - {id: MEM02, re: "أسس|من\\s+مؤسسي",       relation: founded,       direction: to_counterparty, binding: vso}
+    - {id: MEM03, re: "عضو\\s+(?:في|ب)",       relation: member_of,     direction: to_counterparty, binding: prepositional}
+    - {id: MEM04, re: "ترأس|رئيس",             relation: headed,        direction: to_counterparty, binding: vso}
+    - {id: MEM05, re: "حرر\\s+في|كتب\\s+في",   relation: wrote_for,     direction: to_counterparty, binding: prepositional}
+    - {id: MEM06, re: "ساهم\\s+في\\s+تحرير",   relation: wrote_for,     direction: to_counterparty, binding: prepositional}
+    - {id: MEM07, re: "ألف|أصدر\\s+كتاب",      relation: authored,      direction: to_counterparty, binding: vso}
+
+# Subjects of study, recorded as an attribute of a tutelage tie rather than
+# discarded. What a man read with his shaykh is what the book is telling us
+# about the kind of authority being transmitted.
+subjects:
+  - الفقه
+  - النحو
+  - المنطق
+  - البلاغة
+  - التفسير
+  - الحديث
+  - الأصول
+  - التوحيد
+  - الأدب
+  - الصرف
+  - الفرائض
+  - الحساب
+  - التاريخ
+  - الطب
+  - الفلسفة

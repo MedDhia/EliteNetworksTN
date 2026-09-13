@@ -1,0 +1,24 @@
+# OCR repairs observed on this scan, kept as data rather than code so that a
+# new one can be added without touching the normaliser -- the convention
+# config/vocab_events.yaml already follows.
+#
+# Each entry was seen in tesseract output and checked against the printed page
+# by eye. Nothing is here on suspicion: a repair that fires on a word the book
+# actually uses would corrupt the text it is meant to fix.
+
+# Characters the engine substitutes for an Arabic comma at a clause boundary.
+# A guillemet in this book only ever opens or closes a quoted book title, and
+# always in pairs, so one sitting after a letter and before a space is a comma.
+clause_enders:
+  - "»"
+  - "ء"
+  - "،"
+
+# Whole-word substitutions. Left side is what tesseract emitted, right side is
+# what the page reads. Bounded by Arabic-letter lookaround so a repair cannot
+# fire inside a longer word.
+word_repairs:
+  # Populated from the native-resolution OCR after the full run; see
+  # `python -m aalam.ingest --report-suspects`. The upscaled render this list
+  # was first drawn from is no longer used, and native output already reads
+  # most of those cases correctly, so nothing is carried over on faith.

@@ -222,14 +222,20 @@ different question and draws on sources the first build does not touch:
 - it is scoped to **2008–2012**, straddling the January 2011 rupture, at both
   yearly and monthly resolution.
 
-Current build: 1,271 issues → 205,755 blocks → 168,789 dated events → 3,086
+Current build: 1,271 issues → 207,369 blocks → 197,532 dated events → 4,287
 dated tie spells plus 27,585 undated seed ties, and 48,176 act citations.
-87% of the hundred highest-degree seed elites acquire at least one dated event.
+90% of the hundred highest-degree seed elites acquire at least one dated event.
+
+Extraction accuracy on a seeded stratified sample, coded against the printed
+French: **precision 0.982** (95% CI 0.937–0.995) with **no spurious events**,
+**recall 0.967** (0.886–0.991). This is a self-audit, not an independent
+estimate — see `docs/GOLD-SCORE-multiplex-2008-2012.md` and the limitations.
 
 Read `docs/CODEBOOK-multiplex-2008-2012.md` for variable definitions and
-`docs/LIMITATIONS-multiplex-2008-2012.md` before using it; in particular, no
-precision or recall estimate exists for it yet, so event counts are lower
-bounds of unknown tightness.
+`docs/LIMITATIONS-multiplex-2008-2012.md` before using it.
+`docs/GOLD-FINDINGS-multiplex-2008-2012.md` records the twenty extraction
+defects the gold sample exposed, which is also why the figures above supersede
+those of the first release.
 
 ```bash
 make all        # seed -> mirror -> calendar -> segment -> extract -> resolve
@@ -307,6 +313,7 @@ make bourse          # spine -> crawl -> resolve -> fetch -> extract -> movement
 make bourse-ocr      # read the scanned third of the archive (slow; needs
                      # tesseract-ocr and tesseract-ocr-fra installed)
 make bourse-test
+make bourse-verify   # re-read the filings; check each record against its page
 ```
 
 The source corpus is larger than a typical working disk (~27 GB), so
@@ -315,6 +322,17 @@ The source corpus is larger than a typical working disk (~27 GB), so
 next is fetched. `bourse.fetch_parallel` downloads over a few connections at
 once for the large annual reports, where the cost is transfer rather than the
 delay between requests.
+
+`make bourse-verify` is the check the rest of the suite cannot do. Every other
+check tests the dataset against itself, and a figure read off the wrong row
+passes all of them, because a misread figure is still internally consistent.
+This one re-opens each source PDF, accepts it only if the bytes hash to the
+digest recorded in the corpus manifest, and asks of every record whether its
+name and its figure appear on the page it cites. The result is written to
+`data/processed/bourse/source_verification.md`, which names every record that
+did not confirm. Running it is what turned up the four extraction defects
+recorded in §6.1 of the codebook. It needs the source PDFs present, so run
+`make bourse-fetch` first if a previous extraction pruned them.
 
 CI (`.github/workflows/ci.yml`) runs the test suite on Python 3.11 and 3.12, and
 rebuilds this dataset from the committed extraction records to check that the
@@ -335,3 +353,101 @@ file, so `make bourse-resolve bourse-fetch` reconstructs it from the CMF's own
 servers. As with the second build, the output trees are kept apart; whether the
 gazette's person registry and this one should eventually share identifiers is
 the same open question, with the same answer — not yet.
+
+---
+
+## A fourth build: a printed biographical dictionary, 1606–1973
+
+The three builds above read institutional records, all of them French-language,
+and none reaches back before independence. This one reads a book:
+**الصادق الزمالي، أعلام تونسيون** (Sadok Zmerli, *A'lām Tūnisiyyūn*, Dar
+al-Gharb al-Islami, Beirut, 2000) — 38 biographical essays on the Tunisian
+reform and nationalist elite, from Aziza Othmana (b. 1606) to Muhammad al-Tahir
+ibn Ashur (d. 1973).
+
+It adds three things the other builds do not have:
+
+- **the pre-1957 period**, which the gazette cannot reach;
+- **Arabic source text**, which required a separate name normaliser — the
+  French build's `names.py` uppercases into `[A-Z0-9' ]` and reduces every
+  Arabic string to `PERSON_UNKNOWN`;
+- **pedagogical lineage** — who studied under whom, and in what. In this
+  stratum a man's teachers place him more reliably than his appointments do,
+  and the book states those ties explicitly
+  («قرأ عليه الفقه والنحو والمنطق والبلاغة»).
+
+The volume has **no text layer**: all 384 pages are bilevel scans, so the build
+begins with OCR rather than a download. The scan is not redistributed;
+`data/raw/aalam/manifest.csv` carries a sha256 and the exact engine, version
+and flags per page, and the OCR'd text is committed so the tables rebuild — and
+the provenance guard runs — without an OCR engine installed.
+
+Current build: **384 pages → 455,131 characters → all 38 entries → 242 persons,
+366 organisations and 873 ties across four layers** (tutelage, office, kinship,
+membership). 28 of the 38 subjects are tied to at least one other subject, and
+the institutions that bind them are legible: Zaytuna (10 subjects), the Sadiqi
+college (8), the newspaper *al-Hadira* (7), the Khaldouniyya and the Young
+Tunisians (6 each).
+
+**Read [`docs/LIMITATIONS-aalam-tunisiyun.md`](docs/LIMITATIONS-aalam-tunisiyun.md)
+before using any of it.** In particular: there is **no gold-standard score yet**
+— the sample is drawn and waiting to be coded (206 ties and 60 passages in
+`gold/`, seeded so it reproduces), so every count is a lower bound of unknown
+tightness; 709 of the 873 ties carry no
+date, because a biography states that a relation existed far more often than it
+says when; and 866 of 873 ties come from the model pass rather than the rule
+table, for the reason given below.
+
+### How it reads narrative prose
+
+Two passes write the same schema.
+
+The **rule pass** matches an Arabic cue table, and is confined to constructions
+whose grammar binds the counterparty: after a preposition, or after a
+possessive pronoun with no other person named first. The reason is that Arabic
+is verb-subject-object — in «ارتقى الأمير مصطفى باي إلى العرش» the name
+following the verb is the man ascending, not a counterparty — so a pattern
+matched on a bare verb cannot tell a clause's subject from its object. An
+earlier version that ignored this made Yusuf Sahib al-Tabi the son of Hammuda
+Pasha. Cues marked `vso` are recorded but never emitted.
+
+The **model pass** covers the remainder, and carries almost the whole dataset.
+It is not trusted. Every assertion must quote its entry verbatim;
+`aalam.validate` checks each quote against the entry text on **every row rather
+than a sample**, and drops any that is not literally present. A tie the book
+does not state has no sentence to quote. The pass output is committed as a
+record and everything downstream is deterministic, so the tables rebuild
+byte-identically and re-running the model is a reviewable diff — the
+arrangement the bourse build already uses.
+
+That gate catches invention but not misreading, and the difference is not
+academic. The book names what a man read by listing its authors
+(«والغزالي وابن رشد، قد استأثروا بعنايته»), which read as a teaching tie makes
+a scholar dead in 1198 the teacher of a man born in 1871. Ten such ties got
+through, 12% of the tutelage layer at the time, every quote genuine. They are
+now reclassified to `read_work_of`, flagged for review, and a validation check
+fails the build if one survives. The class was found by reading twelve rows at
+random, which is the honest measure of how much else may be there.
+
+```bash
+make aalam-fetch       # download the scan, verified against a pinned sha256
+make aalam-ingest      # OCR 384 pages at native resolution (~6 min)
+make aalam             # segment -> extract -> model -> relations -> codebook -> validate
+make aalam-gold-draw   # seeded stratified sample -> coding sheets in gold/
+make aalam-gold-score  # coded sheets -> precision/recall with Wilson intervals
+make aalam-test
+```
+
+The gold pass is two sheets because precision and recall are not answerable
+from the same unit. Precision is judged per tie, stratified by layer and by
+extractor so the rule pass and the model pass are scored apart. Recall is
+judged per passage: a tie the extractor never found is not in the table to be
+sampled, so a coder reads paragraphs of the book and counts what they state
+against what came back.
+
+Code is `src/aalam/`, outputs are `data/processed/aalam-tunisiyun/`. See
+[`docs/CODEBOOK-aalam-tunisiyun.md`](docs/CODEBOOK-aalam-tunisiyun.md) for
+variable definitions. As with the other builds the output trees are kept apart;
+whether the gazette's person registry and this one should share identifiers is
+the same open question, with the same answer — not yet. The `name_translit`
+column exists so the two can be joined by eye in the meantime.

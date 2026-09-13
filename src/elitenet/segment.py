@@ -38,9 +38,13 @@ RE_CHROME_ISSUE = re.compile(r"^\s*N[°ºo]\s*\d{1,3}\s*$", re.MULTILINE)
 
 # Announcement reference code: terminates its block, and its 5-char rubric
 # suffix types the announcement almost for free.
+# The code normally sits alone on its line, but in 925 issues it trails the
+# last sentence of the announcement. Requiring a whole line missed 1,559 codes,
+# merging those announcements into their neighbour and so attributing them to
+# the wrong company.
 RE_REF = re.compile(
-    r"^[ \t]*(?P<ref>(?P<year>\d{4})(?P<series>[A-Z0-9]{1,6}?)(?P<seq>\d{3,6})"
-    r"(?P<rubric>[A-Z]{3,4}\d))[ \t]*$",
+    r"(?:^[ \t]*|(?<=[.\s]))(?P<ref>(?P<year>\d{4})(?P<series>[A-Z0-9]{1,6}?)"
+    r"(?P<seq>\d{3,6})(?P<rubric>[A-Z]{3,4}\d))[ \t]*$",
     re.MULTILINE,
 )
 

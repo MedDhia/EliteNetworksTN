@@ -35,6 +35,26 @@ _CATEGORY_ROW = re.compile(
 )
 
 
+# A footnote marker *leading* a label: "*** Membre independant", "(2) Nomination
+# par l'AGO du 30 avril 2019", "* Personnes Morales :". Markers that attach to a
+# real name trail it ("M. Hakim DOGHRI(1)"), so a leading one always introduces
+# the legend below a table rather than a row of it.
+_LEADING_MARKER = re.compile(r"^\s*(?:\*+|\(\s*\d{1,2}\s*\))\s*:?\s*")
+
+
+def is_footnote_legend(name: str) -> bool:
+    """True for the explanatory lines printed beneath a table.
+
+    Every table in the corpus that uses asterisks to annotate its rows repeats
+    those asterisks below it against a sentence explaining them. Those lines sit
+    in the same borderless text block as the rows, so row recovery picks them up
+    and they would otherwise enter the network as board members with names like
+    "*** Membre representant les petits actionnaires".
+    """
+    s = (name or "").strip()
+    return bool(_LEADING_MARKER.match(s)) and bool(_LEADING_MARKER.sub("", s).strip())
+
+
 def clean_name(s: str) -> str:
     s = _FOOTNOTE.sub("", (s or "").strip())
     s = re.sub(r"\s+", " ", s)
@@ -64,6 +84,8 @@ _NOISE_LABEL = re.compile(
 
 def is_table_noise(name: str) -> bool:
     """True for leftover header, footer or label text that is not an entity."""
+    if is_footnote_legend(name):
+        return True
     n = norm(name).strip(" .:*()-")
     if not n or len(n) < 2:
         return True
@@ -76,7 +98,8 @@ def is_table_noise(name: str) -> bool:
 
 
 def is_category_row(name: str) -> bool:
-    return bool(_CATEGORY_ROW.match(norm(name))) or is_table_noise(name)
+    n = norm(name)
+    return bool(_CATEGORY_ROW.match(_LEADING_MARKER.sub("", n))) or is_table_noise(name)
 
 
 def first_label(cells: list[str]) -> tuple[int, str]:

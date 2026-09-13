@@ -58,6 +58,37 @@ jobs:
       - name: Run test suite
         run: pytest tests/ -q
 
+  multiplex-consistency:
+    name: 2008-2012 multiplex dataset is self-consistent
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]" -r requirements.txt
+
+      # Reads the committed CSVs under data/processed/multiplex-2008-2012/, so
+      # it needs no gazette mirror. --strict exits non-zero when the dataset
+      # contradicts itself: a spell that ends before it begins, an act
+      # published before it happened, or a resolved link with no organisation
+      # agreement.
+      #
+      # Three checks cannot run here and report themselves skipped at WARN:
+      # the verbatim-quote guard, the negative control, and the act-citation
+      # graph all read data/interim/, a git-ignored intermediate rebuilt from
+      # the mirror. They are exercised locally before each push instead. The
+      # run rewrites docs/VALIDATION-multiplex-2008-2012.md with those WARNs;
+      # nothing diffs docs/, so the committed report stays the full-input one.
+      - name: Consistency checks
+        run: python -m elitenet.validate --strict
+
   bourse-dataset:
     name: bourse dataset rebuilds reproducibly
     runs-on: ubuntu-latest
@@ -105,3 +136,45 @@ jobs:
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           head -n 20 data/processed/bourse/validation_report.md >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+  # The A'lam Tunisiyun build. Like bourse-dataset this rebuilds from committed
+  # inputs and diffs the result, which is possible because the per-page OCR
+  # text is committed and every gzipped table is written with the mtime pinned.
+  # It also runs the verbatim-quote guard over every edge rather than a sample:
+  # a model pass produced most of them, and an assertion that cannot be quoted
+  # is the exact shape a fabricated tie would take.
+  aalam-dataset:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -e ".[dev]" -r requirements.txt
+      - name: Tests
+        run: PYTHONPATH=src python -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py tests/test_gold_aalam.py -q
+      - name: Rebuild the dataset
+        run: make aalam-segment aalam-extract aalam-model aalam-relations
+      - name: Validate
+        run: make aalam-validate
+      - name: The gold sample is still the one that was drawn
+        run: |
+          make aalam-gold-draw
+          if ! git diff --exit-code -- gold/aalam_sample_edges.csv gold/aalam_sample_passages.csv; then
+            echo "::error::Redrawing the gold sample produced a different sample."
+            echo "The draw is seeded so a reviewer can check it was not chosen"
+            echo "after seeing the results; if the corpus changed, redraw and"
+            echo "recode deliberately rather than letting it drift."
+            exit 1
+          fi
+      - name: Committed tables match the rebuild
+        run: |
+          if ! git diff --exit-code -- data/processed/aalam-tunisiyun/; then
+            echo "::error::Rebuilding produced different tables than those committed."
+            echo "Run 'make aalam' and commit the result."
+            exit 1
+          fi
+      - name: Coverage summary
+        if: always()
+        run: head -n 25 docs/VALIDATION-aalam-tunisiyun.md >> "$GITHUB_STEP_SUMMARY"

@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import html
 import json
 import re
 from datetime import date
@@ -42,26 +43,49 @@ CITATION_FIELDS = [
     "cited_kind", "cited_number", "cited_date", "cited_gist", "relation",
 ]
 
-# --- corporate action cues -> event_type. Order matters: first match wins. ---
+# --- corporate action cues -> event_type. First match wins *within* a list. ---
+# Person-level and organisation-level actions are kept apart because one clause
+# routinely states both: "decide de la dissolution totale de la societe et la
+# designation de Mr Brahim Hami comme liquidateur" is a dissolution *and* an
+# appointment, and a single first-match-wins list silently dropped one of them.
 CORP_CUES: list[tuple[str, str, str]] = [
-    ("corp.renewed",   r"renouvellement\s+du\s+mandat|mandats?\s+renouvel", "renewed"),
-    ("corp.resigned",  r"d[ée]mission", "resigned"),
-    ("corp.revoked",   r"r[ée]vocation|r[ée]voqu[ée]|il\s+est\s+mis\s+fin\s+aux\s+fonctions",
-     "revoked"),
+    ("corp.renewed",   r"renouvellement\s+d[eu]\s+mandat|mandats?\s+renouvel|"
+                       r"reconduction\s+d[eu]\s+mandat", "renewed"),
+    ("corp.resigned",  r"d[ée]mission|d[ée]sist[ée]\s+de\s+s[ae]\s+fonction|"
+                       r"renonc[ée]\s+[àa]\s+s[ae]\s+fonction", "resigned"),
+    ("corp.revoked",   r"r[ée]vocation|r[ée]voqu[ée]|\bde\s+r[ée]voquer\b|"
+                       r"il\s+est\s+mis\s+fin\s+aux\s+fonctions", "revoked"),
+    # The infinitive forms carry a large share of appointments: "il a ete decide
+    # de nommer ..." occurs in 4,983 blocks and "de designer" in 681, and the
+    # earlier cue list caught neither.
     ("corp.appointed", r"a\s+nomm[ée]|ont\s+nomm[ée]|est\s+nomm[ée]|sont\s+nomm[ée]|"
-                       r"nomination\s+d|d[ée]sign[ée]|coopt[ée]|"
+                       r"\bde\s+nommer\b|\bde\s+d[ée]signer\b|\bnomme\s+(?:M|Mme|Mlle)|"
+                       r"nomination\s+d|d[ée]sign(?:[ée]|ation)|coopt[ée]|"
                        r"nomm[ée]\s+en\s+qualit[ée]|appel[ée]\s+aux\s+fonctions", "appointed"),
-    ("corp.shares",    r"cession\s+de(?:s)?\s+(?:parts|actions)|transfert\s+de(?:s)?\s+"
-                       r"(?:parts|actions)|c[èe]de\s+", "shares_transferred"),
-    ("corp.cap_up",    r"augmentation\s+d[uе]\s+capital|augmentation\s+de\s+capital",
+    # "a cede/vendu ses parts" occurs in 1,396 blocks; the earlier cue matched
+    # only the unaccented present tense and missed every past participle.
+    ("corp.shares",    r"cession\s+de(?:s)?\s+(?:parts|actions)|"
+                       r"transfert\s+de(?:s)?\s+(?:parts|actions)|"
+                       r"(?:c[èe]de|c[ée]d[ée]s?|vendu|vend)\s+[^.\n]{0,140}?"
+                       r"(?:parts|actions)", "shares_transferred"),
+]
+
+# Organisation-level actions, evaluated independently of the person-level list.
+ORG_CUES: list[tuple[str, str, str]] = [
+    ("corp.cap_up",    r"augmentation\s+d[uе]\s+capital|augmentation\s+de\s+capital|"
+                       r"augmenter\s+le\s+capital|porter\s+le\s+capital",
      "capital_increased"),
-    ("corp.cap_down",  r"r[ée]duction\s+d[uе]\s+capital|r[ée]duction\s+de\s+capital",
-     "capital_decreased"),
-    ("corp.dissolved", r"dissolution\s+(?:anticip[ée]e\s+)?de", "dissolved"),
+    ("corp.cap_down",  r"r[ée]duction\s+d[uе]\s+capital|r[ée]duction\s+de\s+capital|"
+                       r"r[ée]duire\s+le\s+capital", "capital_decreased"),
+    # "dissolution totale de" and "dissolution definitive de" appear in 168
+    # blocks and were missed by a pattern that allowed only "anticipee".
+    ("corp.dissolved", r"dissolution\s+(?:\w+e?\s+)?de|de\s+dissoudre", "dissolved"),
     ("corp.liquidated", r"liquidation", "liquidated"),
     ("corp.renamed",   r"changement\s+de\s+(?:la\s+)?d[ée]nomination|nouvelle\s+d[ée]nomination",
      "renamed"),
-    ("corp.hq",        r"transfert\s+d[uе]\s+si[èe]ge", "headquarters_moved"),
+    ("corp.hq",        r"transfert\s+d[uе]?\s*si[èe]ge|transf[ée]r[ée]\s+son\s+"
+                       r"(?:si[èe]ge|adresse)|changement\s+d[eu]?['’]?\s*(?:si[èe]ge|adresse)",
+     "headquarters_moved"),
 ]
 
 # Roles that only appear as an appointment target, used when a clause names a
@@ -86,38 +110,130 @@ RE_LIST_APPOINT = re.compile(
     r"\s*en\s+qualit[ée]s?\s+d[e']\s*(?P<role>[^,.;\n]{3,90})",
     re.IGNORECASE)
 
+# An association's officers are published as a bureau, with the role first and
+# the name after a colon -- the reverse of the corporate "Name : role" layout:
+#     Bureau :
+#     - President : Mohamed Ben Sedrine,
+#     - Secretaire general : Nooman Ben Ameur,
+#     - Tresorerie : Lotfi Hedhili.
+# This appears in 3,746 of the 7,144 association blocks and yielded nothing at
+# all, because no action verb is present and the role precedes the name.
+RE_BUREAU_ITEM = re.compile(
+    r"^[ \t]*[-•*]?[ \t]*(?P<role>Pr[ée]sident(?:e)?|Vice[- ]pr[ée]sident(?:e)?|"
+    r"Secr[ée]taire\s+g[ée]n[ée]ral(?:e)?(?:\s+adjoint(?:e)?)?|Secr[ée]taire|"
+    r"Tr[ée]sorier(?:e)?(?:\s+adjoint(?:e)?)?|Tr[ée]sorerie|Membre)"
+    r"[ \t]*:[ \t]*(?:(?i:M\.|Mr\.?|Mme|Mlle|Monsieur|Madame|Mademoiselle)\s+)?"
+    r"(?P<name>" + G.NAME + r")",
+    re.IGNORECASE | re.MULTILINE)
+
+# "Denomination : X", but also "Denomination sociale : X", "Denomination de
+# l'association : X" and "Raison sociale : X".
 RE_DENOM = re.compile(
-    r"(?:D[ée]nomination|Raison\s+sociale)\s*(?:sociale)?\s*[:：]\s*(?P<v>[^\n.]{2,90})",
+    r"(?:D[ée]nomination|Raison\s+social[e]?)\b[^:\n]{0,30}?[:：]\s*(?P<v>[^\n.]{2,90})",
     re.IGNORECASE)
-RE_GENERIC_HEAD = re.compile(
-    r"^(?:constitution|construction|gestion|homologation|modification|cession|vente|"
-    r"avis|notice|rectificatif|dissolution|liquidation|augmentation|r[ée]duction|"
-    r"soci[ée]t[ée]s?\s+(?:anonymes?|[àa]\s+responsabilit[ée]|unipersonnelles?)|"
-    r"autres\s+soci[ée]t[ée]s|annonces|sommaire)", re.IGNORECASE)
+
+# A block's first heading is very often the *action* rather than the company
+# ("Nomination d'un nouveau gerant", "Transfert du siege social"). Taking it as
+# the organisation name gave a wrong org on 12.3% of corporate and association
+# blocks, and since the organisation anchors identity resolution, a wrong name
+# there loses the tie entirely.
+RE_ACTION_TITLE = re.compile(
+    r"^(?:d[ée]signation|nomination|reconduction|renouvellement|cession|"
+    r"cr[ée]ation|adoption|approbation|d[ée]cision|notice|extrait\b|"
+    r"changement|augmentation|r[ée]duction|dissolution|liquidation|transfert|"
+    r"d[ée]mission|r[ée]vocation|constitution|construction|modification|"
+    r"homologation|extrait|avis|proc[èe]s|assembl[ée]e|convocation|"
+    r"d[ée]nomination|raison\s+sociale|bureau|classification|si[èe]ge|"
+    r"capital|objet|dur[ée]e|gestion|autres|cooperatives|coop[ée]ratives|"
+    r"nombre|forme|adresse|matricule|registre|identifiant|activit[ée]|"
+    r"exercice|r[ée]partition|associ[ée]s|g[ée]rance|g[ée]rant|administrateur|"
+    r"commissaire|pr[ée]sident|secr[ée]taire|tr[ée]sor|membre|"
+    r"actes?\b|bilans?|rectificatif|annonces|sommaire|fonds\s+de\s+commerce|"
+    r"vente|location|adjonction|retrait|r[ée]partition|apport|fusion|"
+    r"soci[ée]t[ée]s?\s+(?:anonymes?|[àa]\s+responsabilit[ée]|unipersonnelles?|"
+    r"coop[ée]rative))", re.IGNORECASE)
+
+# Lines that mention a legal form but describe something else. A capital line
+# ("S.A au capital de 5 000 000 dinars") contains "S.A" and was therefore
+# preferred over the real company name.
+RE_NOT_A_NAME = re.compile(
+    r"(?:au\s+capital|capital\s+(?:social|de)|si[èe]ge\s+social|"
+    r"matricule|registre\s+de\s+commerce|^RC\b|^R\.C|exercice|"
+    r"nombre\s+d|objet\s+social"
+    # Closing and signature lines that sit where a name would.
+    r"|^pour\s+extrait|^pour\s+le|^p/|^le\s+g[ée]ran|^la\s+g[ée]ran"
+    # A bare legal form with no distinguishing name ("S.A.R.L non residente").
+    r"|^(?:S\.?A\.?R\.?L|S\.?U\.?A\.?R\.?L|S\.?A)\b[\s,]*"
+    r"(?:non\s+r[ée]sidente?|r[ée]sidente?|unipersonnelle)?[\s.]*$"
+    r")", re.IGNORECASE)
+
 RE_PROSE_HEAD = re.compile(
-    r"^(?:Suivant|Selon|Aux?\s+termes|D['’]apr[èe]s|En\s+vertu|Si[èe]ge|Au\s+capital|"
-    r"MF|M\.F|Mat|Le\s+|La\s+|Il\s+|Les\s+associ)", re.IGNORECASE)
+    r"^(?:Suivant|Selon|Aux?\s+termes|D['’]apr[èe]s|En\s+vertu|Au\s+capital|"
+    r"MF|M\.F|Mat|RC\b|R\.C|CNSS|Le\s+|La\s+|Les\s+|Il\s+|Par\s+|Une\s+|"
+    r"Il\s+ressort|Il\s+appert|Messieurs|Mesdames)", re.IGNORECASE)
+
+# Tokens that mark a line as naming a company rather than describing an action.
+RE_LEGAL_FORM_HINT = re.compile(
+    r"\b(?:S\.?A\.?R\.?L|S\.?U\.?A\.?R\.?L|S\.?A\b|SICAR|SICAF|SICAV|"
+    r"Soci[ée]t[ée]|St[ée]\b|Holding|Group[e]?|Compagnie|Etablissements?|"
+    r"Entreprise|Association|Mutuelle|Coop[ée]rative)\b", re.IGNORECASE)
 
 
-def org_name(text: str) -> str:
-    """Best available organisation name for a corporate block."""
-    m = RE_DENOM.search(text)
-    if m:
-        return _tidy_org(m.group("v"))
+RE_NAMED_IN_PROSE = re.compile(
+    r"(?:dite|d[ée]nomm[ée]e|sous\s+la\s+d[ée]nomination\s+(?:de|sociale\s+de)?|"
+    r"sous\s+le\s+nom\s+de|la\s+soci[ée]t[ée]\s+)«?\s*(?P<v>[A-ZÀ-Þ][^,.;«»\n]{2,60})",
+    re.IGNORECASE)
+
+
+def _candidate_lines(text: str) -> list[str]:
+    out = []
     for line in text.split("\n"):
         s = line.strip().strip("#*").strip()
+        s = re.sub(r"\s+", " ", s).strip(" .,;:«»\"'*-")
         if len(s) < 3 or len(s) > 90:
             continue
-        if RE_GENERIC_HEAD.match(s) or RE_PROSE_HEAD.match(s):
+        if RE_ACTION_TITLE.match(s) or RE_PROSE_HEAD.match(s):
             continue
         if G.RE_DATE_TXT.search(s) or "enregistr" in s.lower():
             continue
-        return _tidy_org(s)
-    return ""
+        if RE_NOT_A_NAME.search(s):
+            continue
+        out.append(s)
+    return out
+
+
+def org_name(text: str) -> str:
+    """Best available organisation name for a corporate or association block.
+
+    Tried in order: the stated denomination; a line that carries a legal-form
+    marker and so plainly names a company; then any remaining line that is
+    neither an action title nor running prose. Returning nothing is preferred
+    to returning an action title, because a wrong name resolves to the wrong
+    organisation while an empty one merely leaves the tie unresolved.
+    """
+    m = RE_DENOM.search(text)
+    if m:
+        value = _tidy_org(m.group("v"))
+        if value and not RE_ACTION_TITLE.match(value):
+            return value
+
+    lines = _candidate_lines(text)
+    for s in lines:
+        if RE_LEGAL_FORM_HINT.search(s):
+            return _tidy_org(s)
+    if lines:
+        return _tidy_org(lines[0])
+    # Nothing in the layout names the company, but the prose often does:
+    # "une societe ... est constituee dite Comptoir de Boulanger".
+    m = RE_NAMED_IN_PROSE.search(text)
+    return _tidy_org(m.group("v")) if m else ""
 
 
 def _tidy_org(raw: str) -> str:
-    s = re.sub(r"\s+", " ", raw).strip(" .,;:«»\"'*")
+    # The OCR layer leaves HTML entities in place, and an undecoded "&amp;"
+    # survived into 2,654 organisation names, where it blocks resolution.
+    s = html.unescape(raw or "")
+    s = re.sub(r"\s+", " ", s).strip(" .,;:«»\"'*-")
     s = re.sub(r"\s*[«\"]\s*", " ", s).strip()
     return s[:120]
 
@@ -204,7 +320,27 @@ def _resolve_event_date(dates: dict, pub_date: str) -> tuple[str, str, str, str,
 # corporate and association blocks
 # --------------------------------------------------------------------------- #
 
+RE_CONVOCATION = re.compile(
+    r"convocation|sont\s+convoqu[ée]s|ordre\s+du\s+jour\s+suivant", re.IGNORECASE)
+
+
+def is_convocation(block: dict) -> bool:
+    """True for a notice convening a future meeting.
+
+    Its agenda reads like a list of acts ("1 - Augmentation du capital") but
+    nothing in it has happened, so extracting from it invents events. The
+    rubric catches most of these; a few sit under other rubrics, so the heading
+    is checked too.
+    """
+    if block.get("domain") == "convocation":
+        return True
+    head = (block.get("heading") or "")[:120]
+    return bool(RE_CONVOCATION.search(head))
+
+
 def extract_corporate(block: dict) -> list[dict]:
+    if is_convocation(block):
+        return []
     text = block["text"]
     org = org_name(text)
     mfm = G.RE_MF.search(text)
@@ -271,6 +407,19 @@ def extract_corporate(block: dict) -> list[dict]:
                  role_canonical="representant", role_verbatim="représentée par",
                  extract_confidence=0.90, evidence_quote=_quote(m.group(0)))
 
+    # --- association bureau: "Role : Name" ------------------------------- #
+    if block.get("domain") == "association":
+        for m in RE_BUREAU_ITEM.finditer(text):
+            person = G.clean_name(m.group("name"))
+            if not person:
+                continue
+            canon, verb = G.match_role(m.group("role"))
+            emit(event_type="appointed", pattern_id="assoc.bureau",
+                 person_mention=person,
+                 role_canonical=canon or "association_officer",
+                 role_verbatim=verb or m.group("role"),
+                 extract_confidence=0.90, evidence_quote=_quote(m.group(0)))
+
     # --- bulleted appointment lists with a trailing shared role ---------- #
     listed: set[str] = set()
     for m in RE_LIST_APPOINT.finditer(text):
@@ -311,6 +460,16 @@ def extract_corporate(block: dict) -> list[dict]:
     # --- clause-level actions -------------------------------------------- #
     for clause in _clauses(text):
         folded = G.strip_accents(clause).lower()
+
+        # Organisation-level action, if any: emitted on its own terms.
+        for pid, cue, typ in ORG_CUES:
+            if re.search(cue, folded, re.IGNORECASE):
+                emit(event_type=typ, pattern_id=pid,
+                     amount_dt=(G.parse_capital(clause)
+                                if typ.startswith("capital") else "") or "",
+                     extract_confidence=0.85, evidence_quote=_quote(clause))
+                break
+
         etype, pattern_id = "", ""
         for pid, cue, typ in CORP_CUES:
             if re.search(cue, folded, re.IGNORECASE):
@@ -332,25 +491,44 @@ def extract_corporate(block: dict) -> list[dict]:
             continue
 
         years = G.mandate_years(clause)
-        amount = G.parse_capital(clause) if etype.startswith("capital") else None
-
-        if etype in {"capital_increased", "capital_decreased", "dissolved",
-                     "liquidated", "renamed", "headquarters_moved"}:
-            emit(event_type=etype, pattern_id=pattern_id,
-                 amount_dt=amount if amount is not None else "",
-                 extract_confidence=0.85, evidence_quote=_quote(clause))
-            continue
 
         # Pair each person with their own role where the text states one, so a
         # clause naming a chair and a chief executive does not give both the
         # same title.
         pairs = G.pair_person_roles(clause)
+        # "Messieurs Foued Noomen et Nizar Frikha" gives only the first name a
+        # title of its own, so the rest never reached the pairing at all.
+        known = {n for n, _s, _r in pairs}
+        pairs += [(n, "", "") for n in G.split_plural_title(clause) if n not in known]
         if not pairs:
             pairs = [(n, "", "") for n in G.split_person_list(clause)]
         if not pairs:
             continue
+        # Where the text gives some of the people named their own role and
+        # others none, the ones without are usually bystanders rather than the
+        # object of the action: "de nommer M. X en tant que co-gerant ainsi que
+        # M. Y a confie 10% de ses parts" appoints X only, and attributing the
+        # clause role to Y invented an appointment.
+        #
+        # The exception is a role stated once after a list of names -- "Mr A et
+        # Mr B sont nommes les gerants" anchors only the last -- where the role
+        # plainly governs everyone. Treating that as one appointee dropped the
+        # others, so a single anchor on the last person is shared instead.
+        if etype in {"appointed", "renewed"}:
+            anchored = [i for i, (_n, _s, r) in enumerate(pairs) if r]
+            if len(anchored) == 1 and len(pairs) > 1 and anchored[0] == len(pairs) - 1:
+                shared = pairs[-1][2]
+                pairs = [(n, s, shared) for n, s, _r in pairs]
+            elif anchored:
+                pairs = [(n, s, r) for n, s, r in pairs if r]
         for name, married, own_role in pairs:
             canon, verb = (G.match_role(own_role) if own_role else ("", ""))
+            # "Monsieur X, membre de l'ordre des experts comptables, comme
+            # commissaire aux comptes" states a professional qualification
+            # before the role conferred. A generic `member` is therefore
+            # yielded to a specific role found later in the clause.
+            if canon == "member" and role_canon and role_canon != "member":
+                canon, verb = role_canon, role_verb
             if not canon:
                 canon, verb = role_canon, role_verb
             # Already captured with an explicit role by the list pass.

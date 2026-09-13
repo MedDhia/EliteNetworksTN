@@ -51,15 +51,23 @@ canonical_roles:
   # --- association / party ---
   association_president:   "President of an association, party or union"
   association_officer:     "Other named officer of an association"
+  vice_president:          "Vice-president"
+  treasurer:               "Tresorier / tresorerie"
+  secretaire_general_adj:  "Secretaire general adjoint"
 
 # Surface form -> canonical. Matched case- and accent-insensitively.
 surface_forms:
   gerant: gerant
+  gerants: gerant
+  gerantes: gerant
+  gerance: gerant
   gerante: gerant
   gerant unique: gerant
   gerant associe: gerant
   co-gerant: cogerant
   cogerant: cogerant
+  cogerants: cogerant
+  co-gerants: cogerant
   president directeur general: pdg
   president-directeur general: pdg
   pdg: pdg
@@ -75,6 +83,7 @@ surface_forms:
   dga: dga
   administrateur: administrateur
   administrateurs: administrateur
+  administratrices: administrateur
   administratrice: administrateur
   membre du conseil d'administration: administrateur
   administrateur delegue: administrateur_delegue
@@ -96,6 +105,16 @@ surface_forms:
   chef de service: chef_de_service
   chef de cabinet: chef_de_cabinet
   conseiller: conseiller
+  tresorier: treasurer
+  tresoriere: treasurer
+  tresorerie: treasurer
+  tresorier adjoint: treasurer
+  vice-president: vice_president
+  vice president: vice_president
+  vice-presidente: vice_president
+  secretaire general adjoint: secretaire_general_adj
+  secretaire generale: secretaire_general
+  membre: member
   representant: representant
   representante: representant
   representants: representant

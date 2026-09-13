@@ -55,6 +55,24 @@ _LEGAL_SUFFIX = re.compile(
 _PUNCT = re.compile(r"[^\w\s]+", re.UNICODE)
 _WS = re.compile(r"\s+")
 
+# "Etat Tunisien (représenté par Monsieur Abdessatar BEN SAAD)" is the state,
+# not a separate holder. Board tables name the representative alongside the
+# institution; without stripping it the institution becomes a second node and
+# its stake is counted twice.
+_REPRESENTED_BY = re.compile(
+    r"\s*[\(\[][^)\]]*\b(represent\w*|agissant|pour\s+le\s+compte)\b[^)\]]*[\)\]]",
+    re.I,
+)
+
+# A dotted initialism and its undotted twin are one name: "Financière
+# Tunisienne S.A" and "Financière Tunisienne SA". Punctuation stripping alone
+# turns the first into the tokens "s" "a", which no legal-form rule removes.
+_DOTTED_INITIALISM = re.compile(r"\b((?:\w\.){1,4}\w)\b")
+
+# Footnote markers ride along on the last token: "Moncef CHAFFAR1", "CTAMA*".
+# Asterisks fall to _PUNCT; digits are word characters and survive.
+_FOOTNOTE_DIGITS = re.compile(r"(?<=[^\W\d_]{3})\d{1,2}\b")
+
 # Vehicle markers that must survive normalisation: they distinguish sibling
 # entities inside one group.
 _KEEP = {"sicar", "sicaf", "sicav", "holding", "bank", "banque", "leasing",
@@ -66,11 +84,73 @@ def strip_accents(s: str) -> str:
 
 
 def base_normalise(name: str) -> str:
-    s = strip_accents(name or "").lower()
+    s = strip_accents(name or "")
+    s = _REPRESENTED_BY.sub(" ", s).lower()
     s = s.replace("’", " ").replace("'", " ").replace("-", " ")
+    # Collapse dotted initialisms before punctuation is stripped, or "s.a"
+    # becomes two single letters instead of the legal form "sa".
+    s = _DOTTED_INITIALISM.sub(lambda m: m.group(1).replace(".", ""), s)
+    s = _FOOTNOTE_DIGITS.sub("", s)
     s = _HONORIFIC.sub(" ", s)
     s = _PUNCT.sub(" ", s)
     return _WS.sub(" ", s).strip()
+
+
+# Cells that are not entities at all. Table geometry occasionally hands the
+# name column an address line or a mandate period; left in, each becomes a node
+# with holdings or a board seat attached.
+_NOT_AN_ENTITY = (
+    re.compile(r"^\d{4}\s*[-–—/]\s*\d{2,4}$"),                  # "2024 – 2026"
+    re.compile(r"\b(etage|immeuble|appartement|bureau\s+n|boite\s+postale)\b"),
+    re.compile(r"^(rue|avenue|boulevard|impasse|route)\b"),
+    re.compile(r"^[\d\s]+$"),                                    # bare numbers
+    # The tail of a postal address: a four-digit Tunisian postcode and the
+    # town. Registered offices are printed under the company name, and the
+    # last line of one is all that survives a row break.
+    re.compile(r"^\d{4}\s+[a-z][a-z\s'-]{2,24}$"),
+)
+
+# A four-digit number leading a name is a postcode in "1053 Tunis" and a year
+# or a brand in "2024 Holding". Anything carrying one of these is read as a
+# company however it begins.
+_CORPORATE_WORD = re.compile(
+    r"\b(holding|group|groupe|sa|sarl|spa|sicav|sicaf|sicar|bank|banque|"
+    r"societe|ste|compagnie|assurance\w*|immobiliere|invest\w*|finance\w*|"
+    r"leasing|factoring|industrie\w*|international\w*)\b"
+)
+
+
+def is_not_an_entity(name: str) -> bool:
+    """True for cells that name a place or a period rather than an actor."""
+    n = base_normalise(name)
+    if not n:
+        return True
+    if _CORPORATE_WORD.search(n):
+        return False
+    return any(p.search(n) for p in _NOT_AN_ENTITY)
+
+
+def has_representative(name: str) -> bool:
+    """True for "<institution> (représenté par <person>)".
+
+    Accents are stripped first: the pattern is written unaccented, and the
+    filings write "représenté".
+    """
+    return bool(_REPRESENTED_BY.search(strip_accents(name or "")))
+
+
+def demote_person_hint(name: str, hint: str | None) -> str | None:
+    """Drop a "person" hint from a cell that names a represented institution.
+
+    "Kuwait Investment Authority - KIA (représenté par M. Al Munaifi)" sits in
+    a board-holdings column, so the column hint says person. The subject is the
+    institution holding the seat, not the individual filling it, and the
+    parenthetical is the more specific evidence. Left alone, the institution
+    becomes a second node and its stake is counted twice.
+    """
+    if hint == "person" and has_representative(name):
+        return None
+    return hint
 
 
 def _drop_redundant_acronym(toks: list[str]) -> list[str]:
@@ -182,6 +262,7 @@ def classify(name: str, *, hint: str | None = None) -> str:
     ``hint`` allows the caller to pass through structural knowledge - e.g. a
     board table's "represented by" column always names a natural person.
     """
+    hint = demote_person_hint(name, hint)
     if hint in ENTITY_TYPES:
         return hint
     n = base_normalise(name)
@@ -267,11 +348,13 @@ class Resolver:
         they appear in, which is what lets "Altea Packaging" be read as a firm in
         a shareholder table where the string alone looks like a personal name.
         """
+        etype = demote_person_hint(raw, etype)
         name = base_normalise(raw)
         if name and etype in ENTITY_TYPES:
             self._evidence[name][etype] += 1
 
     def _typed(self, name: str, hint: str | None) -> str:
+        hint = demote_person_hint(name, hint)
         if hint in ENTITY_TYPES:
             return hint
         ev = self._evidence.get(base_normalise(name))
@@ -289,6 +372,10 @@ class Resolver:
             return None, None
 
         ov = self.overrides.get(base_normalise(name))
+        # An override is a researcher's judgement and always wins, including
+        # over the not-an-entity test.
+        if ov is None and is_not_an_entity(name):
+            return None, None
         if ov and ov.get("entity_id"):
             eid = ov["entity_id"]
             etype = ov.get("entity_type") or self._typed(name, hint)
