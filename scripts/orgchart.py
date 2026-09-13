@@ -124,6 +124,24 @@ def wellformed(name: str) -> bool:
     return bool(n) and len(n) <= MAX_NAME
 
 
+# A rank sitting at the end of the child half means the name is not "body
+# inside body" but "body, post held in relation to another body" — *Cour
+# d'Appel de Sfax, Conseiller à la Cour de Cassation* is a judge at Sfax
+# appointed as counsellor to the Cassation court, and neither court contains
+# the other.
+#
+# The register proves this itself: read as containment, the same two courts
+# come out as each other's parent — "Cour de Cassation, Président de Chambre"
+# lands under the Tunis appeal court and "Cour d'Appel de Tunis, Conseiller"
+# lands under Cassation. A relation that runs both ways is not a hierarchy.
+# 302 of the 3,495 names that would otherwise split are this shape, almost all
+# of them judicial.
+_RANK_TAIL = re.compile(
+    r",\s*(?:premier\s+|vice-?)?(?:conseiller|avocat\s+g[ée]n[ée]ral|"
+    r"procureur(?:\s+g[ée]n[ée]ral)?|substitut|pr[ée]sident(?:\s+de\s+chambre)?|"
+    r"juge|greffier|doyen|rapporteur)\b[^,]*$", re.I)
+
+
 def split_parent(name: str) -> tuple[str, str | None]:
     """Split ``name`` into (the body, the body it hangs off) or (name, None).
 
@@ -144,6 +162,13 @@ def split_parent(name: str) -> tuple[str, str | None]:
             # A body is not its own parent, and an empty child is a split that
             # found the separator at the very front of the string.
             if child and parent and fold(child) != fold(parent):
+                # A post, not a containment. Reject the name outright rather
+                # than hunting for another separator in it: the next one is
+                # usually the same construction again, and a body whose name
+                # is really a posting is better left to its acts than given an
+                # invented parent.
+                if _RANK_TAIL.search(child):
+                    return n, None
                 return child, parent
     return n, None
 
