@@ -38,15 +38,26 @@ from collections import Counter, defaultdict
 from datetime import date
 
 from .grammar import RE_POSTAL, normalise_address
+from .orgentity import OrgEntityResolver
 from .paths import DOCS, INTERIM, PROCESSED, ensure_dirs
 
+# Deliberately still aggregated on the SEED node id, not the entity id. An
+# entity is keyed on its matricule, so aggregating there would make "does this
+# organisation hold two matricules" tautologically false and turn the check
+# into exactly the kind of vacuous pass this pipeline has been burned by
+# before. Keyed on the seed node it stays a real question -- and it becomes the
+# regression test for the identity fix, because a generic fuzzy match no longer
+# yields a seed id at all, so the hub counts should collapse on their own.
+# `org_entity_id` rides along as a column so a firm's identifiers are still
+# reachable at entity level.
 FIELDS_ID = [
-    "org_id", "org_label", "id_type", "value_normalised", "value_raw",
+    "org_id", "org_label", "org_entity_id", "id_type", "value_normalised",
+    "value_raw",
     "n_observations", "n_issues", "first_seen", "last_seen",
     "is_conflicting", "n_values_for_org", "issue_uid", "folio_page", "block_uid",
 ]
 FIELDS_ADDR = [
-    "org_id", "org_label", "address_raw", "address_normalised", "postal_code",
+    "org_id", "org_label", "org_entity_id", "address_raw", "address_normalised", "postal_code",
     "observed_date", "date_precision", "obs_kind", "n_observations",
     "first_seen", "last_seen", "issue_uid", "folio_page", "block_uid",
 ]
@@ -104,6 +115,7 @@ def identifiers(events: list[dict], m2o: dict[str, str],
     """One row per (organisation, identifier kind, value)."""
     agg: dict[tuple[str, str, str], dict] = {}
     diag: dict[str, int] = defaultdict(int)
+    org_entity = OrgEntityResolver.load()
 
     for e in events:
         oid = m2o.get(e.get("org_mention") or "")
@@ -120,6 +132,7 @@ def identifiers(events: list[dict], m2o: dict[str, str],
             if row is None:
                 agg[key] = {
                     "org_id": oid, "org_label": labels.get(oid, ""),
+                    "org_entity_id": org_entity.for_event(e),
                     "id_type": id_type, "value_normalised": value,
                     "value_raw": value, "n_observations": 1,
                     "issues": {e.get("issue_uid", "")},
@@ -172,6 +185,7 @@ def addresses(events: list[dict], m2o: dict[str, str],
     """
     agg: dict[tuple[str, str, str], dict] = {}
     diag: dict[str, int] = defaultdict(int)
+    org_entity = OrgEntityResolver.load()
     for e in events:
         oid = m2o.get(e.get("org_mention") or "")
         raw = (e.get("org_address") or "").strip()
@@ -193,6 +207,7 @@ def addresses(events: list[dict], m2o: dict[str, str],
             pm = RE_POSTAL.search(raw)
             agg[key] = {
                 "org_id": oid, "org_label": labels.get(oid, ""),
+                "org_entity_id": org_entity.for_event(e),
                 "address_raw": raw, "address_normalised": norm,
                 "postal_code": (e.get("org_postal_code")
                                 or (pm.group("code") if pm else "")),

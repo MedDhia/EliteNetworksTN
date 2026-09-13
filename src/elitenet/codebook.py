@@ -114,6 +114,28 @@ TABLE_DOCS: dict[str, str] = {
         "larger set with **one end resolved**: there the resolved end anchors "
         "the dyad and only a single name is in question, so `failed_mention`, "
         "`near_org_label` and `near_score` carry what the coder needs.",
+    "org_entities.csv":
+        "**The unit of analysis for an organisation.** One row per firm as "
+        "this corpus can distinguish it, keyed in priority order on the "
+        "normalised matricule fiscal, then the registre-de-commerce number, "
+        "then the normalised mention. Identity used to be *the seed node a "
+        "mention fuzzy-matched*, and `fuzz.token_set_ratio` treats containment "
+        "as identity, so a seed firm whose label normalised to `TROIS` -- the "
+        "French for three -- absorbed every mention containing that word and "
+        "became the highest-degree organisation in the org-org layer. Keying "
+        "on a hard identifier splits those hubs and simultaneously *joins* "
+        "spelling variants, since one matricule often covers several. "
+        "`seed_org_id` retains the seed link and `seed_match_basis` says what "
+        "it rests on, so the previous view is exactly reproducible. "
+        "`is_identity = 0` marks an entity that is retained but claims to "
+        "identify nothing -- a mention carrying several matricules with no "
+        "identifier on this event.",
+    "org_entity_members.csv":
+        "Mention to entity, one row per distinct organisation mention, so "
+        "every mention is accounted for and none is silently orphaned — the "
+        "validator checks exactly that. The map is **modal** where a mention "
+        "spans several entities (`n_entities_on_mention > 1`); the per-event "
+        "key in `orgentity.entity_key` is authoritative.",
     "org_identifiers.csv":
         "Hard identifiers per organisation: the matricule fiscal and the "
         "registre-de-commerce number, one row per (organisation, kind, "

@@ -59,6 +59,8 @@ TABLES = {
     "org_ties": PROCESSED / "org_ties.csv",
     "org_tie_spells": PROCESSED / "org_tie_spells.csv",
     "panel_org_ties_yearly": PROCESSED / "panel_org_ties_yearly.csv",
+    "org_entities": PROCESSED / "org_entities.csv",
+    "org_entity_members": PROCESSED / "org_entity_members.csv",
     "org_identifiers": PROCESSED / "org_identifiers.csv",
     "org_addresses": PROCESSED / "org_addresses.csv",
 }
@@ -149,6 +151,8 @@ def build_sqlite() -> dict:
         'CREATE INDEX ix_spells_org ON spells(org_id)',
         'CREATE INDEX ix_panel_y ON panel_edges_yearly(panel_id)',
         'CREATE INDEX ix_res_key ON resolution(mention_key)',
+        'CREATE INDEX ix_orgent_seed ON org_entities(seed_org_id)',
+        'CREATE INDEX ix_orgmem_ment ON org_entity_members(org_mention)',
         'CREATE INDEX ix_orgid_org ON org_identifiers(org_id)',
         'CREATE INDEX ix_orgid_val ON org_identifiers(value_normalised)',
         'CREATE INDEX ix_orgaddr_org ON org_addresses(org_id)',
@@ -379,7 +383,7 @@ GZIP_TABLES = ["events.csv", "blocks_index.csv", "resolution.csv",
                # address per observation over 10,528 firms is 17 MB, and the
                # org-tie queue carries 10,586 rows with their evidence quotes.
                "org_addresses.csv", "org_identifiers.csv",
-               "org_ties_review_queue.csv"]
+               "org_ties_review_queue.csv", "org_entity_members.csv"]
 
 
 def gzip_large_tables() -> dict:

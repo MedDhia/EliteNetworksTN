@@ -27,6 +27,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
+from .orgentity import OrgEntityResolver
 from .paths import INTERIM, PROCESSED, ensure_dirs, load_config, window
 
 WINDOW_START, WINDOW_END = window()
@@ -101,13 +102,21 @@ class Spell:
         return self.terminus is None and self.terminus_rule == ""
 
 
-def build_spells(events: list[dict], resolution: dict, roles_cfg: dict) -> tuple[list[Spell], int]:
+def build_spells(events: list[dict], resolution: dict, roles_cfg: dict,
+                 org_entity: OrgEntityResolver | None = None
+                 ) -> tuple[list[Spell], int]:
     """Group resolved events into spells per (person, organisation, role)."""
     single_holder = set(roles_cfg["single_holder_roles"])
+    # The organisation an event is about. Identity now comes from the event's
+    # own hard identifier where it has one, so two spellings of one firm land
+    # on one vertex and a generic seed label can no longer absorb both. The
+    # resolver falls back to the old behaviour when the entity stage has not
+    # run, which keeps this stage runnable on its own.
+    org_entity = org_entity or OrgEntityResolver.load()
 
     # Organisation-level events (dissolution, liquidation) carry no person, so
-    # they cannot be looked up by dyad. Build a mention -> resolved id map from
-    # the dyads that were resolved, so a firm's death can close its open ties.
+    # they cannot be looked up by dyad. Build a mention -> id map from the
+    # dyads that were resolved, so a firm's death can close its open ties.
     org_of_mention: dict[str, str] = {}
     for r in resolution.values():
         if r.get("org_mention") and r.get("resolved_org_id"):
@@ -118,7 +127,8 @@ def build_spells(events: list[dict], resolution: dict, roles_cfg: dict) -> tuple
     for e in events:
         res = resolution.get(f"{e.get('person_mention','')}||{e.get('org_mention','')}")
         if e["event_type"] in ORG_CLOSING:
-            oid = ((res or {}).get("resolved_org_id")
+            oid = (org_entity.for_event(e)
+                   or (res or {}).get("resolved_org_id")
                    or org_of_mention.get(e.get("org_mention") or ""))
             if oid:
                 org_events[oid].append(e)
@@ -126,7 +136,9 @@ def build_spells(events: list[dict], resolution: dict, roles_cfg: dict) -> tuple
         if not res or res["link_status"] == "unresolved":
             continue
         pid = res["resolved_person_id"]
-        oid = res["resolved_org_id"] or ("ORGMENTION_" + (e.get("org_mention") or "")[:60])
+        oid = (org_entity.for_event(e)
+               or res["resolved_org_id"]
+               or ("ORGMENTION_" + (e.get("org_mention") or "")[:60]))
         if not pid or not oid:
             continue
         role = e.get("role_canonical") or "unspecified"

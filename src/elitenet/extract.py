@@ -529,9 +529,22 @@ def extract_corporate(block: dict) -> list[dict]:
             group = (_event_id(block["block_uid"], relation, holder, m.start())
                      if len(cands) > 1 else "")
             for target in cands:
+                # The block's matricule, RC number and seat belong to the
+                # firm the notice is ABOUT. Where the tie's target is a
+                # company named inside the clause instead, those columns
+                # describe a different organisation, and carrying them here
+                # attributes one firm's tax ID to another -- which is exactly
+                # the kind of conflict the identifier tables are meant to
+                # detect, manufactured by the extractor. So they are cleared
+                # rather than copied.
+                own = _same_org(target, org)
                 emit(event_type="org_tie", pattern_id=f"corp.org_{relation}",
                      counterparty_mention=holder, org_mention=target,
                      role_canonical=relation, alt_group=group,
+                     org_mf=mf if own else "",
+                     org_rc=rc if own else "",
+                     org_address=address if own else "",
+                     org_postal_code=postal if own else "",
                      role_verbatim=_tidy_org(m.group(0))[:90],
                      # The fallback candidate is the same evidence read a
                      # second way, so it carries the same confidence; which

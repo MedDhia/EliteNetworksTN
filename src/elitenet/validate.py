@@ -100,7 +100,8 @@ BLOCKS = INTERIM / "blocks.jsonl"
 # make the check runnable rather than only that it was not run.
 _REBUILD_WITH = {"blocks.jsonl": "segment", "act_citations.csv": "extract"}
 _STAGE_FOR = {"node_key.csv": "tergm", "org_tie_spells.csv": "orgties",
-              "org_identifiers.csv": "orgattrs"}
+              "org_identifiers.csv": "orgattrs",
+              "org_entities.csv": "orgentity"}
 
 
 def _skip(rep: Report, check: str, needs: Path) -> None:
@@ -335,6 +336,68 @@ def check_citations(rep: Report) -> None:
             f"{len(cits)} citations, {len(dated)} with a resolvable cited date")
 
 
+def check_org_entities(rep: Report) -> None:
+    """Organisation entities, and the proof that refining identity lost nothing.
+
+    The merge hubs came from identity being "the seed node this mention
+    fuzzy-matched": `fuzz.token_set_ratio` treats containment as identity, so
+    a seed firm whose label normalised to "TROIS" absorbed every mention
+    containing the French word for three and became the highest-degree
+    organisation in the org-org layer. The fix refines identity rather than
+    discarding matches, so the thing to check is that **every** organisation
+    mention still reaches an entity. A mention that reached none would be a
+    firm silently deleted from the dataset, which is the one outcome this
+    change was not allowed to have.
+    """
+    if not _table_exists(PROCESSED / "org_entities.csv"):
+        _skip_stage(rep, "organisation entities",
+                    PROCESSED / "org_entities.csv")
+        return
+    ents = _read(PROCESSED / "org_entities.csv")
+    members = _read(PROCESSED / "org_entity_members.csv")
+
+    by_basis = Counter(e["entity_basis"] for e in ents)
+    rep.add("INFO", "organisation entities",
+            f"{len(ents)} entities over {len(members)} distinct mentions: "
+            + ", ".join(f"{k}={v}" for k, v in by_basis.most_common()))
+
+    # The no-data-lost guard, machine-checked rather than asserted in a commit
+    # message.
+    events = _read(PROCESSED / "events.csv")
+    mentions = {(e.get("org_mention") or "").strip() for e in events}
+    mentions.discard("")
+    mapped = {m["org_mention"] for m in members}
+    missing = mentions - mapped
+    rep.add("ERROR" if missing else "INFO", "every org mention has an entity",
+            f"{len(missing)} of {len(mentions)} organisation mentions in "
+            f"events.csv reach no entity"
+            + (f", e.g. {sorted(missing)[0][:60]!r}" if missing else ""))
+
+    # The residual error, stated with its direction. Name-keyed entities split
+    # one firm across spellings, which is the mirror image of the merge this
+    # change fixed: it understates degree where the merge overstated it.
+    name_keyed = by_basis.get("name", 0) + by_basis.get("ambiguous_mention", 0)
+    share = name_keyed / len(ents) if ents else 0
+    rep.add("WARN" if share > 0.5 else "INFO", "entities keyed only by name",
+            f"{name_keyed} of {len(ents)} entities ({share:.0%}) have no hard "
+            f"identifier and are keyed on the mention, so two spellings of one "
+            f"such firm stay separate -- the mirror image of the merge, and it "
+            f"understates degree rather than overstating it")
+
+    spanning = [m for m in members
+                if int(m.get("n_entities_on_mention") or 1) > 1]
+    rep.add("INFO", "mentions spanning several entities",
+            f"{len(spanning)} mentions carry more than one hard identifier, so "
+            f"the mention-level map is modal for them; the per-event key in "
+            f"orgentity.entity_key is the authoritative assignment")
+
+    adopted = [e for e in ents if e.get("seed_link_is_identity") == "1"]
+    rep.add("INFO", "entities linked to a seed organisation",
+            f"{len(adopted)} of {len(ents)} entities carry an identity-grade "
+            f"seed link and adopt that node's id, so seed ties and the dyadic "
+            f"covariates projected from them stay on the same vertex")
+
+
 def check_org_attrs(rep: Report) -> None:
     """Organisation identifiers, and what they say about resolution quality.
 
@@ -462,11 +525,21 @@ def check_org_ties(rep: Report) -> None:
     rep.add("ERROR" if bad_cens else "INFO", "org tie censoring is consistent",
             f"{len(bad_cens)} spells assert an onset while flagged left-censored")
 
+    # A closed-world check over a node universe that now has two authorities.
+    # An organisation's identity is its ENTITY -- keyed on a hard identifier
+    # where it has one -- because identity used to be "the seed node this
+    # mention fuzzy-matched", and a seed label that normalised to a common
+    # French word absorbed every mention containing it. So an endpoint may
+    # legitimately be an `ORGE_` entity rather than a seed node. It may not be
+    # neither: a dangling id is still an error, which is what this checks.
     known = {n["node_id"] for n in _read(PROCESSED / "seed_nodes.csv")}
+    known |= {e["org_entity_id"] for e in _read(PROCESSED / "org_entities.csv")}
     unknown = [s for s in spells
                if s["holder_id"] not in known or s["target_id"] not in known]
-    rep.add("ERROR" if unknown else "INFO", "org tie endpoints are seed nodes",
-            f"{len(unknown)} ties with an endpoint absent from seed_nodes.csv")
+    rep.add("ERROR" if unknown else "INFO",
+            "org tie endpoints are known nodes",
+            f"{len(unknown)} ties with an endpoint in neither "
+            f"seed_nodes.csv nor org_entities.csv")
 
     lc = sum(1 for s in dated if s["left_censored"] == "True")
     rc = sum(1 for s in dated if s["right_censored"] == "True")
@@ -584,6 +657,7 @@ def run(fail_on_error: bool = False) -> int:
     check_cabinets(rep)
     check_citations(rep)
     check_org_ties(rep)
+    check_org_entities(rep)
     check_org_attrs(rep)
     check_tergm_panel(rep)
 

@@ -4,9 +4,9 @@
 
 PY := PYTHONPATH=src python3
 
-.PHONY: all seed mirror calendar segment extract resolve spells orgties orgattrs export tergm codebook validate test clean-derived
+.PHONY: all seed mirror calendar segment extract resolve orgentity spells orgties orgattrs export tergm codebook validate test clean-derived
 
-all: seed mirror calendar segment extract resolve spells orgties orgattrs export tergm codebook validate
+all: seed mirror calendar segment extract resolve orgentity spells orgties orgattrs export tergm codebook validate
 
 seed:      ## ingest and clean the curated seed edge list
 	$(PY) -m elitenet.seed
@@ -34,6 +34,9 @@ export:    ## write SQLite, dynamic GEXF, networkDynamic and snapshot files
 
 orgties:   ## build the organisation-to-organisation tie layer
 	$(PY) -m elitenet.orgties
+
+orgentity: ## organisation entities keyed on the matricule / RC number
+	$(PY) -m elitenet.orgentity
 
 orgattrs:  ## organisation identifiers (tax ID, RC number) and addresses
 	$(PY) -m elitenet.orgattrs

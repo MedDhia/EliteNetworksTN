@@ -17,14 +17,18 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-from collections import defaultdict
+import re
+from collections import Counter, defaultdict
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from rapidfuzz import fuzz
 
-from .names import org_id, parse_org, parse_person, person_id
-from .paths import CONFIG, INTERIM, PROCESSED, ensure_dirs
+from .names import (org_id, parse_org, parse_person, person_id,
+                    strip_accents)
+from .paths import (CONFIG, INTERIM, PROCESSED, ensure_dirs,
+                    load_config)
 
 # Score weights. Organisation agreement outweighs name similarity: two people
 # with the same common name are common, but two people with the same name at
@@ -72,6 +76,8 @@ ROLE_AFFINITY: dict[str, set[str]] = {
 
 RESOLUTION_FIELDS = [
     "mention_key", "person_mention", "org_mention", "org_mf", "org_rc",
+    "org_match_score", "org_match_basis", "org_candidate_id",
+    "org_shared_tokens",
     "resolved_person_id", "resolved_person_label", "resolved_org_id",
     "resolved_org_label", "score", "link_status",
     "s_name", "s_org", "s_mf", "s_cooccur", "s_role",
@@ -107,14 +113,26 @@ class SeedIndex:
     org_by_norm: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))
     org_by_acronym: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))
     org_by_token: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))
+    # Corpus token document frequency, which the fuzzy tier of `org_match`
+    # gates on. It lives on the index so that every existing caller of
+    # `resolve_org` -- `orgties.py` in particular, which resolves org-org
+    # endpoints with no dyad to anchor them and is where 65.5% of the damage
+    # was -- picks up the gate without a signature change. The default gates
+    # nothing, so a stage that never loads the table behaves as before rather
+    # than silently half-applying it.
+    token_spec: TokenSpecificity = field(
+        default_factory=lambda: TokenSpecificity(df={}, n_mentions=0, threshold=2))
 
     def name_ambiguity(self, match_key: str) -> int:
         """How many distinct seed people share this name key."""
         return len(self.by_match_key.get(match_key, ()))
 
 
-def load_seed() -> SeedIndex:
+def load_seed(token_spec: TokenSpecificity | None = None) -> SeedIndex:
     idx = SeedIndex()
+    # The cached table when the caller has not built one. Absent cache means
+    # the gate is inert rather than half-applied -- `validate` reports that.
+    idx.token_spec = token_spec or load_token_specificity()
     with (PROCESSED / "seed_nodes.csv").open(encoding="utf-8", newline="") as fh:
         for row in csv.DictReader(fh):
             if row["node_type"] == "PERSON":
@@ -160,27 +178,164 @@ def load_seed() -> SeedIndex:
 
 
 # --------------------------------------------------------------------------- #
+# token specificity
+# --------------------------------------------------------------------------- #
+# Why this exists at all. `fuzz.token_set_ratio` treats CONTAINMENT as
+# identity: it returns ~1.0 whenever one string's token set is a subset of the
+# other's, however much else the longer string says.
+#
+#     token_set_ratio("comptoir tunisien de batiment", "batiment") == 1.000
+#
+# Meanwhile `seed.py` mints an organisation id from the label with legal-form
+# words stripped, so a seed firm called "SOCIETE TROIS" becomes CO_TROIS with
+# label_normalised "TROIS" -- the French for three, seed degree 1. Together
+# those two facts made that node absorb every mention containing the word,
+# including an address and a clause fragment, until it was the highest-degree
+# organisation in the org-org layer at 1,003 tie endpoints. CO_CONSULTING
+# ("LA CONSULTING") absorbed 4,076 distinct mentions carrying 1,606 different
+# matricules fiscaux.
+#
+# The discriminator is not token count -- most single-token seed labels are
+# proper names (SFBT, TUNISAIR, CONECT) where containment matching is exactly
+# right. It is how many DISTINCT organisation mentions in this corpus contain
+# the token: CONSULTING 4,738 of 199,608, against SFBT 3. That is measurable
+# from the corpus itself, so no external word list is needed and the threshold
+# can be reported rather than asserted.
+
+DF_CACHE = INTERIM / "org_token_df.json"
+_TOKEN_SPLIT = re.compile(r"[^A-Za-z0-9]+")
+
+
+def _tokens(text: str) -> set[str]:
+    return {t for t in _TOKEN_SPLIT.split(strip_accents(text or "").upper()) if t}
+
+
+@dataclass
+class TokenSpecificity:
+    """Document frequency of a token across distinct organisation mentions."""
+
+    df: dict[str, int]
+    n_mentions: int
+    threshold: int
+
+    min_corpus: int = 500
+
+    def is_discriminating(self, token: str) -> bool:
+        # With too small a corpus the frequencies are noise, so nothing is
+        # gated and the pre-change behaviour holds. That is what keeps the
+        # small test fixtures meaningful.
+        if self.n_mentions < self.min_corpus:
+            return True
+        return self.df.get(token, 0) < self.threshold
+
+    @property
+    def active(self) -> bool:
+        return self.n_mentions >= self.min_corpus
+
+    def discriminating(self, tokens: set[str]) -> set[str]:
+        return {t for t in tokens if self.is_discriminating(t)}
+
+
+def build_token_specificity(mentions: Iterable[str],
+                            share: float | None = None,
+                            min_corpus: int | None = None) -> TokenSpecificity:
+    """Count document frequency over DISTINCT mentions.
+
+    Distinct, not per-event: a firm filing forty times would otherwise make
+    its own name look generic, which is the reverse of what is wanted.
+    """
+    cfg = load_config("scope").get("org_identity", {})
+    share = cfg.get("discriminating_df_share", 0.0005) if share is None else share
+    min_corpus = (cfg.get("min_corpus_mentions", 500)
+                  if min_corpus is None else min_corpus)
+    seen: set[str] = set()
+    df: Counter = Counter()
+    for m in mentions:
+        m = (m or "").strip()
+        if not m or m in seen:
+            continue
+        seen.add(m)
+        df.update(_tokens(m))
+    n = len(seen)
+    # At least 2, so a token seen once is always discriminating.
+    threshold = max(2, int(round(share * n)))
+    return TokenSpecificity(df=dict(df), n_mentions=n, threshold=threshold,
+                            min_corpus=min_corpus)
+
+
+def load_token_specificity() -> TokenSpecificity:
+    """The cached table, or an empty one that gates nothing.
+
+    An absent cache must not silently re-enable the bug, but it also must not
+    crash a stage that can run without it, so the empty table reports
+    `n_mentions = 0` and `is_discriminating` then returns True for everything
+    -- the pre-change behaviour, and `validate` says the gate was not applied.
+    """
+    if DF_CACHE.exists():
+        d = json.loads(DF_CACHE.read_text(encoding="utf-8"))
+        return TokenSpecificity(df=d["df"], n_mentions=d["n_mentions"],
+                                threshold=d["threshold"],
+                                min_corpus=d.get("min_corpus", 500))
+    return TokenSpecificity(df={}, n_mentions=0, threshold=2)
+
+
+def save_token_specificity(spec: TokenSpecificity) -> None:
+    DF_CACHE.parent.mkdir(parents=True, exist_ok=True)
+    DF_CACHE.write_text(json.dumps(
+        {"df": spec.df, "n_mentions": spec.n_mentions,
+         "threshold": spec.threshold, "min_corpus": spec.min_corpus}),
+        encoding="utf-8")
+
+
+# --------------------------------------------------------------------------- #
 # organisation resolution
 # --------------------------------------------------------------------------- #
 
-def best_org_match(mention: str, idx: SeedIndex) -> tuple[str, float]:
-    """The closest seed organisation to a mention, with no floor applied.
+# Which tier decided a match. Recorded rather than discarded, because
+# `generic_fuzzy` is the one that has to be refused as an identity claim while
+# still being retained as evidence of what the matcher saw.
+IDENTITY_BASES = ("exact", "acronym", "discriminating_fuzzy", "hard_identifier")
 
-    Separated from `resolve_org` so a *failed* match can still name what it
-    came closest to. The org-tie review queue needs that: an observation with
-    one end resolved is adjudicable only if a coder can see which seed
-    organisation the other end nearly matched and by how much.
+
+@dataclass
+class OrgMatch:
+    org_id: str = ""
+    score: float = 0.0
+    basis: str = "none"
+    # The candidate the fuzzy tier picked even when it was refused, so a
+    # refusal is auditable and the review queue can still name a near-miss.
+    candidate_id: str = ""
+    shared_tokens: tuple[str, ...] = ()
+
+    @property
+    def is_identity(self) -> bool:
+        return bool(self.org_id) and self.basis in IDENTITY_BASES
+
+
+def org_match(mention: str, idx: SeedIndex) -> OrgMatch:
+    """Match an organisation mention to a seed organisation, with its basis.
+
+    The three tiers are unchanged except for the last. A fuzzy match must now
+    rest on at least one token that actually discriminates -- see
+    TokenSpecificity above for why, and for the measurement. A match resting
+    entirely on words like CONSULTING or BATIMENT is recorded as
+    `generic_fuzzy` and is NOT an identity: 95% of the merge-hub attachment in
+    this corpus came in through that door, 69% of it by plain containment and
+    26% by a lenient partial overlap that still cleared 0.88.
+
+    Nothing is dropped here. The candidate and score survive on the returned
+    match, so a refusal is as inspectable as an acceptance.
     """
     if not mention:
-        return "", 0.0
+        return OrgMatch()
     o = parse_org(mention)
     if not o.match_key:
-        return "", 0.0
+        return OrgMatch()
     hits = idx.org_by_norm.get(o.match_key)
     if hits:
-        return sorted(hits)[0], 1.0
+        return OrgMatch(sorted(hits)[0], 1.0, "exact")
     if o.acronym and o.acronym in idx.org_by_acronym:
-        return sorted(idx.org_by_acronym[o.acronym])[0], 0.9
+        return OrgMatch(sorted(idx.org_by_acronym[o.acronym])[0], 0.9, "acronym")
     # token-blocked fuzzy comparison
     cands: set[str] = set()
     for tok in set(o.content_tokens):
@@ -194,13 +349,34 @@ def best_org_match(mention: str, idx: SeedIndex) -> tuple[str, float]:
         s = fuzz.token_set_ratio(o.match_key, label) / 100.0
         if s > best_s:
             best, best_s = cid, s
-    return best, best_s
+    if not best:
+        return OrgMatch("", best_s, "none")
+
+    label = idx.orgs[best]["label_normalised"] or idx.orgs[best]["label"]
+    shared = _tokens(o.match_key) & _tokens(label)
+    good = idx.token_spec.discriminating(shared)
+    basis = "discriminating_fuzzy" if good else "generic_fuzzy"
+    return OrgMatch(org_id=best if good else "", score=best_s, basis=basis,
+                    candidate_id=best, shared_tokens=tuple(sorted(shared)))
+
+
+def best_org_match(mention: str, idx: SeedIndex) -> tuple[str, float]:
+    """The closest seed organisation to a mention, with no floor applied.
+
+    Separated from `resolve_org` so a *failed* match can still name what it
+    came closest to. The org-tie review queue needs that: an observation with
+    one end resolved is adjudicable only if a coder can see which seed
+    organisation the other end nearly matched and by how much. So this reports
+    the candidate even where the specificity gate refused it as an identity.
+    """
+    m = org_match(mention, idx)
+    return (m.org_id or m.candidate_id), m.score
 
 
 def resolve_org(mention: str, idx: SeedIndex) -> tuple[str, float]:
     """Match an organisation mention to a seed organisation."""
-    best, best_s = best_org_match(mention, idx)
-    return (best, best_s) if best_s >= 0.88 else ("", best_s)
+    m = org_match(mention, idx)
+    return (m.org_id, m.score) if (m.is_identity and m.score >= 0.88) else ("", m.score)
 
 
 # --------------------------------------------------------------------------- #
@@ -332,18 +508,26 @@ def load_overrides() -> dict[str, dict]:
 
 def run(events_path: Path | None = None) -> dict:
     ensure_dirs()
-    idx = load_seed()
     overrides = load_overrides()
     events_path = events_path or (INTERIM / "events_raw.jsonl")
 
     # Group events by (person, organisation) dyad: the dyad is the unit of
     # identity, so all evidence for one dyad is scored together.
     dyads: dict[tuple[str, str], dict] = {}
-    org_cache: dict[str, tuple[str, float]] = {}
+    org_cache: dict[str, OrgMatch] = {}
     block_people: dict[str, set[str]] = defaultdict(set)
 
     with events_path.open(encoding="utf-8") as fh:
         rows = [json.loads(line) for line in fh]
+
+    # The specificity table must be built before the seed index, because the
+    # index carries it and the fuzzy tier reads it. It is derived from this
+    # corpus rather than a word list, so it is a product of the same events
+    # being resolved -- which is why it is computed here and cached rather
+    # than shipped.
+    spec = build_token_specificity(e.get("org_mention") or "" for e in rows)
+    save_token_specificity(spec)
+    idx = load_seed(spec)
 
     for e in rows:
         if e.get("person_mention"):
@@ -381,12 +565,18 @@ def run(events_path: Path | None = None) -> dict:
     # than descriptions, so either settles an identity the name alone leaves
     # open: an organisation whose name is spelled three ways reaches the same
     # node through its matricule or its RC number.
+    # Seeded only from identity-grade matches. That is what closes the last
+    # route into the merge hubs: 2% of hub attachment arrived through this map,
+    # because a generic containment match scored 1.0, seeded the matricule
+    # entry, and then pulled in every other spelling carrying that matricule.
+    # `org_match` now refuses such a match, so it cannot seed the map either.
     id_to_org: dict[str, dict[str, str]] = {col: {} for col in HARD_IDS}
     for (person, org_men), d in dyads.items():
         if org_men and any(d[col] for col in HARD_IDS):
             if org_men not in org_cache:
-                org_cache[org_men] = resolve_org(org_men, idx)
-            oid, osc = org_cache[org_men]
+                org_cache[org_men] = org_match(org_men, idx)
+            om = org_cache[org_men]
+            oid, osc = (om.org_id if om.is_identity else ""), om.score
             if oid and osc >= 0.99:
                 for col in HARD_IDS:
                     if d[col]:
@@ -413,13 +603,19 @@ def run(events_path: Path | None = None) -> dict:
     for (person, org_men), d in sorted(dyads.items()):
         stats["dyads"] += 1
         if org_men not in org_cache:
-            org_cache[org_men] = resolve_org(org_men, idx)
-        org_resolved, org_score = org_cache[org_men]
+            org_cache[org_men] = org_match(org_men, idx)
+        om = org_cache[org_men]
+        org_resolved = om.org_id if (om.is_identity and om.score >= 0.88) else ""
+        org_score, org_basis = om.score, om.basis
+        if not org_resolved:
+            stats[f"org_refused_{om.basis}"] = stats.get(
+                f"org_refused_{om.basis}", 0) + 1
         by_id = learned_org(d)
         if not org_resolved and by_id:
-            org_resolved, org_score = by_id, 0.95
+            org_resolved, org_score, org_basis = by_id, 0.95, "hard_identifier"
         if org_resolved:
             stats["org_resolved"] += 1
+            stats[f"org_by_{org_basis}"] = stats.get(f"org_by_{org_basis}", 0) + 1
 
         co_mentions = set()
         for b in d["blocks"]:
@@ -499,6 +695,15 @@ def run(events_path: Path | None = None) -> dict:
                                       if (top and status != "unresolved") else ""),
             "resolved_org_id": org_resolved,
             "resolved_org_label": idx.orgs[org_resolved]["label"] if org_resolved else "",
+            # The org match score was computed and discarded, which left
+            # `s_org` -- a person-side scoring component -- as the only column
+            # available to audit organisation matching with. It reads 0.00 for
+            # any person-unresolved dyad, so it said nothing at all about the
+            # 37,859 mentions that had attached to a merge hub.
+            "org_match_score": round(org_score, 4),
+            "org_match_basis": org_basis,
+            "org_candidate_id": om.candidate_id,
+            "org_shared_tokens": " ".join(om.shared_tokens),
             "score": round(top["score"], 4) if top else 0.0,
             "link_status": status,
             "s_name": round(top["s_name"], 3) if top else 0.0,

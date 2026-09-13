@@ -48,3 +48,29 @@ panel:
   monthly_window:
     start: "2008-01-01"
     end: "2014-12-31"
+
+# --- organisation identity -------------------------------------------------
+# A seed organisation's label can be a short common word once legal-form words
+# are stripped: "SOCIETE TROIS" normalises to "TROIS", the French for three.
+# `fuzz.token_set_ratio` then treats containment as identity -- it returns 1.0
+# whenever the seed label's tokens are a subset of the mention's, however much
+# else the mention says -- so that node absorbed every mention containing the
+# word and became the highest-degree organisation in the org-org layer.
+#
+# The fix is to require the match to rest on a token that actually
+# discriminates, measured by how many DISTINCT organisation mentions in this
+# corpus contain it. CONSULTING appears in 4,738 of 199,608; SFBT in 3. Token
+# count is not the signal: most single-token seed labels are proper names
+# (SFBT, TUNISAIR, CONECT) where containment matching is correct.
+org_identity:
+  # A token is discriminating below this share of distinct org mentions.
+  # 0.0005 is about 100 mentions. The narrowest observed gap is TROIS (143,
+  # generic) against TUNISAIR (22, distinctive), so this is a judgement of
+  # roughly 6x headroom rather than a sharp boundary -- `make orgentity`
+  # reports the hub count at 0.0002 / 0.0005 / 0.001 so the choice stays
+  # visible instead of being buried here.
+  discriminating_df_share: 0.0005
+  # Below this many distinct mentions, document frequency is too noisy to
+  # gate on, so every token counts as discriminating and the old behaviour
+  # holds. Guards the small fixtures the tests run against.
+  min_corpus_mentions: 500

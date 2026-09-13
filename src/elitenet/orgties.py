@@ -31,9 +31,15 @@ import json
 from collections import defaultdict
 from datetime import date, datetime
 
+from .orgentity import OrgEntityResolver
 from .paths import INTERIM, PROCESSED, ensure_dirs, window
 from .resolve import (THRESHOLD_AMBIGUOUS, THRESHOLD_RESOLVED, SeedIndex,
-                      best_org_match, load_seed, resolve_org)
+                      best_org_match, load_seed, org_match, resolve_org)
+
+# The score at which an endpoint counts as a member of the layer. Deliberately
+# the same 0.88 the old rule used, so this change moves identity without
+# moving the row set.
+THRESHOLD_MEMBERSHIP = 0.88
 from .spells import periods
 
 # How each relation bears on the interval. `shares_ceded` is the holder giving
@@ -54,6 +60,11 @@ FIELDS_TIES = [
     "holder_mention", "target_mention", "holder_match", "target_match",
     "score", "link_status", "evidence_quote", "event_id", "block_uid",
     "issue_uid", "folio_page", "extract_confidence",
+    # Both endpoints carry the basis their identity rests on, so a reader can
+    # tell a firm identified by its matricule from one identified only by a
+    # name spelling -- and so the observations that used to pile onto a merge
+    # hub are visible as such rather than silently re-attributed.
+    "holder_basis", "target_basis", "holder_seed_id", "target_seed_id",
 ]
 # The queue carries two kinds of row -- a dyad that resolved ambiguously, and
 # an observation with only one end resolved -- so it names the reason and, for
@@ -151,7 +162,8 @@ def score_link(holder_match: float, target_match: float, n_obs: int,
 # One observation row, shared by the resolved path and the review queue so a
 # queued row carries the same provenance columns a resolved one does.
 def _obs_row(e: dict, idx: SeedIndex, hid: str, hs: float, tid: str, ts: float,
-             hlabel: str, tlabel: str) -> dict:
+             hlabel: str, tlabel: str, hbasis: str = "", tbasis: str = "",
+             hseed: str = "", tseed: str = "") -> dict:
     relation = e.get("role_canonical") or "shareholder_confirmed"
     kind = ("opening" if relation in OPENING else
             "closing" if relation in CLOSING else "confirmation")
@@ -171,6 +183,8 @@ def _obs_row(e: dict, idx: SeedIndex, hid: str, hs: float, tid: str, ts: float,
         "event_id": e.get("event_id", ""), "block_uid": e.get("block_uid", ""),
         "issue_uid": e.get("issue_uid", ""), "folio_page": e.get("folio_page", ""),
         "extract_confidence": e.get("extract_confidence", ""),
+        "holder_basis": hbasis, "target_basis": tbasis,
+        "holder_seed_id": hseed, "target_seed_id": tseed,
     }
 
 
@@ -185,11 +199,42 @@ def observations(events: list[dict],
     pending: list[dict] = []
     diag = defaultdict(int)
     cache: dict[str, tuple[str, float]] = {}
+    org_entity = OrgEntityResolver.load()
 
+    # Membership and identity are now two questions, and separating them is
+    # what lets this fix the merge hubs without dropping a single observation.
+    #
+    #  * MEMBERSHIP is unchanged: an endpoint counts if its mention comes
+    #    within 0.88 of a seed organisation at all, generic match included.
+    #    `best_org_match` reports that candidate even where the specificity
+    #    gate refuses it as an identity, so the row set is exactly what it was.
+    #  * IDENTITY is the entity, not the seed node. `SOCIETE TROIS` had 1,003
+    #    tie endpoints because every mention containing the word "trois"
+    #    became that node; those observations are all still here, attached to
+    #    the firms they actually name.
+    #
+    # Widening membership to endpoints that never matched anything -- the
+    # 13,362 neither-end-resolved and 10,586 one-end-resolved observations --
+    # is a separate decision about coverage, not part of fixing this, so they
+    # stay out and stay in the review queue.
     def rv(mention: str) -> tuple[str, float]:
         if mention not in cache:
-            cache[mention] = resolve_org(mention, idx)
+            cache[mention] = best_org_match(mention, idx)
         return cache[mention]
+
+    def endpoint(mention: str, event: dict | None) -> tuple[str, float, str, str]:
+        """(id, score, basis, seed_id) for one end of a tie."""
+        cand, score = rv(mention)
+        if not cand or score < THRESHOLD_MEMBERSHIP:
+            return "", score, "unresolved", ""
+        m = org_match(mention, idx)
+        seed_id = m.org_id if m.is_identity else ""
+        # The target's identifiers live on the event; the holder is named in a
+        # clause and has none, so it can only be keyed by name.
+        ent = (org_entity.for_event(event) if event is not None else "")
+        if not ent:
+            ent = org_entity.for_mention(mention)
+        return (ent or seed_id or cand), score, m.basis, seed_id
 
     # The extractor emits both candidate targets for a clause that states one,
     # sharing an `alt_group`, and the choice belongs here: this is the first
@@ -210,8 +255,8 @@ def observations(events: list[dict],
     chosen: list[dict] = list(singles)
     for g, alts in groups.items():
         both = [a for a in alts
-                if rv((a.get("counterparty_mention") or "").strip())[0]
-                and rv((a.get("org_mention") or "").strip())[0]]
+                if endpoint((a.get("counterparty_mention") or "").strip(), None)[0]
+                and endpoint((a.get("org_mention") or "").strip(), a)[0]]
         if both:
             diag["alt_group_target_chosen"] += 1
             # The first alternate is the stated target; taking it over the
@@ -227,12 +272,27 @@ def observations(events: list[dict],
             diag["alt_group_unresolved"] += 1
             chosen.append(alts[0])
 
+    def label_of(oid: str, seed_id: str, mention: str) -> str:
+        """A label that does not assume the id is a seed node.
+
+        An entity id is not in `idx.orgs`, so reading the seed label
+        unconditionally would raise -- and silently returning "" would lose
+        the only human-readable handle on the firm.
+        """
+        if oid in idx.orgs:
+            return idx.orgs[oid].get("label", "")
+        if seed_id in idx.orgs:
+            return idx.orgs[seed_id].get("label", "")
+        return mention
+
     for e in chosen:
         diag["events"] += 1
         holder_m = (e.get("counterparty_mention") or "").strip()
         target_m = (e.get("org_mention") or "").strip()
-        hid, hs = rv(holder_m)
-        tid, ts = rv(target_m)
+        hid, hs, hbasis, hseed = endpoint(holder_m, None)
+        tid, ts, tbasis, tseed = endpoint(target_m, e)
+        diag[f"holder_{hbasis}"] += 1
+        diag[f"target_{tbasis}"] += 1
         if not hid and not tid:
             diag["neither_end_resolved"] += 1
             continue
@@ -247,16 +307,17 @@ def observations(events: list[dict],
             failed_m = target_m if hid else holder_m
             near_id, near_s = best_org_match(failed_m, idx)
             pending.append({
-                **_obs_row(e, idx,
-                           hid or "", hs, tid or "", ts,
-                           idx.orgs[hid]["label"] if hid else "",
-                           idx.orgs[tid]["label"] if tid else ""),
+                **_obs_row(e, idx, hid or "", hs, tid or "", ts,
+                           label_of(hid, hseed, holder_m) if hid else "",
+                           label_of(tid, tseed, target_m) if tid else "",
+                           hbasis, tbasis, hseed, tseed),
                 "score": round(near_s, 4), "link_status": "unresolved",
                 "queue_reason": "one_end_resolved",
                 "failed_end": "target" if hid else "holder",
                 "failed_mention": failed_m,
                 "near_org_id": near_id,
-                "near_org_label": idx.orgs[near_id]["label"] if near_id else "",
+                "near_org_label": (idx.orgs[near_id]["label"]
+                                   if near_id in idx.orgs else ""),
                 "near_score": round(near_s, 4),
             })
             continue
@@ -266,8 +327,9 @@ def observations(events: list[dict],
             diag["self_match_dropped"] += 1
             continue
         out.append(_obs_row(e, idx, hid, hs, tid, ts,
-                            idx.orgs[hid].get("label", ""),
-                            idx.orgs[tid].get("label", "")))
+                            label_of(hid, hseed, holder_m),
+                            label_of(tid, tseed, target_m),
+                            hbasis, tbasis, hseed, tseed))
     diag["resolved_observations"] = len(out)
     diag["queued_one_end"] = len(pending)
     return out, pending, dict(diag)
@@ -351,8 +413,11 @@ def build_spells(obs: list[dict], seed_edges: list[dict],
         eff_onset = onset or onset_hi
         spells.append({
             "org_spell_id": _sid(hid, tid, relation),
-            "holder_id": hid, "holder_label": idx.orgs[hid].get("label", ""),
-            "target_id": tid, "target_label": idx.orgs[tid].get("label", ""),
+            "holder_id": hid, "target_id": tid,
+            # The label travels on the observations, because an entity id is
+            # not a seed node and so is not in `idx.orgs`.
+            "holder_label": rows[0].get("holder_label", ""),
+            "target_label": rows[0].get("target_label", ""),
             "relation": relation, "is_ownership": int(relation in OWNERSHIP),
             "layer": "ownership" if relation in OWNERSHIP else "corporate_other",
             "onset": onset.isoformat() if onset else "",
