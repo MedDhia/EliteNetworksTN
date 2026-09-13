@@ -7,6 +7,55 @@ ED_cf24b93f49194c57f77d,tutelage,studied_under,PERSON_ABYHAJB_SALM,سالم بو
 ED_69dd22fadcc295519fbe,tutelage,studied_under,PERSON_ABYHAJB_SALM,سالم بو حاجب,PERSON_NYFR_MHMD,محمد النيفر,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,النيفر والشيخ محمد بيرم، دون أن ننسى آخرهم عهداً
 ED_e4249bdd4f703a88ee34,tutelage,studied_under,PERSON_ABYHAJB_SALM,سالم بو حاجب,PERSON_QABADW_MHMWD,محمود قابادو,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,ألا وهو الشيخ محمود قابادو الذي استحكمت بينه وبين مترجمنا أسباب المودة
 ED_a5aeecfbcb4aff39a6e0,tutelage,studied_under,PERSON_ABYHAJB_SALM,سالم بو حاجب,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,والشيخ إبراهيم الرياحي والشيخ محمد النيفر
+ED_663c1ca2c7284f4e610f,tutelage,taught_at,PERSON_ASRM_MHMD,محمد الأصرم,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,كل جهوده بحماس متجدّد.ء سوا، كأستاذ أو كمحاضر أو كرئيس
+ED_a6c1bfd4bf06f361e6bc,tutelage,studied_at,PERSON_ASRM_MHMD,محمد الأصرم,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,أو في جامع الريتونة الذي كان يتردد على بعض ذروسه
+ED_927ffd810b30deb86e0a,tutelage,taught,PERSON_ASRM_MHMD,محمد الأصرم,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,تلك الدروس التي ما زال يتذكرها كل الذين أسعفهم الحظ بمتابعتها وفي مقدمتهم التلميذ الشاب الحبيب بورقيبة
+ED_9ad787cd86db5abace10,tutelage,taught_at,PERSON_ASRM_MHMD,محمد الأصرم,SCH_MDRSH_LYA_LLGHH_WALADAB_RBYH,المدرسة العليا للغة والآداب العربية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,دُعيَ إلى التدريس على التوالي بالمدرسة العليا للغة والآداب العربية
+ED_625a0cf1ec042802cbcd,tutelage,taught_at,PERSON_ASRM_MHMD,محمد الأصرم,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,بالمدرسة العليا للغة والآداب العربية وبالمدرسة الصادقية
+ED_9cba1e38073d1a68ebd4,tutelage,studied_at,PERSON_ASRM_MHMD,محمد الأصرم,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,ولقد لفت إليه الأنظار سوا، في المدرسة الصادقية أو في جامع
+ED_ec521d5b12f51f6536e5,tutelage,studied_at,PERSON_ASRM_MHMD,محمد الأصرم,SCH_MHD_THANWY_BBARYS,المعهد الثانوي بباريس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,بين المعهد الثانوي ومكتبات العاصمة الفرنسية، ليثري فكره
+ED_35949712cb3b692914c4,tutelage,taught_at,PERSON_BDH_MHMD,محمد عبده,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,1903,1903-01-01,1903-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,وهناك أيضاً ألقى المغفور له الشيخ محمد عبده
+ED_65f1052c873e9c3e845d,tutelage,taught_at,PERSON_BDH_MHMD,محمد عبده,ORG_JMYH_KHLDWNYH,الجمعية الخلدونية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,وقد ألقى على منبر الخلدونية محاضرة بليغة
+ED_8ff315338e8cf1b3921a,tutelage,studied_under,PERSON_BDH_MHMD,محمد عبده,PERSON_AFGHANY_JMAL_DYN,جمال الدين الأفغاني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,تحت تأثير جمال الدين الأفغاني وتلميذه الشيخ محمد عبدهع
+ED_5781d37dae0ee5411c1e,tutelage,taught_at,PERSON_BDWHAB_HSN_HSNY,حسن حسني عبد الوهاب,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,وقد عَهِدَ بها لأول مرّة إلى الأستاذ حسن حسني عبد الوهاب
+ED_494005d53813159df576,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_ABRAHYM_HAFZ,حافظ إبراهيم,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,وخليل مطران وحافظ إبراهيم. وعلى وجه الخصوص الشاعر التونسي
+ED_6de7b93ae4acd6c58389,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_ABYTMAM,أبو تمام,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"والشريف الرضي وأبا تمام والمعري
+والمتنبى وابن رومي"
+ED_773951a8438e49711811,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_ASHRY,الأشعري,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"من أمثال الأشعري وابن
+سينا والزمخشري والغزالي وابن رشد، قد استأئروا بعنايته"
+ED_65848a8795385c43e309,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_BNRSHD,ابن رشد,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,والزمخشري والغزالي وابن رشد، قد استأئروا بعنايته
+ED_9eabe026d7a6af135479,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_BNRWMY,ابن الرومي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,وابن رومي، يضاف إليهم من المحدثين أحمد تيمور
+ED_2a78820cef3aad1c2d3d,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_BNSYNA,ابن سينا,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"من أمثال الأشعري وابن
+سينا والزمخشري والغزالي وابن رشد، قد استأئروا بعنايته"
+ED_53254aa071cf15e86b43,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_FRZDQ,الفرزدق,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,نذكر على سبيل المثال، الفرزدق والشريف الرضي وأبا تمام والمعري
+ED_5a07dab8cc0d293fa9f4,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_GHZALY,الغزالي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,لا سيما منهم الغزالي
+ED_1c85f814068e41bd0720,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_KHYAM_MR,عمر الخيام,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,في آثار السعدي وعمر الخيام المعربة
+ED_e858d83b960bff8a9ad1,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_MRY_ABYLA,أبو العلاء المعري,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"وأبا تمام والمعري
+والمتنبى وابن رومي"
+ED_f8cc23c0e50fa8790310,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_MTNBY,المتنبي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,والمتنبى وابن رومي، يضاف إليهم من المحدثين
+ED_b17b0a9970759d8697ce,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_MTRAN_KHLYL,خليل مطران,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"والرصافي
+وخليل مطران وحافظ إبراهيم"
+ED_700e8f5d1660a0b383cb,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_QABADW_MHMWD,محمود قابادو,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"وعلى وجه الخصوص الشاعر التونسي محمود
+قابادو، الذي استهواه نظمه البديع"
+ED_3758cdccff7402f420a5,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_RDY_SHRYF,الشريف الرضي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,الفرزدق والشريف الرضي وأبا تمام والمعري
+ED_f6bc2e644741076e0199,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_RSAFY_MRWF,معروف الرصافي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"أحمد تيمور والرصافي
+وخليل مطران وحافظ إبراهيم"
+ED_ef701567b6e84affccd1,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_SHYRAZY_SDY,سعدي الشيرازي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,قد وجد في آثار السعدي وعمر الخيام المعربة، متعة
+ED_0c02ebf8d10f5b5579c3,tutelage,taught,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_SNA_MKHATBYH_ASGHR_MNH,مخاطبيه الأصغر منه سنا,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"لتحريض مخاطبيه
+الأصغر منه سنا على دراسة العلوم الإسلامية"
+ED_32804e4e96a054cc204d,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_TKWYNHMA_ASATDHH_DHYN_SAHMWA_FY,الأساتذة الذين ساهموا في تكوينهما,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"أعجبا بنفس
+الأساتذة الذين ساهموا في تكوينهما"
+ED_ca991261359a3d40eeba,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_TYMWR_AHMD,أحمد تيمور,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,يضاف إليهم من المحدثين أحمد تيمور والرصافي
+ED_d3832494b9633a910c35,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_ZMKHSHRY,الزمخشري,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"الأشعري وابن
+سينا والزمخشري والغزالي وابن رشد، قد استأئروا بعنايته وقتاً أطول"
+ED_87374e0269b4d6110fc9,tutelage,studied_at,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,حيث تعلم مبادى، اللغة الفرنسية - وجامع الزيتونة، وتمكن من الحصول على الشهائد
+ED_9c8396ef51651188239e,tutelage,taught_at,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,كمدرس بالمعهد الصادقي وجامع الزيتونة، تكوين
+ED_4462804909247e9b0063,tutelage,studied_under,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,الموجه الحكيم والمرشد المقتدر، لتمكينه من تحقيق ما كان يصبو إليه
+ED_7fed366f976df7173665,tutelage,studied_at,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,SCH_KHLDWNYH,الخلدونية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,فتردّد على التوالى على الخلدونية ومدرسة العطارين
+ED_09407df03d50032fdc57,tutelage,studied_at,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,SCH_MDRSH_TARYN,مدرسة العطارين,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,ومدرسة العطارين - حيث تعلم مبادى، اللغة الفرنسية
+ED_1f109cf0c220c28f5f79,tutelage,taught_at,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,SCH_MHD_SADQY,المعهد الصادقي,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,واستطاع قبل ذلك، كمدرس بالمعهد الصادقي وجامع الزيتونة
+ED_c2843e83c544d55b304a,tutelage,taught_at,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,SCH_JAMH_ZYTWNYH,الجامعة الزيتونية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,درس مدة طويلة بالمعهد الصادقى والجامعة الزيتونية، قبل أن يشغل
+ED_534a6b921992a51d7e8b,tutelage,taught_at,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,SCH_MHD_SADQY,المعهد الصادقي,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,قد درس مدة طويلة بالمعهد الصادقى والجامعة الزيتونية
 ED_cd2dfc7727f3eae9d011,tutelage,taught_at,PERSON_BNHSYN_AHMD,أحمد بن حسين,MSQ_JAM_SAHB_TAB,جامع صاحب الطابع,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.04,عن استئناف دروسه بجامع صاحب الطابع
 ED_ecb4517d440026e45af9,tutelage,studied_under,PERSON_BNHSYN_AHMD,أحمد بن حسين,PERSON_ABY_AHMD,احمد الابي,person,,,,,none,book_stated,rule,TUT01,0.85,aalam:1.04,كما قرأ على الشيخ أحمد الأبي «البيان
 ED_e974891f7c588a4a2855,tutelage,studied_under,PERSON_BNHSYN_AHMD,أحمد بن حسين,PERSON_BNMSWD_TAHR,الطاهر بن مسعود,person,الفقه|النحو,,,,none,book_stated,rule,TUT01,0.85,aalam:1.04,وارتبط من أول وهلة بشيخها الطاهر بن مسعود وقرأ عليه الفقه والنحو
@@ -17,6 +66,34 @@ ED_a90113e1d0e8e699dea9,tutelage,studied_at,PERSON_BNHSYN_AHMD,أحمد بن ح�
 ED_0222fef52b2309afa6b1,tutelage,taught_at,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,SCH_MDRSH_LYA_LLGHH_WALADAB_RBYH,المدرسة العليا للغة والآداب العربية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,"مدير المدرسة العليا للغة والآداب العربية الحديثة
 العهد. فتطوع لإلقا، بعض دروس في التعريب والنقل"
 ED_915a39d15af2143cf511,tutelage,studied_at,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,وهكذا فقد التحق محمّد بن الخوجة بتلك المدرسة
+ED_3b1a2caf5d1c182c60de,tutelage,studied_under,PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,PERSON_KMBNWN_QBTAN,القبطان كمبنون,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"أهم ما تلقاه من دروس عن
+أستاذه المفضل القبطان كمبئنون"
+ED_0b4a42017ace5f3eeced,tutelage,taught_at,PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,SCH_MDRSH_HRBYH_BBARDW,المدرسة الحربية بباردو,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"عُيّن أستاذاً بالمدرسة
+الحربية بباردو"
+ED_daf2d8524656d1986c00,tutelage,studied_at,PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,SCH_MDRSH_HRBYH_BMNWBH,المدرسة الحربية بمنوبة,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"من الالتحاق بثكنة الخيالة بمنوبة، وقد كانت آنذاك
+مقرّ المدرسة الحربية"
+ED_35b433647de04e6723fc,tutelage,taught,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,PERSON_BSHYR,البشير باي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"دروس خاصة للأمرا،
+الطاهر والبشير والمنصف باي"
+ED_b1bb471fd1243dd3235a,tutelage,studied_under,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,person,,1917,1917-01-01,1917-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"أعنيى محمد باي خير الدين الذي اختار الإقامة على تلك
+الربوة الملهمة"
+ED_3585ce31f31d92144b26,tutelage,taught,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,PERSON_MNSF,المنصف باي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"للأمرا،
+الطاهر والبشير والمنصف باي"
+ED_04ac8ddf068e5ac546f5,tutelage,taught,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,PERSON_TAHR,الطاهر باي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"فقد كلف مترجمنا بإعطا، دروس خاصة للأمرا،
+الطاهر والبشير والمنصف باي"
+ED_c86846969e223a865c90,tutelage,studied_at,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,SCH_MDRSH_LWYH,المدرسة العلوية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,ولقد وقع اختياره على المدرسة العلويّة الحديثة العهد. فاألحق بها ابنه
+ED_24b17d28c72dae6fae66,tutelage,taught_at,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,عُيّن خير الله مدرّساً بالمدرسة الصادقية التي بقي بها ست سنين
+ED_b468f6cf9ad38d9ef94a,tutelage,taught_at,PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,عن تعويض بعض الأساتذة المتغيبين أو المشغولين والقيام على غير استعداد بمهمة
+ED_79249568dff4eedc9a57,tutelage,studied_at,PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,بمتابعة دروس بعض الشيوخ المشهورين بجامع الزيتونة المعمور
+ED_d119cdf3b159f49759f5,tutelage,studied_at,PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,SCH_MHD_SADQY,المعهد الصادقي,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,أرسل إلى الكتاب ثم إلى المعهد الصادقي حيث أنهى دراسته الثانوية
+ED_7ce8e38065759d86c9d6,tutelage,studied_under,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,PERSON_ASRM_MHMD,محمد الأصرم,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,وفي مقدمتهم التلميذ الشاب الحبيب بورقيبة
+ED_841bcd0cc869df4ecf87,tutelage,studied_at,PERSON_BWRQYBH_MHMD,الشيخ محمد بورقيبة,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,بجامع الزيتونة المعمور لمواصلة دراسات مطوّلة وشاقة
+ED_ac82f23db9acb14b1b45,tutelage,studied_at,PERSON_BWSHWSHH_LY,علي بوشوشة,SCH_MHD_SADQY,المعهد الصادقي,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,إلى الكتاب ثم إلى الجامع وأخيراً إلى المعهد الصادقي عند افتتاحه
+ED_d46534d94640af3a7b2f,tutelage,taught_at,PERSON_GHTAS_AHMD,أحمد الغطاس,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,قد دفعه إلى التطوع لإلقا، عدة محاضرات، حول بعض المواضيع الأدبية أو الفلسفية
+ED_da91140114aa3bc87e2a,tutelage,studied_at,PERSON_GHTAS_AHMD,أحمد الغطاس,SCH_KLYH_HQWQ_BMDYNH_AKS,كلية الحقوق بمدينة اكس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,متحصلا على الإجازة في الحقوق من كلية الحقوق. بمدينة اكس
+ED_30823a0428996080f9bb,tutelage,studied_at,PERSON_GHTAS_AHMD,أحمد الغطاس,SCH_THANWYH_QDYS_LWYS_BTWNS,ثانوية القديس لويس بتونس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,وهو من قدلما، تلامذة ثانوية القديس لويمس بتونس
+ED_36503d31c340d504cc69,tutelage,licensed_by,PERSON_HANBH_LY_BASH,علي باش حانبة,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,وبعد حصوله على شهادة ختم الدراسة بتلك المدرسة؛ دعي إلى
+ED_a2854db838eb813e5a25,tutelage,studied_at,PERSON_HANBH_LY_BASH,علي باش حانبة,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"علي باش حانبة قد كان من تلامذة المدرسة
+الصادقية النابهين"
 ED_0afc39b9ab9080f674dc,tutelage,studied_under,PERSON_HSYN,الجنرال حسين,PERSON_QABADW_MHMWD,محمود قابادو,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,يتأبعان مع دروس أ م لشيخ ميحمود قابادو الخالدة الذكر
 ED_5a9e49d843b688d4ce53,tutelage,studied_under,PERSON_HSYN,الجنرال حسين,PERSON_QABADW_MHMWD,محمود قابادو,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.07,"استحكمت أسباب المودة بالخصوص بيئه وبين
 أستاذ العربية الشيخ محمود قابادو"
@@ -25,8 +102,49 @@ ED_7cd3074ee920b01f4fa6,tutelage,studied_at,PERSON_HSYN,الجنرال حسين,
 ED_38455ff410ca965de6d3,tutelage,studied_at,PERSON_HSYN,الجنرال حسين,SCH_MDRSH_SGHAR_MMALYK,مدرسة صغار المماليك,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.07,"حيث تم في الأثنا، إلحاقه بجماعة المدرسين المكلفين
 بتربية صغار المماليك"
 ED_9d3b295f9c7eb6812088,tutelage,studied_at,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,ولقد التحق في سر مبكرة بجامع الريتونة المعمور وتابع دروس أبرز
+ED_b92e1fa345a003f3c9ee,tutelage,taught,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,PERSON_MSYKH_HBYBH,حبيبة مسيكة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,"وعكف على
+تلقينها أصول الإلقا، وتدريبها"
+ED_641492e6b81abab593f1,tutelage,studied_at,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,SCH_KTAB,الكتاب,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,"فأرسلته في وقت مبكر إلى الكتاب
+حيث تعلّم القرآن الكريم"
+ED_4b4297dad60202fde19c,tutelage,studied_at,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,SCH_MDRSH_QRANYH,المدرسة القرآنية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,"سيتوسع فيما بعد
+فى دراستها فى المدرسة القرآنية"
+ED_d7ad00138a8eeee0692b,tutelage,studied_at,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,SCH_MHD_KARNW,معهد كارنو,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,"واكتشف بعد ذلك عالماً جديداً عند
+التحاقه بمعهد كارنو الثانوي"
+ED_99c37369efbe4523f72e,tutelage,taught_at,PERSON_KHMYRY_TAHR,الطاهر الخميري,ORG_MSSH_JWHR_HWBKYNS,مؤسسة جوهر هوبكينس,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,"وتوضيح المشاكل الناجمة عن تحرير القارة
+السمراء، لطلبة المؤسسة المذكورة"
+ED_93ff179ce299f0a8a3b1,tutelage,taught_at,PERSON_KHMYRY_TAHR,الطاهر الخميري,SCH_JAMH_AMRYKYH_BALQAHRH,الجامعة الأمريكية بالقاهرة,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,"دُعِيّ مواطننا إلى التدريس
+بالجامعة الأمريكية بالقاهرة"
+ED_1f08502ce9d3050e61ec,tutelage,taught_at,PERSON_KHMYRY_TAHR,الطاهر الخميري,SCH_JAMH_HMBWRGH,جامعة همبورغ,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,بالجامعة الأمريكية بالقاهرة ثم بجامعة همبورغ
+ED_b5515781cd15d41aa90f,tutelage,licensed_by,PERSON_KHMYRY_TAHR,الطاهر الخميري,SCH_JAMH_HMBWRGH,جامعة همبورغ,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,قبل الحصول على شهادة الماجستير في العلوم العصرية من نفس الجامعة
+ED_a86b879d580247dc3556,tutelage,studied_at,PERSON_KHMYRY_TAHR,الطاهر الخميري,SCH_JAMH_HMBWRGH,جامعة همبورغ,school,,1936,1936-01-01,1936-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,الدكتوراه في الآداب من جامعة همبورغ سنة 1936
+ED_16910d8eac8cf07d7e3a,tutelage,studied_at,PERSON_KHMYRY_TAHR,الطاهر الخميري,SCH_JAMH_ZYTWNYH,الجامعة الزيتونية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,قضى سنوات قليلة في الدراسة بالخلدونيّة والجامعة الزيتونية
+ED_5ffa998237a75aeb751f,tutelage,studied_at,PERSON_KHMYRY_TAHR,الطاهر الخميري,SCH_KHLDWNYH,الخلدونية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,قضى سنوات قليلة في الدراسة بالخلدونيّة والجامعة الزيتونية
 ED_52bd32eb6a99fe6c672e,tutelage,studied_at,PERSON_KHYRALDYN,الجنرال خير الدين,SCH_MDRSH_DBAT,مدرسة الضباط,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,انخرط فى سلك مدرسة الضباط الحديئة العهد
 ED_3326ae0f44d3368be513,tutelage,studied_at,PERSON_KHYRALDYN,الجنرال خير الدين,SCH_MDRSH_SGHAR_MMALYK,مدرسة صغار المماليك,school,,,1838-01-01,1839-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,وما إن وصل خير الدين إلى باردو سنة 1838 أو 1839 حتى الحق بمدرسة صغار المماليك
+ED_165160ef0417ce133402,tutelage,studied_under,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,PERSON_KTANY_MHMD,الشيخ محمد الكتاني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"وكانت سمعة
+المعلّم الصوفي الكبير الشيخ محمد الكتاني، قد اجتازت آنذاك حدود العالم"
+ED_d596b67b94b2cf860395,tutelage,studied_at,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,SCH_JAMH_SWRBWN,جامعة الصوربون,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"في المجمع الفرنسي (كوليج دي فرانس) أو بجامعة
+الصوربون"
+ED_5b420ecaa6de1ebcf49e,tutelage,studied_at,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,SCH_KWLYJ_DY_FRANS,كوليج دي فرانس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"وحضوره دروس أقطاب الفكر
+الفرنسيء، سوا، في المجمع الفرنسي (كوليج دي فرانس)"
+ED_1053f3468e9d42d822dd,tutelage,studied_at,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,SCH_JAMH_SWRBWN,جامعة الصوربون,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,للتردد على جامعة الصوربون والمجمع الفرنسي (كوليج دي فرانس)
+ED_b34f4f11be1277fcdd47,tutelage,studied_at,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,SCH_MDRSH_BANKALDY_HRBYH,مدرسة بانكالدي الحربية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,وبعد إتمام تلك الدراسة التمهيدية التحق بمدرسة بانكالدي الحربية
+ED_80dac67c6e9739b1e17c,tutelage,studied_at,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,SCH_MDRSH_DBAT,مدرسة الضباط,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,مزاولته للدراسة بمدرسة الضباط
+ED_40913669913027453e94,tutelage,studied_at,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,SCH_MJM_FRNSY,المجمع الفرنسي,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,جامعة الصوربون والمجمع الفرنسي (كوليج دي فرانس) وارتياد
+ED_53593798aaddedd74375,tutelage,studied_at,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,SCH_MHD_KARNW,معهد كارنو,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,قبل أن يلتحق بمعهد كارنو، حيث أظهر من أول وهلة
+ED_a425db1969cce792e601,tutelage,taught_at,PERSON_MATRY_AHMD,أحمد الماطري,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,الشيخان أحمد والمختار الماطري مدرسين حنفيين من مدرسي جامع الزيتونة
+ED_f30efd05ee10ee96d396,tutelage,studied_at,PERSON_MATRY_MHMWD,محمود الماطري,SCH_KLYH_LWM_WALMDRSH_TBYH_BMDYNH_DYJWN,كلية العلوم والمدرسة الطبية بمدينة ديجون,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,ثم انخرط في كلية العلوم والمدرسة الطبية بمدينة ديجون
+ED_8a2568c2044aed51937e,tutelage,studied_at,PERSON_MATRY_MHMWD,محمود الماطري,SCH_KLYH_TB_BBARYS,كلية الطب بباريس,school,,1923,1923-01-01,1923-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,"انخرط في السنة الرابعة من كلية الطبٌ
+بباريس"
+ED_20bf84b9eba373ce9ac1,tutelage,studied_at,PERSON_MATRY_MHMWD,محمود الماطري,SCH_KTAB,الكتّاب,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,"ارسل الطفل محمود
+إلى الكتّاب"
+ED_f7d55a34ca8f4bd3a399,tutelage,taught_at,PERSON_MATRY_MHMWD,محمود الماطري,SCH_MDARS_HRH_LAKYH_AW_DYNYH,المدارس الحرة اللائكية أو الدينية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,دروس خاصة في بعض المدارس الحرة اللائكية أو الدينية
+ED_66301f357accc6c209cd,tutelage,studied_at,PERSON_MATRY_MHMWD,محمود الماطري,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,ومنه انتقل إلى المدرسة الصادقية لمزاولة دراسته الابتدائية
+ED_5546b324fcd46a23af45,tutelage,taught_at,PERSON_MATRY_MKHTAR,المختار الماطري,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,الشيخان أحمد والمختار الماطري مدرسين حنفيين من مدرسي جامع الزيتونة
+ED_a7219d057bba0f09bd07,tutelage,studied_under,PERSON_MSTFY,مصطفى آغة,PERSON_TKWYNHMA_ASATDHH_DHYN_SAHMWA_FY,الأساتذة الذين ساهموا في تكوينهما,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"الرجلين قد تغذّيا من نفس المنابع وأعجبا بنفس
+الأساتذة"
+ED_39f36c0ef010acdb89f5,tutelage,studied_under,PERSON_MSTFY,مصطفى آغة,PERSON_WALDH_ASATDHH_QLAL_DHYN_AKHTARHM,الأساتذة القلائل الذين اختارهم والده,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.11,"آثار الأساتذة القلائل الذين اختارهم
+والده لتعليمه"
 ED_83772bfed209fb091279,tutelage,taught_at,PERSON_QABADW_MHMWD,محمود قابادو,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,"فقفل راجعاً إلى تونس بعد غيبة طويلة واستانف دروسه في الحال
 بجامع الزيتونة"
 ED_2e97396cd371db335590,tutelage,studied_under,PERSON_QABADW_MHMWD,محمود قابادو,PERSON_BNTAHR_AHMD,أحمد بن الطاهر,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,نخصٌ بالذكر منهم الشيخ أحمد بن الطاهر
@@ -39,15 +157,55 @@ ED_c58941087d7d1097af12,tutelage,taught,PERSON_QABADW_MHMWD,محمود قابا�
 رستم وخير الدين"
 ED_28ad905b8073fd053789,tutelage,taught_at,PERSON_QABADW_MHMWD,محمود قابادو,SCH_MDRSH_HRBYH_BBARDW,المدرسة الحربية بباردو,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,"بتلك
 المدرسة الشهيرة » لتدريس اللغة العربية والتربية الإسلامية"
+ED_2cc6f619be16eb72b7aa,tutelage,studied_at,PERSON_QLATY_HSN,حسن قلاتي,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,المدرّسين المشهورين بجامع الزيتونة، ثلاث أو أربع مرات
+ED_8fd03ede83af51f399f3,tutelage,studied_under,PERSON_QLATY_HSN,حسن قلاتي,PERSON_GHWDYANY_MHAMY,المحامي غودياني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,ثم قضى سنتين في مكتب المأسوف عليه المحامي غودياني
+ED_15e5424b3c4858e2b233,tutelage,studied_at,PERSON_QLATY_HSN,حسن قلاتي,SCH_KLYH_HQWQ_BTWLWZ,كلية الحقوق بتولوز,school,,1902,1902-01-01,1902-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,والتحق بكلية الحقوق بمديئة تولوز وتخرج منها سنة 1902
+ED_6ca00546793c399ac546,tutelage,studied_at,PERSON_QLATY_HSN,حسن قلاتي,SCH_MHD_KARNW,معهد كارنو,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,وفي معهد كارنو المعروف أيضاً باسم معهد سان لويس
+ED_f21555db784a973caef7,tutelage,taught_at,PERSON_RDWAN_MHMD,محمد رضوان,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,الذي أصبح هو أيضاً مدرّساً بجامع الزيتونة
+ED_10b04d6b8cfe7ed07d5e,tutelage,taught_at,PERSON_RDWAN_TYB,الطيب رضوان,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,بجامع الزيتونة الذي درس ودرس فيه، وكان لا يفوت
+ED_4be03a26933c4d02a258,tutelage,studied_at,PERSON_RDWAN_TYB,الطيب رضوان,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,فلقد ظلَ متعلقاً بجامع الزيتونة الذي درس ودرس فيه
 ED_cad629ad685a3ea246a9,tutelage,taught_at,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,MSQ_JAM_HLFAWYN,جامع الحلفاوين,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.03,وعهد إليه بالإضافة إلى ذلك بإلقا، عدّة دروس بجامع
 ED_d388d2817ffe22cecfe6,tutelage,studied_at,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.03,التي ستفتح في وجهه أبواب جامع الزيتونة المعمور على مصراعيها
 ED_9ae26b4389b8bb12a8cb,tutelage,taught,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,PERSON_BHRY_MHMD,محمد البحري,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.03,إلى أن عارضه ذات يوم أحد قدما، تلاميذه، القاضي المالكي والفقيه الشهير، الشيخ محمد البحري
 ED_8eabe3430b9969c265f4,tutelage,taught_at,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,SCH_JAMH_AZHR,جامعة الأزهر,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.03,وطلبوا إليه بإلحاح أن يلقي بعض المحاضرات بجامعة الأزهر
 ED_374408534882cd0b6d3f,tutelage,studied_at,PERSON_SFR_BSHYR,البشير صفر,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.02,أثراً طيّباً لدى أساتذته منذ دخوله للمدرسة الصادقية التي أنشأها خير الدين العظيم
 ED_59683e3d534fbec3518b,tutelage,studied_at,PERSON_SFR_BSHYR,البشير صفر,SCH_MHD_SAN_LWYS_BBARYS,معهد سان لويس بباريس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.02,وعندما أوفدته الحكومة التونسية مع عدد من أقرانه لإتمام دراسته الثانوية بمعهد سان لويس بباريس
+ED_d75f536e1902cfcf9201,tutelage,taught_at,PERSON_SHABY_MHMD_AMYN,محمد الأمين الشابي,SCH_DAR_MLMYN_BTWNS,دار المعلمين بتونس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.14,عُيّنَ أستاذاً بدار المعلمين بتونس
+ED_9b54e48aece5d47329b0,tutelage,studied_at,PERSON_SHABY_MHMD_AMYN,محمد الأمين الشابي,SCH_JAMH_SWRBWN,جامعة الصوربون,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.14,النجاح في مناظرة التبريز في اللغة والآداب العربية بجامعة الصوربون
+ED_000dddf2eb19f84b05b7,tutelage,taught_at,PERSON_SNWSY_MHMD,محمد السنوسي,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,على التوالي خطة مدرس بجامع الزيتونة
+ED_d43ec135c4803839733f,tutelage,studied_at,PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,بعض سئوات من الدراسة بجامع الزيتونة ولم تتوجها أية شهادة علمية
+ED_a013590fb21276cbcdf8,tutelage,studied_at,PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,1920,1920-01-01,1920-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,منذ مغادرته لجامع الزيتونة (1920)
+ED_5741bc266c8e5334c500,tutelage,taught_at,PERSON_TLATLY_SADQ,الصادق التلاتلي,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,تدريس الرياضيات والجغرافيا فى الجمعية الخلدونية
+ED_0e1e6b1eca9f2f034007,tutelage,taught_at,PERSON_TLATLY_SADQ,الصادق التلاتلي,SCH_DAR_MLMYN_BTWNS,دار المعلمين بتونس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,بمعهد كارنو وأستاذ فرنسية بدار المعلمين
+ED_89a9b79e604eeb4e9b93,tutelage,studied_at,PERSON_TLATLY_SADQ,الصادق التلاتلي,SCH_DAR_MLMYN_BTWNS,دار المعلمين بتونس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,في المعهد العلوي ودار المعلمين بتونس وتحصل
+ED_33f0da89f84bc7b3d75d,tutelage,studied_at,PERSON_TLATLY_SADQ,الصادق التلاتلي,SCH_KLYH_HQWQ_BAKS_AN_BRWFANS,كلية الحقوق بإكس آن بروفانس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,ثم التحق بكلية الحقوق بمدينة «أكس-
+ED_fab1842f4b59a9334b11,tutelage,taught_at,PERSON_TLATLY_SADQ,الصادق التلاتلي,SCH_MHD_KARNW,معهد كارنو,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,كأستاذ عربية بمعهد كارنو وأستاذ فرنسية بدار المعلمين
+ED_0319282b9083b1070a15,tutelage,studied_at,PERSON_TLATLY_SADQ,الصادق التلاتلي,SCH_MHD_LWY,المعهد العلوي,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,زاول دراسته الثانوية في المعهد العلوي ودار المعلمين بتونس
+ED_3315272430b4201147dd,tutelage,taught_at,PERSON_TLATLY_SLAHALDYN,صلاح الدين التلاتلي,SCH_MHD_KARNW,معهد كارنو,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,أوْل أستاذ تونسي في مادة الجغرافيا وبدأ يدرس في معهد
+ED_8419ca338f74e061f9ea,tutelage,studied_at,PERSON_WRDANY_LY,علي الورداني,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,وكان من أوائل المنخرطين في المدرسة الصادقية بعد
 ED_2e4df6dc25a4f3d533bb,tutelage,studied_at,PERSON_YASHY_HSWNH,حسونة العياشي,SCH_DAR_MLMYN,دار المعلمين,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,(المعهد الصادقي ودار المعلّمين)
 ED_ded9c09613de6baa0467,tutelage,studied_at,PERSON_YASHY_HSWNH,حسونة العياشي,SCH_KLYH_HQWQ_BBARYS,كلية الحقوق بباريس,school,,,1896-01-01,1898-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,"«الالتحاق بكليّة الحقوق بباريس
 (1898-1896)"
 ED_567c16fa8c26106c7e2b,tutelage,taught_at,PERSON_YASHY_HSWNH,حسونة العياشي,SCH_MHD_KARNW,معهد كارنو,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,بتدريس اللغة العربية بمعهد كارنو بتونس
 ED_3dcacf17c8627d1d2734,tutelage,studied_at,PERSON_YASHY_HSWNH,حسونة العياشي,SCH_MHD_SADQY,المعهد الصادقي,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,"وأتمها بمديئة تونس
 (المعهد الصادقي ودار المعلّمين)"
+ED_cd1cf9a6ff2c627c2a86,tutelage,studied_under,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,PERSON_AWLAR,أولار,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,وبواتكاري وبواسي وأولار، ولافيس
+ED_cd61beedd973e1e44bfe,tutelage,studied_under,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,PERSON_BWANKARY,بوانكاري,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,دوركايم وبوترو وبواتكاري وبواسي وأولار، ولافيس
+ED_2e909d85f569532cd091,tutelage,studied_under,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,PERSON_BWASY,بواسي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,وبوترو وبواتكاري وبواسي وأولار، ولافيس
+ED_ef3d1202ecaed24dae4a,tutelage,studied_under,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,PERSON_BWTRW,بوترو,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,من أمثال دوركايم وبوترو وبواتكاري وبواسي وأولار، ولافيس
+ED_2f2c766c7ac99836145f,tutelage,studied_under,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,PERSON_BYATRA,الأستاذ بياترا,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"فبعدما قفضى فترة قصيرة في التدرّب بمكتب المحامي
+المأسوف عليه الأستاذ بياترا"
+ED_4b2d084389f4a8e06201,tutelage,studied_under,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,PERSON_DWRKAYM_AMYL,إميل دوركايم,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,من أمثال دوركايم وبوترو وبواتكاري وبواسي وأولار، ولافيس
+ED_534e3794680d9440ba81,tutelage,studied_under,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,PERSON_LAFYS,لافيس,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"وبواسي وأولار، ولافيس
+وغيرهم"
+ED_82a72425e712dce349c1,tutelage,studied_at,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,SCH_KLYH_ADAB_SWRBWN,كلية الآداب (السوربون),school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"والكوليج دي
+فرانس وكلية الآداب (الصوربون)"
+ED_7768fc9b8e6999c81af9,tutelage,studied_at,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,SCH_KLYH_HQWQ_BBARYS,كلية الحقوق بباريس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,ما حمله على الالتحاق بكلية الحقوق بباريس
+ED_7449503563978f62c5e3,tutelage,licensed_by,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,SCH_KLYH_HQWQ_BBARYS,كلية الحقوق بباريس,school,,1900,1900-01-01,1900-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"وخلال سنة 1900 رجع حينئذ عبد الجليل الزاوش إلى تونس، متحصادٌ
+على الإجازة في الحقوق"
+ED_9597a96e86e0ff73d0d5,tutelage,studied_at,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,SCH_KWLYJ_DY_FRANS,الكوليج دي فرانس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"فإنه سيتردّد على كلية الحقوق والكوليج دي
+فرانس"
+ED_9d3a601cdcef7789b375,tutelage,studied_at,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,SCH_MDRSH_LWM_SYASYH_BBARYS,مدرسة العلوم السياسية بباريس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"فكلية الحقوق ومدرسة العلوم السياسية التي
+سيتابع دروسها بانتظام"
+ED_9f9e2172ff4f03cd9b59,tutelage,studied_at,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,SCH_MHD_SADQY,المعهد الصادقي,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,حيئما تركوا المعهد الصادقي الذي تغيّرت برامجه الأصلية رأسا على عقب
+ED_13280364c36abe43333c,tutelage,studied_at,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,SCH_MHD_SAN_SHARL,معهد سان شارل,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,فالتتحق بمعهدك سان شارل وانضم إلى

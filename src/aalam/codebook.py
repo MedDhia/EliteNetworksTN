@@ -41,6 +41,11 @@ COLUMN_NOTES = {
                           "e.g. الجندي والمصلح ورجل الدولة. His characterisation, not a coding.",
     "is_subject": "`yes` for the 38 with an essay; `no` for someone named inside one. "
                   "Degrees are not comparable across this line.",
+    "name_kind": "`named` where the book gives a name; `described` where it places "
+                 "the person only by a relation (ابنة الأصرم, شقيق محمد باي). A "
+                 "described node is a real tie to an unidentified person, and two "
+                 "such nodes may or may not be the same person. Do not merge them, "
+                 "and exclude them before counting a population.",
     "name_translit": "Deterministic lossy ASCII, for joining by eye with the other builds. "
                      "Not a scholarly transliteration.",
     "person_id": "`PERSON_<SURNAME>_<GIVEN>`, from the identity key only. Titles are "

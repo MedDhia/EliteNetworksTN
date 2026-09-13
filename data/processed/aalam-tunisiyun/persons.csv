@@ -1,99 +1,243 @@
-person_id,name_ar,name_translit,is_subject,entry_uid,cohort,birth_year,death_year,role_descriptor_ar,rank,n_assertions,n_ties,first_seen_entry
-PERSON_ABYHAJB_LY,علي بو حاجب,LY ABYHAJB,yes,aalam:3.06,المعاصرون,1888,1965,الصحافى والباحث والمناضل,,0,0,aalam:3.06
-PERSON_ABYHAJB_SALM,سالم بو حاجب,SALM ABYHAJB,yes,aalam:2.06,التابعون,1827,1924,ْ للغوي والفيلسوف والمربي,,21,22,aalam:2.06
-PERSON_ASRM_MHMD,محمد الأصرم,MHMD ASRM,yes,aalam:2.07,التابعون,1858,1925,لقد كان المرحوم محمك الأصرم قوي البنية معتدل القامق ذا عيئين,,0,0,aalam:2.07
-PERSON_BKWSH_BDSLAM,عبد السلام البكوش,BDSLAM BKWSH,yes,aalam:2.12,التابعون,1871,1946,العالم اللغوي والشاعر,,0,0,aalam:2.12
-PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,MHMD FADL BNASHWR,yes,aalam:3.10,المعاصرون,1909,1970,رجل من رجال عصر النهضة,,1,1,aalam:3.10
-PERSON_BNASHWR_MHMD_TAHR,محمد الطاهر بن عاشور,MHMD TAHR BNASHWR,yes,aalam:3.12,المعاصرون,1879,1973,الرجل والقاضى والعلامة,,7,7,aalam:3.12
-PERSON_BNHSYN_AHMD,أحمد بن حسين,AHMD BNHSYN,yes,aalam:1.04,السابقون,1800,1868,العالم والفقيه والمربي,,11,12,aalam:1.04
-PERSON_BNKHWJH_MHMD,محمد بن الخوجة,MHMD BNKHWJH,yes,aalam:2.10,التابعون,1869,1942,لقد حجرت العادة فى الامبراطورية العثمانية كما فى غيرها من الدول,,24,24,aalam:2.10
-PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,KHYRALLH BNMSTFY,yes,aalam:3.05,المعاصرون,1867,1965,مما لا شك فيه أن خير الله بن مصطفى أجنبيٌ الأصل. فقد ولد جدّه,,0,0,aalam:3.05
-PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,RSHYD BNMSTFY,yes,aalam:2.14,التابعون,1876,1947,المهندس والمربي والباحث الموسيقي,,0,0,aalam:2.14
-PERSON_BWRQYBH_MHMD,محمد بورقيبة,MHMD BWRQYBH,yes,aalam:3.02,المعاصرون,1882,1956,الصحافي ورجل السياسة,,0,0,aalam:3.02
-PERSON_BWSHWSHH_LY,علي بوشوشة,LY BWSHWSHH,yes,aalam:2.03,التابعون,1859,1917,الصحافي والمزارع,,1,2,aalam:2.03
-PERSON_DYAF_AHMD_BNABY,أحمد بن أبي الضياف,AHMD BNABY DYAF,yes,aalam:1.06,السابقون,1804,1874,الحقوقي والمؤرخ ورجل الدولة,,13,13,aalam:1.06
-PERSON_GHTAS_AHMD,أحمد الغطاس,AHMD GHTAS,yes,aalam:2.08,التابعون,1875,1926,المحامي والأديب والمفكم,,0,0,aalam:2.08
-PERSON_HANBH_LY_BASH,علي باش حانبة,LY BASH HANBH,yes,aalam:2.04,التابعون,1876,1918,أنه لمن المؤسف حمّاً أن نلاحظ ما اكتنف روّادنا السابقين من نسيان»,,0,0,aalam:2.04
-PERSON_HSYN,الجنرال حسين,HSYN,yes,aalam:1.07,السابقون,,1887,الرجل والمواطن والدبلوماسي,general,19,22,aalam:1.07
-PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,MHMD BYRM KHAMS,yes,aalam:1.08,السابقون,1840,1889,المفكر والأديب والموُرّخ,,16,16,aalam:1.08
-PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,MHMD SYD KHLSY,yes,aalam:3.04,المعاصرون,1898,1964,الشاعر والفناتن,,0,0,aalam:3.04
-PERSON_KHMYRY_TAHR,الطاهر الخميري,TAHR KHMYRY,yes,aalam:3.13,المعاصرون,1904,1973,الأديب والباحث والناقد الاجتماعى,,0,0,aalam:3.13
-PERSON_KHYRALDYN,الجنرال خير الدين,KHYRALDYN,yes,aalam:1.09,السابقون,1822,1890,الجندي والمصلح ورجلل الدولة,general,22,29,aalam:1.09
-PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,MHMD KHYRALDYN,yes,aalam:2.05,التابعون,1872,1922,المفكر والمتصوّف,bey,0,0,aalam:2.05
-PERSON_KHYRALDYN_TAHR,طاهر باشا خير الدين,TAHR KHYRALDYN,yes,aalam:2.09,التابعون,1872,1937,القائد والمنظم ورجل الدولة,pasha,1,1,aalam:2.09
-PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,SHADHLY KHYRALLH,yes,aalam:3.09,المعاصرون,1898,1972,الرجل والكائتب والوطني,,0,0,aalam:3.09
-PERSON_LATY_HSN,حسن ڤلاتي,HSN LATY,yes,aalam:3.07,المعاصرون,1880,1966,المحامسي والمفكسر والسياسي,,1,1,aalam:3.07
-PERSON_MATRY_MHMWD,محمود الماطري,MHMWD MATRY,yes,aalam:3.11,المعاصرون,1897,1972,الطبيب والمناضل,,1,1,aalam:3.11
-PERSON_MSTFY,مصطفى آغة,MSTFY,yes,aalam:2.11,التابعون,1871,1946,الشاعر الفيلسوف,agha,2,5,aalam:2.11
-PERSON_QABADW_MHMWD,محمود قابادو,MHMWD QABADW,yes,aalam:1.05,السابقون,1812,1871,الشاعر والمتصوف والمربى,,12,15,aalam:1.05
-PERSON_RDWAN_TYB,الطيب رضوان,TYB RDWAN,yes,aalam:3.01,المعاصرون,1869,1955,المدرس والمزارع ورجل العمل,,1,1,aalam:3.01
-PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,ABRAHYM RYAHY,yes,aalam:1.03,السابقون,1768,1850,الفقيه والرّحالة والدبلوماسى,,11,16,aalam:1.03
-PERSON_SFR_BSHYR,البشير صفر,BSHYR SFR,yes,aalam:2.02,التابعون,1865,1917,المربي والموة ظف ا لكبيم,,8,11,aalam:2.02
-PERSON_SHABY_MHMD_AMYN,محمد الأمين الشابي,MHMD AMYN SHABY,yes,aalam:3.14,المعاصرون,1917,1974,الأديبب والمفكر والمربى,,0,0,aalam:3.14
-PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,ZYNALABDYN SNWSY,yes,aalam:3.08,المعاصرون,1898,1966,الرجل والكاتب والمناضل,,1,1,aalam:3.08
-PERSON_TAB_YWSF_SAHB,يوسف صاحب الطابع,YWSF SAHB TAB,yes,aalam:1.02,السابقون,1763,1815,لقد ولد يوسف صاحب الطابع بملدافيا (أو البغدان باللغة التركية) في,,12,12,aalam:1.02
-PERSON_THMANH_ZYZH,عزيزة عثمانة,ZYZH THMANH,yes,aalam:1.01,السابقون,1606,1669,المحسئة والمنقفة,,4,5,aalam:1.01
-PERSON_TLATLY_SADQ,الصادق التلاتلي,SADQ TLATLY,yes,aalam:2.15,التابعون,1871,1950,المربي ورجل السياسة,,0,0,aalam:2.15
-PERSON_WRDANY_LY,علي الورداني,LY WRDANY,yes,aalam:2.01,التابعون,1861,1905,الفنان والعالم والشاعر,,1,1,aalam:2.01
-PERSON_YASHY_HSWNH,حسونة العياشي,HSWNH YASHY,yes,aalam:3.03,المعاصرون,1873,1958,المحامي والصحافي ورجل السياسة,,19,19,aalam:3.03
-PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,BDJLYL ZAWSH,yes,aalam:2.13,التابعون,1873,1947,صاحب الإنجازات والصحافي,,1,3,aalam:2.13
-PERSON_ABY_AHMD,احمد الابي,AHMD ABY,no,,,,,,,0,1,aalam:1.04
-PERSON_AHMD_ABYBAS,أبو العباس أحمد,ABYBAS AHMD,no,,,,,,,1,2,aalam:1.01
-PERSON_AWL_AHMD,أحمد باي الأول,AHMD AWL,no,,,,,,bey,3,7,aalam:1.05
-PERSON_BAHY_AHMD,سيدي أحمد الباهي,AHMD BAHY,no,,,,,,,0,1,aalam:1.06
-PERSON_BDWHAB_HSN_HSNY,حسن حسني عبد الوهاب,HSN HSNY BDWHAB,no,,,,,,,1,1,aalam:1.01
-PERSON_BHRY_MHMD,محمد البحري,MHMD BHRY,no,,,,,,,1,2,aalam:1.03
-PERSON_BKWSH_MHMD,محمد البكوش,MHMD BKWSH,no,,,,,,,0,1,aalam:2.06
-PERSON_BLNSY_AMYR_AMRA,أمير الأمراء بلنسي,AMYR AMRA BLNSY,no,,,,,,,0,1,aalam:2.10
-PERSON_BNAHMD_LY,علي بن احمد,LY BNAHMD,no,,,,,,,0,1,aalam:3.07
-PERSON_BNASHWR_TAHR,الطاهر بن عاشور,TAHR BNASHWR,no,,,,,,,0,1,aalam:3.10
-PERSON_BNASMAYL_MSTFY,مصطفى بن إسماعيل,MSTFY BNASMAYL,no,,,,,,,1,2,aalam:1.07
-PERSON_BNKHWJH_BSHYR,البشير بن الخوجة,BSHYR BNKHWJH,no,,,,,,,2,3,aalam:1.06
-PERSON_BNKHWJH_SHYKH_ASLAM_MHMD,شيخ الإسلام محمد بن الخوجة,SHYKH ASLAM MHMD BNKHWJH,no,,,,,,,0,1,aalam:2.10
-PERSON_BNMAR_TAHR,الطاهر بن عمار,TAHR BNMAR,no,,,,,,,1,1,aalam:3.03
-PERSON_BNMLWKH_MHMD,محمد بن ملوكة,MHMD BNMLWKH,no,,,,,,,0,1,aalam:2.06
-PERSON_BNMSWD_TAHR,الطاهر بن مسعود,TAHR BNMSWD,no,,,,,,,0,1,aalam:1.04
-PERSON_BNTAHR_AHMD,أحمد بن الطاهر,AHMD BNTAHR,no,,,,,,,0,1,aalam:1.05
-PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,HBYB BWRQYBH,no,,,,,,,1,1,aalam:3.03
-PERSON_BYRM_MHMD,محمد بيرم,MHMD BYRM,no,,,,,,,1,3,aalam:2.06
-PERSON_DAR_MHMD_KHZNH,محمد خزنة دار,MHMD KHZNH DAR,no,,,,,,,1,1,aalam:1.08
-PERSON_DAR_MSTFY_KHZNH,مصطفى خزنه دار,MSTFY KHZNH DAR,no,,,,,,,0,2,aalam:1.09
-PERSON_DAY_THMAN,عثمان داي,THMAN DAY,no,,,,,,,1,2,aalam:1.01
-PERSON_DBAB_MHMD,محمد دباب,MHMD DBAB,no,,,,,,,1,1,aalam:3.03
-PERSON_DYNAR_BNABY,ابن أبي دينار,BNABY DYNAR,no,,,,,,,1,1,aalam:1.01
-PERSON_FATMH,فاطمة,FATMH,no,,,,,,,1,1,aalam:1.01
-PERSON_HMWDH,حمودة باشا,HMWDH,no,,,,,,pasha,2,6,aalam:1.02
-PERSON_HSHAYSHY_MHMD,محمد الحشايشي,MHMD HSHAYSHY,no,,,,,,,1,1,aalam:2.10
-PERSON_HSYNYH_ALH,العائلة الحسينية,ALH HSYNYH,no,,,,,,,0,1,aalam:1.02
-PERSON_JLWLY_BKAR,بكار الجلولي,BKAR JLWLY,no,,,,,,,1,2,aalam:1.02
-PERSON_KALYGHARYS,كاليغاريس,KALYGHARYS,no,,,,,,,1,1,aalam:1.05
-PERSON_KAMBNWN,كامبنون,KAMBNWN,no,,,,,,,1,1,aalam:1.05
-PERSON_KHDAR_MHMD,محمد الخضار,MHMD KHDAR,no,,,,,,,0,1,aalam:2.06
-PERSON_KHWJH_MHMWD,محمود خوجة,MHMWD KHWJH,no,,,,,,,1,2,aalam:1.08
-PERSON_KHWJH_MSTFY,مصطفى خوجة,MSTFY KHWJH,no,,,,,,,1,2,aalam:1.02
-PERSON_LH_HMZH_FTH,حمزة فتح الله,HMZH FTH LH,no,,,,,,,0,1,aalam:1.08
-PERSON_LY,علي باي,LY,no,,,,,,bey,0,2,aalam:1.02
-PERSON_MDNY_MHMD,محمد المدني,MHMD MDNY,no,,,,,,,0,1,aalam:1.05
-PERSON_MHMD,محمد باي,MHMD,no,,,,,,bey,2,4,aalam:1.08
-PERSON_MNSF_MHMD,محمد المنصف باي,MHMD MNSF,no,,,,,,bey,0,1,aalam:2.10
-PERSON_MNSTYRY_HMWDH,حمودة المنستيري,HMWDH MNSTYRY,no,,,,,,,1,1,aalam:3.03
-PERSON_MRAD,مراد باي,MRAD,no,,,,,,bey,0,1,aalam:1.01
-PERSON_NYFR_MHMD,محمد النيفر,MHMD NYFR,no,,,,,,,0,1,aalam:2.06
-PERSON_RSTM,رستم,RSTM,no,,,,,,,0,1,aalam:1.05
-PERSON_RYAHY_TYB,الطيب الرياحي,TYB RYAHY,no,,,,,,,1,2,aalam:1.04
-PERSON_SADQ,الصادق باي,SADQ,no,,,,,,bey,0,1,aalam:1.09
-PERSON_SADQ_MHMD,محمد الصادق باي,MHMD SADQ,no,,,,,,bey,1,2,aalam:1.05
-PERSON_SAFY_AHMD,أحمد الصافي,AHMD SAFY,no,,,,,,,2,2,aalam:3.03
-PERSON_SALH,صالح,SALH,no,,,,,,,1,1,aalam:1.02
-PERSON_SFR_MSTFY,مصطفى صفر,MSTFY SFR,no,,,,,,,0,1,aalam:2.02
-PERSON_SHMAMH_NSYM,نسيم شمامة,NSYM SHMAMH,no,,,,,,,2,2,aalam:1.07
-PERSON_SNWSY_MHMD,محمد السنوسي,MHMD SNWSY,no,,,,,,,1,2,aalam:1.08
-PERSON_SWSY_MHMD,محمد السئوسي,MHMD SWSY,no,,,,,,,0,1,aalam:3.08
-PERSON_TAB_SHAKYR_SAHB,شاكير صاحب الطابع,SHAKYR SAHB TAB,no,,,,,,,1,1,aalam:1.06
-PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,BDZYZ THALBY,no,,,,,,,1,1,aalam:3.03
-PERSON_THANY_HSYN,حسين باي الثاني,HSYN THANY,no,,,,,,bey,0,3,aalam:1.03
-PERSON_THLATY_HSAN,حسان ثلاتي,HSAN THLATY,no,,,,,,,0,1,aalam:3.03
-PERSON_THMAN,عثمان باي,THMAN,no,,,,,,bey,3,5,aalam:1.02
-PERSON_ZRWQ_RBY,العربي زروق,RBY ZRWQ,no,,,,,,,1,2,aalam:1.02
-PERSON_ZYRH_AYLY,إيلي زيرح,AYLY ZYRH,no,,,,,,,1,1,aalam:3.03
-PERSON_ZYZ_HMWDH_BNBD,حمودة بن عبد العزيز,HMWDH BNBD ZYZ,no,,,,,,,2,2,aalam:1.02
+person_id,name_ar,name_translit,is_subject,name_kind,entry_uid,cohort,birth_year,death_year,role_descriptor_ar,rank,n_assertions,n_ties,first_seen_entry
+PERSON_ABYHAJB_LY,علي بو حاجب,LY ABYHAJB,yes,named,aalam:3.06,المعاصرون,1888,1965,الصحافى والباحث والمناضل,,0,0,aalam:3.06
+PERSON_ABYHAJB_SALM,سالم بو حاجب,SALM ABYHAJB,yes,named,aalam:2.06,التابعون,1827,1924,ْ للغوي والفيلسوف والمربي,,21,22,aalam:2.06
+PERSON_ASRM_MHMD,محمد الأصرم,MHMD ASRM,yes,named,aalam:2.07,التابعون,1858,1925,لقد كان المرحوم محمك الأصرم قوي البنية معتدل القامق ذا عيئين,,28,31,aalam:2.07
+PERSON_BKWSH_BDSLAM,عبد السلام البكوش,BDSLAM BKWSH,yes,named,aalam:2.12,التابعون,1871,1946,العالم اللغوي والشاعر,,21,22,aalam:2.12
+PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,MHMD FADL BNASHWR,yes,named,aalam:3.10,المعاصرون,1909,1970,رجل من رجال عصر النهضة,,16,17,aalam:3.10
+PERSON_BNASHWR_MHMD_TAHR,محمد الطاهر بن عاشور,MHMD TAHR BNASHWR,yes,named,aalam:3.12,المعاصرون,1879,1973,الرجل والقاضى والعلامة,,8,8,aalam:3.12
+PERSON_BNHSYN_AHMD,أحمد بن حسين,AHMD BNHSYN,yes,named,aalam:1.04,السابقون,1800,1868,العالم والفقيه والمربي,,11,12,aalam:1.04
+PERSON_BNKHWJH_MHMD,محمد بن الخوجة,MHMD BNKHWJH,yes,named,aalam:2.10,التابعون,1869,1942,لقد حجرت العادة فى الامبراطورية العثمانية كما فى غيرها من الدول,,27,29,aalam:2.10
+PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,KHYRALLH BNMSTFY,yes,named,aalam:3.05,المعاصرون,1867,1965,مما لا شك فيه أن خير الله بن مصطفى أجنبيٌ الأصل. فقد ولد جدّه,,18,19,aalam:3.05
+PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,RSHYD BNMSTFY,yes,named,aalam:2.14,التابعون,1876,1947,المهندس والمربي والباحث الموسيقي,,12,14,aalam:2.14
+PERSON_BWRQYBH_MHMD,محمد بورقيبة,MHMD BWRQYBH,yes,named,aalam:3.02,المعاصرون,1882,1956,الصحافي ورجل السياسة,,14,14,aalam:3.02
+PERSON_BWSHWSHH_LY,علي بوشوشة,LY BWSHWSHH,yes,named,aalam:2.03,التابعون,1859,1917,الصحافي والمزارع,,11,14,aalam:2.03
+PERSON_DYAF_AHMD_BNABY,أحمد بن أبي الضياف,AHMD BNABY DYAF,yes,named,aalam:1.06,السابقون,1804,1874,الحقوقي والمؤرخ ورجل الدولة,,13,13,aalam:1.06
+PERSON_GHTAS_AHMD,أحمد الغطاس,AHMD GHTAS,yes,named,aalam:2.08,التابعون,1875,1926,المحامي والأديب والمفكم,,16,17,aalam:2.08
+PERSON_HANBH_LY_BASH,علي باش حانبة,LY BASH HANBH,yes,named,aalam:2.04,التابعون,1876,1918,أنه لمن المؤسف حمّاً أن نلاحظ ما اكتنف روّادنا السابقين من نسيان»,,23,27,aalam:2.04
+PERSON_HSYN,الجنرال حسين,HSYN,yes,named,aalam:1.07,السابقون,,1887,الرجل والمواطن والدبلوماسي,general,19,22,aalam:1.07
+PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,MHMD BYRM KHAMS,yes,named,aalam:1.08,السابقون,1840,1889,المفكر والأديب والموُرّخ,,16,16,aalam:1.08
+PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,MHMD SYD KHLSY,yes,named,aalam:3.04,المعاصرون,1898,1964,الشاعر والفناتن,,19,20,aalam:3.04
+PERSON_KHMYRY_TAHR,الطاهر الخميري,TAHR KHMYRY,yes,named,aalam:3.13,المعاصرون,1904,1973,الأديب والباحث والناقد الاجتماعى,,10,10,aalam:3.13
+PERSON_KHYRALDYN,الجنرال خير الدين,KHYRALDYN,yes,named,aalam:1.09,السابقون,1822,1890,الجندي والمصلح ورجلل الدولة,general,28,42,aalam:1.09
+PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,MHMD KHYRALDYN,yes,named,aalam:2.05,التابعون,1872,1922,المفكر والمتصوّف,bey,16,19,aalam:2.05
+PERSON_KHYRALDYN_TAHR,طاهر باشا خير الدين,TAHR KHYRALDYN,yes,named,aalam:2.09,التابعون,1872,1937,القائد والمنظم ورجل الدولة,pasha,34,36,aalam:2.09
+PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,SHADHLY KHYRALLH,yes,named,aalam:3.09,المعاصرون,1898,1972,الرجل والكائتب والوطني,,16,17,aalam:3.09
+PERSON_LATY_HSN,حسن ڤلاتي,HSN LATY,yes,named,aalam:3.07,المعاصرون,1880,1966,المحامسي والمفكسر والسياسي,,1,1,aalam:3.07
+PERSON_MATRY_MHMWD,محمود الماطري,MHMWD MATRY,yes,named,aalam:3.11,المعاصرون,1897,1972,الطبيب والمناضل,,24,25,aalam:3.11
+PERSON_MSTFY,مصطفى آغة,MSTFY,yes,named,aalam:2.11,التابعون,1871,1946,الشاعر الفيلسوف,agha,18,23,aalam:2.11
+PERSON_QABADW_MHMWD,محمود قابادو,MHMWD QABADW,yes,named,aalam:1.05,السابقون,1812,1871,الشاعر والمتصوف والمربى,,12,16,aalam:1.05
+PERSON_RDWAN_TYB,الطيب رضوان,TYB RDWAN,yes,named,aalam:3.01,المعاصرون,1869,1955,المدرس والمزارع ورجل العمل,,17,19,aalam:3.01
+PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,ABRAHYM RYAHY,yes,named,aalam:1.03,السابقون,1768,1850,الفقيه والرّحالة والدبلوماسى,,11,17,aalam:1.03
+PERSON_SFR_BSHYR,البشير صفر,BSHYR SFR,yes,named,aalam:2.02,التابعون,1865,1917,المربي والموة ظف ا لكبيم,,17,25,aalam:2.02
+PERSON_SHABY_MHMD_AMYN,محمد الأمين الشابي,MHMD AMYN SHABY,yes,named,aalam:3.14,المعاصرون,1917,1974,الأديبب والمفكر والمربى,,9,9,aalam:3.14
+PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,ZYNALABDYN SNWSY,yes,named,aalam:3.08,المعاصرون,1898,1966,الرجل والكاتب والمناضل,,12,13,aalam:3.08
+PERSON_TAB_YWSF_SAHB,يوسف صاحب الطابع,YWSF SAHB TAB,yes,named,aalam:1.02,السابقون,1763,1815,لقد ولد يوسف صاحب الطابع بملدافيا (أو البغدان باللغة التركية) في,,12,12,aalam:1.02
+PERSON_THMANH_ZYZH,عزيزة عثمانة,ZYZH THMANH,yes,named,aalam:1.01,السابقون,1606,1669,المحسئة والمنقفة,,4,5,aalam:1.01
+PERSON_TLATLY_SADQ,الصادق التلاتلي,SADQ TLATLY,yes,named,aalam:2.15,التابعون,1871,1950,المربي ورجل السياسة,,21,22,aalam:2.15
+PERSON_WRDANY_LY,علي الورداني,LY WRDANY,yes,named,aalam:2.01,التابعون,1861,1905,الفنان والعالم والشاعر,,14,15,aalam:2.01
+PERSON_YASHY_HSWNH,حسونة العياشي,HSWNH YASHY,yes,named,aalam:3.03,المعاصرون,1873,1958,المحامي والصحافي ورجل السياسة,,19,20,aalam:3.03
+PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,BDJLYL ZAWSH,yes,named,aalam:2.13,التابعون,1873,1947,صاحب الإنجازات والصحافي,,35,40,aalam:2.13
+PERSON_ABN_ALH,عائلة ابن الشيخ,ALH ABN,no,named,,,,,,shaykh,0,1,aalam:2.03
+PERSON_ABN_ASKNDR_DWMAS,الاسكندر دوماس الإبن,ASKNDR DWMAS ABN,no,named,,,,,,,1,1,aalam:3.04
+PERSON_ABRAHYMY_AHMD_TALB,أحمد طالب الإبراهيمي,AHMD TALB ABRAHYMY,no,named,,,,,,,0,1,aalam:3.10
+PERSON_ABRAHYM_HAFZ,حافظ إبراهيم,HAFZ ABRAHYM,no,named,,,,,,,0,1,aalam:2.12
+PERSON_ABYHAJB_KHLYL,خليل بو حاجب,KHLYL ABYHAJB,no,named,,,,,,,1,2,aalam:2.03
+PERSON_ABYHAJB_MR,عمر بو حاجب,MR ABYHAJB,no,named,,,,,,,1,1,aalam:2.03
+PERSON_ABYHDY,الشيخ أبو الهدى,ABYHDY,no,named,,,,,,shaykh,0,1,aalam:3.02
+PERSON_ABYTMAM,أبو تمام,ABYTMAM,no,named,,,,,,,0,1,aalam:2.12
+PERSON_ABY_AHMD,احمد الابي,AHMD ABY,no,named,,,,,,,0,1,aalam:1.04
+PERSON_AFGHANY_JMAL_DYN,جمال الدين الأفغاني,JMAL DYN AFGHANY,no,named,,,,,,,0,1,aalam:2.08
+PERSON_AHMD_ABYBAS,أبو العباس أحمد,ABYBAS AHMD,no,named,,,,,,,1,2,aalam:1.01
+PERSON_ASHRY,الأشعري,ASHRY,no,named,,,,,,,0,1,aalam:2.12
+PERSON_ASL_WALD_MHMD_BWRQYBH_TRKY,والد محمد بورقيبة التركي الأصل,WALD MHMD BWRQYBH TRKY ASL,no,described,,,,,,,0,1,aalam:3.02
+PERSON_ASMH_FTAH_TWNSYH_MN_AYAN,فتاة تونسية من أعيان العاصمة,FTAH TWNSYH MN AYAN ASMH,no,named,,,,,,,0,1,aalam:2.08
+PERSON_ASRM_ABNH,ابنة الأصرم,ABNH ASRM,no,described,,,,,,,0,1,aalam:3.01
+PERSON_ASTNBWLY_MHMD_TRKY,محمد تركي الاسطنبولي,MHMD TRKY ASTNBWLY,no,named,,,,,,,0,1,aalam:3.11
+PERSON_ASWD_TAHR,الطاهر الأسود,TAHR ASWD,no,named,,,,,,,1,1,aalam:2.13
+PERSON_AWLAR,أولار,AWLAR,no,named,,,,,,,0,1,aalam:2.13
+PERSON_AWL_AHMD,أحمد باي الأول,AHMD AWL,no,named,,,,,,bey,4,8,aalam:1.05
+PERSON_AZM_SDR,الصدر الأعظم,SDR AZM,no,named,,,,,,,1,1,aalam:2.01
+PERSON_BAHY_AHMD,سيدي أحمد الباهي,AHMD BAHY,no,named,,,,,,,0,1,aalam:1.06
+PERSON_BARWDY_MHMWD_SAMY,محمود سامي البارودي,MHMWD SAMY BARWDY,no,named,,,,,,,0,1,aalam:2.11
+PERSON_BAY,الباي,BAY,no,named,,,,,,,0,2,aalam:3.07
+PERSON_BDHMYD_SLTAN,السلطان عبد الحميد,SLTAN BDHMYD,no,named,,,,,,,1,6,aalam:2.05
+PERSON_BDH_MHMD,محمد عبده,MHMD BDH,no,named,,,,,,,5,6,aalam:2.03
+PERSON_BDWHAB_HSN_HSNY,حسن حسني عبد الوهاب,HSN HSNY BDWHAB,no,named,,,,,,,5,6,aalam:1.01
+PERSON_BHRY_MHMD,محمد البحري,MHMD BHRY,no,named,,,,,,,1,2,aalam:1.03
+PERSON_BKWSH_MHMD,محمد البكوش,MHMD BKWSH,no,named,,,,,,,0,1,aalam:2.06
+PERSON_BLNSY_AMYR_AMRA,أمير الأمراء بلنسي,AMYR AMRA BLNSY,no,named,,,,,,,0,1,aalam:2.10
+PERSON_BNAHMD_LY,علي بن احمد,LY BNAHMD,no,named,,,,,,,0,1,aalam:3.07
+PERSON_BNASHWR_TAHR,الطاهر بن عاشور,TAHR BNASHWR,no,named,,,,,,,9,12,aalam:3.10
+PERSON_BNASMAYL_MSTFY,مصطفى بن إسماعيل,MSTFY BNASMAYL,no,named,,,,,,,1,2,aalam:1.07
+PERSON_BNKHLYFH_HRM_SALH,حرم صالح بن خليفة,HRM SALH BNKHLYFH,no,named,,,,,,,2,3,aalam:3.06
+PERSON_BNKHLYFH_SALH,صالح بن خليفة,SALH BNKHLYFH,no,named,,,,,,,0,1,aalam:3.06
+PERSON_BNKHWJH_BSHYR,البشير بن الخوجة,BSHYR BNKHWJH,no,named,,,,,,,2,3,aalam:1.06
+PERSON_BNKHWJH_SHYKH_ASLAM_MHMD,شيخ الإسلام محمد بن الخوجة,SHYKH ASLAM MHMD BNKHWJH,no,named,,,,,,,0,1,aalam:2.10
+PERSON_BNLY_HSYN,حسين بن علي,HSYN BNLY,no,named,,,,,,,1,2,aalam:3.11
+PERSON_BNMAR_TAHR,الطاهر بن عمار,TAHR BNMAR,no,named,,,,,,,2,2,aalam:2.09
+PERSON_BNMLWKH_MHMD,محمد بن ملوكة,MHMD BNMLWKH,no,named,,,,,,,0,1,aalam:2.06
+PERSON_BNMSTFY_HMDH,حمدة بن مصطفى,HMDH BNMSTFY,no,named,,,,,,,0,1,aalam:2.14
+PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,HSWNH BNMSTFY,no,named,,,,,,,12,14,aalam:3.05
+PERSON_BNMSTFY_JD_RSHYD,جد رشيد بن مصطفى,JD RSHYD BNMSTFY,no,named,,,,,,,1,1,aalam:2.14
+PERSON_BNMSTFY_SLYM,سليم بن مصطفى,SLYM BNMSTFY,no,named,,,,,,,1,1,aalam:2.14
+PERSON_BNMSTFY_ZKRYA,زكرياء بن مصطفى,ZKRYA BNMSTFY,no,named,,,,,,,1,1,aalam:2.14
+PERSON_BNMSWD_TAHR,الطاهر بن مسعود,TAHR BNMSWD,no,named,,,,,,,0,1,aalam:1.04
+PERSON_BNQFSYH_MR,عمر بن قفصية,MR BNQFSYH,no,named,,,,,,,1,1,aalam:3.02
+PERSON_BNRSHD,ابن رشد,BNRSHD,no,described,,,,,,,0,1,aalam:2.12
+PERSON_BNRWMY,ابن الرومي,BNRWMY,no,described,,,,,,,0,1,aalam:2.12
+PERSON_BNSYNA,ابن سينا,BNSYNA,no,described,,,,,,,0,1,aalam:2.12
+PERSON_BNTAHR_AHMD,أحمد بن الطاهر,AHMD BNTAHR,no,named,,,,,,,0,1,aalam:1.05
+PERSON_BNYWSF_MHMD_SGHYR,محمد الصغير بن يوسف,MHMD SGHYR BNYWSF,no,named,,,,,,,1,1,aalam:2.07
+PERSON_BNYWSF_SALH,صالح بن يوسف,SALH BNYWSF,no,named,,,,,,,2,2,aalam:3.04
+PERSON_BRHAN_JRYDH,جريدة البرهان,JRYDH BRHAN,no,named,,,,,,,1,1,aalam:3.02
+PERSON_BRWZWN,الدكتور بروزون,BRWZWN,no,named,,,,,,,0,1,aalam:2.04
+PERSON_BSHYR,البشير باي,BSHYR,no,named,,,,,,bey,0,1,aalam:3.05
+PERSON_BSYS_MHMD_SADQ,محمد الصادق بسيس,MHMD SADQ BSYS,no,named,,,,,,,1,1,aalam:3.05
+PERSON_BTHH_RYS,رئيس البعثة,RYS BTHH,no,named,,,,,,,0,1,aalam:2.01
+PERSON_BWANKARY,بوانكاري,BWANKARY,no,named,,,,,,,0,1,aalam:2.13
+PERSON_BWASY,بواسي,BWASY,no,named,,,,,,,0,1,aalam:2.13
+PERSON_BWHAJB_KHALD,خالد بوحاجب,KHALD BWHAJB,no,named,,,,,,,2,2,aalam:3.06
+PERSON_BWHAJB_KHLYL,خليل بوحاجب,KHLYL BWHAJB,no,named,,,,,,,2,3,aalam:3.06
+PERSON_BWHAJB_LY,علي بوحاجب,LY BWHAJB,no,named,,,,,,,14,16,aalam:3.06
+PERSON_BWRD_BWL,بول بورد,BWL BWRD,no,named,,,,,,,1,2,aalam:2.07
+PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,HBYB BWRQYBH,no,named,,,,,,,8,14,aalam:2.07
+PERSON_BWTRW,بوترو,BWTRW,no,named,,,,,,,0,1,aalam:2.13
+PERSON_BWTWR_MHMD_ZYZ,محمد العزيز بوعتور,MHMD ZYZ BWTWR,no,named,,,,,,,1,3,aalam:3.10
+PERSON_BYATRA,الأستاذ بياترا,BYATRA,no,named,,,,,,,0,1,aalam:2.13
+PERSON_BYRM_AHMD,أحمد بيرم,AHMD BYRM,no,named,,,,,,,1,3,aalam:2.09
+PERSON_BYRM_MHMD,محمد بيرم,MHMD BYRM,no,named,,,,,,,1,3,aalam:2.06
+PERSON_BYRWTWN_MARSAL,مارسال بيروتون,MARSAL BYRWTWN,no,named,,,,,,,3,5,aalam:3.11
+PERSON_BYRWTWN_MQYM_AM,المقيم العام بيروطون,MQYM AM BYRWTWN,no,named,,,,,,,0,1,aalam:2.15
+PERSON_DAR_MHMD_KHZNH,محمد خزنة دار,MHMD KHZNH DAR,no,named,,,,,,,1,1,aalam:1.08
+PERSON_DAR_MSTFY_KHZNH,مصطفى خزنه دار,MSTFY KHZNH DAR,no,named,,,,,,,0,2,aalam:1.09
+PERSON_DAY_THMAN,عثمان داي,THMAN DAY,no,named,,,,,,,1,2,aalam:1.01
+PERSON_DBAB_MHMD,محمد دباب,MHMD DBAB,no,named,,,,,,,1,1,aalam:3.03
+PERSON_DGHSTANY_SHRF_DYN,شرف الدين الدغستاني,SHRF DYN DGHSTANY,no,named,,,,,,,0,1,aalam:2.05
+PERSON_DWRKAYM_AMYL,إميل دوركايم,AMYL DWRKAYM,no,named,,,,,,,0,1,aalam:2.13
+PERSON_DYNAR_BNABY,ابن أبي دينار,BNABY DYNAR,no,described,,,,,,,1,1,aalam:1.01
+PERSON_DYN_SLTAN_WHYD,السلطان وحيد الدين,SLTAN WHYD DYN,no,named,,,,,,,0,2,aalam:2.09
+PERSON_FATMH,فاطمة,FATMH,no,named,,,,,,,1,1,aalam:1.01
+PERSON_FRANS_BYAR_MNDAS,بيار منداس فرانس,BYAR MNDAS FRANS,no,named,,,,,,,1,1,aalam:3.04
+PERSON_FRHAT_SALH,صالح فرحات,SALH FRHAT,no,named,,,,,,,2,3,aalam:2.13
+PERSON_FRYD_DAMAD,الداماد فريد باشا,DAMAD FRYD,no,named,,,,,,pasha,2,2,aalam:2.09
+PERSON_FRZDQ,الفرزدق,FRZDQ,no,named,,,,,,,0,1,aalam:2.12
+PERSON_FYFH_BHRY,البحري فيفة,BHRY FYFH,no,named,,,,,,,1,1,aalam:3.11
+PERSON_GHWDYANY_MHAMY,المحامي غودياني,MHAMY GHWDYANY,no,named,,,,,,,0,1,aalam:3.07
+PERSON_GHZALY,الغزالي,GHZALY,no,named,,,,,,,0,1,aalam:2.12
+PERSON_HBYB_MHMD,محمد الحبيب باي,MHMD HBYB,no,named,,,,,,bey,1,1,aalam:2.09
+PERSON_HDAD_TAHR,الطاهر الحداد,TAHR HDAD,no,named,,,,,,,2,3,aalam:2.14
+PERSON_HMWDH,حمودة باشا,HMWDH,no,named,,,,,,pasha,2,6,aalam:1.02
+PERSON_HSHAYSHY_MHMD,محمد الحشايشي,MHMD HSHAYSHY,no,named,,,,,,,2,2,aalam:2.03
+PERSON_HSHAYSHY_MHMD_BNTHMAN,محمد بن عثمان الحشايشي,MHMD BNTHMAN HSHAYSHY,no,named,,,,,,,1,1,aalam:2.07
+PERSON_HSYNYH_ALH,العائلة الحسينية,ALH HSYNYH,no,named,,,,,,,0,1,aalam:1.02
+PERSON_JLWLY_BKAR,بكار الجلولي,BKAR JLWLY,no,named,,,,,,,1,2,aalam:1.02
+PERSON_JLWLY_MHMD_ZYZ,محمد العزيز الجلولي,MHMD ZYZ JLWLY,no,named,,,,,,,1,1,aalam:2.13
+PERSON_JLWLY_TYB,الطيب الجلولي,TYB JLWLY,no,named,,,,,,,2,3,aalam:2.09
+PERSON_JNADY_MHMD,محمد الجنادي,MHMD JNADY,no,named,,,,,,,1,1,aalam:2.03
+PERSON_KAK_MSTFY,مصطفى الكعاك,MSTFY KAK,no,named,,,,,,,5,6,aalam:2.14
+PERSON_KALYGHARYS,كاليغاريس,KALYGHARYS,no,named,,,,,,,1,1,aalam:1.05
+PERSON_KAMBNWN,كامبنون,KAMBNWN,no,named,,,,,,,1,1,aalam:1.05
+PERSON_KAMBWN_BWL,بول كامبون,BWL KAMBWN,no,named,,,,,,,1,2,aalam:3.05
+PERSON_KHDAR_MHMD,محمد الخضار,MHMD KHDAR,no,named,,,,,,,0,1,aalam:2.06
+PERSON_KHWJH_MHMWD,محمود خوجة,MHMWD KHWJH,no,named,,,,,,,1,2,aalam:1.08
+PERSON_KHWJH_MSTFY,مصطفى خوجة,MSTFY KHWJH,no,named,,,,,,,1,2,aalam:1.02
+PERSON_KHYAM_MR,عمر الخيام,MR KHYAM,no,named,,,,,,,0,1,aalam:2.12
+PERSON_KHYRALDYN_SALH,صالح خير الدين,SALH KHYRALDYN,no,named,,,,,,,2,2,aalam:2.09
+PERSON_KHYRALDYN_SHQYQ_MHMD,شقيق محمد باي خير الدين,SHQYQ MHMD KHYRALDYN,no,described,,,,,,bey,1,2,aalam:2.05
+PERSON_KMBLWN,كمبلون,KMBLWN,no,named,,,,,,,0,1,aalam:3.05
+PERSON_KMBNWN_QBTAN,القبطان كمبنون,QBTAN KMBNWN,no,named,,,,,,,0,1,aalam:3.05
+PERSON_KTANY_MHMD,الشيخ محمد الكتاني,MHMD KTANY,no,named,,,,,,shaykh,0,2,aalam:2.05
+PERSON_LAFYS,لافيس,LAFYS,no,named,,,,,,,0,1,aalam:2.13
+PERSON_LANJY_BARWN_DYR,البارون دير لانجي,BARWN DYR LANJY,no,named,,,,,,,1,3,aalam:3.04
+PERSON_LATY_LY_BNAHMD,علي بن أحمد لاتي,LY BNAHMD LATY,no,named,,,,,,,1,2,aalam:3.07
+PERSON_LH_HMZH_FTH,حمزة فتح الله,HMZH FTH LH,no,named,,,,,,,0,1,aalam:1.08
+PERSON_LY,علي باي,LY,no,named,,,,,,bey,1,3,aalam:1.02
+PERSON_MATRY_AHMD,أحمد الماطري,AHMD MATRY,no,named,,,,,,,2,3,aalam:3.11
+PERSON_MATRY_MKHTAR,المختار الماطري,MKHTAR MATRY,no,named,,,,,,,2,3,aalam:3.11
+PERSON_MDHT,مدحت باشا,MDHT,no,named,,,,,,pasha,1,1,aalam:2.09
+PERSON_MDNY_MHMD,محمد المدني,MHMD MDNY,no,named,,,,,,,0,1,aalam:1.05
+PERSON_MHDY_SALH,صالح المهدي,SALH MHDY,no,named,,,,,,,1,1,aalam:2.14
+PERSON_MHMD,محمد باي,MHMD,no,named,,,,,,bey,2,4,aalam:1.08
+PERSON_MNSF,المنصف باي,MNSF,no,named,,,,,,bey,0,2,aalam:3.05
+PERSON_MNSF_MHMD,محمد المنصف باي,MHMD MNSF,no,named,,,,,,bey,1,2,aalam:2.10
+PERSON_MNSTYRY_HMWDH,حمودة المنستيري,HMWDH MNSTYRY,no,named,,,,,,,1,1,aalam:3.03
+PERSON_MQDM_HSYN,حسين المقدم,HSYN MQDM,no,named,,,,,,,1,1,aalam:3.02
+PERSON_MRAD,مراد باي,MRAD,no,named,,,,,,bey,0,1,aalam:1.01
+PERSON_MRY_ABYLA,أبو العلاء المعري,ABYLA MRY,no,named,,,,,,,0,2,aalam:2.11
+PERSON_MRZWQY_MHMD,محمد المرزوقي,MHMD MRZWQY,no,named,,,,,,,1,1,aalam:2.14
+PERSON_MSYKH_HBYBH,حبيبة مسيكة,HBYBH MSYKH,no,named,,,,,,,1,2,aalam:3.04
+PERSON_MTNBY,المتنبي,MTNBY,no,named,,,,,,,0,1,aalam:2.12
+PERSON_MTRAN_KHLYL,خليل مطران,KHLYL MTRAN,no,named,,,,,,,0,1,aalam:2.12
+PERSON_MYLRAN,ميلران,MYLRAN,no,named,,,,,,,1,1,aalam:2.09
+PERSON_MYY_LWYS_RWNY,لويس روني ميي,LWYS RWNY MYY,no,named,,,,,,,1,1,aalam:2.08
+PERSON_MYY_RWNY,روني ميي,RWNY MYY,no,named,,,,,,,2,2,aalam:2.07
+PERSON_MZALY_MHMD,محمد مزالي,MHMD MZALY,no,named,,,,,,,0,1,aalam:3.10
+PERSON_NASR_MHMD,محمد الناصر باي,MHMD NASR,no,named,,,,,,bey,1,2,aalam:2.09
+PERSON_NASR_MLK_MHMD,الملك محمد الناصر باي,MLK MHMD NASR,no,named,,,,,,bey,0,1,aalam:3.01
+PERSON_NAZLY,الأميرة نازلي,NAZLY,no,named,,,,,,princess,3,4,aalam:2.03
+PERSON_NHDH_JRYDH,جريدة النهضة,JRYDH NHDH,no,named,,,,,,,1,1,aalam:3.02
+PERSON_NMAN_MHMD,محمد نعمان,MHMD NMAN,no,named,,,,,,,1,1,aalam:2.04
+PERSON_NYFR_MHMD,محمد النيفر,MHMD NYFR,no,named,,,,,,,0,1,aalam:2.06
+PERSON_QLATY_HSN,حسن قلاتي,HSN QLATY,no,named,,,,,,,18,19,aalam:3.02
+PERSON_QSTLY_SHADHLY,الشاذلي القسطلي,SHADHLY QSTLY,no,named,,,,,,,1,1,aalam:3.02
+PERSON_QYRWANYH_ZWJTH_THANYH,زوجته الثانية القيروانية,ZWJTH THANYH QYRWANYH,no,described,,,,,,,0,1,aalam:3.05
+PERSON_RAMYLA,راميلا,RAMYLA,no,named,,,,,,,0,1,aalam:2.13
+PERSON_RDWAN_MHMD,محمد رضوان,MHMD RDWAN,no,named,,,,,,,6,7,aalam:3.01
+PERSON_RDWAN_MSTFY,مصطفى رضوان,MSTFY RDWAN,no,named,,,,,,,1,3,aalam:3.01
+PERSON_RDY_SHRYF,الشريف الرضي,SHRYF RDY,no,named,,,,,,,0,1,aalam:2.12
+PERSON_RSAFY_MRWF,معروف الرصافي,MRWF RSAFY,no,named,,,,,,,0,1,aalam:2.12
+PERSON_RSHAD_SLTAN_MHMD,السلطان محمد رشاد,SLTAN MHMD RSHAD,no,named,,,,,,,0,1,aalam:2.04
+PERSON_RSHYD,الجنرال رشيد,RSHYD,no,named,,,,,,general,1,1,aalam:3.05
+PERSON_RSMYWN_MFKRWN,المفكرون الرسميون,MFKRWN RSMYWN,no,named,,,,,,,0,1,aalam:2.14
+PERSON_RSTM,رستم,RSTM,no,named,,,,,,,0,1,aalam:1.05
+PERSON_RYAHY_MHMD,محمد الرياحي,MHMD RYAHY,no,named,,,,,,,0,1,aalam:3.04
+PERSON_RYAHY_TYB,الطيب الرياحي,TYB RYAHY,no,named,,,,,,,1,2,aalam:1.04
+PERSON_SADQ,الصادق باي,SADQ,no,named,,,,,,bey,0,1,aalam:1.09
+PERSON_SADQ_MHMD,محمد الصادق باي,MHMD SADQ,no,named,,,,,,bey,1,2,aalam:1.05
+PERSON_SAFY_AHMD,أحمد الصافي,AHMD SAFY,no,named,,,,,,,3,3,aalam:2.09
+PERSON_SALH,صالح,SALH,no,named,,,,,,,1,1,aalam:1.02
+PERSON_SAN_LWSYAN,لوسيان سان,LWSYAN SAN,no,named,,,,,,,1,1,aalam:2.09
+PERSON_SAR_FYKTWR,فيكتور سار,FYKTWR SAR,no,named,,,,,,,0,1,aalam:2.07
+PERSON_SFR_MSTFY,مصطفى صفر,MSTFY SFR,no,named,,,,,,,1,3,aalam:2.02
+PERSON_SFR_TAHR,الطاهر صفر,TAHR SFR,no,named,,,,,,,1,1,aalam:3.11
+PERSON_SHABY_ABYQASM,أبو القاسم الشابي,ABYQASM SHABY,no,named,,,,,,,0,1,aalam:3.14
+PERSON_SHARLYTY,شارليتي,SHARLYTY,no,named,,,,,,,0,1,aalam:2.15
+PERSON_SHMAMH_NSYM,نسيم شمامة,NSYM SHMAMH,no,named,,,,,,,2,2,aalam:1.07
+PERSON_SHNYQ_MHMD,محمد شنيق,MHMD SHNYQ,no,named,,,,,,,2,2,aalam:2.13
+PERSON_SHRYF_BDJBAR,عبد الجبار الشريف,BDJBAR SHRYF,no,named,,,,,,,1,1,aalam:2.01
+PERSON_SHRYYN_AHD_QDAH,أحد القضاة الشرعيين,AHD QDAH SHRYYN,no,named,,,,,,,0,1,aalam:3.14
+PERSON_SHWKT_MHMD,محمد شوكت باشا,MHMD SHWKT,no,named,,,,,,pasha,1,1,aalam:2.05
+PERSON_SHWKT_MHMWD,محمود شوكت باشا,MHMWD SHWKT,no,named,,,,,,pasha,2,2,aalam:2.09
+PERSON_SHYRAZY_SDY,سعدي الشيرازي,SDY SHYRAZY,no,named,,,,,,,0,1,aalam:2.12
+PERSON_SNA_MKHATBYH_ASGHR_MNH,مخاطبيه الأصغر منه سنا,MKHATBYH ASGHR MNH SNA,no,named,,,,,,,0,1,aalam:2.12
+PERSON_SNWSY_MHMD,محمد السنوسي,MHMD SNWSY,no,named,,,,,,,7,10,aalam:1.08
+PERSON_SNWSY_MHYYALDYN,محيي الدين السنوسي,MHYYALDYN SNWSY,no,named,,,,,,,2,2,aalam:3.08
+PERSON_SNWSY_MNWBY,المنوبي السنوسي,MNWBY SNWSY,no,named,,,,,,,1,1,aalam:3.04
+PERSON_SQA_AHMD,أحمد السقا,AHMD SQA,no,named,,,,,,,1,1,aalam:2.09
+PERSON_SWSY_MHMD,محمد السئوسي,MHMD SWSY,no,named,,,,,,,0,1,aalam:3.08
+PERSON_TAB_SHAKYR_SAHB,شاكير صاحب الطابع,SHAKYR SAHB TAB,no,named,,,,,,,1,1,aalam:1.06
+PERSON_TAFRN_DY,دي تافرن,DY TAFRN,no,named,,,,,,,0,1,aalam:3.05
+PERSON_TAHR,الطاهر باي,TAHR,no,named,,,,,,bey,0,1,aalam:3.05
+PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,BDZYZ THALBY,no,named,,,,,,,14,16,aalam:2.04
+PERSON_THANY_ABNH_AHMD,ابنة أحمد باي الثاني,ABNH AHMD THANY,no,described,,,,,,bey,0,1,aalam:3.08
+PERSON_THANY_AHMD,أحمد باي الثاني,AHMD THANY,no,named,,,,,,bey,2,3,aalam:2.09
+PERSON_THANY_HSN,مولاي الحسن الثاني,HSN THANY,no,named,,,,,,,0,2,aalam:3.10
+PERSON_THANY_HSYN,حسين باي الثاني,HSYN THANY,no,named,,,,,,bey,0,3,aalam:1.03
+PERSON_THLATY_HSAN,حسان ثلاتي,HSAN THLATY,no,named,,,,,,,0,1,aalam:3.03
+PERSON_THLATY_MR,عمر ثلاتي,MR THLATY,no,named,,,,,,,2,3,aalam:2.11
+PERSON_THMAN,عثمان باي,THMAN,no,named,,,,,,bey,3,5,aalam:1.02
+PERSON_TKWYNHMA_ASATDHH_DHYN_SAHMWA_FY,الأساتذة الذين ساهموا في تكوينهما,ASATDHH DHYN SAHMWA FY TKWYNHMA,no,described,,,,,,,0,2,aalam:2.12
+PERSON_TLATLY_BDQADR,عبد القادر التلاتلي,BDQADR TLATLY,no,named,,,,,,,1,2,aalam:2.15
+PERSON_TLATLY_MHMD,محمد التلاتلي,MHMD TLATLY,no,named,,,,,,,2,4,aalam:2.15
+PERSON_TLATLY_SLAHALDYN,صلاح الدين التلاتلي,SLAHALDYN TLATLY,no,named,,,,,,,5,5,aalam:2.15
+PERSON_TRKY_MHMD,محمد التركي,MHMD TRKY,no,named,,,,,,,2,2,aalam:2.03
+PERSON_TWNSYH_FTAH_MN_ALH_BRJWAZYH,فتاة من عائلة برجوازية تونسية,FTAH MN ALH BRJWAZYH TWNSYH,no,named,,,,,,,0,1,aalam:3.04
+PERSON_TYMWR_AHMD,أحمد تيمور,AHMD TYMWR,no,named,,,,,,,0,2,aalam:2.11
+PERSON_WALDH_ASATDHH_QLAL_DHYN_AKHTARHM,الأساتذة القلائل الذين اختارهم والده,ASATDHH QLAL DHYN AKHTARHM WALDH,no,described,,,,,,,0,1,aalam:2.11
+PERSON_ZAFR,الشيخ ظافر,ZAFR,no,named,,,,,,shaykh,1,2,aalam:3.02
+PERSON_ZMKHSHRY,الزمخشري,ZMKHSHRY,no,named,,,,,,,0,1,aalam:2.12
+PERSON_ZMRLY_SADQ,الصادق الزمرلي,SADQ ZMRLY,no,named,,,,,,,2,2,aalam:2.04
+PERSON_ZRAY_MHMD_TLATLY_AMYN,محمد التلاتلي الأمين الزراعي,MHMD TLATLY AMYN ZRAY,no,named,,,,,,,0,1,aalam:2.15
+PERSON_ZRWQ_RBY,العربي زروق,RBY ZRWQ,no,named,,,,,,,1,2,aalam:1.02
+PERSON_ZYRH_AYLY,إيلي زيرح,AYLY ZYRH,no,named,,,,,,,1,1,aalam:3.03
+PERSON_ZYZ_HMWDH_BNBD,حمودة بن عبد العزيز,HMWDH BNBD ZYZ,no,named,,,,,,,2,2,aalam:1.02

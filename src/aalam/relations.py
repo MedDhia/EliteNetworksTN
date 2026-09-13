@@ -24,10 +24,30 @@ from .names_ar import parse_person, person_id, transliterate
 from .paths import INTERIM, PROCESSED, ensure_dirs
 
 PERSON_FIELDS = [
-    "person_id", "name_ar", "name_translit", "is_subject", "entry_uid",
-    "cohort", "birth_year", "death_year", "role_descriptor_ar", "rank",
-    "n_assertions", "n_ties", "first_seen_entry",
+    "person_id", "name_ar", "name_translit", "is_subject", "name_kind",
+    "entry_uid", "cohort", "birth_year", "death_year", "role_descriptor_ar",
+    "rank", "n_assertions", "n_ties", "first_seen_entry",
 ]
+
+# The book often places a person without naming them: «ابنة الأصرم»,
+# «شقيق محمد باي خير الدين», «زوجته الثانية القيروانية». The tie is real -- a
+# marriage happened, a brother existed -- but the node is a description, not
+# an identity, and two such descriptions in different entries may well be the
+# same person or different ones with no way to tell. They are kept, because
+# dropping them would delete ties the source states, and marked, because
+# treating them as identified individuals would overcount the population and
+# invite a merge that nothing supports.
+_DESCRIPTION_HEADS = (
+    "شقيق", "ابن عم", "ابنة عم", "والد", "والدة", "أخو", "أخت", "زوجة",
+    "زوجته", "ابنة", "ابن ", "حفيد", "عم ", "خال ", "صهر", "الأساتذة",
+    "أبناء", "بنت",
+)
+
+
+def name_kind(name: str) -> str:
+    """`described` for a node the book places only by its relation to another."""
+    stripped = (name or "").strip()
+    return "described" if stripped.startswith(_DESCRIPTION_HEADS) else "named"
 ORG_FIELDS = ["org_id", "name_ar", "name_translit", "org_kind", "n_ties", "first_seen_entry"]
 EDGE_FIELDS = [
     "edge_id", "layer", "relation", "from_id", "from_name", "to_id", "to_name",
@@ -68,7 +88,8 @@ def run() -> dict[str, int]:
         persons[pid] = {
             "person_id": pid, "name_ar": e["name_ar"],
             "name_translit": transliterate(p.normalised or e["name_ar"]),
-            "is_subject": "yes", "entry_uid": e["entry_uid"],
+            "is_subject": "yes", "name_kind": "named",
+            "entry_uid": e["entry_uid"],
             "cohort": e["cohort"], "birth_year": e["birth_year"],
             "death_year": e["death_year"],
             "role_descriptor_ar": e["role_descriptor_ar"], "rank": p.rank,
@@ -83,7 +104,8 @@ def run() -> dict[str, int]:
             persons[sid] = {
                 "person_id": sid, "name_ar": r["subject_name"],
                 "name_translit": transliterate(p.normalised or r["subject_name"]),
-                "is_subject": "no", "entry_uid": "", "cohort": "",
+                "is_subject": "no", "name_kind": name_kind(r["subject_name"]),
+                "entry_uid": "", "cohort": "",
                 "birth_year": "", "death_year": "", "role_descriptor_ar": "",
                 "rank": p.rank, "first_seen_entry": r["entry_uid"],
             }
@@ -96,7 +118,9 @@ def run() -> dict[str, int]:
                 persons[cid] = {
                     "person_id": cid, "name_ar": r["counterparty_name"],
                     "name_translit": transliterate(p.normalised or r["counterparty_name"]),
-                    "is_subject": "no", "entry_uid": "", "cohort": "",
+                    "is_subject": "no",
+                    "name_kind": name_kind(r["counterparty_name"]),
+                    "entry_uid": "", "cohort": "",
                     "birth_year": "", "death_year": "", "role_descriptor_ar": "",
                     "rank": p.rank, "first_seen_entry": r["entry_uid"],
                 }
@@ -160,6 +184,8 @@ def run() -> dict[str, int]:
         "subjects": sum(1 for p in persons.values() if p["is_subject"] == "yes"),
         "alters": sum(1 for p in persons.values() if p["is_subject"] == "no"),
         "organisations": len(orgs), "edges": len(edges),
+        "described_alters": sum(1 for p in persons.values()
+                                if p.get("name_kind") == "described"),
     }
     for layer, rows_ in sorted(by_layer.items()):
         stats[f"edges_{layer}"] = len(rows_)

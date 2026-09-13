@@ -1,4 +1,6 @@
 edge_id,layer,relation,from_id,from_name,to_id,to_name,to_kind,subjects_studied,year,year_lo,year_hi,date_precision,evidence_tier,extractor,pattern_id,confidence,entry_uid,evidence_quote
+ED_9483f7e6e41b3b122633,membership,authored,PERSON_ABN_ASKNDR_DWMAS,الاسكندر دوماس الإبن,WORK_GHADH_KAMYLYA,غادة الكاميليا,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,يتمثل في رواية الاسكندر دوماس الإبن، «غادة الكاميليا»
+ED_bdb544f8cdaf00c62f40,membership,wrote_for,PERSON_ABYHAJB_MR,عمر بو حاجب,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,وعمر بو حاجب، وعلى وسجه الخصوص البشير صفر الذي
 ED_12f6879b49e6f6971a78,membership,member_of,PERSON_ABYHAJB_SALM,سالم بو حاجب,ORG_LJAN_MHDTHH_LDBT_ASLAHAT_ASASYH,اللجان المحدثة لضبط الاصلاحات الأساسية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,كما عيّن سالم بوحاجب عضواً في مختلف اللجان المحدثة لضبط الاصلاحات الأساسية
 ED_fa34a060f749b43bd1e7,membership,member_of,PERSON_ABYHAJB_SALM,سالم بو حاجب,ORG_MJLS_SHRY,المجلس الشرعي,org,,1906,1906-01-01,1906-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,لم يتمكن إلا في سنة 1906 من الدخول إلى المجلس الشرعي
 ED_7beefd62f0549fafa845,membership,colleague_of,PERSON_ABYHAJB_SALM,سالم بو حاجب,PERSON_BKWSH_MHMD,محمد البكوش,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,وطوراً بضاحية أريانة في بيت محمد البكوش
@@ -7,19 +9,59 @@ ED_e7ca0478e3c88a9713e8,membership,colleague_of,PERSON_ABYHAJB_SALM,سالم ب�
 ED_2e4731d236e4b3036ce8,membership,colleague_of,PERSON_ABYHAJB_SALM,سالم بو حاجب,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,كانت تعقد تارة بضاحية المرسي في بيت عبد الجليل الزاوش
 ED_36f6750aaddc0bdb35d5,membership,authored,PERSON_ABYHAJB_SALM,سالم بو حاجب,WORK_DYWAN_SHR,ديوان شعر,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,فقد ترك ديواناً من الشعر الجيّد لم ينشر إلى الآن
 ED_4ee8a2dc124f75da08b2,membership,authored,PERSON_ABYHAJB_SALM,سالم بو حاجب,WORK_MKHTARAT_MN_KHTB_JMYH,مختارات من الخطب الجمعية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,جمع فيه مختارات من خخطبه الجمعية البليغة
+ED_08ae25250a754fe57fde,membership,headed,PERSON_ASRM_MHMD,محمد الأصرم,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,سوا، كعضو في الهيئة المديرة للجمعية أو كرئيس، عن العمل والنضال
+ED_a0530c83200d7138e358,membership,member_of,PERSON_ASRM_MHMD,محمد الأصرم,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,1896,1896-01-01,1896-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,وسيوفر له إنشا، الجمعية الخلدونية سنة 1896 الإطار الملائم
+ED_0e3c2fe30157d0ca334c,membership,founded,PERSON_ASRM_MHMD,محمد الأصرم,NEWS_JRYDH_TWNSY,جريدة التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,إصدار جريدة ناطقة باللغة الفرنسية، هى جريدة «التونسى
+ED_e5589859e48d0ce0548e,membership,wrote_for,PERSON_ASRM_MHMD,محمد الأصرم,NEWS_JRYDH_TWNSY,جريدة التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,وسيكون تحت طىّ الخفا، أحد محرّريها الأكثر نشاطاً والأحسن إلهاماً
+ED_f010bdc6cfc3271d01f2,membership,member_of,PERSON_ASRM_MHMD,محمد الأصرم,ORG_ADARH_FLAHH,إدارة الفلاحة,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,إذ دُعى إلى الالتحاق بإدارة الفلاحة الحديثة العهد
+ED_d49c8162a158b325c420,membership,member_of,PERSON_ASRM_MHMD,محمد الأصرم,ORG_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"وخير الله بن مصطفى ومحمد
+الأصرم ومحمد بن الخوجة"
+ED_f24ac040f9f795ce445a,membership,member_of,PERSON_ASRM_MHMD,محمد الأصرم,ORG_HYH_MDYRH_LLJMYH_KHLDWNYH,الهيئة المديرة للجمعية الخلدونية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,طوال ثلاثين سنة، سوا، كعضو في الهيئة المديرة للجمعية أو كرئيس
+ED_a197a0e6d0e5d70775c0,membership,member_of,PERSON_ASRM_MHMD,محمد الأصرم,ORG_MTMR_ASTMARY_BMRSYLYA,المؤتمر الاستعماري بمرسيليا,org,,1906,1906-01-01,1906-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,دراساته العديدة المقدّمة إلى المؤتمر الاستعماري المنعقد بمرسيليا
+ED_b0150845b39b0c14aab1,membership,member_of,PERSON_ASRM_MHMD,محمد الأصرم,ORG_MTMR_ASTMARY_BMRSYLYA,المؤتمر الاستعماري بمرسيليا,org,,1906,1906-01-01,1906-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"ما لقيه ممحمل الأصرم من صدىق
+طيّب في المؤتمر الاستعماري المنعقد بمرسيليا سنة 1906"
+ED_83398dfe4e60120e5c29,membership,member_of,PERSON_ASRM_MHMD,محمد الأصرم,ORG_MTMR_SHMAL_AFRYQYA_BBARYS,مؤتمر شمال إفريقيا بباريس,org,,1908,1908-10-01,1908-10-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,كان مترجمنا المضطر إلى البقا، بتونس من أوْل من وجُهوا بحوثهم إلى
+ED_9c13dc29d84435261176,membership,colleague_of,PERSON_ASRM_MHMD,محمد الأصرم,PERSON_BWRD_BWL,بول بورد,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,بول بورد، من فرصة العمل المباشر مع ذلك المصلح الجليل
+ED_7a93a07ecf368645d202,membership,colleague_of,PERSON_ASRM_MHMD,محمد الأصرم,PERSON_SAR_FYKTWR,فيكتور سار,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,أنه قد نقل إلى اللغة الفرنسية بالاشتراك مع فيكتور سار
+ED_0acc6e63bd1957082d01,membership,authored,PERSON_ASRM_MHMD,محمد الأصرم,WORK_MSAL_TWNSYH,مسائل تونسية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,جمعها صاحبها فيما بعد في نشرية واحدة بعنوان «مسائل تونسية
+ED_ead600be618fbf985076,membership,authored,PERSON_ASRM_MHMD,محمد الأصرم,WORK_MSHR_MLKY_FY_SLTNH_AWLAD_HSYN_BN_LY_TRKY,المشرع الملكي في سلطنة أولاد حسين بن علي تركي,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,كتاب «المشرع الملكي في سلطنة أولاد حسين بن علي تركي)
+ED_dc2d4ac964d2c8693ca3,membership,authored,PERSON_ASRM_MHMD,محمد الأصرم,WORK_RHLH_ALY_BLAD_SNWSYH,الرحلة إلى بلاد السنوسية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,ترجم بالاشتراك مع نفس المؤلف كتاب «الرحلة إلى بلاد السئوسية،
+ED_cbebb4c442301fc4fd72,membership,member_of,PERSON_ASWD_TAHR,الطاهر الأسود,ORG_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,والصادق الزمرلي والطاهر الأسود
 ED_91c28a827f33e52983cf,membership,founded,PERSON_AWL_AHMD,أحمد باي الأول,SCH_MDRSH_HRBYH_BBARDW,المدرسة الحربية بباردو,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,إحداث مدرسة حربية بباردو
+ED_62a216be5b3db8490f85,membership,founded,PERSON_AWL_AHMD,أحمد باي الأول,SCH_MDRSH_HRBYH_BMNWBH,المدرسة الحربية بمنوبة,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,مقرّ المدرسة الحربية التى أنشأها أحمد باي الأول
+ED_b81b7be6876a30b1fddd,membership,wrote_for,PERSON_BDWHAB_HSN_HSNY,حسن حسني عبد الوهاب,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"وبعض المثقفين من ذوي التكوين العصري أمثال، حسن
+حسني عبد الواب وعبد الجليل الزاوش وأحمد الغطاس"
+ED_c152b1269f979c8f6123,membership,authored,PERSON_BDWHAB_HSN_HSNY,حسن حسني عبد الوهاب,WORK_MJML_TARYKH_ADB_TWNSY,مجمل تاريخ الأدب التونسي,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,حسن حسني عبد الوهاب: «مجمل تاريخ الأدب التونسي » صفحة 349
 ED_8cc85fa8e8d8ddfaec0f,membership,authored,PERSON_BDWHAB_HSN_HSNY,حسن حسني عبد الوهاب,WORK_SHHYRAT_TWNSYAT,شهيرات التونسيات,work,,1934,1934-01-01,1934-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.01,حسن حسئي عبد الوهاب: «شهيرات التونسيّات»
+ED_c994b391cde58715e5f9,membership,authored,PERSON_BDWHAB_HSN_HSNY,حسن حسني عبد الوهاب,WORK_WRQAT,الورقات,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,"انظر ترجمة حياة علي الورداني في «الورقات،
+تأليف حسن حسني عبد الوهاب"
+ED_30e1627dd87c1b3b2f2b,membership,colleague_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_MSTFY,مصطفى آغة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,وهما المرحومان مصطفى أغة وعبد السلام البكوش
+ED_474281280836bcedd318,membership,eulogised_by,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,OFFICE_WZYR_TRBYH_QWMYH,وزير التربية القومية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,الخطاب الرنان الذي ألقاه حضرة وزير التربية القومية فى جنازة
+ED_55297c59fbf0318e69d6,membership,member_of,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,ORG_MHAFL_LMYH_AFRYQYH_WALSHRQYH,المحافل العلمية الإفريقية والشرقية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,المحافل العلمية الإفريقية والشرقية التي كانت تدعوه إلى الانضمام إليها
+ED_c387750369f047f940a0,membership,colleague_of,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,PERSON_ABRAHYMY_AHMD_TALB,أحمد طالب الإبراهيمي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,ولقد تأثّر ببراعة الشيخ محمد الفاضل وقدرته الفائقة على جلب انتباه
+ED_93a53b45b381fc2f04c3,membership,eulogised_by,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,PERSON_MZALY_MHMD,محمد مزالي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,كان وزير التربية القومية آنذاك الأستاذ محمد مزالي
+ED_410430fee8379ed6f21e,membership,authored,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,WORK_TRAJM_ALAM,تراجم الأعلام,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,انظر ترجمة حياته في «تراجم الأعلام، للشيخ محمد الفاضل بن عاشور
 ED_5b65090d6c6264c70e6a,membership,member_of,PERSON_BNASHWR_MHMD_TAHR,محمد الطاهر بن عاشور,COURT_MHKMH_QARYH_MKHTLTH,المحكمة العقارية المختلطة,court,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.12,وبين مهمته كعضو مستشار بالمحكمة العقارية المختلطة
 ED_29a3bb677e10d5028eb1,membership,member_of,PERSON_BNASHWR_MHMD_TAHR,محمد الطاهر بن عاشور,ORG_MJLS_MDRSY_JAM_AZM,مجلس مدرسي الجامع الأعظم,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.12,فدعت مترجمنا إلى الانضمام إلى مجلس مدرسي الجامع الأعظم
+ED_7e8daba4f468563c0d72,membership,colleague_of,PERSON_BNASHWR_MHMD_TAHR,محمد الطاهر بن عاشور,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"ومحمد الطاهر بن
+عاشور وعبد الجليل الزاوش، هم الذين تكونت منهم المجموعة المنضبطة"
 ED_33ecf266b0ad27c3a9de,membership,member_of,PERSON_BNASHWR_MHMD_TAHR,محمد الطاهر بن عاشور,SCH_JAMH_ZYTWNYH,الجامعة الزيتونية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.12,المناصب المرموقة في كل من الجامعة الزيتونية الوقورة والمعهد الصادقي
 ED_bbbd0f89b9bde92c44dd,membership,member_of,PERSON_BNASHWR_MHMD_TAHR,محمد الطاهر بن عاشور,SCH_MHD_SADQY,المعهد الصادقي,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.12,المناصب المرموقة في كل من الجامعة الزيتونية الوقورة والمعهد الصادقي
+ED_e27119d3e54f2bb8f94c,membership,founded,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,ORG_FRW_ZYTWNYH,الفروع الزيتونية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,ضمن الفروع الزيتونية التي سهر على إنشائها
+ED_f30e4e5e8255ac6fe6a6,membership,authored,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,WORK_DRS_DYWAN_HMASH,درس ديوان الحماسة,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,الذي اشتهر بدرسه حول ديوان الحماسة
 ED_29d0bd79e9366459b602,membership,authored,PERSON_BNKHWJH_BSHYR,البشير بن الخوجة,WORK_TRJMH_ABN_ABY_DYAF,ترجمة ابن أبي الضياف,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.06,انظر ترجمة ابن أبي الضياف بقلم البشير بن البخوجة
 ED_1c623be37b97bba9a9ad,membership,founded,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,ASSOC_JMYH_AWQAF_HRMYN_SHRYFYN,جمعية أوقاف الحرمين الشريفين,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,"بوصفه العضو
 المؤسس لجمعية أوقاف الحرمين الشريفين"
 ED_3edb55e31991fff2c049,membership,wrote_for,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,"المساهمة بانتظام في تحرير جريدة
 «الحاضرة) التي أسّسها صديقه على بوشوشة"
+ED_5bd0de9e5f08bce8681d,membership,wrote_for,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"نقتصر على ذكر اللذين لبوا من أول وهلة دعوة مؤسس الجريدة أمثال: محمد
+بن الخوجة"
+ED_a2ef050ef341ae244f4a,membership,member_of,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,ORG_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"ومحمد
+الأصرم ومحمد بن الخوجة والصادق الزمرلي"
 ED_ed778be186ec549475da,membership,member_of,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,ORG_KHLDWNYH,الخلدونية,org,,1896,1896-01-01,1896-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,عضواأً في الهيئة المديرة لتلك المؤسسة الجديدة
 ED_a8b695935b6cf9634536,membership,member_of,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,ORG_MTMR_SHMAL_AFRYQY_BBARYS,مؤتمر الشمال الإفريقي بباريس,org,,1908,1908-01-01,1908-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,وقبل ذلك قدّم إلى مؤتمر الشمال الإفريقي المنعقد بباريس سنة 1908
+ED_ed2e431922bfd13656d1,membership,colleague_of,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,PERSON_ASRM_MHMD,محمد الأصرم,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"ومُحمد بن الخوجة
+ومحمد الأصرم ومحمد رضوان وخير الله بن مصطفى"
 ED_c25ff5b4349fe78e7c89,membership,colleague_of,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,PERSON_BWSHWSHH_LY,علي بوشوشة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,التي أسّسها صديقه على بوشوشة بمشاركة عدد كبير من الشبان
 ED_e091a0bed244b4552fda,membership,colleague_of,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,PERSON_SFR_BSHYR,البشير صفر,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,"صديقه الأكبر منه سنا الأستاذ
 البشير صفر، وعين بصفة رئيس قسم مساعد"
@@ -31,16 +73,131 @@ ED_d6ec8a8c4a33d2d5e0d8,membership,authored,PERSON_BNKHWJH_MHMD,محمد بن ا
 ED_edfa7d6476362f83d4cd,membership,authored,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,WORK_RZNAMH_TWNSYH,الرزنامة التونسية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,"فقد أصدر طوال عدة
 سنوات متتالية «الرزنامة التونسية)"
 ED_4983acab1e782d6df247,membership,authored,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,WORK_TARYKH_MALM_TWHYD,تاريخ معالم التوحيد,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,«تاريخ معالم التوحيد»» تأليف محمد بن البخوجة
+ED_9d07178db32b710508f2,membership,founded,PERSON_BNLY_HSYN,حسين بن علي,ORG_DWLH_HSYNYH,الدولة الحسينية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,"حسين بن علي مؤسس
+الدولة الحسينية"
+ED_20a1eb78a27649ab186c,membership,headed,PERSON_BNMAR_TAHR,الطاهر بن عمار,ORG_WFD_DSTWRY_THANY,الوفد الدستوري الثاني,org,,1920,1920-12-04,1920-12-04,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,باريس في 4 ديسمبر 1920 برئاسة الطاهر بن عمار
 ED_821630d649577feca416,membership,headed,PERSON_BNMAR_TAHR,الطاهر بن عمار,ORG_WFD_DSTWRY_THANY_ALY_BARYS,الوفد الدستوري الثاني إلى باريس,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,الطاهر بن عمار (رئيس) ‏ حمودة المنستيري
+ED_0f0ca82eea84d8a9fd41,membership,colleague_of,PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,PERSON_KMBLWN,كمبلون,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,ونال تقدير ومودة زميليه «كمبلون) و«دي تافرن،
+ED_e1314e206a0652457b13,membership,colleague_of,PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,PERSON_TAFRN_DY,دي تافرن,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"زميليه «كمبلون) و«دي تافرن، اللذين أسبغا
+عليه المديح"
+ED_1710002f3f3765790f0f,membership,authored,PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,WORK_KTYB_FY_DRWS_SKRYH_BALRBYH,كتيب في الدروس العسكرية بالعربية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,فتولى تحرير كتيّب باللغة العربية، سبل فيه أهم ما تلقاه من دروس
+ED_c0b4847ac621c939e758,membership,headed,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,ASSOC_JMYH_QDMA_SADQYH,جمعية قدماء الصادقية,association,,1905,1905-01-01,1905-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"تم الاتفاق على إسناد رئاسة تلك الجمعية
+إلى خخير الله"
+ED_717390fe8313f901654d,membership,wrote_for,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,NEWS_TWNSY,التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"وعندما صدرت جريدة «التونسي)©) كان خير الله من أول الأعضا،
+الذين انضموا إلى هيئة تحريرها"
+ED_99c363adc9294023948d,membership,member_of,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,ORG_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"وعبد الجليل الزاوش وخير الله بن مصطفى ومحمد
+الأصرم"
+ED_6100cb6c0bd4a3ad8f2d,membership,member_of,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,ORG_MTMR_SHMAL_AFRYQYA,مؤتمر شمال إفريقيا,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"كان خير الله، من أؤل
+المشاركين في ذلك المؤتمر"
+ED_6059c709b95fd14716dd,membership,member_of,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,ORG_MTMR_SHMAL_AFRYQYA_BBARYS,مؤتمر شمال إفريقيا بباريس,org,,1908,1908-01-01,1908-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"هما السيدان عبد الجليل
+الزاوش وخخير الله"
+ED_11b77a239e815449f280,membership,founded,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,SCH_MDRSH_QRANYH_SRYH,المدرسة القرآنية العصرية,school,,1905,1905-01-01,1905-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,أسّس خير الله بن مصطفى في سنة 1905 «المدرسة القرآنية العصرية) بتونس
+ED_1250bb9f66e28764d447,membership,authored,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,WORK_TLYM_ABTDAY_MKHSS_LLAHALY_FY_BLAD_TWNSYH,التعليم الابتدائي المخصص للأهالي في البلاد التونسية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,ساهم المترجم له في المؤتمر شمال إفريقيا بدراسة عنوانها: «التعليم الانتدائي المخصص
+ED_02c5f9e2aa3499f0bf8d,membership,member_of,PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,قد التحق في الأثنا، بالجمعية الخلدونية بعد مدّة قليلة من تأسيسها
+ED_f951800db90150cf3710,membership,member_of,PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,ORG_MHD_RSHYDY,المعهد الرشيدي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,ولم يتخلف عن أية جلسة من جلسات اللجان المكلفة
+ED_1640037425b82a02b29e,membership,member_of,PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,PARTY_HZB_ATHAD_WALTRQY,حزب الاتحاد والترقي,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,التونسيين القلائل الذين انضمُوا إلى حزب «الاتحاد
+ED_621a62939308778aa58d,membership,authored,PERSON_BNQFSYH_MR,عمر بن قفصية,WORK_ADWA_LY_SHAFH_TWNSYH,أضواء على الصحافة التونسية,work,,1972,1972-01-01,1972-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,عمر بن قفصية «أضوا، على الصحافة التونسية ‏ تونس 1972
+ED_0e90b1f73e440e2a75f2,membership,authored,PERSON_BNYWSF_MHMD_SGHYR,محمد الصغير بن يوسف,WORK_MSHR_MLKY_FY_SLTNH_AWLAD_HSYN_BN_LY_TRKY,المشرع الملكي في سلطنة أولاد حسين بن علي تركي,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,علي تركي) (1771-1705): لمحمد الصغير بن يوسف
+ED_891e20813dbfb45b910b,membership,member_of,PERSON_BNYWSF_SALH,صالح بن يوسف,ORG_WZARH_MHMD_SHNYQ,وزارة محمد شنيق,org,,1950,1950-01-01,1950-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,"برئاسة السيد محمد شنيق وبمشاركة
+الأمين العام للحزب الدستوري الجديد، الآستاذ صالح بن يوسف"
+ED_c5834aedcea12cc204fa,membership,member_of,PERSON_BRHAN_JRYDH,جريدة البرهان,PARTY_HZB_ASLAHY,الحزب الإصلاحي,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,جريدة «البرهان) هي لسان حال الحزب الإصلاحي
+ED_bfcbaabed94dc52821c7,membership,authored,PERSON_BSYS_MHMD_SADQ,محمد الصادق بسيس,WORK_NAZLH_TWNSYH,النازلة التونسية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,تاليف محمد السئوسي وتحقيق محمد الصادق بسيّس
+ED_a44459d82ea3ac2ebfc5,membership,member_of,PERSON_BWHAJB_LY,علي بوحاجب,ASSOC_JMYH_TMTHYLYH_ADAB,الجمعية التمثيلية الآداب,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,فانضم علي بوحاجب إلى الجمعية التمثيلية «الآداب،
+ED_6ab8ab00fe2990efcbac,membership,wrote_for,PERSON_BWHAJB_LY,علي بوحاجب,NEWS_ML_TWNSY,العمل التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"الفصول العديدة التي نشرها بجريدة «العمل
+التونسي)"
+ED_84cd459434eb1d8a229a,membership,wrote_for,PERSON_BWHAJB_LY,علي بوحاجب,NEWS_MNARH,المنارة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"سبق له أن نشر محاولتين أو ثلاث محاولاات معتبرة فى
+المجلة الشهرية «المنارة»"
+ED_f4a46a4f6af83e1d2fbd,membership,wrote_for,PERSON_BWHAJB_LY,علي بوحاجب,NEWS_RJAL_WWALM,رجال وعوالم,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"فكان ينشر من حين لآخر
+في مجلة «رجال وعوالم»)"
+ED_bcae0690b6a8f97610aa,membership,wrote_for,PERSON_BWHAJB_LY,علي بوحاجب,NEWS_SWT_SHB,صوت الشعب,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"بنشر
+سلسلة من الفصول الرائعة في صحيفة «صوت الشعب،"
+ED_8d21832b551f7544b153,membership,wrote_for,PERSON_BWHAJB_LY,علي بوحاجب,NEWS_SWT_TWNSY,صوت التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"التي شنها على صفحات جريدة «صوت
+التونسي )"
+ED_62467aa39e082b27acd1,membership,wrote_for,PERSON_BWHAJB_LY,علي بوحاجب,NEWS_TWNSY,التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"لم يتردّه عن الالتحاق بتلك
+المجموعة والمساهمة في تحرير صحيفتها"
+ED_31e68165298ab8590785,membership,member_of,PERSON_BWHAJB_LY,علي بوحاجب,ORG_WZARH_MSTFY_KAK,وزارة مصطفى الكعاك,org,,1947,1947-01-01,1947-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,فعرض على علي بوحاجب الانضمام إلى التشكيلة الجديدة
+ED_3076111268c5bc355d36,membership,member_of,PERSON_BWHAJB_LY,علي بوحاجب,PARTY_HZB_HR_DSTWRY_TWNSY,الحزب الحر الدستوري التونسي,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"أسرع علي بوحاجب الوطني الغيور والمخلص والعدو
+التدود للهيجان والغوغائية، إلى الانضمام إلى ذلك الحزب"
+ED_c43ce73b74f6c3f48141,membership,colleague_of,PERSON_BWHAJB_LY,علي بوحاجب,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"وذلك بالاشتراك مع الرئيس الحبيب بورقيبة وثلّة من
+المحررين البارعين"
+ED_65cd0df6ecc8d48bf3a5,membership,authored,PERSON_BWHAJB_LY,علي بوحاجب,WORK_ARD_QBL_KL_SHY,الأرض قبل كل شيء,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"تحت عنوان «الأرض
+قبل كل شيءغ، عالج فيها ببراعة نادرة"
+ED_dbe6667d09beef6ee62a,membership,wrote_for,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,NEWS_ML_TWNSY,العمل التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"بجريدة «العمل
+التونسي). حيث كان لا يفوت أية فرصة"
+ED_ece6c995b26687914576,membership,member_of,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,ORG_MKTB_SYASY_LLHZB_DSTWRY_JDYD,المكتب السياسي للحزب الدستوري الجديد,org,,1934,1934-01-01,1934-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,انتخب مؤتمر قصر هلال المكتب السياسي للحزب الدستوري الجديد
+ED_451104e1b0daab045156,membership,headed,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,PARTY_HZB_DSTWRY_JDYD,الحزب الدستوري الجديد,party,,1934,1934-01-01,1934-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,"أسفر عن انشقاق الحركة وتكليف الحبيب بورقيبة بتسيير
+الحزب الجديد"
+ED_fc184a4e2d7a1b019062,membership,headed,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,PARTY_HZB_DSTWRY_JDYD,الحزب الدستوري الجديد,party,,1952,1952-01-18,1952-01-18,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,الزعيم الحبيب بورقيبة رئيس الحزب الدستوري الجديد في 18 جانفي
+ED_7001ec766c3ef725355d,membership,member_of,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,PARTY_HZB_HR_DSTWRY,الحزب الحر الدستوري,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,"كلا من محمود الماطري
+والحبيب بورقيبة ولم يترددا عن الانضمام إلى حركته الناشئة"
 ED_c1c583c8831f6081c927,membership,member_of,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,PARTY_JNAH_MTHRR_LLHZB_DSTWRY,الجناح المتحرر للحزب الدستوري,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,"أعني الدكتور محمود
 الماطري والزعيم الحبيب بورقيبة وأتباعهما"
+ED_7d6fe0a50c2bbe9f5c95,membership,colleague_of,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,وبفضل مثابرة المتعاونين المذكورين (بورقيبة وخير الله) ومساعدة رفيق ثالث
+ED_45a581627be75f397dff,membership,member_of,PERSON_BWRQYBH_MHMD,الشيخ محمد بورقيبة,ASSOC_JMYH_ADAB,جمعية الآداب,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,أو كعضو في جمعية الآداب التى تأسشست فيما بعد
+ED_cddbe216e98e601dec7d,membership,member_of,PERSON_BWRQYBH_MHMD,الشيخ محمد بورقيبة,ASSOC_NADY_TWNSY,النادي التونسي,association,,1905,1905-01-01,1905-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,كعضو في النادي التونسي منل تأسيسه (سنة 1905)
+ED_839abe805938d7291df4,membership,wrote_for,PERSON_BWRQYBH_MHMD,الشيخ محمد بورقيبة,NEWS_JRYDH_BRHAN,جريدة البرهان,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,فقد ساهم بانتظام في تحرير جريدة «البرهان، ثم
+ED_8772a670dd72686c1e97,membership,founded,PERSON_BWRQYBH_MHMD,الشيخ محمد بورقيبة,NEWS_JRYDH_LSAN_HQ,جريدة لسان الحق,newspaper,,1896,1896-01-01,1896-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,أصدر الشيخ محمد بورقيبة جريدة «لسان الحنٌ) في سئة 1896
+ED_457342374ca0470ee870,membership,wrote_for,PERSON_BWRQYBH_MHMD,الشيخ محمد بورقيبة,NEWS_JRYDH_MBSHR,جريدة المبشر,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,مثل «المنتظر، و «المبشر، وغيرهما
+ED_052c152c69ace7a97d8a,membership,wrote_for,PERSON_BWRQYBH_MHMD,الشيخ محمد بورقيبة,NEWS_JRYDH_MNTZR,جريدة المنتظر,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,فى تحرير بعض الصحف الأسبوعية الأخرى مثل «المنتظر،
+ED_af0e2e049cbc22613226,membership,wrote_for,PERSON_BWRQYBH_MHMD,الشيخ محمد بورقيبة,NEWS_JRYDH_NHDH,جريدة النهضة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,جريدة «النهضة) © التى كان كثيرا ما يحرر افتتاحياتها
+ED_7b7e046e8fcb81cee2f3,membership,founded,PERSON_BWRQYBH_MHMD,الشيخ محمد بورقيبة,NEWS_JRYDH_NTAJ_AKHBAR,جريدة نتائج الأخبار,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,أنشأ أوؤل صحيفة عربية ظهرت فى تونس بعد انتصاب الحماية الفرنسية
+ED_174d37a8363980cbba82,membership,member_of,PERSON_BWRQYBH_MHMD,محمد بورقيبة,ORG_MKTB_SYASY_LLHZB_DSTWRY_JDYD,المكتب السياسي للحزب الدستوري الجديد,org,,1934,1934-01-01,1934-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,ومّحمد بورقيبة (أمين مال)
 ED_36b194be1357813466a1,membership,founded,PERSON_BWSHWSHH_LY,علي بوشوشة,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,«الحاضرة) التي أسّسها صديقه على بوشوشة بمشاركة عدد كبير
+ED_994b87444228ea57f21e,membership,headed,PERSON_BWSHWSHH_LY,علي بوشوشة,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,بوصفه مدير جريدة «الحاضرة)
+ED_0c13a7fd2d34e17e88b1,membership,founded,PERSON_BWSHWSHH_LY,علي بوشوشة,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,1888,1888-01-01,1888-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,فقد أسّس سنة 1888 جريدة «الحاضرة)» بالتعاون مع
+ED_235ef219acab6b814ec3,membership,member_of,PERSON_BWSHWSHH_LY,علي بوشوشة,ORG_HYH_MDYRH_LLJMYH_KHLDWNYH,الهيئة المديرة للجمعية الخلدونية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,استطاع أن يحتلّ مكانة مرموقة ضمن الهيئة المديرة للجمعية
+ED_687991e6db4f33541811,membership,member_of,PERSON_BWSHWSHH_LY,علي بوشوشة,ORG_JMYH_KHLDWNYH,الجمعية الخلدونية,org,,1896,1896-01-01,1896-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"تأسّست الجمعية الخلدونية سئة 1896 فكان علي بوشوشة
+من أنشط مسيّريها"
+ED_2787f697f9fd40919a77,membership,member_of,PERSON_BWSHWSHH_LY,علي بوشوشة,ORG_SALWN_AMYRH_NAZLY,صالون الأميرة نازلي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"كان مواظباً على حضور الجلسات التى كانت
+تعقد بصالون الأميرة نازلى"
+ED_e933534387a302ce42be,membership,colleague_of,PERSON_BWSHWSHH_LY,علي بوشوشة,PERSON_BDH_MHMD,محمد عبده,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"تعرّف على مفتي الديار المصرية الشيخ محمد
+عبده"
+ED_473e5af5ee75ef2b1d79,membership,colleague_of,PERSON_BWSHWSHH_LY,علي بوشوشة,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"كان يقوم صحبة صديقه عبد الجليل الزاوش بجولات
+مطولة عبر مدينة اسطنبول"
 ED_5d0742fd49a07400d2f1,membership,authored,PERSON_DBAB_MHMD,محمد دباب,WORK_WFWD_DSTWRYH,الوفود الدستورية 1920-1919,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,«الوفود الدستورية 1920-1919 - تأليف محمد دباب
 ED_b02b6186de39b780b4ba,membership,authored,PERSON_DYAF_AHMD_BNABY,أحمد بن أبي الضياف,WORK_ATHAF_AHL_ZMAN,إتحاف أهل الزمان,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.06,"وإعداد تأليفه الشهير «إتحاف أهل الزمان في أخبار ملوك تونس وعهد
 الأمان»"
 ED_d849d9aee72088b8d9ea,membership,authored,PERSON_DYAF_AHMD_BNABY,أحمد بن أبي الضياف,WORK_ATHAF_AHL_ZMAN,إتحاف أهل الزمان,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.01,أحمد بن أبي الضياف: «إتحاف أهل
 ED_e6a715643a7d7fc804f5,membership,authored,PERSON_DYNAR_BNABY,ابن أبي دينار,WORK_MNS_FY_AKHBAR_AFRYQYA_WTWNS,المؤنس في أخبار إفريقيا وتونس,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.01,ابن أبي ديئار: «المؤنس في أخبار إفريقيا وتونس
+ED_7dc254053f79f23c2739,membership,authored,PERSON_FRHAT_SALH,صالح فرحات,WORK_THLATH_QSAD_BALLGHH_FRNSYH,ثلاث قصائد باللغة الفرنسية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,"ثلاث قصائد (باللغة
+الفرنسية) من نظم صديقه صالح فرحات"
+ED_bf884e7388283c7f5b96,membership,headed,PERSON_FRYD_DAMAD,الداماد فريد باشا,ORG_HKWMH_THMANYH,الحكومة العثمانية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,في الحكومة التي يرأسها الداماد فريد باشا
+ED_23919f234b57bf464779,membership,member_of,PERSON_FYFH_BHRY,البحري فيفة,ORG_MKTB_SYASY_LLHZB_DSTWRY_JDYD,المكتب السياسي للحزب الدستوري الجديد,org,,1934,1934-01-01,1934-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,والبحري فيفة (أمين مال مساعد)
+ED_eb4ce8f4c5437642dc89,membership,member_of,PERSON_GHTAS_AHMD,أحمد الغطاس,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,وقد وجد مجالاً للعمل في نطاق الجمعية الخلدونية التي أسّستها منذ
+ED_a436e6d1c00ea10d681e,membership,member_of,PERSON_GHTAS_AHMD,أحمد الغطاس,ASSOC_NADY_TWNSY,النادي التونسي,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,كان حريصاً على زيارة النادي التونسى ء حيث كان يحظى بالترحاب
+ED_719d83800a708106306a,membership,wrote_for,PERSON_GHTAS_AHMD,أحمد الغطاس,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,وعبد الجليل الزاوش وأحمد الغطاس، وقد رجع هذان
+ED_5a57b5011177f4010137,membership,wrote_for,PERSON_GHTAS_AHMD,أحمد الغطاس,NEWS_JRYDH_TWNSY,جريدة التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,مساهمته العرضية والمحتشمة في جريدة «التونسي
+ED_1ce9878a0c86938bfc30,membership,member_of,PERSON_GHTAS_AHMD,أحمد الغطاس,ORG_HYH_MDYRH_LLJMYH_KHLDWNYH,الهيئة المديرة للجمعية الخلدونية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,فانضم في الحين إلى هيثتها المديرة وبقي عضواً فيها زمناً طويلاً
+ED_dd1bb6b1f18db345c284,membership,colleague_of,PERSON_GHTAS_AHMD,أحمد الغطاس,PERSON_ASRM_MHMD,محمد الأصرم,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,زملائه البشير صفر ومحمد الأصرم ومحمد بن الخوجة وغيرهم
+ED_d89fbca96b2be5e8dad1,membership,colleague_of,PERSON_GHTAS_AHMD,أحمد الغطاس,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,ومحمد الأصرم ومحمد بن الخوجة وغيرهم، متدرّباً على شؤون التعليم
+ED_659eacc2af5331a37b87,membership,colleague_of,PERSON_GHTAS_AHMD,أحمد الغطاس,PERSON_SFR_BSHYR,البشير صفر,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,إلى جانب زملائه البشير صفر ومحمد الأصرم
+ED_48a1385d58c7203f352f,membership,authored,PERSON_GHTAS_AHMD,أحمد الغطاس,WORK_KNASH,كناش,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,أن أحمد الغطاس كان يحتفظ بكنش»ء يسجل فيه
+ED_0fdfd2a20c059abde1d4,membership,founded,PERSON_HANBH_LY_BASH,علي باش حانبة,ASSOC_JMYH_QDMA_MDRSH_SADQYH,جمعية قدماء المدرسة الصادقية,association,,1905,1905-01-01,1905-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,فأنشأ جمعية قدما، المدرسة الصادقية
+ED_cacb4cfb873d73cfa4b9,membership,founded,PERSON_HANBH_LY_BASH,علي باش حانبة,ASSOC_JMYH_QDMA_SADQYH,جمعية قدماء الصادقية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,بعدما كان الصديق الحميم لمؤسس تلك الجمعية، علي باش حانبة
+ED_5704dacc34d838a58ac1,membership,founded,PERSON_HANBH_LY_BASH,علي باش حانبة,ASSOC_JMYH_QDMA_SADQYH,جمعية قدماء الصادقية,association,,1905,1905-01-01,1905-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"أنشعت جمعية قدما، الصادقية سنة 1905 بمبادرة من المرحوم
+علي باش حانبة"
+ED_b8eda14b57c6933ad5d5,membership,founded,PERSON_HANBH_LY_BASH,علي باش حانبة,NEWS_FRNSA_ASLAMYH,فرنسا الإسلامية,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"يصدر بالتعاون مع
+الدكتور بروزون جريدة أسبوعية «فرنسا
+الإسلامية)"
+ED_08be189012aaba91751c,membership,wrote_for,PERSON_HANBH_LY_BASH,علي باش حانبة,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,صفر وعلي باش حانبة المنشورة في جريدة الحاضرة
+ED_576786efeea787cc9ee3,membership,headed,PERSON_HANBH_LY_BASH,علي باش حانبة,NEWS_JRYDH_TWNSY,جريدة التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,واختاروا بالإجماع على باش حانبة للإشراف على تلك الجريدة
+ED_a2ecc0b08e556777eb48,membership,headed,PERSON_HANBH_LY_BASH,علي باش حانبة,NEWS_JRYDH_TWNSY,جريدة التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,حول علي باش حانبة، مدير الجريدة
+ED_d5ad73d901c7d62cd7c3,membership,headed,PERSON_HANBH_LY_BASH,علي باش حانبة,NEWS_JRYDH_TWNSY,جريدة التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,اشتهر منذ أمد بعيل ببراعته ونفوذه الأدبي : ألا وهو على باش حانبة
+ED_afbcb657a028dff561b3,membership,wrote_for,PERSON_HANBH_LY_BASH,علي باش حانبة,NEWS_JRYDH_TWNSY,جريدة التونسي,newspaper,,1908,1908-01-01,1908-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,وكتب في العدد المؤرخ في 6 أكتوبر 1908 ما يلي
+ED_270ad47e2c6d37d1e195,membership,founded,PERSON_HANBH_LY_BASH,علي باش حانبة,NEWS_NSHRH_RBYH_LJRYDH_TWNSY,النشرة العربية لجريدة التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"أصدر علي باش حانبة إلى جانب جريدة
+«التونسي، الناطقة بالفرنسية جريدة أسبوعية ثانية ناطقة بالعربية"
+ED_44d666a5799d7321ef2f,membership,headed,PERSON_HANBH_LY_BASH,علي باش حانبة,NEWS_TWNSY,التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,التي يشرف عليها بطريقة مثالية مدير ذو شأن، هو المرحوم علي باش حانبة
+ED_4f9c7051ec0fbdbcb555,membership,member_of,PERSON_HANBH_LY_BASH,علي باش حانبة,ORG_HRKH_SHBAN_TWNSYYN,حركة الشبان التونسيين,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"الحركة الجديدة التي ظهرت للوجود والمعروفة باسم
+(حركة الشبان التونسيين»)"
+ED_5d6ab0cc5399678860b3,membership,headed,PERSON_HANBH_LY_BASH,علي باش حانبة,ORG_LJNH_ML_LAGHATHH_TRABLSYYN,لجنة عمل لإغاثة الطرابلسيين,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,وقرزروا إحداث لجنة عمل لهذا الغرض، يرأسها علي باش حانبة وحسن ثلاتي
+ED_da5aac414f4f35de36a9,membership,member_of,PERSON_HANBH_LY_BASH,علي باش حانبة,ORG_MJLS_DWLH,مجلس الدولة,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,فقد دُعي بعد مدّة قليلة إلى الانتما، إلى مجلس الدولة
+ED_ef9b0630192ee2cbcfdb,membership,colleague_of,PERSON_HANBH_LY_BASH,علي باش حانبة,PERSON_BRWZWN,الدكتور بروزون,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"بالتعاون مع
+الدكتور بروزون جريدة أسبوعية"
+ED_da75d3e2d443f09d7efc,membership,colleague_of,PERSON_HANBH_LY_BASH,علي باش حانبة,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,الزعما، المبعدون هم: علي باش حانبة وعبد العزيز الثعالبي ومحمد نعمان
+ED_a71ca9ef9eaa204fb6b5,membership,authored,PERSON_HDAD_TAHR,الطاهر الحداد,WORK_AMRATNA_FY_SHRYH_WALMJTM,امرأتنا في الشريعة والمجتمع,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,الأديب المنكود الحظ، الطاهر الحدّاد «امرأتنا في
+ED_195d543908c8857f276d,membership,wrote_for,PERSON_HSHAYSHY_MHMD,محمد الحشايشي,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,وعلي الورداني ومتحمد الحشايشي ومعحمدل الأصرم وسحجوج
 ED_c1691ae25329a489fa82,membership,wrote_for,PERSON_HSHAYSHY_MHMD,محمد الحشايشي,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,الحشايشي وعلي الورداني وغيرهم من المحررين
+ED_0d0e4647a8723f9170ba,membership,authored,PERSON_HSHAYSHY_MHMD_BNTHMAN,محمد بن عثمان الحشايشي,WORK_RHLH_ALY_BLAD_SNWSYH,الرحلة إلى بلاد السنوسية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,كتاب «الرحلة إلى بلاد السئوسية، للشيخ محمد بن عثمان الحشايشي
 ED_dca09328a508cacd78bf,membership,wrote_for,PERSON_HSYN,الجنرال حسين,NEWS_RAD_TWNSY,الرائد التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.07,ثم نشرها بحذافيرها في جريدة «الرائد التونسي»
 ED_f9c80b213cfb429d8908,membership,member_of,PERSON_HSYN,الجنرال حسين,ORG_MJLS_AKBR,المجلس الأكبر,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.07,دُعِيّا إلى الانضمام إلى المجلس
 ED_93234fba545380a3c9b0,membership,member_of,PERSON_HSYN,الجنرال حسين,ORG_MJLS_SHWRY_MLK,مجلس شورى الملك,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.07,"حتى عُيّن الجئرال حسين عضواً
@@ -49,6 +206,7 @@ ED_d10d517eb06f9afd91a9,membership,colleague_of,PERSON_HSYN,الجنرال حس�
 الشيخ سالم بوحاجب"
 ED_25f768a635250fcfb5c9,membership,colleague_of,PERSON_HSYN,الجنرال حسين,PERSON_KHYRALDYN,الجنرال خير الدين,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.07,"بإشارة من صديقه الحميم
 الجئرال خير الدين"
+ED_cd686eb75c0842a41855,membership,wrote_for,PERSON_JNADY_MHMD,محمد الجنادي,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,ومحمد الجنادي وعمر بو حاجب، وعلى وسجه الخصوص البشير صفر
 ED_1f54878d9f01231e301d,membership,founded,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,NEWS_JRYDH_ALAM,جريدة الإعلام,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,"فأصدر
 صحيفة «الإعلام، التي كانت تظهر يوميّاً في أول عهدها"
 ED_14153114f53b90fd6b0a,membership,wrote_for,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,NEWS_RAD_TWNSY,الرائد التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,وأصدر صحيفة «الرائد التونسي) (الجريدة الرسمية) في مواعييد
@@ -60,33 +218,200 @@ ED_3ab234db1e4544cca4ef,membership,colleague_of,PERSON_KHAMS_MHMD_BYRM,محمد 
 حمزة فتح الله المصري والشيخ محمد السئوسي التونسي"
 ED_2b5e79c0799f35f89d76,membership,colleague_of,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,PERSON_SNWSY_MHMD,محمد السنوسي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,حمزة فتح الله المصري والشيخ محمد السئوسي التونسي
 ED_9f65ba10663f421df3f0,membership,authored,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,WORK_SFWH_ATBAR_BMSTWD_AMSAR_WALAQTAR,صفوة الاعتبار بمستودع الأمصار والأقطار,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,من كتابه الذائع الصيت «صفوة الاعتبار بمستودع الأمصار والأقطار)
+ED_495b823499736f229273,membership,member_of,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,ASSOC_NADY_MSTFY_AGHH,نادي مصطفى آغة,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,وكان يتردّد أيضاً على نادي الشاعر الفيلسوف مصطفى آغة
+ED_3e88c8deea582ef7fc0a,membership,member_of,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,ASSOC_NADY_QDMA_SADQYH,نادي قدماء الصادقية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,ومن بينها نادي قدما، الصادقية
+ED_1f6184773456345a04e3,membership,member_of,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,ASSOC_NADY_TWNSY,النادي التونسي,association,,1917,1917-01-01,1917-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,تختطفه انضم إلى النادي التونسي
+ED_d99d1be72e88aa436bab,membership,colleague_of,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,PERSON_FRHAT_SALH,صالح فرحات,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,من نظم صديقه صالح فرحات وكيف اختطفها منه
+ED_0143eaabc111817f08a4,membership,colleague_of,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,"على غرار محمد باي
+خير الدين الذي كان قد تعرّف عليه وأعجب به"
+ED_8d4082f8ab902f04d681,membership,colleague_of,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,PERSON_LANJY_BARWN_DYR,البارون دير لانجي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,وقبل في آخر الأمر العمل مع البارون دير لانجي
+ED_32bbdae8d81950a828ee,membership,authored,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,WORK_BHYRH,البحيرة,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,"ومنها قصيدة لامرتين:
+«البحيرة»)"
+ED_9c1cece8d8003155e35f,membership,authored,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,WORK_GHADH_KAMYLYA,غادة الكاميليا,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,أقدم الخلصي على ترجمة أثر نثري هذه المرةع
+ED_ec298b19b4d40d6e9d20,membership,authored,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,WORK_QSYDH_FY_FYH_ABY_LA_MRY,قصيدة في ألفية أبي العلاء المعري,work,,,1945-01-01,1946-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,"نظم بمناسبة الاحتفال
+بألفية الشاعر أبى العلا، المعرّي, قصيدة غرّاء"
+ED_f18b7895d7baabd4d033,membership,headed,PERSON_KHMYRY_TAHR,الطاهر الخميري,ORG_MHD_DRASAT_RBYH_BLNDN,معهد الدراسات العربية بلندن,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,"قبل أن تعهّد إليه إدارة معهد
+الدراسات العربية بلندن"
+ED_5e0b7b8d02a17b99c8bf,membership,authored,PERSON_KHMYRY_TAHR,الطاهر الخميري,WORK_SBYH_ND_ABN_KHLDWN,العصبية عند ابن خلدون,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,كان عنوان أطروحته: «العصبية عند ابن خلدون
 ED_e2cc0bb5d42df2ba8bf7,membership,founded,PERSON_KHYRALDYN,الجنرال خير الدين,ORG_MKTBH_JAM_ZYTWNH,مكتبة جامع الزيتونة,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,"فقد قبل مهمة تنظيم المكتبة التي
 أسسها خير الدين في أحد أروقة جامع الزيتونة"
 ED_9672d1a921be9ad7e6fa,membership,founded,PERSON_KHYRALDYN,الجنرال خير الدين,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,وعلى وجه الخصوص تأسيس المدرسة الصادقية
+ED_e21b6df6681b8e8d213c,membership,founded,PERSON_KHYRALDYN,خير الدين,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,لفت إليه انتباه مؤسس المدرسة الصادقية الجنرال خير الدين الذي
 ED_27afdb0ddb9b324e136b,membership,founded,PERSON_KHYRALDYN,الجنرال خير الدين,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,1875,1875-01-01,1875-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.02,أسس الجنرال شخير الدين المدرسة الصادقية سنة 1875
 ED_fa3c0fd0b0e248374479,membership,authored,PERSON_KHYRALDYN,الجنرال خير الدين,WORK_AQWM_MSALK,أقوم المسالك,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,واستخلص من تلك الدراسة العناصر الأساسية للكتاب الذي ألفه بعنوان: «أقوم المسالك
 ED_2bfa0c5d73bb82d70dfb,membership,authored,PERSON_KHYRALDYN,خير الدين,WORK_AQWM_MSALK_FY_MRFH_AHWAL_MMALK,أقوم المسالك في معرفة أحوال الممالك,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,لتحرير كتابه «أقوم المسالك فى معرفة أحوال الممالك، الذي نشرته المطبعة الرسمية التونسية
+ED_89cde4f30707e91ccf8b,membership,headed,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,NEWS_JRYDH_SHAHRAH,جريدة شاهراه,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,وهكذا أصبح مديراً لجريدة المعارضة «شاهراه)
+ED_8e245a2c230f875fcec2,membership,member_of,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,ORG_TRYQH_KTANYH,الطريقة الكتانية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"محاطاً
+بعطف مريدي الطريقة الكتانية، الذين كان يعتبرهم بمثابة عائلته الروحية"
+ED_a90be3447cd62f3cc141,membership,member_of,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,ORG_ZAWYH_KTANYH_BMRAKSH,الزاوية الكتانية بمراكش,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,على غرار المريدين العديدين التابعين للزاوية الكتانية بمراكش
+ED_b6a250ca43777f251809,membership,colleague_of,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,PERSON_DGHSTANY_SHRF_DYN,شرف الدين الدغستاني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"تعرّف على السيد شرف الدين
+الدغستاني». ذلك العالم الصوفي الأصيل والقويّ النفوذ"
+ED_260396cf7b2f1934f578,membership,wrote_for,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,NEWS_JRYDH_AQDAM,جريدة الإقدام,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,وكان يتولّى بنفسه تحرير المقالات الأساسية
+ED_3f79f9af5a8f229af6f2,membership,founded,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,NEWS_JRYDH_AQDAM,جريدة الإقدام,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,إلى تأسيس جريدتين، هما على التوالي «الإقدام، و «شاهراه»
+ED_34b47a4473b7e1e279c7,membership,founded,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,NEWS_JRYDH_SHAHRAH,جريدة شاهراه,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,تأسيس جريدتين، هما على التوالي «الإقدام، و «شاهراه». بالتعاون مع مجموعة صغيرة
+ED_b6523954128ca7bd0297,membership,member_of,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,ORG_MJLS_MBWTHAN,مجلس المبعوثان,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,دعي إلى تمثيل أكبر دائرة من دوائر العاصمة التركية بمجلس المبعوثان
+ED_a7438d7afd29a9901bba,membership,headed,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,PARTY_HZB_ATLAF_HR,حزب الائتلاف الحر,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,"من أبرز وأفصح زعما، حزب «الائتلاف الحرّ، الحديث العهد, الذي احتلّ به مكانة مرموقة"
+ED_d0e7bd44d8ad989755ba,membership,member_of,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,PARTY_HZB_ATLAF_HR,حزب الائتلاف الحر,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,وأصبح من أبرز وأفصح زعما، حزب «الائتلاف الحرّ، الحديث العهد
+ED_991f760ad6b6b19fe670,membership,colleague_of,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,PERSON_JLWLY_TYB,الطيب الجلولي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,الذي كان طاهر خير الدين متحالفاً معه
+ED_2924ded018873e2b9cdc,membership,wrote_for,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,NEWS_JRYDH_SWT_TWNSY,جريدة صوت التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,وكان ينشر تلك الفصول في جريدة «صوت التونسي، وغيرها من
+ED_66ce5b934fe375136246,membership,headed,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,NEWS_JRYDH_SWT_TWNSY,جريدة صوت التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,بواسطة جريدة الشاذلي خير الله التي كانت تورّع عليهم بانتظام
+ED_f4dcd28c28e58d08cd88,membership,wrote_for,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,NEWS_SHF_HZB_HR_DSTWRY_TWNSY,صحف الحزب الحر الدستوري التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,صحف الحزب الحرّ الدستوري التونسي التي احتجبت قبل الأوان
+ED_8549b4f8cc79d7e25cf3,membership,colleague_of,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,في نفس الوقت هو ورفيقه المقبل في الكفاح. الحبيب بورقيبة
+ED_3d02d63c03270188399b,membership,colleague_of,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,PERSON_BWSHWSHH_LY,علي بوشوشة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,وعلي بوشوشة وحسن قلاتي والطيب رضوان وغيرهم
+ED_897b4dae2ef1854e1b2a,membership,colleague_of,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,PERSON_GHTAS_AHMD,أحمد الغطاس,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,وحسونة العياشي وأحمد الغطاس
+ED_e48ad65a1e6b2d74761e,membership,colleague_of,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,PERSON_QLATY_HSN,حسن قلاتي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,وعلي بوشوشة وحسن قلاتي والطيب رضوان
+ED_81b130babaf0be1ac4cd,membership,colleague_of,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,PERSON_RDWAN_TYB,الطيب رضوان,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,وحسن قلاتي والطيب رضوان وغيرهم
+ED_254060d2b3b98abe9780,membership,colleague_of,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,PERSON_SFR_BSHYR,البشير صفر,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,محتذياً في ذلك حذو عظما، الرجال التونسيين أمثال: البشير صفر
+ED_00b65b483c89f8e722d4,membership,colleague_of,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,PERSON_YASHY_HSWNH,حسونة العياشي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,أمثال: البشير صفر وحسونة العياشي وأحمد الغطاس
+ED_29e50af56a3d6faab58e,membership,authored,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,WORK_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,«حركة الشباب التونسي، ‏ تونس - بلا تاريخ (باللغة الفرنسية)
+ED_57930242c3f674e5b8a0,membership,authored,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,WORK_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,انظر: الشاذلي خير الله «حركة الشباب التونسي، (باللغة الفرنسية)
+ED_70a0865bd72a5ee9a35f,membership,authored,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,WORK_HRKH_TTWYRYH_TWNSYH,الحركة التطويرية التونسية,work,,1938,1938-01-01,1938-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,«الحركة التطويرية التونسية - تونس - 1938 (باللغة الفرنسية)
+ED_43709158a82a91ecde29,membership,authored,PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,WORK_TARYKH_HRKH_WTNYH_TWNSYH,تاريخ الحركة الوطنية التونسية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.09,وألف حول ذلك الموضوع ثلاثة أجزا، مليثة بالوقائع والمعلومات الهامة
+ED_d9649d8dd8804b12622e,membership,authored,PERSON_LANJY_BARWN_DYR,البارون دير لانجي,WORK_TARYKH_MWSYQY_RBYH,تاريخ الموسيقى العربية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,لتأليف كتابه الضخم «تاريخ الموسيقى العربية)
+ED_ff101b101f652964375a,membership,headed,PERSON_MATRY_MHMWD,محمود الماطري,ORG_MKTB_SYASY_LLHZB_DSTWRY_JDYD,المكتب السياسي للحزب الدستوري الجديد,org,,1934,1934-01-01,1934-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,الدكتور محمود الماطري (رئيس) والأساتذة الحبيب بورقيبة (أمين عام)
+ED_60ef318d6c2f858ce2ad,membership,member_of,PERSON_MATRY_MHMWD,محمود الماطري,ORG_WZARH_TFAWDYH,الوزارة التفاوضية,org,,1950,1950-01-01,1950-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,في الوزارة التفاوضية التي تولّت الحكم من سنة 1950
+ED_022a9cc26bac7fe2377b,membership,member_of,PERSON_MATRY_MHMWD,محمود الماطري,PARTY_HZB_HR_DSTWRY,الحزب الحر الدستوري,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,"كلا من محمود الماطري
+والحبيب بورقيبة ولم يترددا عن الانضمام إلى حركته الناشئة"
 ED_ffe56b933da87f2b8c0e,membership,member_of,PERSON_MATRY_MHMWD,محمود الماطري,PARTY_JNAH_MTHRR_LLHZB_DSTWRY,الجناح المتحرر للحزب الدستوري,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,"ممثّلي جناحه المتحرر, أعني الدكتور محمود
 الماطري والزعيم الحبيب بورقيبة"
+ED_0d7421fba70dfc30ca5b,membership,colleague_of,PERSON_MATRY_MHMWD,محمود الماطري,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,"بعد التقائه بباريس مع الزعيم
+الحبيب بورقيبة"
+ED_4ed7fce4b11a21e69eee,membership,authored,PERSON_MDHT,مدحت باشا,WORK_DSTWR_THMANY,الدستور العثماني,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,لإعادة العمل بدستور مدحت باشا المعظل طوال ثلاثين سنة
+ED_4a8281a81a839c22bc5f,membership,authored,PERSON_MHDY_SALH,صالح المهدي,WORK_MHD_RSHYDY_LLMWSYQY_TWNSYH,المعهد الرشيدي للموسيقى التونسية,work,,1981,1981-01-01,1981-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,كتاب «المعهد الرشيدي للموسيقى التونسية»» تأليف صالح المهدي
 ED_da1ff7b58026cfed0ceb,membership,member_of,PERSON_MNSTYRY_HMWDH,حمودة المنستيري,ORG_WFD_DSTWRY_THANY_ALY_BARYS,الوفد الدستوري الثاني إلى باريس,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,حمودة المنستيري وإيلي زيرح وحسونة العياشي
+ED_b02be97c88e63a76c446,membership,founded,PERSON_MQDM_HSYN,حسين المقدم,NEWS_JRYDH_NTAJ_AKHBAR,جريدة نتائج الأخبار,newspaper,,1889,1889-01-01,1889-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,جريدة «نتائج الأخبار، لصاحبها حسين المقدّم؛ فقد ظهرت في سنة 1889
+ED_1ab39394ec96d7807af5,membership,authored,PERSON_MRZWQY_MHMD,محمد المرزوقي,WORK_MHD_RSHYDY_LLMWSYQY_TWNSYH,المعهد الرشيدي للموسيقى التونسية,work,,1981,1981-01-01,1981-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,تأليف صالح المهدي ومحمد المرزوقي
+ED_d56181894903cd46b2b3,membership,member_of,PERSON_MSTFY,مصطفى آغة,ASSOC_JMYH_ADAB_TMTHYLYH,جمعية الآداب التمثيلية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.11,فسوا، في جمعية (الآداب، التمثيلية أو في النادي التونسي
+ED_aa13cf6dcc8680330291,membership,member_of,PERSON_MSTFY,مصطفى آغة,ASSOC_NADY_TWNSY,النادي التونسي,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.11,"النادي التونسي
+الذي كان أحد أعضائه المثابرين"
+ED_f50948fee8073bc4c6f1,membership,headed,PERSON_MSTFY,مصطفى آغة,ASSOC_NADY_TWNSY,النادي التونسي,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.11,"قبل أن يتولى رئاسته على إثر وفاة المقدّم
+عمر ثلاتي"
+ED_2bdc0602fd992eb45bfb,membership,wrote_for,PERSON_MSTFY,مصطفى آغة,ORG_ADHAH_TWNSYH,الإذاعة التونسية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.11,هي ممجموعة أحاديث ألقاها مصطفى اغة بالإذاعة التونسية
+ED_ab6cb742c8150edbb1b8,membership,member_of,PERSON_MSTFY,مصطفى,ORG_JYSH_TRKY,الجيش التركي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"فألحق بالجيش التركي وتدرّج في سلك
+الجندية إلى أن بلغ رتبة اغا"
+ED_e0a541e04764cf634b74,membership,headed,PERSON_MSTFY,مصطفى آغة,ORG_MJLS_THLATHA_BQSR_KRM,مجلس الثلاثاء بقصر الكرم,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.11,"المجالس الملتئمة
+كل يوم ثلاثا، بقصره الفسبح"
+ED_943cccfeba90eeee436d,membership,colleague_of,PERSON_MSTFY,مصطفى آغة,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"الصداقة الحميمة التي جمعت بينهما مدة
+
+خمسين سنة"
+ED_3d46c6e01d7a898fc166,membership,authored,PERSON_MSTFY,مصطفى آغة,WORK_BYNY_WBYN_MRY,بيني وبين المعري,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.11,ألقاها مصطفى اغة بالإذاعة التونسية تحت عنوان «بيني وبين المعرّي»
+ED_9250e98f61528483b0e5,membership,authored,PERSON_MSTFY,مصطفى آغة,WORK_MQAMAT_BYNH_WBYN_ABY_LA_MRY,المقامات بينه وبين أبي العلاء المعري,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.11,المقامات التي كانت تجمع بيئه وبين شاعر المعرة الخالد الذكر
+ED_6f79a32f64b2731c0f2a,membership,eulogised_by,PERSON_MSYKH_HBYBH,حبيبة مسيكة,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,أنشد محمد السعيد الخلصي في تأبين. حبيبة مسيكة قصيدة عصما،
+ED_be0b9ebf38293fcdfbbe,membership,wrote_for,PERSON_MYY_RWNY,روني ميي,WORK_MSAL_TWNSYH,مسائل تونسية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,لتقديم الدراسات المشار إليها أعلاه
+ED_75ccd960d2569e3b3bce,membership,headed,PERSON_NAZLY,الأميرة نازلي,ORG_NADY_AMYRH_NAZLY,نادي الأميرة نازلي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"نادي المرحومة الأميرة
+نازلي في الشبيبة التونسية"
+ED_4495a87832fd2901ef9c,membership,headed,PERSON_NAZLY,الأميرة نازلي,ORG_SALWN_KHLYL_BWHAJB,صالون خليل بوحاجب,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"خليل بوحاجب، الذي كانت تديره زوجته الأميرة
+نازلي"
+ED_d0cef2d5af238baa225a,membership,member_of,PERSON_NHDH_JRYDH,جريدة النهضة,PARTY_HZB_ASLAHY,الحزب الإصلاحي,party,,1923,1923-01-01,1923-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,تأسست في سئة 1923 لتعويضص جريدة «البرهان، الناطقة الرسمية باسم الحزب الإصلاحي
+ED_9632de33e20d780e2170,membership,colleague_of,PERSON_NMAN_MHMD,محمد نعمان,PERSON_HANBH_LY_BASH,علي باش حانبة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"وعبد العزيز الثعالبي ومحمد نعمان وحسن قلاتي
+والصادق الزمرلي"
 ED_34eeb0d29d1100f288fb,membership,member_of,PERSON_QABADW_MHMWD,محمود قابادو,ORG_TRYQH_MDNYH,الطريقة المدنية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,"المشاعر الأخوية المؤثرة التي
 أظهرها له أتباع الطريقة المدنية"
 ED_14e3d62ee928c7a81e38,membership,authored,PERSON_QABADW_MHMWD,محمود قابادو,WORK_DYWAN_QABADW,ديوان قابادو,work,,1877,1877-01-01,1877-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,«ديوان قابادو، ‏ الطبعة الأولى - المطبعة الرسمية تونس 1877
+ED_0adab3fdb9bc7f78b04f,membership,headed,PERSON_QLATY_HSN,حسن قلاتي,ASSOC_JMYH_ADAB_MSRHYH,جمعية الآداب المسرحية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,أصبح رئيسا لجمعية «الآداب) المسرحية
+ED_df3bbc510498116d0f81,membership,headed,PERSON_QLATY_HSN,حسن قلاتي,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,المسرحية ثم للجمعية الخلدونية بعد مغادرة عضوين
+ED_3ac281f5a27b739acbca,membership,founded,PERSON_QLATY_HSN,حسن قلاتي,ASSOC_JMYH_NHDH_AQTSADYH,جمعية النهضة الاقتصادية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,فقد أنشأ على التوالي جمعية «النهضة الاقتصادية، التي لم تعمر
+ED_013fd3e5e10303781650,membership,headed,PERSON_QLATY_HSN,حسن قلاتي,ASSOC_JMYH_TMTHYLYH_ADAB,الجمعية التمثيلية الآداب,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"مجموعة من الشبان التونسيين، على رأسهم
+حسن قلاتي"
+ED_4f5f390ed886b795cccd,membership,founded,PERSON_QLATY_HSN,حسن قلاتي,ASSOC_JMYH_TMTHYLYH_ADAB,الجمعية التمثيلية الآداب,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"التي أسستها في
+
+3228
+
+خحضم الحرب العالمية الأولى مجموعة من الشبان التونسيين، على رأسهم
+حسن قلاتي"
+ED_0da801e510eeb8919590,membership,founded,PERSON_QLATY_HSN,حسن قلاتي,NEWS_JRYDH_BRHAN,جريدة البرهان,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,على إصدار جريدة «البرهان، الرامية إلى تيسير سبل مواصلة
+ED_d670b42bd76f3b6fabb5,membership,founded,PERSON_QLATY_HSN,حسن قلاتي,NEWS_JRYDH_NHDH,جريدة النهضة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,ثم جريدة «النهضة، اليومية ذات الاتجاه المعتدل
+ED_b0bec04be5e25b61a9f1,membership,wrote_for,PERSON_QLATY_HSN,حسن قلاتي,NEWS_JRYDH_TWNSY,جريدة التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,عن طريق النشرة العربية من جريدة «التونسي»
+ED_7b50b7633827c17e926c,membership,headed,PERSON_QLATY_HSN,حسن قلاتي,ORG_LJNH_ML_LAGHATHH_TRABLSYYN,لجنة عمل لإغاثة الطرابلسيين,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,يرأسها علي باش حانبة وحسن ثلاتي » بمساعدة حوالى خمسة عشر
+ED_cd6b42eda438e223c04f,membership,founded,PERSON_QLATY_HSN,حسن قلاتي,PARTY_HZB_ASLAHY,الحزب الإصلاحي,party,,1921,1921-01-01,1921-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,هي لسان حال الحزب الإصلاحي الذي أسّسه حسن قلاتي سنة 1921
+ED_7b8481cd37024cafa8fa,membership,colleague_of,PERSON_QLATY_HSN,حسن قلاتي,PERSON_HANBH_LY_BASH,علي باش حانبة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,بالتعاون مع صديقيه علي باش حانبة وعبد الجليل الزاوش
+ED_63ae154d1458827117ed,membership,colleague_of,PERSON_QLATY_HSN,حسن قلاتي,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,بالتعاون مع صديقيه علي باش حانبة وعبد الجليل الزاوش
+ED_c1add5389237ae23f08f,membership,headed,PERSON_QSTLY_SHADHLY,الشاذلي القسطلي,NEWS_JRYDH_NHDH,جريدة النهضة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,أصبحت الجريدة تعبّر عن رأي صاحبها الشاذلي القسطلي
+ED_fb2775906dcb4db9cd9b,membership,member_of,PERSON_RDWAN_TYB,الطيب رضوان,ASSOC_JMYH_KHYRYH_ASLAMYH,الجمعية الخيرية الإسلامية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,كما دعي إلى الانضمام إلى الهيئة المديرة للجمعية الخيرية الإسلامية
+ED_eef13d032a3152184065,membership,member_of,PERSON_RDWAN_TYB,الطيب رضوان,ASSOC_JMYH_QDMA_SADQYH,جمعية قدماء الصادقية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,عضواً ناشطاً وسخياً من بين أعضا، جمعية قدما، الصادقية
+ED_1016527ad4c33b33a8e5,membership,founded,PERSON_RDWAN_TYB,الطيب رضوان,ORG_MSHRW_AHBA_TLBH,مشروع أحباء الطلبة,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,أن الباعث الأول للمشروع المذكور الجدير بالتقديرء، هو الطيب رضوان
+ED_9a722ab0a9c073137228,membership,member_of,PERSON_RDWAN_TYB,الطيب رضوان,ORG_WFD_ARBYN,وفد الأربعين,org,,1922,1922-01-01,1922-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,عندما شارك في وفد الأربعين الذي أبدى تضامنه سنة 1922
+ED_14932b4f84d439e52dfa,membership,colleague_of,PERSON_RDWAN_TYB,الطيب رضوان,PERSON_HANBH_LY_BASH,علي باش حانبة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,كان الصديق الحميم لمؤسس تلك الجمعية، علي باش حانبة ومن المعجبين به
+ED_91a8fe866354c27e2a85,membership,colleague_of,PERSON_RDWAN_TYB,الطيب رضوان,PERSON_TLATLY_MHMD,الدكتور محمد التلاتلي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,بمساعدة المرحوم الدكتور محمد التلاتلي عضو المجلس الكبير
 ED_456aba581aa77f303542,membership,member_of,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,ORG_TRYQH_TYJANYH,الطريقة التيجانية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.03,وفي طليعتهم مؤسّس الطريقة التيجانية التي سيصبح ممثلها بتونس
 ED_2c81eb12f2a40b36b2ba,membership,member_of,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,SCH_MDRSH_BYR_AHJAR,مدرسة بير الأحجار,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.03,وهي مدرسة بير الأحجار التي عاش فيها ردحا من الزمن
 ED_c1dcfbd20d8ec15fdd4b,membership,member_of,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,SCH_MDRSH_HWANYT_ASHWR,مدرسة حوانيت عاشور,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.03,وقد أقام في أل الأمر مدّة طويلة بمدرسة حوانيت عاشور
+ED_9563531fdd029979ceb1,membership,headed,PERSON_SAFY_AHMD,أحمد الصافي,ORG_WFD_DSTWRY_AWL,الوفد الدستوري الأول,org,,1920,1920-06-06,1920-06-06,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,لقد تحول الوفد الدستوري الأول إلى باريس في 6 جوان 1920 برئاسة أحمد الصافي
 ED_c5ddc5172083e945fff6,membership,headed,PERSON_SAFY_AHMD,أحمد الصافي,ORG_WFD_DSTWRY_AWL_ALY_BARYS,الوفد الدستوري الأول إلى باريس,org,,1920,1920-01-01,1920-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,الوفد الدستوري الأول إلى باريس في 6 جوان 1920» برئاسة الأستاذ أحمد الصافي
+ED_febac63e4075508031f3,membership,founded,PERSON_SFR_BSHYR,البشير صفر,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,فى الجمعية الخلدونية التى كان أحد مؤسسيها
+ED_0df805f842dcef5c7caf,membership,founded,PERSON_SFR_BSHYR,البشير صفر,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,1896,1896-01-01,1896-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,مؤسس الجمعية اللخلدونية هو الشير صفر
+ED_0d95afd3361acaae0796,membership,wrote_for,PERSON_SFR_BSHYR,البشير صفر,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"وعلى وسجه الخصوص البشير صفر الذي
+كان لفصوله المتعلقة بمطامع بعض الدول العظمى"
 ED_2c9d87aea120dde14cf5,membership,wrote_for,PERSON_SFR_BSHYR,البشير صفر,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,أمثال البشير صفر والشيخ محمد السنوسي والشيخ محمد
+ED_65334a7ecfd5776793e9,membership,wrote_for,PERSON_SFR_BSHYR,البشير صفر,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,وأن فصول البشير صفر وعلي باش حانبة المنشورة في جريدة الحاضرة
+ED_b44f743590bf687f3836,membership,member_of,PERSON_SFR_BSHYR,البشير صفر,ORG_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"سبعة أعضا، من حركة
+«الشباب التونسي، هم: البشير صفر وعبد الجليل الزاوش"
 ED_c5f5eafac62321c1e8d3,membership,headed,PERSON_SFR_BSHYR,البشير صفر,ORG_QSM_MHASBH,قسم المحاسبة,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,قسم المحاسبة الذي كان يشرف عليه آنذاك صديقه الأكبر منه سنا الأستاذ
+ED_5653de1ebd410d508765,membership,colleague_of,PERSON_SFR_BSHYR,البشير صفر,PERSON_BWSHWSHH_LY,علي بوشوشة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"أن أمثال محمد القروي والبشير
+صفر وعلي بوشوشة ومحمد الجنادي وعمر بوحاجب"
+ED_d2e1cffd8e0c8c1c0922,membership,founded,PERSON_SFR_MSTFY,مصطفى صفر,ORG_MHD_RSHYDY,المعهد الرشيدي,org,,1934,1934-01-01,1934-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,«المعهد الرشيدي، الذي أسسهة المرحوم مصطفى
+ED_0de7399b609a435294e9,membership,member_of,PERSON_SFR_TAHR,الطاهر صفر,ORG_MKTB_SYASY_LLHZB_DSTWRY_JDYD,المكتب السياسي للحزب الدستوري الجديد,org,,1934,1934-01-01,1934-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,"والطاهر صفر (أمين
+عام مساعد)"
+ED_5a7f58a09de23484fae0,membership,headed,PERSON_SHABY_MHMD_AMYN,محمد الأمين الشابي,ORG_LJNH_THQAFYH_QWMYH,اللجنة الثقافية القومية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.14,دُعي إلى رئاسة اللجنة الثقافية القومية
+ED_c39ba8896b91052a6c60,membership,headed,PERSON_SHABY_MHMD_AMYN,محمد الأمين الشابي,SCH_MHD_THANWY_BKHZNDAR,المعهد الثانوي بخزندار,school,,1955,1955-01-01,1955-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.14,"قبل أن تسئّد إليه إدارة المعهد
+الثانوي بخزنة دار (1955)"
+ED_08eba15f791e783551b2,membership,authored,PERSON_SHRYF_BDJBAR,عبد الجبار الشريف,WORK_RHLH_ANDLSYH,الرحلة الأندلسية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,"توفق الأستاد عبد الجبار الشريف إلى
+تحقيقها وإعادة نشرها في سفر واحد"
+ED_622d9dbb7e3fee2721cd,membership,headed,PERSON_SHWKT_MHMWD,محمود شوكت باشا,ORG_HKWMH_THMANYH_JDYDH,الحكومة العثمانية الجديدة,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,لا إلحاح الحكومة الجديدة التي يرأسها محمود شوكت باشا
 ED_da884a05138e1140a815,membership,wrote_for,PERSON_SNWSY_MHMD,محمد السنوسي,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,أمثال البشير صفر والشيخ محمد السنوسي والشيخ محمد
+ED_0f4397573560e996a3c0,membership,authored,PERSON_SNWSY_MHMD,محمد السنوسي,WORK_MJM_DWAWYN,مجمع الدواوين,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,وهو كتاب «مجمع الدواوين، الذي استنفذ كل
+ED_bd5a8d83b095bcae6ed1,membership,authored,PERSON_SNWSY_MHMD,محمد السنوسي,WORK_NAZLH_TWNSYH,النازلة التونسية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,«النازلة التونسية) ‏ تاليف محمد السئوسي
+ED_74fbb72472bf3cb3e31e,membership,wrote_for,PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,NEWS_JRYDH_TWNS,جريدة تونس,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,وقد كان يظهر فيها تارة بمظهر الناقد اللاذع
+ED_edd942c899ef8fb15e0d,membership,founded,PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,NEWS_JRYDH_TWNS,جريدة تونس,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,هذا بالإضافة إلى جريدته «تونس، التي كانت تصدر أحياناً
+ED_a86b65932d175086c943,membership,founded,PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,NEWS_MJLH_ALM_ADBY,مجلة العالم الأدبي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,تمكن من طبع ونشر مجلة «العالم الأدبي)
+ED_b7ba7c25dc51073608c6,membership,founded,PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,ORG_MTBH_RB,مطبعة العرب,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,«مطبعة العرب، التي تمكن من تشغيلها في أوْل عهدها
+ED_3dcb32ec121400fcce2f,membership,authored,PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,WORK_ADB_TWNSY_FY_QRN_RAB_SHR,الأدب التونسي في القرن الرابع عشر,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,ألا وهو كتاب «الأدب التونسي في القرن الرابع عشر،
+ED_02cf7d1653c20419ad53,membership,authored,PERSON_SQA_AHMD,أحمد السقا,WORK_TWNS_SHHYDH,تونس الشهيدة,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,وقد حرره باللغة الفرنسية أحد مساعديه
 ED_5a84e5e36e49c35a374c,membership,founded,PERSON_TAB_YWSF_SAHB,يوسف صاحب الطابع,MSQ_JAM_SAHB_TAB,جامع صاحب الطابع,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,وأبرزها الجامع الفخم الذي يحمل اسمه
 ED_4bed6da56e4347563d9b,membership,member_of,PERSON_TAB_YWSF_SAHB,يوسف صاحب الطابع,ORG_QSR_BARDW,قصر باردو,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,حتى نقل إلى قصر باردو وسلّم إلى رئيس المماليك لإلحاقه بخدمة الأمير حمّودة باشا
 ED_5c254ab640df7fc21f32,membership,eulogised_by,PERSON_TAB_YWSF_SAHB,يوسف صاحب الطابع,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,ارتفع صوت وقور ورنان، هو صوت الشيخ إبراهيم الرياحي
+ED_172f7cb8a67610fe7405,membership,headed,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,NEWS_NSHRH_RBYH_LJRYDH_TWNSY,النشرة العربية لجريدة التونسي,newspaper,,1909,1909-01-01,1909-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,ظهرت النشرة العربية من جريدة التونسي في سنة 1909 بإشراف الشيخ عبد العزيز الثعالبي
 ED_dd84921e9c86561eecb5,membership,headed,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,ORG_WFD_DSTWRY_AWL_ALY_BARYS,الوفد الدستوري الأول إلى باريس,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,"توجّه وفد تونسي أول إلى باريس برئاسة
 الشيخ عبد العزيز الثعالبي"
+ED_70c7788edade64ccd262,membership,founded,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,PARTY_HZB_DSTWRY,الحزب الدستوري,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,وأحد مؤسّسي الحزب الدستوري، الاتصال
+ED_6fd77b2481d3b187c048,membership,founded,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,PARTY_HZB_HR_DSTWRY,الحزب الحر الدستوري,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,"ولقد كان الحزب الحرٌ الدستوري الذي أنشأه الشيخ عبد العزيز
+الثعالبي"
+ED_f7cf8e6da1cd89d735d3,membership,headed,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,PARTY_HZB_HR_DSTWRY_TWNSY,الحزب الحر الدستوري التونسي,party,,1919,1919-01-01,1919-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"وأوفد زعيمه
+
+الشيخ عبد العزيز الثعالبي إلى باريس"
+ED_3089df4b2e02561d7dd3,membership,authored,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,WORK_TWNS_SHHYDH,تونس الشهيدة,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,"صدر كتاب «تونس الشهيدة)2, بوحي من ذلك الخطيب المصقع"
+ED_314e1313b19614bcc0a5,membership,authored,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,WORK_TWNS_SHHYDH,تونس الشهيدة,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,الشيخ عبد العزيز الثعالبي المؤلف المفترض لذلك الكتاب
+ED_f6afd9fe278d49def528,membership,authored,PERSON_THALBY_BDZYZ,الشيخ عبد العزيز الثعالبي,WORK_TWNS_SHHYDH,تونس الشهيدة,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,في كتابه الشهير «تونس الشهيدة)
+ED_cc078882773a50470f74,membership,headed,PERSON_THLATY_MR,عمر ثلاتي,ASSOC_NADY_TWNSY,النادي التونسي,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.11,"قبل أن يتولى رئاسته على إثر وفاة المقدّم
+عمر ثلاتي"
+ED_8aa5d1d10097891ab742,membership,headed,PERSON_THLATY_MR,عمر ثلاتي,SCH_DYH_MDRSYH_BALANSARYN,الضيعة المدرسية بالأنصارين,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"المرحوم المقدّم عمر ثلاتي الذي سيجعل منها في ظرف بضع سنوات مدرسة
+مثالية"
 ED_865a6359502ed1faa227,membership,founded,PERSON_THMANH_ZYZH,عزيزة عثمانة,ORG_MSTSHFY_ZAFYN,مستشفى العزافين,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.01,وتأسيس مستشفى أقيم في أول الأمر بنهج العزافين بتونس ثم حول فيما بعد إلى القصبة
 ED_06e39b91110ed9575251,membership,member_of,PERSON_THMANH_ZYZH,عزيزة عثمانة,ORG_ZAWYH_SYDY_AHMD_BN_RWS,زاوية سيدي أحمد بن عروس,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.01,وحولت بيتا من البيوت الكائنة بزنقة الشماعية إلى تربة محاذية لضريح الولي
+ED_0abb2df34fdd9986d0ea,membership,member_of,PERSON_TLATLY_MHMD,الدكتور محمد التلاتلي,ORG_MJLS_KBYR,المجلس الكبير,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,الدكتور محمد التلاتلي عضو المجلس الكبير الذي يمثّل وجهاً آخر
+ED_9dcac7e168df0b073419,membership,member_of,PERSON_TLATLY_MHMD,محمد التلاتلي,ORG_MJLS_KBYR,المجلس الكبير,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,الذي قام بدور معتبر في المجلس الكبير وفى المنظمات الثقافية
+ED_0d104bb03b7a39f6d775,membership,eulogised_by,PERSON_TLATLY_SADQ,الصادق التلاتلي,NEWS_JRYDH_TWNS_MSAYH,جريدة تونس المسائية,newspaper,,1950,1950-01-01,1950-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,كتبت جريدة «تونس المسائية) بتاريخ 7 ديسمبر 1950
+ED_663c1cd2f5faa35486dc,membership,member_of,PERSON_TLATLY_SADQ,الصادق التلاتلي,ORG_LJNH_ASLAH_TLYM_ZYTWNY,لجنة إصلاح التعليم الزيتوني,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,أو عضواً في لجنة إصلاح التعليم الزيتوني
+ED_152ef55348967fade41a,membership,member_of,PERSON_TLATLY_SADQ,الصادق التلاتلي,ORG_MJLS_ALY_LLBLAD_TWNSYH,المجلس الأعلى للبلاد التونسية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,أو بوصفه عضرا في المجلس الأعلى للبلاد
+ED_7495f85f792a0109bf1e,membership,member_of,PERSON_TLATLY_SADQ,الصادق التلاتلي,ORG_MJLS_ALY_LLTLYM_MWMY,المجلس الأعلى للتعليم العمومي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,أو عضواً في المجلس الأعلى للتعليم العمومي
+ED_957074115b22b851f2f7,membership,member_of,PERSON_TLATLY_SADQ,الصادق التلاتلي,ORG_MJLS_KBYR,المجلس الكبير,org,,1931,1931-01-01,1945-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,وهكذا فمن سئة 1931 إلى سنة 21945 سوا، بوصفه مقرّراً لميزانية
+ED_e02f2921f32ffb9e5101,membership,colleague_of,PERSON_TLATLY_SADQ,الصادق التلاتلي,PERSON_SFR_BSHYR,البشير صفر,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,دعاه صديقه البشير صفر إلى تدريس الرياضيات والجغرافيا
+ED_496bf71570e7d0aa65d8,membership,authored,PERSON_TLATLY_SADQ,الصادق التلاتلي,WORK_TRYQH_SRYH,الطريقة العصرية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,مثل كتاب «الطريقة العصرية، الرائع، الذي أصدره الصادق التلاتلي في جزأين
+ED_f533780c2f9cb95813ef,membership,authored,PERSON_TLATLY_SLAHALDYN,صلاح الدين التلاتلي,WORK_JRBH_WALJRBYWN,جربة والجربيون,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,أصدر أطروحته «جربة والجربيّون»
+ED_82da14ff6478f9a8d7a6,membership,authored,PERSON_TLATLY_SLAHALDYN,صلاح الدين التلاتلي,WORK_TWNS_JDYDH,تونس الجديدة,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,من أهمّها كتاب «تونس الجديدة»
+ED_9d7bf8593d66efa7ebec,membership,member_of,PERSON_TRKY_MHMD,محمد التركي,ORG_HYH_THRYR_JRYDH_HADRH,هيئة تحرير جريدة الحاضرة,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,انضِمٌ إلى هيئة التحرير مدير التشريفات السابق الجنرال محيّد التركي
+ED_4ec5325bbb075b6dc1f3,membership,wrote_for,PERSON_WRDANY_LY,علي الورداني,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"دعوة مؤسس الجريدة أمثال: محمد
+بن الخوجة وعلي الورداني ومتحمد الحشايشي"
 ED_bd53bda0ee4b63b3b865,membership,wrote_for,PERSON_WRDANY_LY,علي الورداني,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,الحشايشي وعلي الورداني وغيرهم من المحررين
+ED_86081a15514c431fa018,membership,wrote_for,PERSON_WRDANY_LY,علي الورداني,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,1888,1888-01-01,1890-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,في أعداد متتابعة من جريدة «الحاضرة، الصادرة بتونس
+ED_04c96367b9836d848823,membership,member_of,PERSON_WRDANY_LY,علي الورداني,ORG_BTHH_LMYH,البعثة العلمية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,العلمية المكلّفة بإحصا، المؤلفات العربية المحفوظة في مكتبات اسبانيا
+ED_230caa7f72e8d791aa7f,membership,member_of,PERSON_WRDANY_LY,علي الورداني,ORG_SALWN_AMYRH_NAZLY,صالون الأميرة نازلي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,"الأميرة نازلي حريصة على الاجتماع بمترجمنا في
+صالونها الأدبي"
+ED_37b7354642d9d0b27604,membership,colleague_of,PERSON_WRDANY_LY,علي الورداني,PERSON_BTHH_RYS,رئيس البعثة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,شاهد رئيس البعثة يدنو منه رويداً رويداً
+ED_eebe120ee6ec74c062e6,membership,colleague_of,PERSON_WRDANY_LY,علي الورداني,PERSON_KHYRALDYN,خير الدين,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,"صاحبه
+علي الورداني مع عائلته إلى اسطنبول"
+ED_d32ff5650bf976130796,membership,authored,PERSON_WRDANY_LY,علي الورداني,WORK_RHLH_ANDLSYH,الرحلة الأندلسية,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,"نشر أخبار رحلته إلى أسبابيا تحت عنوان
+«الرحلة الأندلسية)"
 ED_22bda51dd2379917fc9a,membership,headed,PERSON_YASHY_HSWNH,حسونة العياشي,ASSOC_JMYH_KHYRYH_ASLAMYH,الجمعية الخيرية الإسلامية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,الجمعية الخيرية الإسلامية التي تولّى رئاستها
 ED_ed884a168dacf3be3b97,membership,founded,PERSON_YASHY_HSWNH,حسونة العياشي,ASSOC_JMYH_KHYRYH_ASLAMYH,الجمعية الخيرية الإسلامية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,"وأنشأ
 الجمعية الخيرية الإسلامية التي تولّى رئاستها"
@@ -105,5 +430,25 @@ ED_7fc30016a71850c57bff,membership,colleague_of,PERSON_YASHY_HSWNH,حسونة ا
 ED_2407512640fe8798dc26,membership,colleague_of,PERSON_YASHY_HSWNH,حسونة العياشي,PERSON_THLATY_HSAN,حسان ثلاتي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,"أمثال زميله المحامي
 حسان ثلاتي"
 ED_3b0931c063759fb70d4d,membership,colleague_of,PERSON_YASHY_HSWNH,حسونة العياشي,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,البشير صفر وعبد الجليل الزاوش اللذين
+ED_074e983a52a1b0cd6f4e,membership,founded,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,ASSOC_NADY_TWNSY,النادي التونسي,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"فقد عمد عبد الجليل الزاوش وبعض أصدقائه إلى
+إنشا، النادي التونسي"
+ED_9e7ee5a8174deb6395ea,membership,wrote_for,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,NEWS_JRYDH_HADRH,جريدة الحاضرة,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"حسني عبد الواب وعبد الجليل الزاوش وأحمد الغطاس، وقد رجع هذان
+الأخيران منذ مدة قليلة من فرنسا"
+ED_ba14fa78957504df5d86,membership,wrote_for,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,NEWS_JRYDH_TWNSY,جريدة التونسي,newspaper,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,فقد نشر كلّ من حسن ثلاتي وعلي باش حانبة وعبد الجليل الزاوش سلسلة من الدراسات
+ED_7cf6b24bf84ee0a46e17,membership,founded,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,NEWS_JRYDH_TWNSY,جريدة التونسي,newspaper,,1907,1907-01-01,1907-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"أصدر عبد الجليل الزاوش وحوالي عشرة
+شبان تونسيين من أصدقائه العدد الأول من «التونسي)"
+ED_d7cc3865d368580b55e7,membership,founded,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,ORG_ATHAD_TJARY,الاتحاد التجاري,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,فلقد أسّس «الاتحاد التجاري، الذي سيؤثّر فى التجارة المحلية
+ED_efc1186e5707abd57e63,membership,member_of,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,ORG_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,هم: البشير صفر وعبد الجليل الزاوش وخير الله بن مصطفى
+ED_8cad1ba0b477903940b0,membership,founded,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,ORG_MTHNH_SRYH,مطحنة عصرية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"فأسس مع الرجل السابق الذكر
+مطحنة عصرية"
+ED_7e1d91f853cdd41b9f0f,membership,member_of,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,ORG_MTMR_SHMAL_AFRYQYA_BBARYS,مؤتمر شمال إفريقيا بباريس,org,,1908,1908-01-01,1908-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"فقد شارك في ذلك المؤتمر عبد الجليل الزاوش صحبة ستة
+شبان تونسيين من أصدقائه"
+ED_d018ce963b994d68ff05,membership,colleague_of,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,PERSON_RAMYLA,راميلا,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,حيث تعرف على السيدراميلا، تخلّى نهائياً عن
+ED_f9524720d0b8ddbb8e03,membership,colleague_of,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,PERSON_SFR_BSHYR,البشير صفر,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"خلفاً لصديقه البشير صفر الذي
+اختطفته يد المنون في وقت مبكر"
+ED_9e7d08166976803f9a5c,membership,founded,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,SCH_DYH_MDRSYH_BALANSARYN,الضيعة المدرسية بالأنصارين,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,ثم أنشأ بعد ذلك بقليل الضيعة المدرسية بالأنصارين
+ED_a90c5ac6482ccbcd8bf6,membership,member_of,PERSON_ZMRLY_SADQ,الصادق الزمرلي,ORG_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,ومحمد بن الخوجة والصادق الزمرلي والطاهر الأسود
+ED_07b66920a711c2d277f2,membership,colleague_of,PERSON_ZMRLY_SADQ,الصادق الزمرلي,PERSON_HANBH_LY_BASH,علي باش حانبة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"وحسن قلاتي
+والصادق الزمرلي والمنوبي درغوث والمسختار كاهية"
 ED_132a371ac7a67ddebdbe,membership,member_of,PERSON_ZYRH_AYLY,إيلي زيرح,ORG_WFD_DSTWRY_THANY_ALY_BARYS,الوفد الدستوري الثاني إلى باريس,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,وإيلي زيرح وحسونة العياشي وعبد الرحمان
 ED_cb36f0fc5b6bb3dd8101,membership,authored,PERSON_ZYZ_HMWDH_BNBD,حمودة بن عبد العزيز,WORK_TARYKH_BASHY,التاريخ الباشي,work,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,حمودة بن عبد العزيز: مستشار الباي وصاحب كتاب «التاريخ الباشي
