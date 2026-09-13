@@ -7,7 +7,9 @@ test that imports a figure module cannot run in CI, and a rule about which
 bodies belong to the interior is exactly the kind of thing that should be under
 test rather than checked by eye on a finished chart.
 
-Nothing here draws, and nothing here needs pandas.
+Nothing here draws. The classification rules need nothing but the standard
+library; the one table helper at the end needs pandas, which is a dependency of
+the project and is available wherever the tests run.
 """
 
 from __future__ import annotations
@@ -242,3 +244,34 @@ def wilson(k: int, n: int) -> tuple[float, float]:
     c = (p + z * z / (2 * n)) / d
     h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
     return max(0.0, c - h) * 100, min(1.0, c + h) * 100
+
+
+# ---------------------------------------------------------------------------
+# building moves out of spells
+# ---------------------------------------------------------------------------
+def consecutive_moves(spells, branch_col: str = "branch"):
+    """One row per post-to-post move: the post held, and the one taken next.
+
+    Two things here are easy to get wrong, and both were got wrong first.
+
+    *One post per person-date.* Several appointments are often gazetted on the
+    same day, so the senior one stands for where the person was.
+
+    *Whether a next post exists is read off its start date, never off its
+    branch.* A destination outside the classified body has no branch, so a
+    branch of NaN means either "outside" or "no next post at all". Filtering on
+    the branch collapses those two and silently discards every move out of the
+    body — which is most of them. It left one figure showing 904 of 2,333
+    interior moves, and the diagram looked entirely reasonable.
+
+    Returns the frame with `to_branch` added and only rows that have a next
+    post. Callers decide what an absent `to_branch` means for them.
+    """
+    import pandas as pd  # noqa: F401  (imported here to keep the rules stdlib-only)
+
+    s = spells.sort_values(["person_id", "start", "rank_score"])
+    s = s.loc[s.groupby(["person_id", "start"]).rank_score.idxmax()]
+    s = s.sort_values(["person_id", "start"])
+    nxt = s.groupby("person_id").shift(-1)
+    out = s.assign(to_branch=nxt[branch_col], _has_next=nxt.start.notna())
+    return out[out._has_next].drop(columns="_has_next")

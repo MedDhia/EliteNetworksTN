@@ -5,7 +5,7 @@ those rows rather than invented strings. That matters here because the two
 guards on the local-attachment rule each exist for one real pattern in the
 gazette, and a paraphrase would not exercise either.
 
-The rules live in ``scripts/apparatus.py`` rather in the figure scripts so
+The rules live in ``scripts/apparatus.py`` rather than in the figure scripts so
 that this module imports no drawing library: matplotlib is not a dependency of
 this project, and a test that needed it would be skipped in CI, which is the
 one place these rules most need checking.
@@ -16,9 +16,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
+import pandas as pd  # noqa: E402
+
 from apparatus import (  # noqa: E402
-    SECURITY_STAYS, attached_to_local_body, destination, in_interior_apparatus,
-    in_security_apparatus, security_branch, security_destination, wilson,
+    SECURITY_STAYS, attached_to_local_body, consecutive_moves, destination,
+    in_interior_apparatus, in_security_apparatus, security_branch,
+    security_destination, wilson,
 )
 
 
@@ -211,3 +214,56 @@ class TestSecurityDestination:
                                      "direction")
                 == destination(None, "direction générale des impôts", "direction")
                 == "finance and economy")
+
+
+class TestConsecutiveMoves:
+    """Building post-to-post moves out of the spell table.
+
+    The second rule below is here because breaking it is silent. Filtering on
+    the next post's *branch* rather than its start date discards every move out
+    of the classified body, which is most of them, and the figure drawn on the
+    remainder looks entirely reasonable.
+    """
+
+    @staticmethod
+    def _frame(rows):
+        import pandas as pd
+        f = pd.DataFrame(rows, columns=["person_id", "start", "rank_score",
+                                        "branch"])
+        f["start"] = pd.to_datetime(f.start)
+        return f
+
+    def test_a_move_out_of_the_body_is_kept(self):
+        f = self._frame([("P1", "2000-01-01", 50, "interior"),
+                         ("P1", "2003-01-01", 50, None)])
+        m = consecutive_moves(f)
+        assert len(m) == 1
+        assert m.iloc[0].branch == "interior"
+        assert m.iloc[0].to_branch is None or pd.isna(m.iloc[0].to_branch)
+
+    def test_a_spell_with_no_next_post_is_dropped(self):
+        f = self._frame([("P1", "2000-01-01", 50, "interior")])
+        assert len(consecutive_moves(f)) == 0
+
+    def test_the_last_spell_of_a_person_is_dropped_not_joined_to_the_next(self):
+        # Without the per-person grouping, P1's last post would "move" to P2's
+        # first one and invent a crossing that never happened.
+        f = self._frame([("P1", "2000-01-01", 50, "interior"),
+                         ("P2", "2001-01-01", 50, "defence")])
+        assert len(consecutive_moves(f)) == 0
+
+    def test_one_post_per_person_date_and_the_senior_one_wins(self):
+        f = self._frame([("P1", "2000-01-01", 30, "interior"),
+                         ("P1", "2000-01-01", 70, "defence"),
+                         ("P1", "2004-01-01", 50, "interior")])
+        m = consecutive_moves(f)
+        assert len(m) == 1
+        assert m.iloc[0].branch == "defence"      # the senior post stands
+        assert m.iloc[0].to_branch == "interior"
+
+    def test_moves_are_ordered_by_date_not_by_table_order(self):
+        f = self._frame([("P1", "2008-01-01", 50, "defence"),
+                         ("P1", "2002-01-01", 50, "interior")])
+        m = consecutive_moves(f)
+        assert len(m) == 1
+        assert (m.iloc[0].branch, m.iloc[0].to_branch) == ("interior", "defence")
