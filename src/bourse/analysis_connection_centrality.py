@@ -64,6 +64,8 @@ FIRMISH = {"firm", "fund", "state"}
 N_PERMUTATIONS = 5000
 N_STRATA = 5
 SEED = 20260913
+# Decimal places betweenness is rounded to before ranking; see centrality().
+BETWEENNESS_DP = 12
 
 # Which nodes must be removed before a channel's own effect can be read. A
 # channel defined by ties to a class of node cannot be tested on a graph that
@@ -145,10 +147,19 @@ def centrality(g: nx.Graph) -> dict[str, dict[str, float]]:
     """
     gg = nx.Graph(g)
     gg.remove_edges_from(nx.selfloop_edges(gg))
+    bc = nx.betweenness_centrality(g, normalized=True)
     return {
         "degree": dict(g.degree()),
         "strength": dict(g.degree(weight="weight")),
-        "betweenness": nx.betweenness_centrality(g, normalized=True),
+        # Rounded, and not only for tidiness. Betweenness sums path counts in
+        # whatever order the graph iterates, so two nodes with identical
+        # structural position can come out differing by ~1e-17 - measured at
+        # 5.6e-17 across 59 nodes of this graph. Ranking groups ties by exact
+        # equality, so that noise silently splits a genuine tie into two
+        # ranks, and it also makes the committed report depend on iteration
+        # order. Twelve places is far below any real difference here and
+        # removes both problems.
+        "betweenness": {k: round(v, BETWEENNESS_DP) for k, v in bc.items()},
         "core": {k: float(v) for k, v in nx.core_number(gg).items()},
     }
 

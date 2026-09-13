@@ -193,6 +193,26 @@ class TestCentrality:
         for m, vals in c.items():
             assert set(vals) == set(star.nodes()), m
 
+    def test_structurally_identical_nodes_tie_exactly(self):
+        # Betweenness accumulates path counts in iteration order, so nodes in
+        # identical positions came out differing by ~1e-17. Ranking groups
+        # ties by exact equality, so that noise split a genuine tie into two
+        # ranks. Symmetric graphs must produce exactly equal values.
+        g = nx.barbell_graph(6, 3)
+        c = centrality(g)
+        bt = c["betweenness"]
+        # The barbell is symmetric about its middle: node i and its mirror
+        # must have identical betweenness.
+        n = g.number_of_nodes()
+        for i in range(n // 2):
+            assert bt[i] == bt[n - 1 - i], i
+
+    def test_centrality_is_invariant_to_graph_copying(self):
+        # A copy can iterate in a different order; the reported numbers must
+        # not depend on that, or the committed report is not reproducible.
+        g = nx.barbell_graph(8, 4)
+        assert centrality(g) == centrality(nx.Graph(g))
+
 
 class TestTreatedSets:
     def test_firm_years_collapse_to_ever_connected(self):

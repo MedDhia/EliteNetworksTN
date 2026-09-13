@@ -68,7 +68,7 @@ Exposure bins (documents naming the firm) and how the treated firms fall across 
 |---|---:|---:|---:|---:|
 | degree | +0.016 | 0.0664 | -0.273 | 0.0002 |
 | strength | -0.004 | 0.5035 | -0.270 | 0.0002 |
-| betweenness | +0.008 | 0.3211 | -0.009 | 0.2773 |
+| betweenness | +0.008 | 0.3207 | -0.009 | 0.2771 |
 | core | +0.017 | 0.0462 | -0.279 | 0.0002 |
 
 ## `pc_narrow` — Faccio strict
@@ -90,7 +90,7 @@ Exposure bins (documents naming the firm) and how the treated firms fall across 
 |---|---:|---:|---:|---:|
 | degree | +0.026 | 0.0028 | -0.255 | 0.0002 |
 | strength | +0.003 | 0.5821 | -0.256 | 0.0002 |
-| betweenness | +0.021 | 0.0144 | +0.003 | 0.7263 |
+| betweenness | +0.021 | 0.0144 | +0.003 | 0.7265 |
 | core | +0.019 | 0.0244 | -0.269 | 0.0002 |
 
 ## Reading it
