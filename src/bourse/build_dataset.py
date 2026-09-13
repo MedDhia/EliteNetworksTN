@@ -42,19 +42,36 @@ EVIDENCE_COLUMNS = [
     ("interlocks.jsonl.gz", "other_firm_name_raw", "firm"),
     ("executives.jsonl.gz", "other_firm_name_raw", "firm"),
     ("subsidiaries.jsonl.gz", "subsidiary_name_raw", "firm"),
+    ("movements.jsonl.gz", "target_name_raw", "firm"),
+    ("board_events.jsonl.gz", "person_name_raw", "person"),
+    ("board_events.jsonl.gz", "replaces_name_raw", "person"),
+    ("board_events.jsonl.gz", "firm_name_raw", "firm"),
+    ("board_events.jsonl.gz", "entity_name_raw", "firm"),
 ]
 
 
 def _year(rec: dict) -> int | None:
-    """Year the record describes: the stated 'as of' date, else the filing."""
-    for field in ("as_of", "filing_date"):
-        v = rec.get(field)
-        if v and len(str(v)) >= 4 and str(v)[:4].isdigit():
-            y = int(str(v)[:4])
-            if 1990 <= y <= 2035:
-                return y
+    """Year the record describes.
+
+    Order matters. A stated "as of" date is best. The document's own reference
+    year comes next, and must beat the filing date: an annual report is filed
+    the year *after* the year it reports on, so falling back to the filing date
+    would date every tie in it one year late.
+    """
+    v = rec.get("as_of")
+    if v and len(str(v)) >= 4 and str(v)[:4].isdigit():
+        y = int(str(v)[:4])
+        if 1990 <= y <= 2035:
+            return y
     y = rec.get("issuer_ref_year")
-    return int(y) if y else None
+    if y and 1990 <= int(y) <= 2035:
+        return int(y)
+    v = rec.get("filing_date")
+    if v and len(str(v)) >= 4 and str(v)[:4].isdigit():
+        y = int(str(v)[:4])
+        if 1990 <= y <= 2035:
+            return y
+    return None
 
 
 def _obs_date(rec: dict) -> str | None:
@@ -134,6 +151,10 @@ def build_edges(res: Resolver) -> tuple[list[dict], dict[str, dict]]:
                 "doc_url": rec.get("doc_url"),
                 "page": rec.get("page"),
                 "doc_sha256": rec.get("doc_sha256"),
+                # Whether the row was read by OCR rather than from a text
+                # layer. Carried onto the edge so a reader can weight or drop
+                # the scanned part of the archive without rejoining records.
+                "from_ocr": int(bool(rec.get("from_ocr"))),
                 **extra,
             }
         )
@@ -203,6 +224,214 @@ def build_edges(res: Resolver) -> tuple[list[dict], dict[str, dict]]:
             add(layer, person, firm, 1.0, rec, directed=False, role=rec.get("role_raw"))
 
     return edges, listed
+
+
+# --------------------------------------------------------------------------
+# movements
+# --------------------------------------------------------------------------
+
+# Movements that transfer or contest ownership. A capital increase changes
+# every holder's percentage but creates no tie, so it is recorded in the
+# movements table and not as an edge.
+OFFER_TYPES = {
+    "opa", "opa_obligatoire", "opa_simplifiee", "opr_retrait",
+    "ope_echange", "opf_prix_ferme", "opv_prix_ouvert", "maintien_de_cours",
+}
+
+
+def build_movement_edges(res: Resolver) -> tuple[list[dict], list[dict], list[dict]]:
+    """Return (edges, movement rows, firm listing events).
+
+    Two layers come out of the notices:
+
+    ``tender_offer``
+        initiator -> target, weighted by the stake the offer states. This is a
+        dated, directed claim on control, which the annual snapshots cannot
+        express.
+    ``concert_party``
+        an undirected tie between every pair of parties to the same offer.
+        "Agir de concert" is a declared coalition, so this is a tie the issuer
+        states rather than one inferred from co-occurrence.
+    """
+    movements = {m["movement_id"]: m for m in read_jsonl(RECORDS / "movements.jsonl.gz")}
+    parties = read_jsonl(RECORDS / "movement_parties.jsonl.gz")
+
+    edges: list[dict] = []
+    listing: list[dict] = []
+
+    def prov(m: dict) -> dict:
+        return {
+            "doc_node_key": m.get("doc_node_key"),
+            "doc_type": m.get("doc_type"),
+            "doc_url": m.get("doc_url"),
+            "page": None,
+            "doc_sha256": m.get("doc_sha256"),
+        }
+
+    by_movement: dict[str, list[dict]] = defaultdict(list)
+    for p in parties:
+        by_movement[p["movement_id"]].append(p)
+
+    for mid, plist in by_movement.items():
+        m = movements.get(mid)
+        if m is None or m.get("event_year") is None:
+            continue
+        if m["event_type"] not in OFFER_TYPES:
+            continue
+        target, _ = res.resolve(m.get("target_name_raw") or "", hint="firm")
+        # A stated stake is the natural weight; where the notice gives none the
+        # tie still exists, so it is recorded with weight 1 and the absence is
+        # visible in `pct_stated`.
+        pct = m.get("pct_max_stated") or m.get("pct_stated")
+        resolved = []
+        for p in plist:
+            pid, ptype = res.resolve(p["party_name_raw"] or "")
+            if pid:
+                resolved.append((pid, ptype, p["role"]))
+        if target:
+            for pid, ptype, role in resolved:
+                if pid == target:
+                    continue
+                edges.append({
+                    "layer": "tender_offer", "year": m["event_year"],
+                    "obs_date": m.get("event_date"),
+                    "source_id": pid, "target_id": target,
+                    "weight": float(pct) if pct else 1.0,
+                    "directed": 1, "role": role,
+                    "event_type": m["event_type"],
+                    "pct_stated": pct, "price_tnd": m.get("price_tnd"),
+                    **prov(m),
+                })
+        # Coalition ties among the parties themselves.
+        ids = sorted({pid for pid, _t, _r in resolved})
+        for a, b in itertools.combinations(ids, 2):
+            edges.append({
+                "layer": "concert_party", "year": m["event_year"],
+                "obs_date": m.get("event_date"),
+                "source_id": a, "target_id": b, "weight": 1.0, "directed": 0,
+                "event_type": m["event_type"], **prov(m),
+            })
+
+    # Listing events: an admission dates a firm's arrival on the cote, a
+    # radiation its departure. Together they are the listing history the BVMT
+    # roster snapshot cannot give.
+    for m in movements.values():
+        ev, date = m.get("listing_event"), m.get("event_date")
+        if m.get("delisting_date"):
+            ev, date = "radiation", m["delisting_date"]
+        if not ev:
+            continue
+        fid, _ = res.resolve(m.get("target_name_raw") or "", hint="firm")
+        if not fid:
+            continue
+        listing.append({
+            "entity_id": fid, "firm_name": m.get("target_name_raw"),
+            "listing_event": ev, "event_date": date,
+            "event_year": int(date[:4]) if date and date[:4].isdigit() else None,
+            "market": m.get("market"), "isin": m.get("isin"), "ticker": m.get("ticker"),
+            "doc_node_key": m.get("doc_node_key"), "doc_url": m.get("doc_url"),
+        })
+
+    # Resolve movement rows to entity ids for the standalone table.
+    rows = []
+    for m in movements.values():
+        fid, _ = res.resolve(m.get("target_name_raw") or "", hint="firm")
+        rows.append({**m, "target_id": fid,
+                     "target_name": res.canonical_name(fid) if fid else None})
+    rows.sort(key=lambda r: (r.get("event_date") or "", r.get("event_type") or ""))
+    return edges, rows, listing
+
+
+# --------------------------------------------------------------------------
+# board events from AGM resolutions
+# --------------------------------------------------------------------------
+
+# Resolutions that seat someone. An expiry or termination closes a mandate
+# rather than opening one, so it is recorded in the events table but carries no
+# appointment edge.
+SEATING_EVENTS = {"appointment", "cooptation", "cooptation_ratified", "renewal"}
+
+
+def build_board_event_edges(res: Resolver) -> tuple[list[dict], list[dict]]:
+    """Return (edges, board-event rows) from the AGM resolutions.
+
+    Two layers:
+
+    ``board_appointment``
+        person -> firm, dated to the general meeting that seated them, with the
+        mandate's stated expiry. This is what gives a board tie a start date;
+        the board tables can only say that someone sat at the time of writing.
+    ``board_succession``
+        outgoing -> incoming, where a resolution appoints someone "en
+        remplacement de" a named person. The source states the handover, so it
+        is not inferred - the same relation the JORT build reads out of the
+        gazette.
+    """
+    events = read_jsonl(RECORDS / "board_events.jsonl.gz")
+    edges: list[dict] = []
+    rows: list[dict] = []
+    seen_edges: set[tuple] = set()
+
+    for ev in events:
+        firm, _ = res.resolve(ev.get("firm_name_raw") or "", hint="firm")
+        person, _ = res.resolve(ev.get("person_name_raw") or "", hint="person") \
+            if ev.get("person_name_raw") else (None, None)
+        predecessor, _ = res.resolve(ev.get("replaces_name_raw") or "", hint="person") \
+            if ev.get("replaces_name_raw") else (None, None)
+        represents, _ = res.resolve(ev.get("entity_name_raw") or "", hint="firm") \
+            if ev.get("entity_name_raw") else (None, None)
+        year = ev.get("meeting_year")
+
+        rows.append({
+            **ev,
+            "firm_id": firm,
+            "firm_name": res.canonical_name(firm) if firm else None,
+            "person_id": person,
+            "person_name": res.canonical_name(person) if person else None,
+            "replaces_id": predecessor,
+            "represents_id": represents,
+        })
+
+        prov = {
+            "doc_node_key": ev.get("doc_node_key"),
+            "doc_type": ev.get("doc_type"),
+            "doc_url": ev.get("doc_url"),
+            "page": None,
+            "doc_sha256": ev.get("doc_sha256"),
+        }
+        key = ("board_appointment", person, firm,
+               ev.get("doc_node_key"), ev.get("resolution_number"))
+        if (firm and person and year and ev["event_type"] in SEATING_EVENTS
+                and person != firm and key not in seen_edges):
+            seen_edges.add(key)
+            edges.append({
+                "layer": "board_appointment", "year": year,
+                "obs_date": ev.get("meeting_date"),
+                "source_id": person, "target_id": firm, "weight": 1.0,
+                "directed": 1, "role": ev.get("role"),
+                "event_type": ev["event_type"],
+                "mandate_end": ev.get("term_end_year"),
+                "represents": represents,
+                "seat_holder_type": ev.get("seat_holder_type"),
+                **prov,
+            })
+        # A resolution that seats several people but names one predecessor does
+        # not say which of them replaces that person. Pairing them all would
+        # invent handovers, so the succession tie is only drawn where the
+        # resolution names exactly one appointee.
+        if (person and predecessor and year and person != predecessor
+                and (ev.get("n_people_in_resolution") or 1) == 1):
+            edges.append({
+                "layer": "board_succession", "year": year,
+                "obs_date": ev.get("meeting_date"),
+                "source_id": predecessor, "target_id": person, "weight": 1.0,
+                "directed": 1, "role": ev.get("role"),
+                "event_type": ev["event_type"],
+                "at_firm": firm,
+                **prov,
+            })
+    rows.sort(key=lambda r: (r.get("meeting_date") or "", r.get("resolution_number") or 0))
+    return edges, rows
 
 
 # --------------------------------------------------------------------------
@@ -303,11 +532,35 @@ def expand_panel(edges: list[dict], max_carry: int = 3) -> list[dict]:
 # main
 # --------------------------------------------------------------------------
 
+MOVEMENT_FIELDS = [
+    "movement_id", "event_type", "is_result", "event_date", "event_year",
+    "event_date_source", "target_id", "target_name", "target_name_raw",
+    "price_tnd", "pct_stated", "pct_max_stated", "shares_sought",
+    "shares_acquired", "shares_stated", "capital_before_tnd", "capital_after_tnd",
+    "capital_stated_tnd", "capital_method", "new_shares", "listing_event",
+    "delisting_date", "market", "isin", "ticker", "open_date", "close_date",
+    "decision_date", "doc_node_key", "doc_type", "doc_title", "doc_url",
+    "doc_sha256", "filing_date",
+]
+
+BOARD_EVENT_FIELDS = [
+    "board_event_id", "meeting_date", "meeting_year", "meeting_kind",
+    "meeting_date_source", "resolution_number", "event_type", "role",
+    "firm_id", "firm_name", "firm_name_raw",
+    "person_id", "person_name", "person_name_raw", "seat_holder_type",
+    "entity_name_raw", "represents_id",
+    "replaces_id", "replaces_name_raw", "board_decision_date",
+    "term_years", "term_end_year", "adoption",
+    "doc_node_key", "doc_type", "doc_url", "doc_sha256", "excerpt",
+]
+
 EDGE_FIELDS = [
     "layer", "year", "obs_date", "source_id", "source_name", "source_type",
     "target_id", "target_name", "target_type", "weight", "directed", "role",
     "mandate_start", "mandate_end", "n_shares", "seat_holder_type", "represents",
-    "shared_actors", "doc_node_key", "doc_type", "doc_url", "page", "doc_sha256",
+    "shared_actors", "event_type", "pct_stated", "price_tnd",
+    "at_firm", "mandate_end",
+    "doc_node_key", "doc_type", "doc_url", "page", "doc_sha256", "from_ocr",
 ]
 
 
@@ -322,6 +575,9 @@ def main() -> None:
     seed_evidence(res)
     log.info("pass 2: resolving entities and building edges")
     edges, listed = build_edges(res)
+    movement_edges, movement_rows, listing_events = build_movement_edges(res)
+    board_edges, board_rows = build_board_event_edges(res)
+    edges += movement_edges + board_edges
     derived = derive_firm_layers(edges)
     all_edges = edges + derived
 
@@ -351,7 +607,23 @@ def main() -> None:
     all_edges.sort(key=lambda e: (e["layer"], e["year"] or 0, e["source_id"], e["target_id"]))
     write_csv(PROCESSED / "multiplex_edges_observed.csv.gz", all_edges, EDGE_FIELDS)
 
-    panel = expand_panel(all_edges, max_carry=args.max_carry)
+    # Movements are dated events, not states: carrying a tender offer forward
+    # would assert an offer that was never made, so they are excluded from the
+    # panel expansion and remain in the observed edge list only.
+    write_csv(PROCESSED / "movements.csv", movement_rows, MOVEMENT_FIELDS)
+    write_csv(PROCESSED / "firm_listing_events.csv",
+              sorted(listing_events, key=lambda r: (r.get("event_date") or "")),
+              ["entity_id", "firm_name", "listing_event", "event_date", "event_year",
+               "market", "isin", "ticker", "doc_node_key", "doc_url"])
+
+    write_csv(PROCESSED / "board_events.csv", board_rows, BOARD_EVENT_FIELDS)
+
+    # Event layers describe things that happened on a date, not states that
+    # persist, so they are excluded from the carry-forward panel.
+    EVENT_LAYERS = {"tender_offer", "concert_party",
+                    "board_appointment", "board_succession"}
+    panel = expand_panel([e for e in all_edges if e["layer"] not in EVENT_LAYERS],
+                         max_carry=args.max_carry)
     panel.sort(key=lambda e: (e["layer"], e["panel_year"], e["source_id"], e["target_id"]))
     write_csv(PROCESSED / "multiplex_edges_panel.csv.gz", panel,
               ["panel_year", "observation_type"] + EDGE_FIELDS)
