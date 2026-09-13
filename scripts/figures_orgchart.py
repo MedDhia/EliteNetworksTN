@@ -1,32 +1,30 @@
-"""The reconstructed state, drawn whole.
+"""The state's organisation chart, drawn as a chart of organisation.
 
-8,840 nodes will not fit on a page as an organisation chart in the usual
-sense — boxes and connecting lines — so this is an icicle: depth runs left to
-right, every body occupies a band whose height is the number of bodies beneath
-it, and the state's shape is the silhouette. Nothing is dropped. Branches large
-enough to label are labelled; the rest is the texture at the right-hand edge,
-which is itself the finding — most of the register is two or three levels of
-directorates and communes under a handful of ministries.
+A hierarchy is a node-link structure — who answers to whom — so it is drawn
+with nodes and connectors, not as an area-filling partition. A treemap or an
+icicle encodes *subtree size*, which answers "where is the mass" and not "what
+reports to what"; the first version of this figure made that mistake.
 
-**Colour carries the evidence, not the ministry.** Every attachment in this
-chart was inferred, and how it was inferred is the thing a reader most needs to
-discount for. The ramp is ordinal — a body placed by its own name is better
-evidenced than one placed by the parent its acts happen to name most often,
-which is better than one placed by a portfolio alone — so it takes a
-single-hue sequential ramp rather than four unrelated hues, per the house rule
-for anything ordered.
+**What a page can hold.** 8,803 bodies cannot all be boxes and lines at a
+legible size: the register runs to 4,687 nodes at depth three alone, and a
+node-link tree of them needs a wall, not a plate. So this draws the top of the
+hierarchy properly — the state, every ministry, and the largest bodies under
+each — and says in figures what it elides, rather than shrinking everything to
+an unreadable size or silently dropping the tail. The explorable version
+carries the rest.
 
-**The union caveat is on the plate.** This is 1957–2026 at once and shows
-bodies that never coexisted. The interactive version carries a year filter;
-a static page cannot, so it says so instead.
+**Colour still carries the evidence.** Every attachment was inferred, and the
+marker beside each body says from what: its own name, the parent its
+appointment acts name, or the portfolio it carries. That is an ordered
+quantity and takes the house sequential ramp.
 """
 
 from __future__ import annotations
 
 import sys
+from collections import defaultdict
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -34,171 +32,199 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from figstyle import (  # noqa: E402
     ERA_RAMP, INK, MUTED, PROC, RULE, SOURCE, headline, plt, save,
 )
-from matplotlib.patches import Patch, Rectangle  # noqa: E402
+from matplotlib.lines import Line2D  # noqa: E402
 
 STATE = "STATE"
-
-# Ordinal: how much the attachment is worth, weakest to strongest. A subset of
-# the house sequential ramp, which stays monotone in lightness under subsetting
-# because that is what a sequential ramp is; the categorical adjacency checks
-# that govern CAT4 subsets do not apply to it.
-EVIDENCE = [
-    ("form", "nothing placed it", ERA_RAMP[0]),
-    ("portfolio", "the portfolio it carries", ERA_RAMP[2]),
-    ("modal_parent", "the parent its acts name", ERA_RAMP[3]),
-    ("name", "its own name says so", ERA_RAMP[4]),
-]
-EV_COLOUR = {k: c for k, _, c in EVIDENCE}
-# Structural nodes: the root and the canonical ministry tier are scaffolding
-# this build put in, not bodies the register names, so they are drawn in the
-# ink of the page rather than given an evidence colour they did not earn.
 STRUCTURAL = {"root", "canonical"}
 
-# Below this share of the column a label cannot be set without overlapping its
-# neighbours, so the band is drawn unlabelled rather than crowded.
-LABEL_MIN = 0.011
+EVIDENCE = [
+    ("name", "its own name says so", ERA_RAMP[4]),
+    ("modal_parent", "the parent its acts name", ERA_RAMP[3]),
+    ("portfolio", "the portfolio it carries", ERA_RAMP[2]),
+    ("form", "nothing placed it", ERA_RAMP[0]),
+]
+EV_COLOUR = {k: c for k, _, c in EVIDENCE}
+
+# Bodies shown under each ministry. Five is what fits beside thirty-six
+# ministries on a page; the rest are counted, never dropped silently.
+PER_MINISTRY = 5
+COLUMNS = 2
 
 
-def load() -> pd.DataFrame:
+def load():
     df = pd.read_csv(PROC / "org_hierarchy.csv.gz", low_memory=False)
     df["name"] = df.name.fillna("")
-    return df
+    kids = defaultdict(list)
+    for o, p in zip(df.org_id, df.parent_id):
+        if isinstance(p, str):
+            kids[p].append(o)
+    return df, kids
 
 
-def measure(df: pd.DataFrame) -> dict:
-    """Subtree size for every node, counting real bodies only.
+def gather(df: pd.DataFrame, kids) -> list[dict]:
+    """Each ministry with the bodies beneath it, deepest branch first.
 
-    The canonical ministry tier would otherwise be counted twice — once as
-    itself and once inside the register-named ministry under it.
+    Descent skips the canonical/register-name tier: that pair is this
+    reconstruction's scaffolding for collapsing renamings, not a level of the
+    state, and drawing it would put "MINISTERE DES FINANCES" under "Finance"
+    as though the ministry reported to itself.
     """
-    kids: dict[str, list[str]] = {}
-    for oid, pid in zip(df.org_id, df.parent_id):
-        if isinstance(pid, str):
-            kids.setdefault(pid, []).append(oid)
-    real = {oid for oid, m in zip(df.org_id, df.method)
-            if m not in STRUCTURAL}
-    size: dict[str, int] = {}
+    method = dict(zip(df.org_id, df.method))
+    name = dict(zip(df.org_id, df.name))
+    form = dict(zip(df.org_id, df.form))
 
-    def walk(node: str) -> int:
-        if node in size:
-            return size[node]
-        n = 1 if node in real else 0
-        for k in kids.get(node, ()):
-            n += walk(k)
-        size[node] = n
+    def below(root):
+        out, stack = [], list(kids.get(root, ()))
+        while stack:
+            c = stack.pop()
+            if method.get(c) not in STRUCTURAL:
+                out.append(c)
+            stack.extend(kids.get(c, ()))
+        return out
+
+    def sub(node):
+        n, stack = 0, list(kids.get(node, ()))
+        while stack:
+            c = stack.pop()
+            n += 1
+            stack.extend(kids.get(c, ()))
         return n
 
-    walk(STATE)
-    return {"kids": kids, "size": size}
-
-
-def layout(df: pd.DataFrame, m: dict, max_depth: int = 5) -> list[dict]:
-    """Place every node as a band: x is depth, y is its share of the state."""
-    info = df.set_index("org_id")
-    total = float(m["size"][STATE]) or 1.0
-    out: list[dict] = []
-
-    def place(node: str, depth: int, y0: float, y1: float) -> None:
-        r = info.loc[node]
-        out.append({"id": node, "name": r["name"], "depth": depth,
-                    "y0": y0, "y1": y1, "method": r["method"],
-                    "size": m["size"][node], "form": r["form"]})
-        if depth >= max_depth:
-            return
-        ks = sorted(m["kids"].get(node, ()),
-                    key=lambda k: (-m["size"][k], info.loc[k, "name"]))
-        span = y1 - y0
-        # Children are laid out against the parent's own subtree size, so a
-        # parent's band is never overrun by the sum of its children.
-        denom = float(m["size"][node]) or 1.0
-        cur = y0
-        for k in ks:
-            h = span * m["size"][k] / denom
-            if h <= 0:
-                continue
-            place(k, depth + 1, cur, min(cur + h, y1))
-            cur += h
-
-    place(STATE, 0, 0.0, 1.0)
+    out = []
+    for oid, m in zip(df.org_id, df.method):
+        if m != "canonical":
+            continue
+        d = below(oid)
+        # A ministry's direct bodies, ranked by how much hangs off them.
+        direct = [c for c in d if method.get(c) != "canonical"
+                  and any(c in kids.get(k, ()) for k in [oid] + [
+                      x for x in kids.get(oid, ())])]
+        ranked = sorted(direct, key=lambda c: (-sub(c), name.get(c, "")))
+        out.append({
+            "id": oid, "name": name[oid], "total": len(d),
+            "children": [{"name": name[c], "n": sub(c),
+                          "method": method.get(c, "form"),
+                          "form": form.get(c, "")}
+                         for c in ranked[:PER_MINISTRY]],
+            "n_direct": len(direct),
+        })
+    out.sort(key=lambda r: -r["total"])
     return out
 
 
-def short(name: str, n: int) -> str:
-    name = " ".join(name.split())
-    return name if len(name) <= n else name[: n - 1].rstrip(" ,;-") + "…"
+def short(s: str, n: int) -> str:
+    s = " ".join(str(s).split())
+    return s if len(s) <= n else s[: n - 1].rstrip(" ,;-") + "…"
 
 
-def draw(ax, bands: list[dict], max_depth: int) -> None:
-    colw = 1.0 / (max_depth + 1)
-    for b in bands:
-        x = b["depth"] * colw
-        h = b["y1"] - b["y0"]
-        colour = (INK if b["method"] in STRUCTURAL
-                  else EV_COLOUR.get(b["method"], ERA_RAMP[0]))
-        ax.add_patch(Rectangle(
-            (x, b["y0"]), colw * 0.965, h,
-            facecolor=colour, edgecolor="white",
-            linewidth=0.25 if h > 0.002 else 0.0, zorder=2))
-        if h >= LABEL_MIN and b["depth"] <= 3:
-            # Dark bands take light type and vice versa; the ramp's midpoint
-            # is between ERA_RAMP[2] and [3].
-            light = b["method"] in STRUCTURAL or b["method"] in (
-                "name", "modal_parent")
-            ax.annotate(
-                short(b["name"], int(52 * (h / 0.05)) if h < 0.05 else 60),
-                xy=(x + colw * 0.03, (b["y0"] + b["y1"]) / 2),
-                ha="left", va="center", zorder=4,
-                fontsize=min(8.2, max(5.4, 150 * h)),
-                color="white" if light else INK)
-    ax.set_xlim(0, 1)
-    ax.set_ylim(1, 0)
-    ax.axis("off")
+def draw_column(ax, rows, x0: float, y: float, row_h: float,
+                width: float = 0.44) -> float:
+    """Draw ministries down a spine; return the y reached."""
+    spine_x = x0 + 0.028
+    top = y
+    for r in rows:
+        # ministry node
+        ax.plot([x0, spine_x - 0.004], [y, y], color=RULE, lw=0.9, zorder=2)
+        ax.annotate(f"{short(r['name'], 40)}",
+                    xy=(spine_x, y), ha="left", va="center",
+                    fontsize=8.6, fontweight="bold", color=INK, zorder=4)
+        ax.annotate(f"{r['total']:,} bodies",
+                    xy=(x0 + width, y), ha="right", va="center",
+                    fontsize=7.0, color=MUTED, zorder=4)
+        y -= row_h
 
-    for d, lab in enumerate(["the state", "ministry (canonical)",
-                             "ministry as named", "body", "sub-body",
-                             "deeper"][: max_depth + 1]):
-        ax.annotate(lab, xy=(d * colw, -0.012), ha="left", va="bottom",
-                    fontsize=7.4, color=MUTED, annotation_clip=False)
+        # its own spine, down to the bodies beneath it
+        kid_x = spine_x + 0.022
+        branch_top = y + row_h * 0.5
+        last = y
+        for c in r["children"]:
+            ax.plot([kid_x, kid_x + 0.014], [y, y], color=RULE, lw=0.7, zorder=2)
+            ax.plot([kid_x + 0.0165], [y], "s", ms=3.1,
+                    color=EV_COLOUR.get(c["method"], ERA_RAMP[0]), zorder=4)
+            ax.annotate(short(c["name"], 62),
+                        xy=(kid_x + 0.024, y), ha="left", va="center",
+                        fontsize=7.2, color=INK, zorder=4)
+            if c["n"]:
+                ax.annotate(f"{c['n']:,}", xy=(x0 + width, y),
+                            ha="right", va="center", fontsize=6.6,
+                            color=MUTED, zorder=4)
+            last = y
+            y -= row_h
+        rest = r["n_direct"] - len(r["children"])
+        if rest > 0:
+            ax.plot([kid_x, kid_x + 0.014], [y, y], color=RULE, lw=0.7, zorder=2)
+            ax.annotate(f"+ {rest:,} more directly under this ministry",
+                        xy=(kid_x + 0.024, y), ha="left", va="center",
+                        fontsize=6.9, color=MUTED, style="italic", zorder=4)
+            last = y
+            y -= row_h
+        if r["children"] or rest > 0:
+            ax.plot([kid_x, kid_x], [branch_top, last], color=RULE, lw=0.7,
+                    zorder=1)
+        y -= row_h * 0.42
+    ax.plot([x0, x0], [top, y + row_h * 0.42], color=RULE, lw=0.9, zorder=1)
+    return y
 
 
 def fig_orgchart() -> None:
-    df = load()
-    m = measure(df)
-    max_depth = 5
-    bands = layout(df, m, max_depth)
-
+    df, kids = load()
+    mins = gather(df, kids)
     bodies = df[~df.method.isin(STRUCTURAL)]
-    attached = int((bodies.parent_id != STATE).sum())
+    unplaced = int(((df.parent_id == STATE) & ~df.method.isin(STRUCTURAL)).sum())
     by_method = bodies.method.value_counts()
-    deepest = max(b["depth"] for b in bands)
 
-    fig, ax = plt.subplots(figsize=(13.4, 9.6))
-    fig.subplots_adjust(top=0.80, bottom=0.075, left=0.03, right=0.985)
-    draw(ax, bands, max_depth)
+    half = (len(mins) + 1) // 2
+    cols = [mins[:half], mins[half:]]
+    rows_needed = max(sum(1 + len(r["children"])
+                          + (1 if r["n_direct"] > len(r["children"]) else 0)
+                          for r in c) for c in cols)
+    row_h = 1.0 / (rows_needed + len(cols[0]) + 4)
 
-    ax.legend(
-        handles=[Patch(facecolor=c, label=lab) for _, lab, c in EVIDENCE]
-        + [Patch(facecolor=INK, label="scaffolding of this reconstruction")],
-        loc="upper center", bbox_to_anchor=(0.5, -0.035), ncol=5,
-        title="how the attachment was established", fontsize=7.8)
+    fig, ax = plt.subplots(figsize=(14.6, 15.2))
+    fig.subplots_adjust(top=0.885, bottom=0.045, left=0.015, right=0.985)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+
+    # The root, and a bus across to both columns: every ministry descends from
+    # it, and drawing thirty-six lines across the plate would say the same
+    # thing far less clearly.
+    ax.annotate("État tunisien", xy=(0.5, 0.985), ha="center", va="center",
+                fontsize=12.5, fontweight="bold", color=INK, zorder=5)
+    ax.annotate(f"{len(bodies):,} bodies, 1957–2026",
+                xy=(0.5, 0.962), ha="center", va="center", fontsize=7.8,
+                color=MUTED, zorder=5)
+    ax.plot([0.5, 0.5], [0.953, 0.944], color=RULE, lw=1.0)
+    ax.plot([0.028, 0.520], [0.944, 0.944], color=RULE, lw=1.0)
+    ax.plot([0.028, 0.028], [0.944, 0.936], color=RULE, lw=1.0)
+    ax.plot([0.520, 0.520], [0.944, 0.936], color=RULE, lw=1.0)
+
+    draw_column(ax, cols[0], 0.028, 0.936, row_h)
+    draw_column(ax, cols[1], 0.520, 0.936, row_h)
+
+    ax.legend(handles=[Line2D([], [], marker="s", ls="", ms=6, color=c,
+                              label=lab) for _, lab, c in EVIDENCE],
+              loc="lower center", bbox_to_anchor=(0.5, -0.028), ncol=4,
+              title="how each attachment was established", fontsize=7.6)
 
     headline(
         fig,
-        "The Tunisian state as the gazette records it, every body at once",
-        f"{len(bodies):,} administrative bodies named in the Journal Officiel "
-        f"between 1957 and 2026, each a band whose height is the number of "
-        f"bodies beneath it. {attached / len(bodies) * 100:.0f}% attach to "
-        f"something other than the bare state. The gazette publishes no parent "
-        f"field, so every attachment here is inferred and the colour says from "
-        f"what: {by_method.get('name', 0):,} from the body's own name, which "
-        f"states it outright — “direction générale des services communs au "
-        f"ministère de l'équipement” — {by_method.get('modal_parent', 0):,} "
-        f"from the parent its appointment acts most often name, and "
-        f"{by_method.get('portfolio', 0):,} from the portfolio it carries. The "
-        f"{by_method.get('form', 0):,} that nothing placed are drawn against "
-        f"the state rather than hidden. This is a union of seventy years and "
-        f"shows bodies that never coexisted.",
-        width=146,
+        "The Tunisian state, ministry by ministry",
+        f"Every ministry the Journal Officiel records between 1957 and 2026, "
+        f"with the five bodies beneath each that carry the most below them, "
+        f"and a count of the rest. {len(bodies):,} bodies in all. The gazette "
+        f"publishes no parent field, so every attachment here is inferred and "
+        f"the marker says from what: {by_method.get('name', 0):,} from the "
+        f"body's own name, which states it outright — “direction générale des "
+        f"services communs au ministère de l'équipement” — "
+        f"{by_method.get('modal_parent', 0):,} from the parent its appointment "
+        f"acts most often name, {by_method.get('portfolio', 0):,} from the "
+        f"portfolio it carries. A further {unplaced:,} bodies are not drawn "
+        f"here because nothing placed them under any ministry. Successive "
+        f"names of one ministry are collapsed, so équipement and équipement et "
+        f"habitat are one row rather than two. This is a union of seventy "
+        f"years: the ministries listed never all existed at once.",
+        width=150,
     )
     save(fig, "fig35_state_organigram",
          SOURCE + "  The hierarchy is reconstructed: neither the "
@@ -206,31 +232,27 @@ def fig_orgchart() -> None:
                   "and the parent recorded on a spell belongs to the act the "
                   "appointment was published in rather than to the body — one "
                   "body carries 89 different parents that way. Attachment is "
-                  "therefore read from the body's own name first, since "
-                  "Tunisian administrative titles state what they hang off and "
-                  "beat the act when the two disagree; from the commonest "
-                  "parent its acts give it second, and only where at least 40% "
-                  "of them agree; from its portfolio third. A separator alone "
-                  "is not an attachment — the 'des' in direction générale des "
-                  "impôts is ordinary French — so a name is only split where "
-                  "the separator is followed by a word that names a body. "
-                  "Where an act appoints a committee the whole membership list "
-                  "can land in the name field, at a median 1,051 characters "
-                  "against 72 for a real name, and each 'représentant du "
-                  "ministère de X' in it reads as an attachment; those are cut "
-                  "back before parsing. Successive names of one ministry "
-                  "collapse onto a canonical node, so équipement, équipement "
-                  "et habitat, and équipement, habitat et aménagement du "
-                  "territoire are one branch and not three. Band height is the "
-                  "count of bodies beneath, so a ministry supervising nine "
-                  "hundred communes is wide whatever its staff; the canonical "
-                  "tier and the root are this reconstruction's own scaffolding "
-                  "rather than bodies the register names, and are drawn in ink "
-                  f"rather than given an evidence colour. Depth runs to "
-                  f"{deepest}. Bands below about one percent of a column are "
-                  "drawn unlabelled rather than crowded. An explorable version "
-                  "carries search, a year filter and the evidence behind each "
-                  "attachment node by node.")
+                  "read from the body's own name first, since Tunisian "
+                  "administrative titles state what they hang off and beat the "
+                  "act where the two disagree; from the commonest parent its "
+                  "acts give it second, and only where at least 40% of them "
+                  "agree; from its portfolio third. A separator alone is not "
+                  "an attachment — the 'des' in direction générale des impôts "
+                  "is ordinary French — so a name is only split where the "
+                  "separator is followed by a word that names a body. Where an "
+                  "act appoints a committee the whole membership list can land "
+                  "in the name field, at a median 1,051 characters against 72 "
+                  "for a real name, and each 'représentant du ministère de X' "
+                  "in it reads as an attachment; those are cut back before "
+                  "parsing. The count beside a body is everything beneath it, "
+                  "at any depth. Ministries are ordered by how much hangs off "
+                  "them and bodies within a ministry likewise, so the five "
+                  "shown are the largest branches and not the whole of what a "
+                  "ministry directly holds. The full register runs to 4,687 "
+                  "bodies at depth three alone, which no node-link chart can "
+                  "set legibly on a page; an explorable version carries every "
+                  "node, with search, a year filter and the evidence behind "
+                  "each attachment.")
 
 
 def main() -> None:
