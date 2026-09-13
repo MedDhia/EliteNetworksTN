@@ -552,8 +552,52 @@ def org_match_within(mention: str, org_ids: set[str],
     return (best, best_s) if best_s >= SNOWBALL_ORG_FLOOR else ("", best_s)
 
 
+def _harvest_identifiers(out_rows: list[dict], dyads: dict,
+                         id_map: dict[str, str], conflicts: set[str],
+                         stats: dict) -> int:
+    """Add every named organisation's hard identifiers to the map.
+
+    This is what makes an identifier a propagation channel rather than a
+    one-shot lookup. A matricule fiscal or an RC number identifies a firm
+    outright, so an organisation named in ANY pass should contribute its
+    identifiers to the map, and every other filing printing them should then
+    reach it. Seeding the map only from identity-grade name matches -- which
+    is what pass 0 did -- threw away the strongest anchor in the corpus the
+    moment it was earned by any other route.
+
+    A value that would name two different organisations is deleted and
+    blacklisted, not resolved by majority. `validate` reports 4,461 identifier
+    values sitting on more than one organisation node, so the conflict is
+    common and taking the modal side would bury exactly the signal that says
+    a resolution merged two firms.
+    """
+    added = 0
+    for r in out_rows:
+        oid = r["resolved_org_id"]
+        if not oid:
+            continue
+        d = dyads.get((r["person_mention"], r["org_mention"]))
+        if not d:
+            continue
+        for col in HARD_IDS:
+            v = d.get(col)
+            if not v or v in conflicts:
+                continue
+            prev = id_map.get(v)
+            if prev is None:
+                id_map[v] = oid
+                added += 1
+            elif prev != oid:
+                del id_map[v]
+                conflicts.add(v)
+                stats["identifier_conflicts"] = stats.get(
+                    "identifier_conflicts", 0) + 1
+    return added
+
+
 def snowball(out_rows: list[dict], dyads: dict, idx: SeedIndex,
              block_people: dict[str, set[str]],
+             id_to_org: dict[str, dict[str, str]] | None = None,
              max_passes: int = MAX_SNOWBALL_PASSES) -> dict:
     """Use what the first pass named as anchors for what it could not.
 
@@ -584,6 +628,23 @@ def snowball(out_rows: list[dict], dyads: dict, idx: SeedIndex,
     by_key = {r["mention_key"]: r for r in out_rows}
     stats: dict[str, int] = defaultdict(int)
 
+    # The identifier map, live across passes. Flattened out of the per-column
+    # map pass 0 built: a matricule and an RC number are both registration
+    # numbers and neither value space collides with the other in practice, and
+    # one map is what lets a firm identified by its matricule in one filing be
+    # reached by its RC number in another.
+    id_map: dict[str, str] = {}
+    conflicts: set[str] = set()
+    for col_map in (id_to_org or {}).values():
+        for v, oid in col_map.items():
+            prev = id_map.get(v)
+            if prev is None:
+                id_map[v] = oid
+            elif prev != oid:
+                del id_map[v]
+                conflicts.add(v)
+    stats["identifiers_seeded"] = len(id_map)
+
     # Which mentions have a named organisation, and which a named person.
     anchor_of: dict[str, str] = {}
     for r in out_rows:
@@ -594,8 +655,46 @@ def snowball(out_rows: list[dict], dyads: dict, idx: SeedIndex,
         if r["link_status"] in NAMING and r["resolved_person_id"]:
             person_of.setdefault(r["person_mention"], r["resolved_person_id"])
 
+    # Everything pass 0 already named contributes its identifiers before the
+    # first snowball pass, so the strongest anchor in the corpus is available
+    # from round one rather than only to whatever named it.
+    stats["identifiers_harvested_pass_0"] = _harvest_identifiers(
+        out_rows, dyads, id_map, conflicts, stats)
+
     for p in range(1, max_passes + 1):
         changed = 0
+
+        # --- 0. a known identifier names the firm ------------------------ #
+        # The safest edge in the whole snowball, and the one it was not using.
+        # A name propagates a resemblance; a matricule fiscal propagates an
+        # identity. Where a firm's registration number is printed in one
+        # filing and its name is unreadable in another, this is the only
+        # thing that connects them.
+        for r in out_rows:
+            if r["resolved_org_id"] or not r["org_mention"]:
+                continue
+            d = dyads.get((r["person_mention"], r["org_mention"]))
+            if not d:
+                continue
+            hits = set()
+            for col in HARD_IDS:
+                v = d.get(col)
+                if v and v in id_map:
+                    hits.add(id_map[v])
+            # Two identifiers on one filing pointing at two organisations is
+            # the merge signal `orgattrs` exists to report. Neither is taken.
+            if len(hits) != 1:
+                stats["identifier_disagreement"] += int(len(hits) > 1)
+                continue
+            oid = hits.pop()
+            r["resolved_org_id"] = oid
+            r["resolved_org_label"] = idx.orgs[oid]["label"] if oid in idx.orgs else oid
+            r["org_match_basis"] = "identifier_bridge"
+            r["resolve_pass"] = p
+            r["snowball_basis"] = r["snowball_basis"] or "identifier_names_org"
+            anchor_of.setdefault(r["org_mention"], oid)
+            stats["org_named_by_identifier"] += 1
+            changed += 1
 
         # --- 1. a named person names their firm -------------------------- #
         for r in out_rows:
@@ -665,9 +764,18 @@ def snowball(out_rows: list[dict], dyads: dict, idx: SeedIndex,
             stats[basis] += 1
             changed += 1
 
+        # Every organisation this pass named now contributes its identifiers,
+        # so the next pass can reach the other filings that print them. This
+        # is the step that makes the identifier compound rather than fire once.
+        harvested = _harvest_identifiers(out_rows, dyads, id_map, conflicts, stats)
+        stats[f"pass_{p}_identifiers_added"] = harvested
         stats[f"pass_{p}_links"] = changed
-        if not changed:
+        # A pass that named nothing but learned identifiers is not the end:
+        # those identifiers are what the next pass fires on.
+        if not changed and not harvested:
             break
+    stats["identifiers_known"] = len(id_map)
+    stats["identifiers_refused_as_conflicting"] = len(conflicts)
     return dict(stats)
 
 
@@ -1111,7 +1219,7 @@ def run(events_path: Path | None = None) -> dict:
 
     # Snowball: what the first pass named becomes the anchor for what it could
     # not. Runs after every pass-0 row exists, and only ever upgrades one.
-    sb = snowball(out_rows, dyads, idx, block_people)
+    sb = snowball(out_rows, dyads, idx, block_people, id_to_org)
     for k, v in sb.items():
         stats[f"snowball_{k}"] = v
     for r in out_rows:

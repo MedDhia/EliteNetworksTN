@@ -333,3 +333,164 @@ def test_no_address_leaves_the_inference_standing():
     """Most mentions state no residence. Absence must not be read as conflict,
     or the tier would collapse to nothing."""
     assert _rarity().is_unique(KEY)
+
+
+# --- the identifier bridge ------------------------------------------------ #
+# A name propagates a resemblance; a matricule fiscal propagates an identity.
+# It is the safest edge in the snowball and the one it was not using: the map
+# was built once, before the first pass, and seeded only from organisations
+# named by an identity-grade NAME match.
+
+def _row_id(person, org, mf="", rc="", pid="", oid="", status="unresolved"):
+    r = _row(person, org, pid, oid, status)
+    r["org_mf"], r["org_rc"] = mf, rc
+    return r
+
+
+def _dyad_id(person, org, mf="", rc="", blocks=("B1",)):
+    d = _dyad(person, org, blocks)
+    d["org_mf"], d["org_rc"] = mf, rc
+    return d
+
+
+def test_a_matricule_learned_in_one_filing_names_the_firm_in_another():
+    """The gap this closes. One filing prints the firm's name readably and its
+    matricule; another prints only the matricule. Nothing but the identifier
+    connects them."""
+    idx = _idx(orgs={"CO_SFBT": "SFBT"}, persons={"P_A": "Ali Ben Salah"},
+               person_orgs={"P_A": {"CO_SFBT"}})
+    rows = [_row_id("Ali Ben Salah", "SFBT", mf="111111A",
+                    pid="P_A", oid="CO_SFBT", status="resolved"),
+            _row_id("Leila Trabelsi", "Ste illisible XYZ", mf="111111A")]
+    dyads = {("Ali Ben Salah", "SFBT"): _dyad_id("Ali Ben Salah", "SFBT", mf="111111A"),
+             ("Leila Trabelsi", "Ste illisible XYZ"):
+                 _dyad_id("Leila Trabelsi", "Ste illisible XYZ", mf="111111A")}
+    stats = R.snowball(rows, dyads, idx, {})
+    assert stats["org_named_by_identifier"] == 1
+    assert rows[1]["resolved_org_id"] == "CO_SFBT"
+    assert rows[1]["org_match_basis"] == "identifier_bridge"
+    assert rows[1]["snowball_basis"] == "identifier_names_org"
+
+
+def test_an_identifier_earned_by_person_anchoring_then_propagates():
+    """The compounding step. The firm is named in pass 1 by its officer, its
+    matricule enters the map, and a third filing carrying only that matricule
+    is reached in pass 2. Seeding the map once, before the loop, could never
+    do this."""
+    idx = _idx(orgs={"CO_SFBT": "SFBT"}, persons={"P_A": "Ali Ben Salah"},
+               person_orgs={"P_A": {"CO_SFBT"}})
+    rows = [_row_id("Ali Ben Salah", "Societe SFBT", mf="222222B",
+                    pid="P_A", status="resolved"),
+            _row_id("Leila Trabelsi", "Ste illisible", mf="222222B")]
+    dyads = {("Ali Ben Salah", "Societe SFBT"):
+                 _dyad_id("Ali Ben Salah", "Societe SFBT", mf="222222B"),
+             ("Leila Trabelsi", "Ste illisible"):
+                 _dyad_id("Leila Trabelsi", "Ste illisible", mf="222222B")}
+    stats = R.snowball(rows, dyads, idx, {})
+    # Pass 1 names the firm from its officer; pass 2 bridges on the matricule.
+    assert stats["org_named_by_person"] == 1
+    assert stats["org_named_by_identifier"] == 1
+    assert rows[1]["resolved_org_id"] == "CO_SFBT"
+    assert rows[1]["resolve_pass"] == 2
+
+
+def test_an_rc_number_bridges_to_a_firm_known_by_its_matricule():
+    """One flat map, not one per column: a firm identified by its matricule in
+    one filing is reachable by its RC number in another, because a filing
+    carrying both links the two values."""
+    idx = _idx(orgs={"CO_SFBT": "SFBT"}, persons={"P_A": "Ali Ben Salah"},
+               person_orgs={"P_A": {"CO_SFBT"}})
+    rows = [_row_id("Ali Ben Salah", "SFBT", mf="333333C", rc="B1231999",
+                    pid="P_A", oid="CO_SFBT", status="resolved"),
+            _row_id("Leila Trabelsi", "Ste illisible", rc="B1231999")]
+    dyads = {("Ali Ben Salah", "SFBT"):
+                 _dyad_id("Ali Ben Salah", "SFBT", mf="333333C", rc="B1231999"),
+             ("Leila Trabelsi", "Ste illisible"):
+                 _dyad_id("Leila Trabelsi", "Ste illisible", rc="B1231999")}
+    R.snowball(rows, dyads, idx, {})
+    assert rows[1]["resolved_org_id"] == "CO_SFBT"
+
+
+def test_one_identifier_on_two_firms_names_neither():
+    """4,461 identifier values in this corpus sit on more than one
+    organisation node. Taking the modal side would bury exactly the signal
+    that says a resolution merged two firms, so a conflicting value is deleted
+    and blacklisted."""
+    idx = _idx(orgs={"CO_A": "ALPHA", "CO_B": "BETA"},
+               persons={"P_A": "Ali Ben Salah", "P_B": "Sami Gharbi"},
+               person_orgs={"P_A": {"CO_A"}, "P_B": {"CO_B"}})
+    rows = [_row_id("Ali Ben Salah", "ALPHA", mf="444444D",
+                    pid="P_A", oid="CO_A", status="resolved"),
+            _row_id("Sami Gharbi", "BETA", mf="444444D",
+                    pid="P_B", oid="CO_B", status="resolved"),
+            _row_id("Leila Trabelsi", "Ste illisible", mf="444444D")]
+    dyads = {("Ali Ben Salah", "ALPHA"): _dyad_id("Ali Ben Salah", "ALPHA", mf="444444D"),
+             ("Sami Gharbi", "BETA"): _dyad_id("Sami Gharbi", "BETA", mf="444444D"),
+             ("Leila Trabelsi", "Ste illisible"):
+                 _dyad_id("Leila Trabelsi", "Ste illisible", mf="444444D")}
+    stats = R.snowball(rows, dyads, idx, {})
+    assert stats["identifier_conflicts"] >= 1
+    assert stats["identifiers_refused_as_conflicting"] >= 1
+    assert rows[2]["resolved_org_id"] == ""
+
+
+def test_two_identifiers_disagreeing_on_one_filing_name_neither():
+    """A filing whose matricule and RC number point at two organisations is
+    the merge signal orgattrs reports. Guessing here would bury it."""
+    idx = _idx(orgs={"CO_A": "ALPHA", "CO_B": "BETA"},
+               persons={"P_A": "Ali Ben Salah", "P_B": "Sami Gharbi"},
+               person_orgs={"P_A": {"CO_A"}, "P_B": {"CO_B"}})
+    rows = [_row_id("Ali Ben Salah", "ALPHA", mf="555555E",
+                    pid="P_A", oid="CO_A", status="resolved"),
+            _row_id("Sami Gharbi", "BETA", rc="B9992001",
+                    pid="P_B", oid="CO_B", status="resolved"),
+            _row_id("Leila Trabelsi", "Ste illisible", mf="555555E", rc="B9992001")]
+    dyads = {("Ali Ben Salah", "ALPHA"): _dyad_id("Ali Ben Salah", "ALPHA", mf="555555E"),
+             ("Sami Gharbi", "BETA"): _dyad_id("Sami Gharbi", "BETA", rc="B9992001"),
+             ("Leila Trabelsi", "Ste illisible"):
+                 _dyad_id("Leila Trabelsi", "Ste illisible",
+                          mf="555555E", rc="B9992001")}
+    stats = R.snowball(rows, dyads, idx, {})
+    assert stats["identifier_disagreement"] >= 1
+    assert rows[2]["resolved_org_id"] == ""
+
+
+def test_the_pass_zero_map_seeds_the_snowball():
+    """What pass 0 learned from identity-grade name matches is available from
+    round one, rather than only to whatever named it."""
+    idx = _idx(orgs={"CO_SFBT": "SFBT"})
+    rows = [_row_id("Leila Trabelsi", "Ste illisible", mf="666666F")]
+    dyads = {("Leila Trabelsi", "Ste illisible"):
+                 _dyad_id("Leila Trabelsi", "Ste illisible", mf="666666F")}
+    stats = R.snowball(rows, dyads, idx, {},
+                       id_to_org={"org_mf": {"666666F": "CO_SFBT"}, "org_rc": {}})
+    assert stats["identifiers_seeded"] == 1
+    assert rows[0]["resolved_org_id"] == "CO_SFBT"
+
+
+def test_a_conflict_in_the_seeded_map_is_refused():
+    idx = _idx(orgs={"CO_A": "ALPHA", "CO_B": "BETA"})
+    rows = [_row_id("Leila Trabelsi", "Ste illisible", mf="777777G", rc="777777G")]
+    dyads = {("Leila Trabelsi", "Ste illisible"):
+                 _dyad_id("Leila Trabelsi", "Ste illisible",
+                          mf="777777G", rc="777777G")}
+    R.snowball(rows, dyads, idx, {},
+               id_to_org={"org_mf": {"777777G": "CO_A"},
+                          "org_rc": {"777777G": "CO_B"}})
+    assert rows[0]["resolved_org_id"] == ""
+
+
+def test_a_pass_that_only_learns_identifiers_does_not_end_the_loop():
+    """The convergence test has to count identifiers as progress. A pass that
+    named nothing but learned a matricule is exactly what the next pass fires
+    on, and breaking there would stop one round short."""
+    idx = _idx(orgs={"CO_SFBT": "SFBT"}, persons={"P_A": "Ali Ben Salah"},
+               person_orgs={"P_A": {"CO_SFBT"}})
+    rows = [_row_id("Ali Ben Salah", "Societe SFBT", mf="888888H",
+                    pid="P_A", status="resolved")]
+    dyads = {("Ali Ben Salah", "Societe SFBT"):
+                 _dyad_id("Ali Ben Salah", "Societe SFBT", mf="888888H")}
+    stats = R.snowball(rows, dyads, idx, {})
+    # Pass 1 names the org and harvests its matricule; pass 2 adds nothing.
+    assert stats["pass_1_identifiers_added"] == 1
+    assert "pass_2_links" in stats
