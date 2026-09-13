@@ -410,6 +410,24 @@ now reclassified to `read_work_of`, flagged for review, and a validation check
 fails the build if one survives. The class was found by reading twelve rows at
 random, which is the honest measure of how much else may be there.
 
+### Figures
+
+`python scripts/figures_aalam.py` writes four figures into `figures/`, each a
+300 dpi PNG and a vector PDF, in the house style shared with the gazette build
+(`scripts/house_style.py`):
+
+| Figure | What it shows |
+|---|---|
+| `fig01_aalam_two_mode` | the institutions that tie three or more of the 38 together, and who passed through them |
+| `fig02_aalam_tutelage` | the largest chain of teacher-pupil ties, drawn teacher to pupil |
+| `fig03_aalam_subject_backbone` | the 46 pairs of subjects the book joins, by layer |
+| `fig04_aalam_lives` | the 37 datable life spans, grouped by the author's three cohorts |
+
+Arabic labels are passed **raw**. This matplotlib shapes and orders Arabic
+itself, so putting a string through `arabic-reshaper` and `python-bidi` first —
+the usual advice — processes it twice and silently produces reversed, disjoint
+text that still looks like Arabic to anyone who cannot read it.
+
 ```bash
 make aalam-fetch       # download the scan, verified against a pinned sha256
 make aalam-ingest      # OCR 384 pages at native resolution (~6 min)

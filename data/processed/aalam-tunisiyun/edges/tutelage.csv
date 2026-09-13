@@ -14,12 +14,12 @@ ED_9ad787cd86db5abace10,tutelage,taught_at,PERSON_ASRM_MHMD,محمد الأصر�
 ED_625a0cf1ec042802cbcd,tutelage,taught_at,PERSON_ASRM_MHMD,محمد الأصرم,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,بالمدرسة العليا للغة والآداب العربية وبالمدرسة الصادقية
 ED_9cba1e38073d1a68ebd4,tutelage,studied_at,PERSON_ASRM_MHMD,محمد الأصرم,SCH_MDRSH_SADQYH,المدرسة الصادقية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,ولقد لفت إليه الأنظار سوا، في المدرسة الصادقية أو في جامع
 ED_ec521d5b12f51f6536e5,tutelage,studied_at,PERSON_ASRM_MHMD,محمد الأصرم,SCH_MHD_THANWY_BBARYS,المعهد الثانوي بباريس,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,بين المعهد الثانوي ومكتبات العاصمة الفرنسية، ليثري فكره
+ED_65f1052c873e9c3e845d,tutelage,taught_at,PERSON_BDH_MHMD,محمد عبده,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,وقد ألقى على منبر الخلدونية محاضرة بليغة
 ED_35949712cb3b692914c4,tutelage,taught_at,PERSON_BDH_MHMD,محمد عبده,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,1903,1903-01-01,1903-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,وهناك أيضاً ألقى المغفور له الشيخ محمد عبده
-ED_65f1052c873e9c3e845d,tutelage,taught_at,PERSON_BDH_MHMD,محمد عبده,ORG_JMYH_KHLDWNYH,الجمعية الخلدونية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,وقد ألقى على منبر الخلدونية محاضرة بليغة
 ED_8ff315338e8cf1b3921a,tutelage,studied_under,PERSON_BDH_MHMD,محمد عبده,PERSON_AFGHANY_JMAL_DYN,جمال الدين الأفغاني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,تحت تأثير جمال الدين الأفغاني وتلميذه الشيخ محمد عبدهع
 ED_5781d37dae0ee5411c1e,tutelage,taught_at,PERSON_BDWHAB_HSN_HSNY,حسن حسني عبد الوهاب,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,وقد عَهِدَ بها لأول مرّة إلى الأستاذ حسن حسني عبد الوهاب
 ED_494005d53813159df576,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_ABRAHYM_HAFZ,حافظ إبراهيم,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,وخليل مطران وحافظ إبراهيم. وعلى وجه الخصوص الشاعر التونسي
-ED_6de7b93ae4acd6c58389,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_ABYTMAM,أبو تمام,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"والشريف الرضي وأبا تمام والمعري
+ED_6de7b93ae4acd6c58389,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_ABYTMAM,أبو تمام,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"والشريف الرضي وأبا تمام والمعري
 والمتنبى وابن رومي"
 ED_773951a8438e49711811,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_ASHRY,الأشعري,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"من أمثال الأشعري وابن
 سينا والزمخشري والغزالي وابن رشد، قد استأئروا بعنايته"
@@ -27,20 +27,20 @@ ED_65848a8795385c43e309,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد الس�
 ED_9eabe026d7a6af135479,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_BNRWMY,ابن الرومي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,وابن رومي، يضاف إليهم من المحدثين أحمد تيمور
 ED_2a78820cef3aad1c2d3d,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_BNSYNA,ابن سينا,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"من أمثال الأشعري وابن
 سينا والزمخشري والغزالي وابن رشد، قد استأئروا بعنايته"
-ED_53254aa071cf15e86b43,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_FRZDQ,الفرزدق,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,نذكر على سبيل المثال، الفرزدق والشريف الرضي وأبا تمام والمعري
+ED_53254aa071cf15e86b43,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_FRZDQ,الفرزدق,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,نذكر على سبيل المثال، الفرزدق والشريف الرضي وأبا تمام والمعري
 ED_5a07dab8cc0d293fa9f4,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_GHZALY,الغزالي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,لا سيما منهم الغزالي
-ED_1c85f814068e41bd0720,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_KHYAM_MR,عمر الخيام,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,في آثار السعدي وعمر الخيام المعربة
-ED_e858d83b960bff8a9ad1,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_MRY_ABYLA,أبو العلاء المعري,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"وأبا تمام والمعري
+ED_1c85f814068e41bd0720,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_KHYAM_MR,عمر الخيام,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,في آثار السعدي وعمر الخيام المعربة
+ED_e858d83b960bff8a9ad1,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_MRY_ABYLA,أبو العلاء المعري,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"وأبا تمام والمعري
 والمتنبى وابن رومي"
 ED_f8cc23c0e50fa8790310,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_MTNBY,المتنبي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,والمتنبى وابن رومي، يضاف إليهم من المحدثين
 ED_b17b0a9970759d8697ce,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_MTRAN_KHLYL,خليل مطران,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"والرصافي
 وخليل مطران وحافظ إبراهيم"
 ED_700e8f5d1660a0b383cb,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_QABADW_MHMWD,محمود قابادو,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"وعلى وجه الخصوص الشاعر التونسي محمود
 قابادو، الذي استهواه نظمه البديع"
-ED_3758cdccff7402f420a5,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_RDY_SHRYF,الشريف الرضي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,الفرزدق والشريف الرضي وأبا تمام والمعري
+ED_3758cdccff7402f420a5,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_RDY_SHRYF,الشريف الرضي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,الفرزدق والشريف الرضي وأبا تمام والمعري
 ED_f6bc2e644741076e0199,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_RSAFY_MRWF,معروف الرصافي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"أحمد تيمور والرصافي
 وخليل مطران وحافظ إبراهيم"
-ED_ef701567b6e84affccd1,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_SHYRAZY_SDY,سعدي الشيرازي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,قد وجد في آثار السعدي وعمر الخيام المعربة، متعة
+ED_ef701567b6e84affccd1,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_SHYRAZY_SDY,سعدي الشيرازي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,قد وجد في آثار السعدي وعمر الخيام المعربة، متعة
 ED_0c02ebf8d10f5b5579c3,tutelage,taught,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_SNA_MKHATBYH_ASGHR_MNH,مخاطبيه الأصغر منه سنا,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"لتحريض مخاطبيه
 الأصغر منه سنا على دراسة العلوم الإسلامية"
 ED_32804e4e96a054cc204d,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_TKWYNHMA_ASATDHH_DHYN_SAHMWA_FY,الأساتذة الذين ساهموا في تكوينهما,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"أعجبا بنفس
@@ -48,10 +48,10 @@ ED_32804e4e96a054cc204d,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد الس
 ED_ca991261359a3d40eeba,tutelage,studied_under,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_TYMWR_AHMD,أحمد تيمور,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,يضاف إليهم من المحدثين أحمد تيمور والرصافي
 ED_d3832494b9633a910c35,tutelage,read_work_of,PERSON_BKWSH_BDSLAM,عبد السلام البكوش,PERSON_ZMKHSHRY,الزمخشري,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.12,"الأشعري وابن
 سينا والزمخشري والغزالي وابن رشد، قد استأئروا بعنايته وقتاً أطول"
+ED_7fed366f976df7173665,tutelage,studied_at,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,فتردّد على التوالى على الخلدونية ومدرسة العطارين
 ED_87374e0269b4d6110fc9,tutelage,studied_at,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,حيث تعلم مبادى، اللغة الفرنسية - وجامع الزيتونة، وتمكن من الحصول على الشهائد
 ED_9c8396ef51651188239e,tutelage,taught_at,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,MSQ_JAM_ZYTWNH,جامع الزيتونة,mosque,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,كمدرس بالمعهد الصادقي وجامع الزيتونة، تكوين
 ED_4462804909247e9b0063,tutelage,studied_under,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,الموجه الحكيم والمرشد المقتدر، لتمكينه من تحقيق ما كان يصبو إليه
-ED_7fed366f976df7173665,tutelage,studied_at,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,SCH_KHLDWNYH,الخلدونية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,فتردّد على التوالى على الخلدونية ومدرسة العطارين
 ED_09407df03d50032fdc57,tutelage,studied_at,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,SCH_MDRSH_TARYN,مدرسة العطارين,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,ومدرسة العطارين - حيث تعلم مبادى، اللغة الفرنسية
 ED_1f109cf0c220c28f5f79,tutelage,taught_at,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,SCH_MHD_SADQY,المعهد الصادقي,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,واستطاع قبل ذلك، كمدرس بالمعهد الصادقي وجامع الزيتونة
 ED_c2843e83c544d55b304a,tutelage,taught_at,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,SCH_JAMH_ZYTWNYH,الجامعة الزيتونية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,درس مدة طويلة بالمعهد الصادقى والجامعة الزيتونية، قبل أن يشغل
@@ -110,6 +110,7 @@ ED_4b4297dad60202fde19c,tutelage,studied_at,PERSON_KHLSY_MHMD_SYD,محمد ال�
 فى دراستها فى المدرسة القرآنية"
 ED_d7ad00138a8eeee0692b,tutelage,studied_at,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,SCH_MHD_KARNW,معهد كارنو,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,"واكتشف بعد ذلك عالماً جديداً عند
 التحاقه بمعهد كارنو الثانوي"
+ED_5ffa998237a75aeb751f,tutelage,studied_at,PERSON_KHMYRY_TAHR,الطاهر الخميري,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,قضى سنوات قليلة في الدراسة بالخلدونيّة والجامعة الزيتونية
 ED_99c37369efbe4523f72e,tutelage,taught_at,PERSON_KHMYRY_TAHR,الطاهر الخميري,ORG_MSSH_JWHR_HWBKYNS,مؤسسة جوهر هوبكينس,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,"وتوضيح المشاكل الناجمة عن تحرير القارة
 السمراء، لطلبة المؤسسة المذكورة"
 ED_93ff179ce299f0a8a3b1,tutelage,taught_at,PERSON_KHMYRY_TAHR,الطاهر الخميري,SCH_JAMH_AMRYKYH_BALQAHRH,الجامعة الأمريكية بالقاهرة,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,"دُعِيّ مواطننا إلى التدريس
@@ -118,7 +119,6 @@ ED_1f08502ce9d3050e61ec,tutelage,taught_at,PERSON_KHMYRY_TAHR,الطاهر ال�
 ED_b5515781cd15d41aa90f,tutelage,licensed_by,PERSON_KHMYRY_TAHR,الطاهر الخميري,SCH_JAMH_HMBWRGH,جامعة همبورغ,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,قبل الحصول على شهادة الماجستير في العلوم العصرية من نفس الجامعة
 ED_a86b879d580247dc3556,tutelage,studied_at,PERSON_KHMYRY_TAHR,الطاهر الخميري,SCH_JAMH_HMBWRGH,جامعة همبورغ,school,,1936,1936-01-01,1936-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,الدكتوراه في الآداب من جامعة همبورغ سنة 1936
 ED_16910d8eac8cf07d7e3a,tutelage,studied_at,PERSON_KHMYRY_TAHR,الطاهر الخميري,SCH_JAMH_ZYTWNYH,الجامعة الزيتونية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,قضى سنوات قليلة في الدراسة بالخلدونيّة والجامعة الزيتونية
-ED_5ffa998237a75aeb751f,tutelage,studied_at,PERSON_KHMYRY_TAHR,الطاهر الخميري,SCH_KHLDWNYH,الخلدونية,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,قضى سنوات قليلة في الدراسة بالخلدونيّة والجامعة الزيتونية
 ED_52bd32eb6a99fe6c672e,tutelage,studied_at,PERSON_KHYRALDYN,الجنرال خير الدين,SCH_MDRSH_DBAT,مدرسة الضباط,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,انخرط فى سلك مدرسة الضباط الحديئة العهد
 ED_3326ae0f44d3368be513,tutelage,studied_at,PERSON_KHYRALDYN,الجنرال خير الدين,SCH_MDRSH_SGHAR_MMALYK,مدرسة صغار المماليك,school,,,1838-01-01,1839-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,وما إن وصل خير الدين إلى باردو سنة 1838 أو 1839 حتى الحق بمدرسة صغار المماليك
 ED_165160ef0417ce133402,tutelage,studied_under,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,PERSON_KTANY_MHMD,الشيخ محمد الكتاني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"وكانت سمعة
