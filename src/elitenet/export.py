@@ -59,6 +59,8 @@ TABLES = {
     "org_ties": PROCESSED / "org_ties.csv",
     "org_tie_spells": PROCESSED / "org_tie_spells.csv",
     "panel_org_ties_yearly": PROCESSED / "panel_org_ties_yearly.csv",
+    "rne_org_links": PROCESSED / "rne_org_links.csv",
+    "rne_unmatched_identifiers": PROCESSED / "rne_unmatched_identifiers.csv",
     "suspect_holes": PROCESSED / "suspect_holes.csv",
     "hole_exposure_by_layer": PROCESSED / "hole_exposure_by_layer.csv",
     "low_degree_audit": PROCESSED / "low_degree_audit.csv",

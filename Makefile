@@ -4,9 +4,9 @@
 
 PY := PYTHONPATH=src python3
 
-.PHONY: all seed mirror calendar segment extract resolve orgentity spells orgties personties orgattrs holes export tergm codebook validate test clean-derived
+.PHONY: all seed mirror calendar segment extract rne resolve orgentity spells orgties personties orgattrs holes export tergm codebook validate test clean-derived
 
-all: seed mirror calendar segment extract resolve orgentity spells orgties personties orgattrs holes export tergm codebook validate
+all: seed mirror calendar segment extract rne resolve orgentity spells orgties personties orgattrs holes export tergm codebook validate
 
 seed:      ## ingest and clean the curated seed edge list
 	$(PY) -m elitenet.seed
@@ -22,6 +22,9 @@ segment:   ## split issues into announcement blocks and state acts
 
 extract:   ## pull dated relational events out of blocks and acts
 	$(PY) -m elitenet.extract
+
+rne:       ## link JORT identifiers to the national business register
+	$(PY) -m elitenet.rne
 
 resolve:   ## link mentions to the seed network on the (person, org) dyad
 	$(PY) -m elitenet.resolve

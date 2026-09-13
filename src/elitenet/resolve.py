@@ -63,6 +63,30 @@ NAME_FLOOR_FOR_ORG = 0.70
 KINSHIP = {"spouse_of", "widow_of", "maiden_name_of"}
 
 
+def _rne_identifier_map() -> dict[str, dict[str, str]]:
+    """identifier value -> seed organisation, from the business register.
+
+    Read from `rne_org_links.csv` rather than by importing `elitenet.rne`,
+    which imports this module. Only identity-grade rows count: the register
+    says which firm an identifier belongs to, `org_match` says whether that
+    firm is a seed node, and both have to hold.
+
+    Absent file means an empty map and the previous behaviour exactly, so the
+    register is an addition rather than a dependency.
+    """
+    out: dict[str, dict[str, str]] = {col: {} for col in HARD_IDS}
+    path = PROCESSED / "rne_org_links.csv"
+    if not path.exists():
+        return out
+    with path.open(encoding="utf-8", newline="") as fh:
+        for r in csv.DictReader(fh):
+            if r.get("is_identity") != "1" or not r.get("seed_org_id"):
+                continue
+            col = "org_mf" if r.get("id_type") == "matricule_fiscal" else "org_rc"
+            out[col][r["value_normalised"]] = r["seed_org_id"]
+    return out
+
+
 def _persons_of(e: dict) -> list[str]:
     """Every person mention on an event row, subject first."""
     out = [e["person_mention"]] if e.get("person_mention") else []
@@ -1006,7 +1030,16 @@ def run(events_path: Path | None = None) -> dict:
     # because a generic containment match scored 1.0, seeded the matricule
     # entry, and then pulled in every other spelling carrying that matricule.
     # `org_match` now refuses such a match, so it cannot seed the map either.
+    # The national business register, where it has been linked. Seeded FIRST so
+    # a gazette-learned value can be compared against it rather than silently
+    # overwriting it: the register is the authority on which firm an identifier
+    # belongs to, and a disagreement is a signal about the gazette-side match
+    # rather than noise to resolve by order of arrival.
     id_to_org: dict[str, dict[str, str]] = {col: {} for col in HARD_IDS}
+    rne_map = _rne_identifier_map()
+    for col, vals in rne_map.items():
+        id_to_org[col].update(vals)
+    stats["identifiers_from_register"] = sum(len(v) for v in rne_map.values())
     for (person, org_men), d in dyads.items():
         if org_men and any(d[col] for col in HARD_IDS):
             if org_men not in org_cache:
@@ -1026,7 +1059,17 @@ def run(events_path: Path | None = None) -> dict:
             if oid:
                 for col in HARD_IDS:
                     if d[col]:
-                        id_to_org[col].setdefault(d[col], oid)
+                        prior = id_to_org[col].get(d[col])
+                        if prior is None:
+                            id_to_org[col][d[col]] = oid
+                        elif prior != oid and d[col] in rne_map.get(col, {}):
+                            # The register says this identifier is one firm and
+                            # the gazette-side name match says another. The
+                            # register wins -- it holds the identifier as a
+                            # primary key rather than parsed out of OCR -- and
+                            # the disagreement is counted rather than hidden.
+                            stats["register_overrode_gazette_match"] = stats.get(
+                                "register_overrode_gazette_match", 0) + 1
 
     def learned_org(d: dict) -> str:
         """The organisation a dyad's hard identifiers point to, if any.
