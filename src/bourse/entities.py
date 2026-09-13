@@ -133,6 +133,7 @@ _ORGAN_PHRASE = re.compile(
     r"administration|"
     r"membre|membres|administrateur|administrateurs|comite|commission|"
     r"organe|organes|role|assemblee|bureau\s+du|secretaire|gerance|"
+    r"representant|representants|representante|"
     r"composition|nomination|revocation|mandat\s+d|directoire|censeur|"
     r"lui\s*meme|elle\s*meme|eux\s*memes)\b"
 )
@@ -150,6 +151,17 @@ _STATUS_PHRASE = re.compile(r"^(en|hors)\s+(fonction|exercice|cours|activite)\b"
 _MARKED = re.compile(r"[*]|\(\s*\*+\s*\)")
 
 
+# "Etat" is the State and also the opening of an accounting caption: "etat de
+# flux de tresorerie", "etat des engagements hors bilan", "etat de resultat".
+# Financial statements sit in the same filings as the ownership tables, so
+# without this guard the cash-flow statement is classified as the Tunisian
+# state and enters the network as a shareholder.
+_ETAT_ACCOUNTING = re.compile(
+    r"^\s*etats?\s+(de|des|du|d)\s+"
+    r"(flux|engagement|resultat|situation|rapprochement|variation|"
+    r"synthese|solde|compte|tresorerie|charge|produit)"
+)
+
 def is_not_an_entity(name: str) -> bool:
     """True for cells that name a place, a period or a company organ.
 
@@ -163,6 +175,10 @@ def is_not_an_entity(name: str) -> bool:
     if _ORGAN_PHRASE.match(n) or _ORGAN_PHRASE.match(_LEADING_ITEM_NUMBER.sub("", n)):
         return True
     if _STATUS_PHRASE.match(n):
+        return True
+    # "Etat de flux de tresorerie", "Etat des engagements hors bilan": the
+    # caption of a financial statement, not the State and not an actor.
+    if _ETAT_ACCOUNTING.match(n):
         return True
     if _CORPORATE_WORD.search(n):
         return False
@@ -309,7 +325,7 @@ def classify(name: str, *, hint: str | None = None) -> str:
         return "unknown"
     if _PUBLIC_LABEL.match(n) or _is_spaced_aggregate(n):
         return "aggregate"
-    if _RE_STATE.search(n):
+    if _RE_STATE.search(n) and not _ETAT_ACCOUNTING.match(n):
         return "state"
     if _RE_FUND.search(n):
         return "fund"
