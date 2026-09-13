@@ -614,7 +614,7 @@ def run(events_path: Path | None = None) -> dict:
         if org_men not in org_cache:
             org_cache[org_men] = org_match(org_men, idx)
         om = org_cache[org_men]
-        org_resolved = om.org_id if (om.is_identity and om.score >= 0.88) else ""
+        org_resolved = om.org_id if om.is_identity else ""
         org_score, org_basis = om.score, om.basis
         if not org_resolved:
             stats[f"org_refused_{om.basis}"] = stats.get(
@@ -626,13 +626,35 @@ def run(events_path: Path | None = None) -> dict:
             stats["org_resolved"] += 1
             stats[f"org_by_{org_basis}"] = stats.get(f"org_by_{org_basis}", 0) + 1
 
+        # The ANCHOR is a separate question from the IDENTITY, and conflating
+        # them cost 372 resolved dyads, 854 spells and 7,171 panel rows --
+        # data removal, under a brief that forbade it.
+        #
+        # Person resolution is dyad-anchored: a candidate is only credited
+        # when the organisation agrees between two mentions. That test needs
+        # the two mentions to land on the SAME organisation, not on a
+        # defensible one, so a generic match serves it perfectly well while
+        # still being refused as an identity claim. And it was never the
+        # problem here: only 258 of 10,844 resolved dyads (2.4%) were anchored
+        # on a merge hub, precisely because the dyad requirement already
+        # filters what a bad organisation match can do on the person side.
+        #
+        # So the anchor keeps the candidate the gate refused, and
+        # `resolved_org_id` keeps only identity-grade links. The organisation
+        # vertex a spell lands on comes from the entity either way.
+        org_anchor = org_resolved or (
+            om.candidate_id if om.score >= THRESHOLD_ORG_IDENTITY else "")
+        if org_anchor and not org_resolved:
+            stats["org_anchored_on_refused_candidate"] = stats.get(
+                "org_anchored_on_refused_candidate", 0) + 1
+
         co_mentions = set()
         for b in d["blocks"]:
             co_mentions |= (block_people.get(b, set()) - {person})
 
         role = next(iter(d["roles"]), "")
-        cands = candidates_for(person, org_resolved, idx)
-        scored = [score_pair(person, c, org_resolved, org_score,
+        cands = candidates_for(person, org_anchor, idx)
+        scored = [score_pair(person, c, org_anchor, org_score,
                              bool(by_id),
                              co_mentions, role, idx)
                   for c in cands]

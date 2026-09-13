@@ -1,6 +1,6 @@
 # Codebook
 
-Generated 2026-09-12 by `python -m elitenet.codebook`. Do not edit by hand: column lists and counts are read from the data, and vocabularies from `config/`, so this file cannot drift from the dataset.
+Generated 2026-09-13 by `python -m elitenet.codebook`. Do not edit by hand: column lists and counts are read from the data, and vocabularies from `config/`, so this file cannot drift from the dataset.
 
 ## Scope
 
@@ -212,6 +212,10 @@ One row per (person mention, organisation mention) dyad, with the score componen
 | `org_mention` |  |
 | `org_mf` |  |
 | `org_rc` |  |
+| `org_match_score` |  |
+| `org_match_basis` |  |
+| `org_candidate_id` |  |
+| `org_shared_tokens` |  |
 | `resolved_person_id` |  |
 | `resolved_person_label` |  |
 | `resolved_org_id` |  |
@@ -246,7 +250,7 @@ One row per (person mention, organisation mention) dyad, with the score componen
 
 ### `review_queue.csv`
 
-4,832 rows.
+4,131 rows.
 
 Ambiguous dyads ordered by how consequential they are (seed degree and event count), for hand coding. These are cases the matcher declines to decide, not cases it got wrong.
 
@@ -257,6 +261,10 @@ Ambiguous dyads ordered by how consequential they are (seed degree and event cou
 | `org_mention` |  |
 | `org_mf` |  |
 | `org_rc` |  |
+| `org_match_score` |  |
+| `org_match_basis` |  |
+| `org_candidate_id` |  |
+| `org_shared_tokens` |  |
 | `resolved_person_id` |  |
 | `resolved_person_label` |  |
 | `resolved_org_id` |  |
@@ -291,7 +299,7 @@ Ambiguous dyads ordered by how consequential they are (seed degree and event cou
 
 ### `gazette_only_persons.csv`
 
-249,333 rows.
+249,457 rows.
 
 People named in the gazette who match no seed person. The seed sheet is an elite snapshot while the gazette covers every registered company, so these are mostly non-elite — but they are also where new elite entrants would appear, which is why they are kept.
 
@@ -307,7 +315,7 @@ People named in the gazette who match no seed person. The seed sheet is an elite
 
 ### `spells.csv`
 
-40,616 rows.
+40,185 rows.
 
 Person-organisation-role ties as intervals. `onset`/`terminus` are point estimates; the `_lo`/`_hi` columns carry what is actually known. The certain core of a spell is [onset_hi, terminus_lo].
 
@@ -347,7 +355,7 @@ Person-organisation-role ties as intervals. `onset`/`terminus` are point estimat
 
 ### `spell_observations.csv`
 
-15,749 rows.
+15,110 rows.
 
 Every dated observation attached to a spell. An `obs_kind` of `confirmation` or `renewal` proves the tie existed at that moment without asserting when it began.
 
@@ -361,7 +369,7 @@ Every dated observation attached to a spell. An `obs_kind` of `confirmation` or 
 
 ### `panel_edges_yearly.csv`
 
-143,037 rows.
+141,399 rows.
 
 Ties active in each calendar year, with an explicit `certainty`.
 
@@ -381,7 +389,7 @@ Ties active in each calendar year, with an explicit `certainty`.
 
 ### `panel_edges_monthly.csv`
 
-339,594 rows.
+334,727 rows.
 
 As above at monthly resolution, because the January 2011 rupture is invisible at annual resolution.
 
@@ -401,7 +409,7 @@ As above at monthly resolution, because the January 2011 rupture is invisible at
 
 ### `org_ties.csv`
 
-3,104 rows.
+4,018 rows.
 
 Organisation-to-organisation observations, one row per resolved (holder, target, relation) assertion. Both endpoints must resolve to **distinct** seed organisations; a mention resolving to the subject firm is a self-tie and is dropped rather than counted.
 
@@ -429,10 +437,14 @@ Organisation-to-organisation observations, one row per resolved (holder, target,
 | `issue_uid` |  |
 | `folio_page` | Printed page number, as cited in scholarship. Not the OCR page index. |
 | `extract_confidence` |  |
+| `holder_basis` |  |
+| `target_basis` |  |
+| `holder_seed_id` |  |
+| `target_seed_id` |  |
 
 ### `org_tie_spells.csv`
 
-6,928 rows.
+8,178 rows.
 
 The org-org layer as intervals, in the same vocabulary as `spells.csv`. It is a **separate, one-mode, directed** layer: adding these rows to `spells.csv` would silently break every two-mode term in the TERGM panel. `evidence_tier` separates gazette-dated spells from the undated seed ties carried alongside them. Read `docs/ORG-TIES-multiplex.md` before modelling: the dominant clause confirms a standing holding rather than dating its start, so onsets here are overwhelmingly left-censored.
 
@@ -467,7 +479,7 @@ The org-org layer as intervals, in the same vocabulary as `spells.csv`. It is a 
 
 ### `panel_org_ties_yearly.csv`
 
-45,948 rows.
+65,548 rows.
 
 The org-org layer by calendar year, the input to `R/build_org_ownership.R`.
 
@@ -488,7 +500,7 @@ The org-org layer by calendar year, the input to `R/build_org_ownership.R`.
 
 ### `org_ties_review_queue.csv`
 
-10,586 rows.
+10,621 rows.
 
 Org-org observations a human has to settle. `queue_reason` separates a dyad whose link score landed in the ambiguous band from the far larger set with **one end resolved**: there the resolved end anchors the dyad and only a single name is in question, so `failed_mention`, `near_org_label` and `near_score` carry what the coder needs.
 
@@ -516,6 +528,10 @@ Org-org observations a human has to settle. `queue_reason` separates a dyad whos
 | `issue_uid` |  |
 | `folio_page` | Printed page number, as cited in scholarship. Not the OCR page index. |
 | `extract_confidence` |  |
+| `holder_basis` |  |
+| `target_basis` |  |
+| `holder_seed_id` |  |
+| `target_seed_id` |  |
 | `queue_reason` |  |
 | `failed_end` |  |
 | `failed_mention` |  |
@@ -523,9 +539,53 @@ Org-org observations a human has to settle. `queue_reason` separates a dyad whos
 | `near_org_label` |  |
 | `near_score` |  |
 
+### `org_entities.csv`
+
+230,023 rows.
+
+**The unit of analysis for an organisation.** One row per firm as this corpus can distinguish it, keyed in priority order on the normalised matricule fiscal, then the registre-de-commerce number, then the normalised mention. Identity used to be *the seed node a mention fuzzy-matched*, and `fuzz.token_set_ratio` treats containment as identity, so a seed firm whose label normalised to `TROIS` -- the French for three -- absorbed every mention containing that word and became the highest-degree organisation in the org-org layer. Keying on a hard identifier splits those hubs and simultaneously *joins* spelling variants, since one matricule often covers several. `seed_org_id` retains the seed link and `seed_match_basis` says what it rests on, so the previous view is exactly reproducible. `is_identity = 0` marks an entity that is retained but claims to identify nothing -- a mention carrying several matricules with no identifier on this event.
+
+| column | note |
+| --- | --- |
+| `org_entity_id` |  |
+| `entity_basis` |  |
+| `entity_key` |  |
+| `n_keys` |  |
+| `label` |  |
+| `n_mentions` |  |
+| `n_events` |  |
+| `first_seen` |  |
+| `last_seen` |  |
+| `matricule` |  |
+| `rc` |  |
+| `seed_org_id` |  |
+| `seed_org_label` |  |
+| `seed_match_basis` |  |
+| `seed_link_is_identity` |  |
+| `is_identity` |  |
+| `issue_uid` |  |
+
+### `org_entity_members.csv`
+
+296,795 rows.
+
+Mention to entity, one row per distinct organisation mention, so every mention is accounted for and none is silently orphaned — the validator checks exactly that. The map is **modal** where a mention spans several entities (`n_entities_on_mention > 1`); the per-event key in `orgentity.entity_key` is authoritative.
+
+| column | note |
+| --- | --- |
+| `org_mention` |  |
+| `org_entity_id` |  |
+| `entity_basis` |  |
+| `n_events` |  |
+| `mention_is_ambiguous` |  |
+| `n_identifiers_on_mention` |  |
+| `n_entities_on_mention` |  |
+| `seed_org_id` |  |
+| `seed_match_basis` |  |
+
 ### `org_identifiers.csv`
 
-37,600 rows.
+123,535 rows.
 
 Hard identifiers per organisation: the matricule fiscal and the registre-de-commerce number, one row per (organisation, kind, value). These are **stable** attributes -- a firm keeps them -- which is why `is_conflicting = 1` is a defect rather than a change over time: it means the node holds two values of an identifier a firm has one of. A one-character difference is OCR; a wholly different value is an organisation-resolution merge, and every tie on that node is then suspect. See `docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md`.
 
@@ -533,6 +593,7 @@ Hard identifiers per organisation: the matricule fiscal and the registre-de-comm
 | --- | --- |
 | `org_id` |  |
 | `org_label` |  |
+| `org_entity_id` |  |
 | `id_type` |  |
 | `value_normalised` |  |
 | `value_raw` |  |
@@ -548,7 +609,7 @@ Hard identifiers per organisation: the matricule fiscal and the registre-de-comm
 
 ### `org_addresses.csv`
 
-67,014 rows.
+230,952 rows.
 
 Stated seats, one row per (organisation, normalised address, kind), dated. **Time-varying**, unlike the identifiers: `obs_kind` is `moved_to` where the address is the destination named in a transfer clause and `stated` where it is the seat as printed. Aggregated on the normalised form, because casing, accents and the street abbreviation vary between two printings of one address and comparing raw strings would report a move that never happened.
 
@@ -556,6 +617,7 @@ Stated seats, one row per (organisation, normalised address, kind), dated. **Tim
 | --- | --- |
 | `org_id` |  |
 | `org_label` |  |
+| `org_entity_id` |  |
 | `address_raw` |  |
 | `address_normalised` |  |
 | `postal_code` |  |
@@ -577,7 +639,7 @@ Written by `make tergm`. These are the yearly panel re-indexed for a temporal ER
 
 ### `node_key.csv`
 
-13,152 rows.
+13,235 rows.
 
 **Mode-blocked** vertex key for the TERGM panel: persons take ids 1..n1 and organisations n1+1..n, which is what makes `bipartite = n1` a true statement about the ordering. `label_suspect` marks a vertex whose name is not a firm name (an address, a role fragment, a clause) and which should probably be excluded.
 
@@ -595,7 +657,7 @@ Written by `make tergm`. These are the yearly panel re-indexed for a temporal ER
 
 ### `edges_yearly.csv`
 
-130,084 rows.
+129,196 rows.
 
 The yearly panel re-indexed to bipartite vertex ids and reduced to **binary** ties: two roles in one firm in one year is two panel rows and one tie, with the roles preserved pipe-joined. `dissolution_observed` marks the minority of ties actually seen to end, as opposed to right-censored.
 
@@ -611,7 +673,7 @@ The yearly panel re-indexed to bipartite vertex ids and reduced to **binary** ti
 
 ### `vertex_activity_yearly.csv`
 
-920,640 rows.
+926,450 rows.
 
 The risk set. An organisation is active between its constitution and dissolution, widened where needed to cover a period in which it demonstrably holds a tie, so activity is always one contiguous interval. `birth_known = 0` means left-censored and at risk from the window start. Persons are active throughout: the gazette records appointments, not births.
 
@@ -627,7 +689,7 @@ The risk set. An organisation is active between its constitution and dissolution
 
 ### `node_attrs_yearly.csv`
 
-920,640 rows.
+926,450 rows.
 
 Per-period nodal covariates, rectangular by construction (every vertex appears in every period, isolates included). Use `cum_degree_lag` rather than `cum_degree` in `nodecov`: degree measured at t is a function of the ties being modelled at t.
 
@@ -649,7 +711,7 @@ Per-period nodal covariates, rectangular by construction (every vertex appears i
 
 ### `dyad_cov_yearly.csv`
 
-440,012 rows.
+345,317 rows.
 
 Dyadic covariates as **sparse triplets** -- dense would be 2,592 x 2,915 per covariate per period. Projected from the seed sheet's undated kinship and shareholding ties, which is what makes them exogenous. `kin_in_org`, `owner_of` and `prior_comembership` are lagged to t-1 and so are absent in the first period; `is_shareholder` needs no lag and is present in all of them.
 

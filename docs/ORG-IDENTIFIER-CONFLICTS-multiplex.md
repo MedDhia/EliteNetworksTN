@@ -1,6 +1,6 @@
 # Organisation identifier conflicts
 
-Generated 2026-09-12 by `make orgattrs`.
+Generated 2026-09-13 by `make orgattrs`.
 
 A matricule fiscal and a registre-de-commerce number are hard
 identifiers: a firm has one of each. An organisation node carrying two
@@ -22,12 +22,12 @@ identifier worth recording even when it is never used as a variable.
 
 | kind | organisations affected |
 | --- | --- |
-| matricule_fiscal | 2805 of 7513 carrying one (37%) |
-| registre_commerce | 1443 of 4762 carrying one (30%) |
+| matricule_fiscal | 2107 of 79587 carrying one (3%) |
+| registre_commerce | 2046 of 33782 carrying one (6%) |
 
-Of 4248 conflicts, **3638 read as merges** and 610 as OCR damage.
+Of 4153 conflicts over **3364 organisations**, **3065 read as merges** and 1088 as OCR damage. A conflict is one (organisation, identifier kind) pair, so a node with a bad matricule *and* a bad RC number counts twice here and once in that organisation total.
 
-The distribution is not what a metadata problem looks like. The worst node, **LA CONSULTING**, carries **1606 distinct matricule fiscal values** over 3739 observations, with its modal value accounting for only 0% of them. That is not one registration misread; it is a generic name fragment that every firm beginning with those words resolves onto.
+The distribution is not what a metadata problem looks like. The worst node, **SOCIETE M**, carries **154 distinct matricule fiscal values** over 374 observations, with its modal value accounting for only 3% of them. That is not one registration misread; it is a generic name fragment that every firm beginning with those words resolves onto.
 
 **So the dominant failure in organisation resolution is the generic-name merge, not fuzzy-match noise.** A node like that does not degrade a variable — it fabricates a hub, and any centrality computed over it is meaningless. Treat the merge rows below as a blocklist: exclude those nodes, or split them, before using organisation-level structure.
 
@@ -37,405 +37,405 @@ Classifying these on the distance between the two closest values was the first a
 
 | organisation | identifier | values | modal share | reads as | most-observed values |
 | --- | --- | --- | --- | --- | --- |
-| LA CONSULTING | matricule_fiscal | 1606 | 0% | merge | `761845Y` (15), `993206J` (15), `1045760M` (13), `1194793B` (12), `1086710C` (11), … +1601 more |
-| SOCIETE GENERALE | matricule_fiscal | 647 | 1% | merge | `1441813R` (17), `1009170Q` (15), `539187R` (15), `614671Y` (15), `868250M` (14), … +642 more |
-| BATIMENT + | matricule_fiscal | 635 | 1% | merge | `992233H` (17), `42888H` (14), `934991S` (14), `974426N` (12), `1351489Z` (10), … +630 more |
-| SA CONFECTION | matricule_fiscal | 532 | 1% | merge | `969630G` (20), `1068488P` (16), `623108A` (13), `1151391B` (12), `28703X` (12), … +527 more |
-| GM DISTRIBUTION | matricule_fiscal | 500 | 1% | merge | `942468Z` (16), `10755245N` (14), `961902C` (13), `1030966Y` (12), `1061369C` (11), … +495 more |
-| SOCIETE LE CONSEIL | matricule_fiscal | 377 | 5% | merge | `503855N` (57), `5905G` (29), `1022914N` (26), `1055931T` (22), `245588W` (16), … +372 more |
-| LA CONSULTING | registre_commerce | 318 | 2% | merge | `B2421992009` (13), `B24114492009` (11), `B01229492012` (8), `B01229502012` (8), `B01234272013` (8), … +313 more |
-| AS DISTRIBUTION | matricule_fiscal | 301 | 2% | merge | `943751D` (17), `1058118J` (15), `505875B` (15), `1125286C` (14), `1050387V` (12), … +296 more |
-| SOCIETE GENERALE | registre_commerce | 272 | 2% | merge | `B118591997` (20), `B1140791997` (16), `B2459652006` (16), `B0388692008` (14), `B1177522009` (12), … +267 more |
-| DESIGN | matricule_fiscal | 254 | 4% | merge | `1028699C` (26), `1053081R` (14), `737651Z` (11), `1075262P` (8), `1261336F` (8), … +249 more |
-| BEST | matricule_fiscal | 240 | 4% | merge | `103539B` (28), `1098673E` (12), `851938D` (12), `1385253N` (9), `1419832N` (9), … +235 more |
-| SOCIETE NOUR | matricule_fiscal | 215 | 2% | merge | `986698B` (14), `1027384F` (12), `1255303H` (10), `620582L` (10), `1153975E` (9), … +210 more |
-| V PRODUCTION | matricule_fiscal | 209 | 5% | merge | `804219N` (26), `784074H` (11), `1062872S` (8), `3000N` (8), `1009060K` (7), … +204 more |
-| SOCIETE TOURISTIQUE | matricule_fiscal | 206 | 2% | merge | `341715B` (17), `389148Y` (16), `40782P` (13), `1091895M` (12), `10973D` (12), … +201 more |
-| R INDUSTRIE | matricule_fiscal | 196 | 3% | merge | `220007C` (14), `445129M` (13), `381721W` (12), `1026883R` (10), `962324T` (10), … +191 more |
-| Y SOLUTIONS | matricule_fiscal | 194 | 2% | merge | `1377242N` (8), `539876L` (8), `1145993K` (5), `1202048X` (5), `1226482Q` (5), … +189 more |
-| SA CONFECTION | registre_commerce | 191 | 4% | merge | `B1114371996` (20), `1111931996` (16), `B150892002` (12), `B131051999` (10), `B15176842010` (8), … +186 more |
-| SOCIETE TOURISTIQUE | registre_commerce | 188 | 5% | merge | `B0936852004` (33), `B180221997` (23), `B147961997` (22), `B197141996` (18), `B110781199` (15), … +183 more |
-| UB ENGINEERING | matricule_fiscal | 176 | 2% | merge | `1161351Y` (9), `1130357J` (8), `11333251N` (7), `1290623X` (7), `871525W` (7), … +171 more |
-| GM DISTRIBUTION | registre_commerce | 165 | 4% | merge | `B0154512012` (20), `B1163071997` (12), `B160462000` (12), `B183411996` (12), `B1681997` (10), … +160 more |
-| CONCEPT | matricule_fiscal | 163 | 3% | merge | `1045318X` (13), `1063172Z` (12), `1030163T` (10), `747035K` (8), `1371819H` (7), … +158 more |
-| SOCIETE ONS DE TRAVAUX PUBLICS | matricule_fiscal | 160 | 3% | merge | `620694T` (12), `1450454P` (9), `1393510H` (8), `827397F` (7), `980466K` (7), … +155 more |
-| DECO | matricule_fiscal | 157 | 5% | merge | `913236X` (20), `1076287D` (19), `1193140N` (10), `1424659C` (7), `1193237X` (6), … +152 more |
-| SOCIETE M | matricule_fiscal | 154 | 2% | merge | `1293190F` (8), `1214095T` (7), `992132D` (7), `1387182Z` (6), `1194059B` (5), … +149 more |
-| BM INTERNATIONAL TRADING | matricule_fiscal | 150 | 3% | merge | `1390293F` (10), `1099614X` (8), `13448286P` (8), `1189215L` (6), `1437753S` (6), … +145 more |
-| BATIMENT + | registre_commerce | 146 | 4% | merge | `B2445732005` (14), `A0559062006` (12), `B177791996` (7), `B2469892011` (7), `B26166382013` (7), … +141 more |
-| SOCIETE DE MATERIAUX DE CONSTRUCTION SMC | matricule_fiscal | 140 | 4% | merge | `320570M` (14), `981726Q` (13), `1062286E` (12), `939553V` (10), `1219833B` (8), … +135 more |
-| SOCIETE EL-BARAKA | matricule_fiscal | 134 | 6% | merge | `708583S` (19), `827657G` (10), `964532J` (9), `908322K` (8), `349694Z` (7), … +129 more |
-| SOCIETE LE CONSEIL | registre_commerce | 134 | 4% | merge | `D081862008` (22), `B1135031997` (19), `B138811996` (17), `B0123702007` (15), `B130221998` (15), … +129 more |
-| DELTA | matricule_fiscal | 128 | 3% | merge | `779069W` (12), `794378W` (10), `1083337N` (8), `1153341Z` (8), `1180006P` (8), … +123 more |
-| SOCIETE LE METAL | matricule_fiscal | 126 | 2% | merge | `601807C` (7), `718879M` (7), `1079342F` (6), `17565W` (6), `967804C` (6), … +121 more |
-| SOCIETE DE PROMOTION IMMOBILIERE | matricule_fiscal | 119 | 9% | merge | `754848J` (32), `719356S` (18), `570983W` (16), `833596Z` (12), `437566J` (11), … +114 more |
-| SOCIETE IS TECHNOLOGIE | matricule_fiscal | 111 | 4% | merge | `1071410Q` (9), `745486B` (7), `1015298V` (5), `1356120N` (5), `1402737E` (5), … +106 more |
-| SOCIETE DE PROMOTION IMMOBILIERE | registre_commerce | 105 | 6% | merge | `B110002001` (21), `B151252000` (14), `B1117961997` (12), `B1147261997` (10), `B149702000` (9), … +100 more |
-| 2M INFORMATIQUE | matricule_fiscal | 100 | 4% | merge | `1067564E` (10), `1070998D` (9), `24485P` (7), `1032633M` (6), `1046173C` (6), … +95 more |
-| GLOBAL SERVICES | matricule_fiscal | 97 | 5% | merge | `926133J` (11), `1211478S` (5), `1226630J` (5), `1242378K` (5), `1186036X` (4), … +92 more |
-| LE CONFORT | matricule_fiscal | 96 | 4% | merge | `1142832E` (9), `983192Q` (8), `924957K` (7), `1349517P` (6), `1062378H` (5), … +91 more |
-| SOLUTION T | matricule_fiscal | 93 | 4% | merge | `1075110Y` (8), `1179895S` (6), `1338269H` (6), `1434623V` (6), `1210274C` (5), … +88 more |
-| SOCIETE TRAVAUX ET SERVICES | matricule_fiscal | 90 | 7% | merge | `943168T` (16), `921771N` (10), `1043101X` (8), `1175186B` (7), `1328631A` (7), … +85 more |
-| R INDUSTRIE | registre_commerce | 88 | 5% | merge | `B152541998` (15), `B2425942007` (14), `B15203632010` (13), `B13952002` (12), `B138841997` (8), … +83 more |
-| AS DISTRIBUTION | registre_commerce | 84 | 6% | merge | `B0149222008` (15), `B0321942004` (15), `B2422011` (10), `B039222009` (8), `B03181762010` (7), … +79 more |
-| LA RESIDENCE | matricule_fiscal | 83 | 6% | merge | `36022Z` (17), `17216B` (13), `1461981T` (10), `1269034D` (9), `20074F` (9), … +78 more |
-| SOCIETE YASMINE | matricule_fiscal | 83 | 6% | merge | `588259N` (10), `539563W` (7), `960267T` (7), `1259329L` (6), `1280926E` (6), … +78 more |
-| SOCIETE DE SERVICES DE TUNISIE | matricule_fiscal | 81 | 7% | merge | `917973S` (16), `1063373G` (14), `1285193M` (7), `1127501Y` (6), `1328394G` (6), … +76 more |
-| V PRODUCTION | registre_commerce | 79 | 5% | merge | `B08170952013` (12), `B141032002` (11), `B1577582007` (8), `B2471642008` (8), `B1126011997` (7), … +74 more |
-| STEG INTERNATIONAL SERVICES | matricule_fiscal | 78 | 6% | merge | `1319461Z` (16), `830641Y` (12), `1031244Y` (10), `1473178M` (9), `1125346X` (8), … +73 more |
-| SOCIETE LE CLUB | matricule_fiscal | 77 | 7% | merge | `761810L` (16), `967482E` (8), `1175993B` (7), `633884R` (7), `910774G` (7), … +72 more |
-| SOCIETE NOUR | registre_commerce | 76 | 4% | merge | `B2478702007` (9), `B25126702012` (8), `B150052001` (7), `B27103612010` (7), `B51118782013` (6), … +71 more |
-| N TRAINING | matricule_fiscal | 75 | 3% | merge | `1060511K` (5), `1419069B` (5), `1304313K` (4), `561264T` (4), `1041840T` (3), … +70 more |
-| LE SANITAIRE | matricule_fiscal | 74 | 7% | merge | `382465D` (19), `1310922T` (17), `1188187W` (14), `635649Q` (14), `740351P` (13), … +69 more |
-| SMAG | matricule_fiscal | 72 | 7% | merge | `953145R` (9), `1143469K` (5), `1211768A` (3), `1242010D` (3), `1439003S` (3), … +67 more |
-| SOFTWARE SA | matricule_fiscal | 71 | 6% | merge | `1236582Z` (12), `1085475G` (8), `1266489V` (7), `1044093V` (6), `1312792L` (6), … +66 more |
-| BEST | registre_commerce | 70 | 6% | merge | `B2435342009` (10), `B0243322005` (8), `B151832003` (7), `B24148832011` (6), `B113462003` (5), … +65 more |
-| SOCIETE DE CONSULTING ET DE SERVICES | matricule_fiscal | 70 | 3% | merge | `1251944V` (4), `1413097E` (4), `1023641L` (3), `1201450Z` (3), `1225279K` (3), … +65 more |
-| ARC EN CIEL | matricule_fiscal | 61 | 6% | merge | `1357169L` (7), `775642L` (7), `1244934A` (6), `1112658S` (5), `1065233D` (4), … +56 more |
-| BB | matricule_fiscal | 61 | 5% | merge | `958835J` (6), `1161062R` (3), `975694M` (3), `1084410J` (2), `1139737G` (2), … +56 more |
-| SOCIETE CONTACT | matricule_fiscal | 60 | 9% | merge | `1408057M` (17), `613851W` (13), `926008E` (13), `1047041V` (10), `47218V` (8), … +55 more |
-| GS COMPANY INTERNATIONAL | matricule_fiscal | 59 | 6% | merge | `1451853F` (8), `1426076S` (6), `1072718N` (3), `1135723H` (3), `1172581W` (3), … +54 more |
-| SOCIETE ESSADAKA DE BATIMENTS ET DE TRAVAUX PUBLIQUES EN ETAT DE LIQUIDATION | matricule_fiscal | 59 | 13% | merge | `3783G` (18), `1328549H` (9), `1326750Y` (8), `1052401H` (5), `1075771G` (4), … +54 more |
-| BATIMENT ET TRAVAUX PUBLICS | matricule_fiscal | 58 | 13% | merge | `953342V` (21), `1414945A` (9), `566198Y` (7), `1155454R` (6), `1544079E` (6), … +53 more |
-| DESIGN | registre_commerce | 57 | 7% | merge | `B116372002` (11), `B24155782012` (8), `B0387272008` (6), `B2552512012` (6), `B0124622008` (5), … +52 more |
-| AB CORPORATION | matricule_fiscal | 56 | 16% | merge | `1031794A` (25), `970037L` (9), `1027497P` (6), `1341094C` (5), `760581N` (5), … +51 more |
-| AUTO PIECES | matricule_fiscal | 54 | 4% | merge | `1376937K` (5), `1172428M` (4), `1461492F` (4), `1604770C` (4), `790579L` (4), … +49 more |
-| SOCIETE DE PRODUITS ALIMENTAIRES SPA | matricule_fiscal | 54 | 5% | merge | `620700Y` (6), `988334H` (6), `1459101E` (5), `1269783L` (4), `1037019R` (3), … +49 more |
-| OASIS | matricule_fiscal | 53 | 12% | merge | `1064105R` (20), `885095S` (13), `1315534G` (10), `1174346V` (9), `1489912A` (7), … +48 more |
-| SOCIETE ESSADAKA DE BATIMENTS ET DE TRAVAUX PUBLIQUES EN ETAT DE LIQUIDATION | registre_commerce | 52 | 20% | merge | `B147451996` (31), `B110141996` (8), `B1101501997` (8), `B01229652013` (6), `B2536192008` (5), … +47 more |
-| UB ENGINEERING | registre_commerce | 52 | 10% | merge | `B2416272004` (13), `B1855902005` (7), `B2410882007` (7), `A0281862005` (6), `B0358942013` (5), … +47 more |
-| Z PRODUCTION | matricule_fiscal | 52 | 7% | merge | `1030990Y` (11), `1320454R` (10), `579934A` (9), `940993H` (9), `842838Z` (7), … +47 more |
-| SOCIETE GENERALE TRAVAUX | matricule_fiscal | 51 | 5% | merge | `1245624S` (7), `960966Q` (6), `1247675N` (5), `1567658S` (5), `1118876C` (4), … +46 more |
-| ENTREPRISE EL-AMEN | matricule_fiscal | 50 | 10% | merge | `718584Z` (18), `1176119T` (15), `973190H` (12), `633754G` (11), `513415X` (10), … +45 more |
-| SOCIETE LE METAL | registre_commerce | 50 | 9% | merge | `B2748222004` (10), `B168032000` (6), `B117621999` (5), `B181212000` (5), `B08214662012` (4), … +45 more |
-| CONCEPT | registre_commerce | 49 | 10% | merge | `A0266122006` (13), `A0172742005` (7), `B02133132009` (7), `B02206862014` (7), `B019102013` (6), … +44 more |
-| SOCIETE EL-BARAKA | registre_commerce | 49 | 8% | merge | `B111232003` (10), `B07114662009` (9), `B140282003` (8), `B163411996` (7), `B2434482007` (5), … +44 more |
-| SOCIETE TROIS | matricule_fiscal | 49 | 8% | merge | `1109574P` (10), `1350285J` (9), `874678B` (7), `1158668S` (6), `1257666S` (6), … +44 more |
-| MANUFACTURE | matricule_fiscal | 47 | 7% | merge | `45372W` (8), `1321919J` (5), `1492491A` (5), `2961C` (5), `847871X` (5), … +42 more |
-| SOCIETE DE MATERIAUX DE CONSTRUCTION SMC | registre_commerce | 46 | 9% | merge | `B2450432005` (12), `A2675872005` (10), `B1105061997` (6), `A0821942005` (5), `B150501996` (5), … +41 more |
-| SOCIETE LIFE | matricule_fiscal | 46 | 24% | merge | `578800G` (34), `1504731N` (6), `1487549S` (5), `926524W` (5), `1119027W` (4), … +41 more |
-| FARAH | matricule_fiscal | 43 | 10% | merge | `38228W` (10), `808998V` (5), `843718W` (5), `930752L` (4), `1108075V` (3), … +38 more |
-| RAYEN | matricule_fiscal | 43 | 4% | merge | `1217172C` (4), `1288532Z` (3), `1365752S` (3), `1488987R` (3), `1519342F` (3), … +38 more |
-| IT DEVELOPMENT | matricule_fiscal | 42 | 5% | merge | `1022492E` (4), `1206230K` (3), `1236884L` (3), `1265868Y` (3), `978911P` (3), … +37 more |
-| LE CONFORT | registre_commerce | 42 | 11% | merge | `B139842001` (12), `B121832000` (9), `A0233582007` (7), `B131442003` (6), `B2457792010` (5), … +37 more |
-| LM INFORMATIQUE | matricule_fiscal | 42 | 5% | merge | `1023991G` (5), `1275568T` (4), `1412315Q` (4), `539645X` (4), `1041287Q` (3), … +37 more |
-| SOCIETE LINA | matricule_fiscal | 42 | 6% | merge | `1477399R` (5), `1120674P` (4), `1134770L` (4), `969927X` (3), `994398N` (3), … +37 more |
-| SOCIETE AMEL | matricule_fiscal | 40 | 14% | merge | `1005164A` (15), `315719G` (7), `11172F` (6), `44862F` (6), `884116A` (4), … +35 more |
-| BM INTERNATIONAL TRADING | registre_commerce | 39 | 7% | merge | `B2436882009` (8), `B25107542009` (7), `B0118922014` (5), `B0268932007` (5), `B09162822013` (5), … +34 more |
-| ELITE + | matricule_fiscal | 39 | 7% | merge | `1415101Q` (5), `1452898Z` (3), `1836128T` (3), `1160652E` (2), `1224291B` (2), … +34 more |
-| PRESTIGE | matricule_fiscal | 39 | 11% | merge | `1014573Q` (10), `1025936H` (7), `1198362Y` (5), `1286812W` (4), `340668H` (4), … +34 more |
-| SOCIETE ONS DE TRAVAUX PUBLICS | registre_commerce | 39 | 11% | merge | `B0210922004` (14), `B111081999` (12), `B138161996` (9), `B0172452016` (7), `B0162942016` (5), … +34 more |
-| AMANA | matricule_fiscal | 38 | 6% | merge | `1437026R` (6), `1082302X` (5), `504321Q` (5), `1208857A` (4), `10761959W` (3), … +33 more |
-| AZUR | matricule_fiscal | 38 | 11% | merge | `1076765N` (11), `1088572V` (5), `1465044B` (5), `1383227C` (4), `745443P` (4), … +33 more |
-| DELTA | registre_commerce | 38 | 10% | merge | `B245302009` (12), `B0129522005` (7), `B5142002014` (7), `B0419762012` (6), `B115761999` (6), … +33 more |
-| SOCIETE BAYA | matricule_fiscal | 38 | 6% | merge | `1152664M` (5), `1270226B` (5), `1276556T` (3), `1366721P` (3), `1540683C` (3), … +33 more |
-| SOCIETE BW TRADE COMPANY | matricule_fiscal | 38 | 12% | merge | `924654X` (11), `1476721B` (7), `1327135J` (4), `1443069R` (4), `1236523M` (3), … +33 more |
-| SOCIETE EVENT | matricule_fiscal | 38 | 14% | merge | `816663R` (15), `795140D` (9), `1477001D` (6), `1481965E` (5), `1113398W` (4), … +33 more |
-| SOCIETE GOLD | matricule_fiscal | 38 | 9% | merge | `1236162G` (8), `1014821M` (4), `1430009K` (4), `1481050S` (4), `995545K` (4), … +33 more |
-| SOCIETE UNIQUE | matricule_fiscal | 38 | 24% | merge | `947693D` (26), `431699A` (7), `2309D` (6), `965502G` (4), `1074529T` (3), … +33 more |
-| Y SOLUTIONS | registre_commerce | 37 | 8% | merge | `B0156442013` (8), `B51234562014` (8), `B187332007` (7), `B016112007` (5), `B0329332007` (5), … +32 more |
-| LA RESIDENCE | registre_commerce | 36 | 15% | merge | `B182181999` (18), `B148441997` (9), `B152252000` (8), `B1941932017` (7), `B01224482015` (5), … +31 more |
-| SOCIETE BLUE TRADE INTERNATIONAL | matricule_fiscal | 36 | 10% | merge | `1109651K` (9), `47958B` (6), `1032082C` (4), `1282823G` (4), `1125064P` (3), … +31 more |
-| EL WAFA | matricule_fiscal | 35 | 8% | merge | `718579C` (6), `1385448Y` (4), `1042438A` (3), `382843K` (3), `945342Y` (3), … +30 more |
-| SAAD | matricule_fiscal | 35 | 8% | merge | `779285C` (5), `1192202F` (4), `1195307C` (4), `1537449T` (4), `1435000X` (3), … +30 more |
-| SOCIETE MEGA | matricule_fiscal | 35 | 8% | merge | `510712Q` (8), `455973Y` (7), `892021Q` (7), `1282605Y` (5), `1318657F` (4), … +30 more |
-| LA PERLE | matricule_fiscal | 34 | 6% | merge | `1317734X` (5), `1525158W` (5), `1118961Y` (4), `1484773L` (4), `1085490F` (3), … +29 more |
-| SERVICES INTERNATIONAL BSIR TOTALEMENT EXPORTATRICE SIB | matricule_fiscal | 34 | 14% | merge | `1033827A` (18), `886774P` (15), `1432766B` (11), `1130386P` (7), `1009827K` (6), … +29 more |
-| SOCIETE ADEM | matricule_fiscal | 34 | 6% | merge | `1314988F` (5), `1240148N` (4), `1280773F` (4), `889656X` (4), `1319477H` (3), … +29 more |
-| SOCIETE DES SERVICES INDUSTRIELS | matricule_fiscal | 34 | 7% | merge | `1053421R` (5), `1251036Q` (4), `1490438L` (3), `1507593K` (3), `453700P` (3), … +29 more |
-| SOCIETE IS TECHNOLOGIE | registre_commerce | 34 | 6% | merge | `B23129462014` (5), `B2453162007` (5), `B175422000` (4), `B2442612005` (4), `B2457012003` (4), … +29 more |
-| 2M INFORMATIQUE | registre_commerce | 33 | 12% | merge | `A0139312008` (9), `B03206812016` (4), `B12229732016` (4), `B125711997` (4), `B17671997` (4), … +28 more |
-| MAC INTERNATIONAL | matricule_fiscal | 33 | 7% | merge | `703687D` (7), `986095D` (7), `962245W` (6), `434140X` (5), `1209640N` (4), … +28 more |
-| SOCIETE INTERNATIONAL TRADING COMPANY | matricule_fiscal | 33 | 11% | merge | `1432918Z` (10), `1238613X` (7), `1006279Q` (6), `1242753N` (5), `31475E` (4), … +28 more |
-| SOCIETE LE RECOUVREMENT | matricule_fiscal | 33 | 12% | merge | `1116832F` (13), `794031V` (10), `815441C` (8), `817264M` (8), `1285632P` (7), … +28 more |
-| SOCIETE DES PIECES DE RECHANGE DU SUD | matricule_fiscal | 32 | 7% | merge | `1255772K` (5), `1007807X` (4), `1267447N` (3), `1312172M` (3), `1533246R` (3), … +27 more |
-| SOCIETE JARDIN DEDEN CONDITIONNEMENT ET TRANSFORMATION DES DATTES | matricule_fiscal | 32 | 25% | merge | `633291W` (37), `1038250B` (12), `1136890C` (10), `1039394X` (9), `975739H` (8), … +27 more |
-| MANUFACTURE | registre_commerce | 31 | 10% | merge | `B127461998` (10), `B11891998` (9), `B136451998` (7), `B14901998` (6), `B1127301997` (5), … +26 more |
-| SOCIETE INES | matricule_fiscal | 31 | 12% | merge | `433713J` (10), `548462S` (9), `913925R` (5), `496362B` (4), `1117976B` (3), … +26 more |
-| SOCIETE JAWHARA | matricule_fiscal | 31 | 12% | merge | `496428C` (10), `918740F` (8), `738541Y` (6), `1113076E` (5), `1238899C` (5), … +26 more |
-| SOCIETE LE FRIGO | matricule_fiscal | 31 | 8% | merge | `1369897C` (6), `787646E` (5), `1002434Q` (4), `1068443A` (3), `109469X` (3), … +26 more |
-| SPEED | matricule_fiscal | 31 | 11% | merge | `1489982Q` (8), `809748G` (6), `1135020G` (4), `1147532R` (3), `1470123H` (3), … +26 more |
-| EL HANA | matricule_fiscal | 30 | 10% | merge | `385268N` (7), `601865N` (5), `1118917T` (4), `1125347Y` (4), `767542L` (4), … +25 more |
-| LE SANITAIRE | registre_commerce | 30 | 14% | merge | `B1158171997` (18), `B81154182013` (15), `B0831882005` (11), `B151732000` (9), `B24153442009` (9), … +25 more |
-| LINK | matricule_fiscal | 30 | 14% | merge | `1214663E` (14), `904223Q` (11), `1226388T` (7), `1029460J` (5), `1036969C` (5), … +25 more |
-| SOCIETE DE MISE EN VALEUR ET DE DEVELOPPEMENT AGRICOLE | matricule_fiscal | 30 | 11% | merge | `587620F` (13), `736406H` (11), `1361054E` (10), `349464L` (9), `539810R` (8), … +25 more |
-| SOCIETE E SOLUTIONS | matricule_fiscal | 30 | 6% | merge | `1504421B` (4), `737611Q` (4), `1097112V` (3), `1141632T` (3), `1253627S` (3), … +25 more |
-| SOCIETE GENERALE TRAVAUX | registre_commerce | 30 | 11% | merge | `B146401996` (9), `B162921996` (7), `B278532004` (6), `B017942010` (4), `B134012003` (4), … +25 more |
-| SOCIETE YASMINE | registre_commerce | 30 | 8% | merge | `B048822013` (6), `B2426542006` (5), `B5141432013` (5), `B0928882005` (4), `B140332002` (4), … +25 more |
-| ARC EN CIEL | registre_commerce | 29 | 21% | merge | `B131681997` (12), `B2077192012` (6), `B1118861996` (3), `B2430602012` (3), `B0255312005` (2), … +24 more |
-| AVENIR | matricule_fiscal | 29 | 11% | merge | `836646E` (7), `1424004R` (5), `1396139X` (4), `972461H` (4), `749193H` (3), … +24 more |
-| CARTHAGO SA | matricule_fiscal | 29 | 16% | merge | `35760Z` (13), `757760P` (10), `579940Y` (5), `875861C` (5), `1016555X` (4), … +24 more |
-| DECO | registre_commerce | 29 | 19% | merge | `B0716152005` (22), `A0283312008` (19), `B0158162011` (10), `B0714302018` (6), `B0119582010` (4), … +24 more |
-| EMNA | matricule_fiscal | 29 | 13% | merge | `1104866C` (10), `983196V` (6), `418040A` (4), `956752Y` (4), `1135457J` (3), … +24 more |
-| OGER INTERNATIONAL TUNISIE, OIT | matricule_fiscal | 29 | 15% | merge | `960142F` (10), `1197615W` (6), `1066850D` (3), `1156740Z` (3), `1179920A` (3), … +24 more |
-| SOCIETE JARDIN DEDEN CONDITIONNEMENT ET TRANSFORMATION DES DATTES | registre_commerce | 29 | 15% | merge | `B141191997` (18), `B0122862007` (10), `B249482008` (10), `B2711432008` (10), `80352992006` (8), … +24 more |
-| SOCIETE LE CLUB | registre_commerce | 29 | 12% | merge | `B0369552010` (13), `B152292003` (10), `B127172001` (7), `B0156192007` (6), `B12661998` (6), … +24 more |
-| SOCIETE LE LABORATOIRE | matricule_fiscal | 29 | 16% | merge | `4156N` (13), `1303202Z` (7), `979646W` (7), `818915E` (5), `1186830R` (3), … +24 more |
-| SOCIETE EL-WIFAK | matricule_fiscal | 28 | 8% | merge | `433134V` (4), `283777Q` (3), `4414611N` (3), `74526033N` (3), `1087708N` (2), … +23 more |
-| SOCIETE IMEN | matricule_fiscal | 28 | 13% | merge | `1248862T` (11), `418182P` (9), `1046396R` (5), `475636T` (5), `1114188R` (4), … +23 more |
-| SOCIETE ZAABI DES BATIMENTS ET TRAVAUX PUBLICS | matricule_fiscal | 28 | 10% | merge | `1215786V` (7), `735936B` (5), `1085161Q` (4), `873041N` (4), `1331844M` (3), … +23 more |
-| STEG INTERNATIONAL SERVICES | registre_commerce | 28 | 16% | merge | `2616712013` (16), `B117762003` (15), `B01171042016` (6), `B0140512010` (6), `B115611997` (6), … +23 more |
-| LE FUTURE | matricule_fiscal | 27 | 26% | merge | `1021337X` (22), `1323377J` (7), `1361978S` (4), `1052650Z` (3), `1195893J` (3), … +22 more |
-| HM BUREAUTIQUE ET INFORMATIQUE | matricule_fiscal | 26 | 22% | merge | `1032255F` (15), `635721F` (10), `1092007Y` (2), `1135184C` (2), `1171308A` (2), … +21 more |
+| SOCIETE M | matricule_fiscal | 154 | 3% | merge | `1387182Z` (10), `1293190F` (8), `992132D` (8), `1214095T` (7), `1283124P` (7), … +149 more |
+| SOCIETE DE PROMOTION IMMOBILIERE | matricule_fiscal | 117 | 6% | merge | `754848J` (33), `570983W` (21), `719356S` (20), `833596Z` (13), `958310H` (13), … +112 more |
+| SOCIETE DE PROMOTION IMMOBILIERE | registre_commerce | 113 | 5% | merge | `B110002001` (21), `B151252000` (18), `B130991997` (17), `B1117961997` (12), `B1147261997` (12), … +108 more |
+| SMAG | matricule_fiscal | 73 | 7% | merge | `953145R` (10), `1143469K` (5), `1298734N` (4), `1211768A` (3), `1242010D` (3), … +68 more |
+| SOCIETE MUTUELLE DE BASE DES SERVICES AGRICOLES EL-FALAH | matricule_fiscal | 66 | 5% | merge | `1205726B` (5), `776V` (4), `1008698Q` (3), `1025179T` (3), `1874029E` (3), … +61 more |
+| ARC EN CIEL | matricule_fiscal | 64 | 8% | merge | `1244934A` (11), `1357169L` (7), `775642L` (7), `1112658S` (5), `1065233D` (4), … +59 more |
+| BB | matricule_fiscal | 62 | 5% | merge | `958835J` (6), `975694M` (6), `1161062R` (5), `1472588Y` (5), `1173553W` (3), … +57 more |
+| PNEU | matricule_fiscal | 57 | 7% | merge | `1145573S` (10), `2172E` (9), `283866Q` (9), `972627M` (8), `1404651H` (5), … +52 more |
+| TUNISIE FONDERIE | matricule_fiscal | 57 | 7% | merge | `929047A` (8), `1147103Y` (3), `1504471M` (3), `1544955A` (3), `939323G` (3), … +52 more |
+| SOCIETE BAYA | matricule_fiscal | 47 | 5% | merge | `1152664M` (5), `1270226B` (5), `1453310L` (4), `1281396E` (3), `1540683C` (3), … +42 more |
+| SOCIETE EL-BARAKA | matricule_fiscal | 45 | 9% | merge | `349694Z` (8), `943515F` (5), `952921E` (5), `1279563F` (4), `1320541P` (4), … +40 more |
+| SOCIETE EVENT | matricule_fiscal | 45 | 12% | merge | `816663R` (15), `795140D` (10), `1477001D` (6), `1481965E` (5), `1113398W` (4), … +40 more |
+| SOCIETE UNIQUE | matricule_fiscal | 42 | 22% | merge | `947693D` (28), `2309D` (11), `431699A` (7), `1348069G` (5), `965502G` (4), … +37 more |
+| LINK | matricule_fiscal | 41 | 21% | merge | `1001375S` (32), `1214663E` (15), `904223Q` (12), `1226388T` (9), `1029460J` (5), … +36 more |
+| SOCIETE MUTUELLE DE BASE DES SERVICES AGRICOLES EL-FALAH | registre_commerce | 40 | 8% | merge | `B24119452011` (5), `B2443662006` (5), `B162971997` (4), `B2472992007` (3), `01149032017` (2), … +35 more |
+| SAAD | matricule_fiscal | 39 | 6% | merge | `1145981F` (5), `14443Y` (5), `779285C` (5), `1192202F` (4), `1195307C` (4), … +34 more |
+| SOCIETE ADEM | matricule_fiscal | 39 | 6% | merge | `1314988F` (5), `1240148N` (4), `1280773F` (4), `889656X` (4), `1319477H` (3), … +34 more |
+| SOCIETE INES | matricule_fiscal | 37 | 12% | merge | `433713J` (10), `913925R` (5), `496362B` (4), `1117976B` (3), `1207440Y` (3), … +32 more |
+| CARTHAGO SA | matricule_fiscal | 36 | 19% | merge | `35760Z` (22), `1016555X` (12), `757760P` (10), `579940Y` (5), `644548M` (5), … +31 more |
+| LE FUTURE | matricule_fiscal | 36 | 20% | merge | `1021337X` (22), `960004W` (10), `1323377J` (7), `1261503C` (5), `1361978S` (5), … +31 more |
+| SOCIETE CIVILE IMMOBILIERE | matricule_fiscal | 36 | 11% | merge | `1196071F` (12), `1205895T` (10), `796816F` (8), `1312254N` (6), `1455350D` (5), … +31 more |
+| SOCIETE JAWHARA | matricule_fiscal | 35 | 11% | merge | `496428C` (11), `918740F` (8), `738541Y` (7), `1238899C` (6), `1113076E` (5), … +30 more |
+| EMNA | matricule_fiscal | 34 | 12% | merge | `1104866C` (10), `983196V` (7), `1350906Q` (5), `418040A` (4), `520275W` (4), … +29 more |
+| PHENIX | matricule_fiscal | 34 | 10% | merge | `840725G` (9), `510648A` (8), `920386D` (7), `1261734R` (6), `982181H` (5), … +29 more |
+| PREMIUM | matricule_fiscal | 34 | 9% | merge | `1249877F` (7), `1274758T` (5), `1028602A` (4), `1176662N` (4), `1426711X` (4), … +29 more |
+| SOCIETE ENTREPRISE TRABELSI | matricule_fiscal | 34 | 14% | merge | `624954M` (11), `584166R` (6), `1294912W` (5), `1110303H` (3), `625305M` (3), … +29 more |
+| SOCIETE MULTISERVICES | matricule_fiscal | 34 | 8% | merge | `1024399A` (6), `1028994G` (4), `1604206C` (4), `1163408G` (3), `1425684H` (3), … +29 more |
+| SOCIETE YOSR | matricule_fiscal | 34 | 20% | merge | `587499Z` (13), `1050714P` (5), `1448814Y` (5), `1237692J` (4), `1363935P` (4), … +29 more |
+| AMANA | matricule_fiscal | 32 | 8% | merge | `1437026R` (6), `1071452B` (5), `1082302X` (5), `1292857Y` (5), `504321Q` (5), … +27 more |
+| ARC EN CIEL | registre_commerce | 32 | 20% | merge | `B131681997` (12), `B2077192012` (6), `B1118861996` (3), `B2430602012` (3), `B0255312005` (2), … +27 more |
+| LE MOTEUR | matricule_fiscal | 32 | 11% | merge | `1130552K` (10), `1483726Z` (8), `836992W` (8), `1283427C` (6), `1183353V` (5), … +27 more |
+| SOCIETE DE MISE EN VALEUR ET DE DEVELOPPEMENT AGRICOLE | matricule_fiscal | 32 | 9% | merge | `587620F` (13), `736406H` (13), `1361054E` (10), `349464L` (9), `1053615A` (8), … +27 more |
+| SOCIETE IRIS | matricule_fiscal | 32 | 6% | merge | `956958L` (4), `1039951E` (3), `1059199G` (3), `1096655T` (3), `1315018Q` (3), … +27 more |
+| MODA | matricule_fiscal | 31 | 8% | merge | `1219980M` (6), `1177044W` (5), `1003502P` (4), `1203618P` (4), `1309829G` (4), … +26 more |
+| SPEED | matricule_fiscal | 31 | 10% | merge | `1489982Q` (8), `809748G` (6), `1135020G` (4), `1068883X` (3), `1147532R` (3), … +26 more |
+| SOCIETE DE MISE EN VALEUR ET DE DEVELOPPEMENT AGRICOLE | registre_commerce | 30 | 14% | merge | `B2469412008` (16), `B11291` (9), `B112912003` (9), `B131041997` (8), `B154371997` (7), … +25 more |
+| SOCIETE CIVILE IMMOBILIERE | registre_commerce | 29 | 14% | merge | `B07118722011` (10), `B0289792013` (8), `B158341996` (7), `C0155972008` (6), `C0351752007` (6), … +24 more |
+| SOCIETE ZIED | matricule_fiscal | 29 | 12% | merge | `1411373X` (7), `1333716N` (4), `1488292Q` (3), `1587249P` (3), `728641W` (3), … +24 more |
+| CENTRAL | matricule_fiscal | 27 | 19% | merge | `1287385C` (16), `986737Q` (9), `1184329Z` (5), `9247M` (5), `1218362L` (4), … +22 more |
+| SOCIETE ALFA | matricule_fiscal | 27 | 18% | merge | `901039E` (11), `1091356N` (3), `1107960M` (3), `1206459F` (3), `1341333Y` (3), … +22 more |
+| SOCIETE LE COIN | matricule_fiscal | 27 | 23% | merge | `1231067M` (18), `1125332Q` (5), `1223649H` (4), `1386252R` (4), `795077P` (4), … +22 more |
+| ENGINEERING D'AFFAIRES ET CONSULTING | matricule_fiscal | 26 | 12% | merge | `1196984Q` (6), `1315920N` (3), `1030512V` (2), `1125323P` (2), `1125387G` (2), … +21 more |
 | HR CONNECT | matricule_fiscal | 26 | 11% | merge | `1062305P` (6), `1088686E` (3), `1030859W` (2), `1134165V` (2), `1180788G` (2), … +21 more |
-| SOCIETE DE MISE EN VALEUR ET DE DEVELOPPEMENT AGRICOLE | registre_commerce | 26 | 20% | merge | `B2469412008` (16), `B131041997` (8), `B11291` (7), `B129711998` (6), `B191631999` (6), … +21 more |
-| SOCIETE MULTISERVICES | matricule_fiscal | 26 | 9% | merge | `1024399A` (5), `1028994G` (4), `1604206C` (4), `1163408G` (3), `1435665K` (3), … +21 more |
-| SOCIETE NEGOCE INTERNATIONAL | matricule_fiscal | 26 | 15% | merge | `822360V` (10), `1174521R` (4), `737643Z` (4), `1248875Z` (3), `1326259R` (3), … +21 more |
-| EL MANAR | matricule_fiscal | 25 | 18% | merge | `578020K` (13), `30838H` (7), `326140T` (5), `874048A` (5), `1374242A` (3), … +20 more |
-| SOCIETE AM DE SERVICE ET COMMERCE INTERNATIONALE NON RESIDENTE | matricule_fiscal | 25 | 16% | merge | `1092524Q` (14), `990612G` (14), `827532T` (8), `958863N` (7), `741392D` (5), … +20 more |
-| SOCIETE EL-AMAL | matricule_fiscal | 25 | 21% | merge | `944132K` (15), `620899F` (7), `1264278B` (5), `1395085W` (5), `1416538X` (3), … +20 more |
-| SOCIETE ENTREPRISE TRABELSI | matricule_fiscal | 25 | 15% | merge | `624954M` (9), `1294912W` (5), `625305M` (3), `1114831W` (2), `1130066A` (2), … +20 more |
-| SOCIETE INTERNATIONAL CONSULTING SERVICES | matricule_fiscal | 25 | 9% | merge | `1277553V` (5), `1296669N` (4), `978213T` (4), `1042984P` (2), `1147560W` (2), … +20 more |
-| SOCIETE MODERNE DE BATIMENT | matricule_fiscal | 25 | 20% | merge | `1298072X` (13), `1305051L` (4), `1420980R` (4), `840486L` (4), `725469P` (3), … +20 more |
-| TUNISIE DISTRIBUTION | matricule_fiscal | 25 | 10% | merge | `803516Q` (8), `856180B` (7), `960004W` (7), `1277500F` (6), `432475K` (6), … +20 more |
-| LE MOTEUR | matricule_fiscal | 24 | 13% | merge | `1130552K` (9), `1483726Z` (8), `836992W` (8), `1183353V` (5), `341584J` (4), … +19 more |
-| MENUISERIE ALUMINIUM | matricule_fiscal | 24 | 14% | merge | `1578551R` (9), `1306432A` (6), `584166R` (5), `1162751Q` (4), `1139227N` (3), … +19 more |
-| MODA | matricule_fiscal | 24 | 10% | merge | `1219980M` (6), `1003502P` (4), `1203618P` (4), `1309829G` (4), `993259Y` (4), … +19 more |
-| OASIS | registre_commerce | 24 | 15% | merge | `B2259412008` (12), `B24204242010` (9), `B153031997` (8), `B0138512007` (6), `B122761998` (5), … +19 more |
-| SOCIETE EL-YOSR | matricule_fiscal | 24 | 15% | merge | `1110053J` (9), `1307276L` (4), `1336448A` (4), `1091147F` (3), `1438695E` (3), … +19 more |
-| SOCIETE ¨PALM | matricule_fiscal | 24 | 10% | merge | `1065132Z` (7), `1028282E` (6), `1573563Z` (6), `1574595M` (5), `1146870D` (4), … +19 more |
-| SOCIETE DE COMMERCE INTERNATIONAL | matricule_fiscal | 23 | 12% | merge | `1226564R` (6), `1036844P` (4), `1262141A` (4), `1244922W` (3), `1478168G` (3), … +18 more |
-| SOCIETE IRIS | matricule_fiscal | 23 | 7% | merge | `1059199G` (3), `1377953P` (3), `766923R` (3), `956958L` (3), `1086752N` (2), … +18 more |
-| SOFTWARE SA | registre_commerce | 23 | 13% | merge | `B249122009` (8), `B24184662012` (5), `B01163002013` (3), `B01238752012` (3), `B1149167997` (3), … +18 more |
-| TUNISIE TRAVAUX | matricule_fiscal | 23 | 8% | merge | `111269V` (5), `852544S` (5), `857921V` (5), `1419094C` (4), `1112692V` (3), … +18 more |
-| Z PRODUCTION | registre_commerce | 23 | 17% | merge | `B02198832013` (13), `A0186322007` (11), `B133402003` (7), `B0330152006` (6), `B156472002` (6), … +18 more |
-| EL WIFEK | matricule_fiscal | 22 | 12% | merge | `784622H` (6), `504352Y` (4), `1344233H` (3), `438610Z` (3), `1087338G` (2), … +17 more |
-| GLOBAL SERVICES | registre_commerce | 22 | 12% | merge | `B0265952012` (6), `B24219112011` (5), `B01148272015` (4), `B02216192015` (4), `B11271998` (4), … +17 more |
-| SOCIETE ALFA | matricule_fiscal | 22 | 5% | merge | `1064302V` (2), `1091356N` (2), `1107960M` (2), `1198681L` (2), `1214107E` (2), … +17 more |
-| SOCIETE DE SERVICES DE TUNISIE | registre_commerce | 22 | 9% | merge | `B03164962016` (7), `B03165082016` (7), `B2627832013` (7), `B2422652005` (6), `B51240852013` (6), … +17 more |
-| SOCIETE TRAVAUX ET SERVICES | registre_commerce | 22 | 21% | merge | `A0145822007` (16), `B123692000` (8), `B0359162003` (6), `B0216672006` (5), `B1557822012` (5), … +17 more |
-| SOCIETE TROIS | registre_commerce | 22 | 12% | merge | `B0130252007` (7), `B2420262004` (7), `B24138612012` (6), `B51164092016` (5), `B0122862007` (3), … +17 more |
-| LA ROSA | matricule_fiscal | 21 | 13% | merge | `1322794T` (6), `1543744L` (4), `1154Y` (2), `1201248Z` (2), `1218406F` (2), … +16 more |
-| MAYA | matricule_fiscal | 21 | 10% | merge | `1031522B` (5), `1212195N` (4), `1327035F` (4), `1165010W` (3), `1222536V` (3), … +16 more |
-| SICAV ENTREPRISE | registre_commerce | 21 | 17% | merge | `B186251996` (20), `B11574` (17), `B115741997` (16), `B014377` (11), `B1157641997` (9), … +16 more |
-| SOCIETE LE COIN | matricule_fiscal | 21 | 28% | merge | `1231067M` (18), `1223649H` (4), `1386252R` (4), `795077P` (4), `1511509B` (3), … +16 more |
-| SUD SERVICES | matricule_fiscal | 21 | 20% | merge | `513505Y` (10), `1237146L` (4), `1438338K` (3), `1029766A` (2), `1098478D` (2), … +16 more |
-| BATIMENT ET TRAVAUX PUBLICS | registre_commerce | 20 | 12% | merge | `B01249542017` (5), `B13291997` (4), `B24145482012` (4), `B083219` (3), `B188841997` (3), … +15 more |
-| CHIC | matricule_fiscal | 20 | 11% | merge | `1056547T` (5), `897753T` (4), `1598457F` (3), `1073857D` (2), `1081836V` (2), … +15 more |
-| SELECTION | matricule_fiscal | 20 | 14% | merge | `991762A` (7), `1014887G` (4), `1325703L` (4), `1343433K` (4), `1048889S` (3), … +15 more |
-| SOCIETE BEN-SALEM | matricule_fiscal | 20 | 13% | merge | `1154438M` (6), `949225L` (4), `967901C` (4), `1484348X` (3), `1184178C` (2), … +15 more |
-| SOCIETE DE PROMOTION IMMOBILIERE AXIA | matricule_fiscal | 20 | 24% | merge | `750157V` (12), `1265121J` (6), `1264643C` (4), `635940Q` (4), `1260896F` (3), … +15 more |
-| SOCIETE GENERAL DISTRIBUTION | matricule_fiscal | 20 | 14% | merge | `1032335E` (8), `819355Y` (6), `1315369M` (5), `1285658A` (4), `1409314P` (3), … +15 more |
-| SOCIETE GENERAL VAP ET SERVICE | matricule_fiscal | 20 | 10% | merge | `622216Z` (4), `827373X` (4), `980422X` (3), `1132011S` (2), `1176496S` (2), … +15 more |
-| SOCIETE GENERALE DE MENUISERIE SOGEM | matricule_fiscal | 20 | 18% | merge | `968189G` (9), `420354M` (7), `1353970M` (3), `36847K` (3), `789331W` (3), … +15 more |
-| SOCIETE MABROUK | matricule_fiscal | 20 | 33% | merge | `580188F` (24), `1177809T` (6), `1165483C` (4), `966567E` (4), `1315583R` (3), … +15 more |
-| GENERAL IMMOBILIERE DE L'AVENIR | matricule_fiscal | 19 | 20% | merge | `1085827L` (9), `340639L` (4), `1173360N` (3), `1313318R` (3), `1009175W` (2), … +14 more |
-| MS SERVICES | matricule_fiscal | 19 | 17% | merge | `1295119G` (7), `1180463M` (3), `1102931K` (2), `1192043J` (2), `1259343J` (2), … +14 more |
-| PNEU | matricule_fiscal | 19 | 17% | merge | `1145573S` (10), `2172E` (9), `1011295Z` (6), `1078824Q` (4), `1161611Z` (4), … +14 more |
-| SOCIETE CONTACT | registre_commerce | 19 | 20% | merge | `B02124702015` (15), `B013011997` (8), `B0350582007` (8), `B2433842009` (7), `B0311002013` (5), … +14 more |
-| SOCIETE GLOBE | matricule_fiscal | 19 | 11% | merge | `1263303E` (5), `323694M` (5), `774310N` (4), `11156421X` (3), `1188404K` (3), … +14 more |
-| SOCIETE YOSR | matricule_fiscal | 19 | 30% | merge | `587499Z` (13), `1050714P` (5), `1448814Y` (5), `587599Z` (4), `1363935P` (3), … +14 more |
-| STEP | matricule_fiscal | 19 | 18% | merge | `969271D` (10), `1251519F` (5), `488136W` (4), `999308Q` (4), `1184719K` (3), … +14 more |
-| AS DE COMMERCE INTERNATIONAL | matricule_fiscal | 18 | 17% | merge | `1211840Q` (7), `1188099X` (4), `1179125E` (2), `1189910D` (2), `1206459F` (2), … +13 more |
-| AZIZA | matricule_fiscal | 18 | 19% | merge | `968444G` (8), `1034663C` (4), `1488982L` (3), `1117381D` (2), `1125265X` (2), … +13 more |
-| EL FAOUZ | matricule_fiscal | 18 | 20% | merge | `1017737F` (11), `963770S` (7), `612789D` (4), `1089161H` (3), `1226155C` (3), … +13 more |
-| ENTREPRISE DE TRAVAUX ELECTRIQUES | matricule_fiscal | 18 | 23% | merge | `1338079D` (10), `1267543M` (4), `1063168D` (2), `1100015X` (2), `1118961Y` (2), … +13 more |
-| ERRAHMA | matricule_fiscal | 18 | 69% | merge | `884195R` (58), `1109154X` (2), `1188441Q` (2), `1340815H` (2), `13619421E` (2), … +13 more |
-| LE PROGRES | matricule_fiscal | 18 | 16% | merge | `854453Z` (8), `614801P` (6), `433488V` (5), `1090478T` (4), `1269316L` (3), … +13 more |
-| MAS MAINTENANCE ET SERVICE | matricule_fiscal | 18 | 15% | merge | `864850P` (7), `1109421X` (4), `1367250H` (3), `582402A` (3), `790248T` (3), … +13 more |
-| ME CONSULTANTS | matricule_fiscal | 18 | 23% | merge | `980692T` (17), `761845Y` (9), `1299448P` (7), `775137Y` (6), `1302629V` (5), … +13 more |
-| MED SERVICES | matricule_fiscal | 18 | 24% | merge | `1024919C` (13), `1057827D` (5), `792176D` (5), `1253413E` (4), `1024749C` (2), … +13 more |
-| SARA DE DISTRIBUTION | matricule_fiscal | 18 | 25% | merge | `1177471M` (13), `1021301J` (5), `1473876H` (4), `1235270F` (3), `1102633C` (2), … +13 more |
-| SOCIETE ANIS | matricule_fiscal | 18 | 18% | merge | `797092X` (8), `1485476J` (4), `1189749N` (3), `1296386E` (3), `135981C` (3), … +13 more |
-| SOCIETE ASMA | matricule_fiscal | 18 | 18% | merge | `1414847Z` (7), `778929M` (4), `1123535R` (2), `1190424K` (2), `1214105C` (2), … +13 more |
-| SOCIETE CHEMS DE TRANSPORT DE MARCHANDISES | matricule_fiscal | 18 | 14% | merge | `752970B` (6), `703062Z` (5), `1117235T` (4), `30798S` (4), `362877K` (4), … +13 more |
-| SOCIETE COMPTOIR DE BOIS | matricule_fiscal | 18 | 18% | merge | `1229145N` (10), `1143223N` (5), `1272543W` (5), `1035789W` (4), `1140506J` (4), … +13 more |
-| SOCIETE DE NUTRITION | matricule_fiscal | 18 | 21% | merge | `842437K` (11), `2992K` (5), `1474874K` (3), `1519065A` (3), `1544260Z` (3), … +13 more |
-| SOCIETE F H SERVICES | matricule_fiscal | 18 | 10% | merge | `1373723J` (4), `857967K` (4), `1092577E` (3), `1461340P` (3), `1017500K` (2), … +13 more |
-| SOCIETE LE RECOUVREMENT | registre_commerce | 18 | 17% | merge | `B19512001` (15), `B126472002` (10), `B159212002` (8), `B138512002` (7), `B114972001` (6), … +13 more |
-| SOCIETE ZIED | matricule_fiscal | 18 | 16% | merge | `1411373X` (7), `1333716N` (4), `1488292Q` (3), `1587249P` (3), `997580X` (3), … +13 more |
-| GROUPEMENT AGRICOLE | matricule_fiscal | 17 | 17% | merge | `948916D` (21), `881400N` (18), `755962P` (15), `635666R` (11), `1005384L` (8), … +12 more |
-| GS COMPANY INTERNATIONAL | registre_commerce | 17 | 12% | merge | `B0378712016` (5), `B01211812015` (3), `B02414832011` (3), `B037871216` (3), `B1107121996` (3), … +12 more |
-| JUNIOR | matricule_fiscal | 17 | 21% | merge | `937275H` (11), `1025883M` (6), `975311G` (6), `1295925F` (3), `1556760E` (3), … +12 more |
-| PREMIUM | matricule_fiscal | 17 | 15% | merge | `1249877F` (6), `1274758T` (5), `1426711X` (4), `1017041D` (2), `1113086G` (2), … +12 more |
-| SERVICES INTERNATIONAL BSIR TOTALEMENT EXPORTATRICE SIB | registre_commerce | 17 | 16% | merge | `B2469502006` (8), `B198252010` (6), `B912182014` (6), `B2445722007` (5), `B11901998` (4), … +12 more |
-| SOCIETE REAL ESTATE | matricule_fiscal | 17 | 14% | merge | `1104105Q` (7), `1010815X` (5), `1227214A` (5), `1179884P` (4), `1569728Y` (4), … +12 more |
-| SOCIETE TUNISIE CONFECTION | matricule_fiscal | 17 | 18% | merge | `1060146J` (7), `1362469E` (4), `1181469Y` (3), `1199748S` (3), `601695N` (3), … +12 more |
-| CENTRAL | matricule_fiscal | 16 | 23% | merge | `1287385C` (12), `986737Q` (7), `1184329Z` (5), `9247M` (5), `1503636L` (3), … +11 more |
-| EL HOUDA | matricule_fiscal | 16 | 22% | merge | `644485P` (10), `635896E` (4), `928674T` (4), `341510P` (3), `966576F` (3), … +11 more |
-| ENTREPRISE EL-AMEN | registre_commerce | 16 | 17% | merge | `B13195922010` (15), `B198751998` (15), `B127241997` (9), `B140851998` (8), `B24169352010` (8), … +11 more |
-| EQUIPEMENT GENERAL DE BATIMENT EXPORT EGBE | matricule_fiscal | 16 | 17% | merge | `932147D` (6), `910594E` (5), `740178V` (3), `1029497Y` (2), `1213051B` (2), … +11 more |
-| GROUPEMENT AGRICOLE | registre_commerce | 16 | 14% | merge | `B146842001` (15), `B14082003` (13), `B120732002` (10), `B2416832004` (10), `B0213652006` (8), … +11 more |
-| N TRAINING | registre_commerce | 16 | 13% | merge | `B2456112012` (5), `B2459372007` (4), `B24100552009` (3), `B242462005` (3), `B25104762009` (3), … +11 more |
-| PHENIX | matricule_fiscal | 16 | 17% | merge | `840725G` (9), `920386D` (7), `1261734R` (6), `1393399D` (4), `510648A` (4), … +11 more |
-| PRIME SERVICES INFORMATIQUES | matricule_fiscal | 16 | 12% | merge | `1112064W` (4), `980688Y` (4), `1037704G` (3), `1080787Z` (2), `1230073F` (2), … +11 more |
-| SOCIETE AMEL | registre_commerce | 16 | 18% | merge | `B1105921996` (7), `B0735872005` (6), `B195561997` (5), `60350662007` (3), `B01164092013` (3), … +11 more |
-| SOCIETE DES SERVICES GENERAUX SSG | matricule_fiscal | 16 | 18% | merge | `1019630D` (6), `1037992F` (2), `1119012N` (2), `1127575S` (2), `1148157S` (2), … +11 more |
-| SOCIETE LES AMIS | matricule_fiscal | 16 | 19% | merge | `1177553N` (8), `1509857Z` (6), `1415607N` (3), `1459940N` (3), `981321X` (3), … +11 more |
-| SOCIETE MUTUELLE DES BASES DES SERVICES AGRICOLES | registre_commerce | 16 | 12% | merge | `011611998` (4), `B0475832008` (4), `B1137231997` (4), `B1614212006` (4), `B3931995` (3), … +11 more |
-| SOCIETE SALMA | matricule_fiscal | 16 | 27% | merge | `612787B` (12), `1059762M` (6), `1031764T` (2), `1078477R` (2), `1127497W` (2), … +11 more |
-| SOCIETE SOLTANA | matricule_fiscal | 16 | 14% | merge | `24120L` (5), `1335434P` (3), `1003017F` (2), `1078518H` (2), `1105812R` (2), … +11 more |
-| SOCIETE YESMINE | matricule_fiscal | 16 | 22% | merge | `944007F` (11), `1233140M` (6), `1084688P` (3), `1215498P` (3), `1438460L` (3), … +11 more |
-| SOLUTION T | registre_commerce | 16 | 11% | merge | `B0854272008` (4), `B0943372014` (4), `03168512013` (3), `B01228492013` (3), `B24147022011` (3), … +11 more |
-| ALL MARKETING SERVICES | matricule_fiscal | 15 | 15% | merge | `1198173V` (6), `1127595X` (5), `1035955R` (4), `1542928N` (3), `544880Q` (3), … +10 more |
-| AYA DISTRIBUTION | matricule_fiscal | 15 | 17% | merge | `1197547B` (6), `1102566J` (4), `1251425A` (3), `1301874C` (3), `1198136P` (2), … +10 more |
-| EL AMEL | matricule_fiscal | 15 | 22% | merge | `1014246C` (9), `1115258S` (7), `609751N` (4), `1105745Y` (3), `1290219N` (2), … +10 more |
-| EL MEDINA | matricule_fiscal | 15 | 11% | merge | `1061815D` (4), `615054G` (4), `1148493G` (3), `759554T` (3), `1194268J` (2), … +10 more |
-| GLOBAL DISTRIBUTION | matricule_fiscal | 15 | 18% | merge | `866255J` (9), `418157N` (8), `1495802H` (5), `1463589Y` (4), `1109653M` (3), … +10 more |
-| KMG SERVICES | matricule_fiscal | 15 | 24% | merge | `1364584Q` (9), `1327995Y` (3), `1231141E` (2), `1270427J` (2), `1306352B` (2), … +10 more |
-| NESRINE | matricule_fiscal | 15 | 11% | merge | `1360328H` (3), `1217391M` (2), `1266529K` (2), `1330114D` (2), `1345156R` (2), … +10 more |
-| SOCIETE AMINA | matricule_fiscal | 15 | 11% | merge | `1350590Q` (4), `708427F` (4), `1118335B` (3), `1441290L` (3), `943107E` (3), … +10 more |
-| SOCIETE HAMZA | matricule_fiscal | 15 | 9% | merge | `1253571T` (3), `1324193G` (3), `1580124W` (3), `1188249S` (2), `1190522L` (2), … +10 more |
-| SOCIETE SFAX PEINTURE ET DECORATION | matricule_fiscal | 15 | 10% | merge | `1521592T` (3), `1003993Y` (2), `1056677A` (2), `1122818W` (2), `1124548B` (2), … +10 more |
-| SUD SUD TRAVAUX | matricule_fiscal | 15 | 13% | merge | `1306965B` (4), `1021725F` (3), `1131357N` (3), `1376487E` (3), `1166328W` (2), … +10 more |
-| AB PROMOTION IMMOBILIERE | matricule_fiscal | 14 | 17% | merge | `956311A` (8), `1325482S` (7), `970455B` (6), `830060G` (5), `1468233S` (4), … +9 more |
-| GALLAND ETABLISSEMENT STABLE | matricule_fiscal | 14 | 44% | merge | `968975B` (14), `1194038W` (3), `1297377H` (3), `710975B` (2), `765122K` (2), … +9 more |
-| INTERNATIONAL PROD SIGN COMPANY TUNISIA | matricule_fiscal | 14 | 23% | merge | `1142790M` (7), `601426S` (6), `1410775H` (3), `1074561T` (2), `1102146R` (2), … +9 more |
-| INTERNATIONAL TA CONSULTING | matricule_fiscal | 14 | 8% | merge | `1157392D` (2), `1182653A` (2), `1382502Y` (2), `1387841M` (2), `1479120T` (2), … +9 more |
-| MAC INTERNATIONAL | registre_commerce | 14 | 15% | merge | `B252302007` (6), `B0330302006` (4), `B149611997` (4), `B1592572007` (4), `B24138722011` (4), … +9 more |
-| OIL SERVICES | matricule_fiscal | 14 | 14% | merge | `908971P` (5), `1114826Z` (4), `1226363R` (4), `430013Y` (4), `1222363R` (3), … +9 more |
-| PANORAMA | matricule_fiscal | 14 | 14% | merge | `905539N` (4), `296329M` (3), `1337403Q` (2), `1452580D` (2), `1453850L` (2), … +9 more |
-| SARA SERVICES | matricule_fiscal | 14 | 17% | merge | `1405157C` (5), `1121118T` (2), `1256558K` (2), `1390519E` (2), `1402614T` (2), … +9 more |
-| SERVICES AFRICA | matricule_fiscal | 14 | 23% | merge | `1190514L` (10), `1062374D` (5), `1030521W` (4), `1020216J` (3), `1097196R` (3), … +9 more |
-| SOCIETE AGRICOLE EL-BARAKA | matricule_fiscal | 14 | 14% | merge | `824488V` (4), `1360514H` (3), `1005927W` (2), `1319861M` (2), `1409566J` (2), … +9 more |
-| SOCIETE ARTISANALE AL-BARAKA | matricule_fiscal | 14 | 33% | merge | `1006426H` (17), `1041099N` (12), `1447181H` (6), `1047024T` (2), `1061967V` (2), … +9 more |
-| SOCIETE DE TRAVAUX INDUSTRIELS | matricule_fiscal | 14 | 38% | merge | `975285Y` (18), `418561X` (4), `1075106C` (3), `1441633T` (3), `389086B` (3), … +9 more |
-| SOCIETE MB DISTRIBUTION | matricule_fiscal | 14 | 15% | merge | `1012128N` (6), `1285005R` (5), `852705R` (5), `1062654J` (4), `1358083K` (4), … +9 more |
-| SOCIETE NEGOCE INTERNATIONAL | registre_commerce | 14 | 18% | merge | `B03197982010` (6), `B12632003` (6), `B113402002` (4), `D241852007` (3), `B181421996` (2), … +9 more |
-| SPEED | registre_commerce | 14 | 21% | merge | `B2434302007` (13), `B01258392016` (6), `B123382002` (6), `B147352002` (6), `B2445292005` (6), … +9 more |
-| TRADE SERVICES | matricule_fiscal | 14 | 19% | merge | `608132L` (7), `1100998X` (4), `869399N` (4), `437522W` (3), `1002001S` (2), … +9 more |
-| VENUS | matricule_fiscal | 14 | 29% | merge | `875973K` (12), `1351470M` (6), `1129683E` (3), `1387982A` (3), `1067250N` (2), … +9 more |
-| AZUR | registre_commerce | 13 | 21% | merge | `B2684342008` (7), `B2415252009` (6), `B01151692016` (3), `B0133452007` (3), `B0358362005` (3), … +8 more |
-| CHAMS | matricule_fiscal | 13 | 17% | merge | `1158536F` (6), `9233F` (4), `1117131L` (3), `1214738G` (3), `923828X` (3), … +8 more |
-| EAGLE INTERNATIONAL TRADING COMPANY | matricule_fiscal | 13 | 8% | merge | `1131115W` (2), `1210775V` (2), `1230291P` (2), `1351884G` (2), `1353004X` (2), … +8 more |
+| SOCIETE NOUR | matricule_fiscal | 26 | 14% | merge | `620582L` (10), `1220246D` (7), `349539N` (7), `1301601C` (6), `1276669C` (4), … +21 more |
+| LA ROSA | matricule_fiscal | 25 | 11% | merge | `1322794T` (6), `1524836H` (4), `1543744L` (4), `1489835E` (3), `1154Y` (2), … +20 more |
+| MAYA | matricule_fiscal | 25 | 10% | merge | `1031522B` (6), `1212195N` (4), `1222536V` (4), `1278452V` (4), `1327035F` (4), … +20 more |
+| SOCIETE ANIS | matricule_fiscal | 25 | 14% | merge | `797092X` (8), `1485476J` (4), `1021546E` (3), `1189749N` (3), `1296386E` (3), … +20 more |
+| SOCIETE ASMA | matricule_fiscal | 25 | 16% | merge | `1414847Z` (7), `778929M` (4), `1490554P` (3), `1123535R` (2), `1214105C` (2), … +20 more |
+| SOCIETE SALMA | matricule_fiscal | 25 | 18% | merge | `612787B` (12), `904025L` (11), `1059762M` (7), `1403839P` (3), `1031764T` (2), … +20 more |
+| EL WIFEK | matricule_fiscal | 24 | 13% | merge | `438610Z` (6), `784622H` (6), `1236696J` (4), `504352Y` (4), `1344233H` (3), … +19 more |
+| SELECTION | matricule_fiscal | 24 | 11% | merge | `991762A` (7), `1014887G` (4), `1290285Z` (4), `1325703L` (4), `1343433K` (4), … +19 more |
+| SOCIETE GLOBE | matricule_fiscal | 24 | 9% | merge | `1115642X` (6), `323694M` (6), `1263303E` (5), `774310N` (4), `988427M` (4), … +19 more |
+| SOCIETE ¨PALM | matricule_fiscal | 24 | 10% | merge | `1065132Z` (7), `1028282E` (6), `1574595M` (5), `1146870D` (4), `1183545B` (4), … +19 more |
+| CHIC | matricule_fiscal | 23 | 10% | merge | `1056547T` (5), `897753T` (4), `1389757B` (3), `1398472R` (3), `1598457F` (3), … +18 more |
+| EL FAOUZ | matricule_fiscal | 23 | 14% | merge | `1017737F` (9), `963770S` (8), `858402E` (6), `612789D` (4), `1089161H` (3), … +18 more |
+| SICAV ENTREPRISE | registre_commerce | 23 | 16% | merge | `B186251996` (20), `B11574` (17), `B115741997` (16), `B014377` (11), `B1157641997` (9), … +18 more |
+| SOCIETE EL-YOSR | matricule_fiscal | 23 | 23% | merge | `1110053J` (15), `1307276L` (4), `1336448A` (4), `615235K` (4), `1091147F` (3), … +18 more |
+| SOCIETE MABROUK | matricule_fiscal | 23 | 32% | merge | `580188F` (25), `1177809T` (6), `1165483C` (4), `385454N` (4), `966567E` (4), … +18 more |
+| ME CONSULTANTS | matricule_fiscal | 22 | 23% | merge | `761845Y` (24), `980692T` (21), `1299448P` (7), `775137Y` (7), `1302629V` (5), … +17 more |
+| SOCIETE DE NUTRITION | matricule_fiscal | 22 | 29% | merge | `842437K` (21), `1113857C` (7), `737785N` (7), `2992K` (5), `1519065A` (3), … +17 more |
+| STEP | matricule_fiscal | 22 | 19% | merge | `969271D` (13), `1251519F` (9), `1398104T` (5), `488136W` (4), `999308Q` (4), … +17 more |
+| LES HORIZONS | matricule_fiscal | 21 | 8% | merge | `1556071K` (4), `1128494X` (3), `1286689M` (3), `1334844A` (3), `1522735V` (3), … +16 more |
+| SOCIETE HAMZA | matricule_fiscal | 21 | 9% | merge | `1222016Z` (4), `1253571T` (3), `1324193G` (3), `1580124W` (3), `34461L` (3), … +16 more |
+| SOCIETE YASMINE | matricule_fiscal | 21 | 12% | merge | `1339595Z` (5), `1507929P` (3), `876898W` (3), `921899E` (3), `1144984E` (2), … +16 more |
+| ENTREPRISE EL-AMEN | matricule_fiscal | 20 | 24% | merge | `718584Z` (18), `1176119T` (16), `1042279V` (12), `1063164Z` (6), `1005432B` (2), … +15 more |
+| SOCIETE LE LABO | matricule_fiscal | 20 | 15% | merge | `1121630F` (7), `1100532P` (4), `766861V` (4), `1267726S` (3), `966124E` (3), … +15 more |
+| SOMAFRIP | matricule_fiscal | 20 | 22% | merge | `1386476G` (9), `1084894T` (2), `1086513Z` (2), `1223640Y` (2), `12526715S` (2), … +15 more |
+| AZIZA | matricule_fiscal | 19 | 19% | merge | `968444G` (8), `1117381D` (3), `1265313Q` (3), `1488982L` (3), `1125265X` (2), … +14 more |
+| CARTHAGO SA | registre_commerce | 19 | 18% | merge | `B125432011` (10), `B2422622004` (7), `B2455392007` (7), `B157572002` (5), `B0116822006` (3), … +14 more |
+| ERRAHMA | matricule_fiscal | 19 | 65% | merge | `884195R` (68), `635620B` (10), `1029874D` (3), `1109154X` (2), `1188441Q` (2), … +14 more |
+| GLOBAL SERVICES | matricule_fiscal | 19 | 29% | merge | `926133J` (14), `1003086V` (6), `1325021Q` (3), `1392746Y` (3), `1202376L` (2), … +14 more |
+| SOCIETE REAL ESTATE | matricule_fiscal | 19 | 15% | merge | `1104105Q` (8), `1179884P` (6), `1010815X` (5), `1227214A` (5), `1204037C` (2), … +14 more |
+| EL HOUDA | matricule_fiscal | 18 | 20% | merge | `644485P` (11), `1013539J` (6), `1000837Y` (4), `635896E` (4), `928674T` (4), … +13 more |
+| ETABLISSEMENT GHORBEL | matricule_fiscal | 18 | 10% | merge | `1068472F` (3), `1035641A` (2), `1400355K` (2), `1410851C` (2), `1438797K` (2), … +13 more |
+| JUNIOR | matricule_fiscal | 18 | 20% | merge | `937275H` (11), `1025883M` (6), `975311G` (6), `1080559N` (3), `1295925F` (3), … +13 more |
+| NESRINE | matricule_fiscal | 18 | 9% | merge | `1360328H` (3), `1526961W` (3), `1217391M` (2), `1266529K` (2), `1330114D` (2), … +13 more |
+| SOCIETE AMINA | matricule_fiscal | 18 | 22% | merge | `760439H` (13), `1189215L` (8), `1441290L` (5), `1350590Q` (4), `708427F` (4), … +13 more |
+| SOCIETE GENERALE DE MENUISERIE SOGEM | matricule_fiscal | 18 | 17% | merge | `789331W` (9), `968189G` (9), `420354M` (7), `1353970M` (3), `36847K` (3), … +13 more |
+| SOCIETE START | matricule_fiscal | 18 | 23% | merge | `1142207J` (10), `1319887Y` (3), `1372155T` (3), `1424426L` (3), `1512101J` (3), … +13 more |
+| VENUS | matricule_fiscal | 18 | 22% | merge | `875973K` (12), `1351470M` (8), `1052590E` (6), `1387982A` (4), `1129683E` (3), … +13 more |
+| CHAMS | matricule_fiscal | 17 | 16% | merge | `1158536F` (7), `9233F` (4), `1117131L` (3), `1154597C` (3), `1214738G` (3), … +12 more |
+| PANORAMA | matricule_fiscal | 17 | 12% | merge | `296329M` (4), `905539N` (4), `1337403Q` (2), `1452580D` (2), `1453850L` (2), … +12 more |
+| SOCIETE AMEUR | matricule_fiscal | 17 | 21% | merge | `1037211P` (9), `1218909A` (6), `1527846Y` (3), `539369W` (3), `882091A` (3), … +12 more |
+| SOCIETE ENTREPRISE TRABELSI | registre_commerce | 17 | 15% | merge | `B0770222013` (6), `B166081998` (6), `B2510972004` (5), `B1119891998` (4), `B148002000` (3), … +12 more |
+| SOCIETE INTERACTIVE | matricule_fiscal | 17 | 21% | merge | `911130D` (10), `601887V` (7), `985048R` (4), `136242A` (3), `989017B` (3), … +12 more |
+| SOCIETE SINDBAD | matricule_fiscal | 17 | 19% | merge | `1464437L` (8), `1047255H` (5), `33420X` (4), `1075736D` (3), `1471358F` (3), … +12 more |
+| SOCIETE SOLTANA | matricule_fiscal | 17 | 13% | merge | `1421009J` (5), `24120L` (5), `1316992K` (3), `1335434P` (3), `1003017F` (2), … +12 more |
+| LA TUNISIENNE | matricule_fiscal | 16 | 18% | merge | `536917P` (12), `710611Z` (9), `1332369K` (8), `15175B` (7), `25612G` (7), … +11 more |
+| LINK | registre_commerce | 16 | 24% | merge | `B025042005` (12), `B25159372011` (12), `B2427862007` (9), `B2532822012` (3), `B1147652014` (2), … +11 more |
+| PROMED | matricule_fiscal | 16 | 18% | merge | `1099803A` (7), `1167779A` (4), `710820G` (4), `1160864Q` (3), `916085N` (3), … +11 more |
+| SERA | matricule_fiscal | 16 | 31% | merge | `794807W` (19), `1032633M` (9), `1350321V` (5), `578639R` (5), `806596W` (5), … +11 more |
+| SOCIETE AMEUR | registre_commerce | 16 | 25% | merge | `B170131997` (14), `B247502008` (14), `B0251892004` (7), `B115371996` (3), `B25178872011` (3), … +11 more |
+| SOCIETE CHAIMA | matricule_fiscal | 16 | 33% | merge | `1039666C` (21), `1048157L` (9), `1042834A` (7), `1042634A` (4), `1261612G` (4), … +11 more |
+| SOCIETE EL-KHADRA | matricule_fiscal | 16 | 21% | merge | `1094798A` (13), `6473H` (12), `47376A` (8), `1276176K` (4), `2301V` (4), … +11 more |
+| SOCIETE EZDIHAR | matricule_fiscal | 16 | 15% | merge | `1173444R` (6), `1008211C` (4), `743724M` (4), `1197374Y` (3), `1383415E` (3), … +11 more |
+| SOCIETE YESMINE | matricule_fiscal | 16 | 21% | merge | `944007F` (11), `1233140M` (6), `32740G` (6), `946327D` (4), `1084688P` (3), … +11 more |
+| SOCIETE ZIED | registre_commerce | 16 | 15% | merge | `B19311997` (4), `B126312000` (3), `B2521792007` (3), `B0127782004` (2), `B15136782011` (2), … +11 more |
+| SICAV ENTREPRISE | matricule_fiscal | 15 | 20% | merge | `1055155B` (13), `1566945S` (9), `492474R` (7), `492473Q` (6), `770729W` (6), … +10 more |
+| SOCIETE SIRINE | matricule_fiscal | 15 | 21% | merge | `543776M` (9), `1197390Y` (6), `833559T` (5), `1593035P` (4), `1093680G` (2), … +10 more |
+| CESAR | matricule_fiscal | 14 | 12% | merge | `1161879C` (3), `1165138M` (3), `1108533A` (2), `1277770C` (2), `13781301K` (2), … +9 more |
+| COSMOS | matricule_fiscal | 14 | 15% | merge | `1013852Q` (5), `1347030L` (4), `1227369V` (3), `1389678D` (3), `1504826V` (3), … +9 more |
+| GALLAND ETABLISSEMENT STABLE | matricule_fiscal | 14 | 38% | merge | `968975B` (14), `1194038W` (5), `1297377H` (3), `1422176D` (3), `765122K` (3), … +9 more |
+| LA FONDATION | matricule_fiscal | 14 | 29% | merge | `835118E` (14), `587880A` (6), `1064381L` (5), `1403618C` (4), `1028177E` (3), … +9 more |
+| PHENIX | registre_commerce | 14 | 23% | merge | `B2931995` (8), `B0631872004` (7), `B2462372006` (5), `B0313032008` (2), `B08209172013` (2), … +9 more |
+| RANIM | matricule_fiscal | 14 | 22% | merge | `1351380L` (7), `1116658K` (3), `1105069J` (2), `1137437N` (2), `1210708H` (2), … +9 more |
+| SERA | registre_commerce | 14 | 18% | merge | `B131332009` (7), `B2440972012` (6), `B197031996` (5), `143222002` (3), `B137071998` (3), … +9 more |
+| SOCIETE EL-BARAKA | registre_commerce | 14 | 27% | merge | `B163411996` (8), `B0421852013` (4), `193312000` (3), `B00755262006` (2), `B0174732008` (2), … +9 more |
+| SOCIETE MABROUK | registre_commerce | 14 | 17% | merge | `B0914372010` (7), `B0112452009` (6), `B25204972010` (6), `B2528782007` (6), `B01119922009` (3), … +9 more |
+| SOCIETE VITAL | matricule_fiscal | 14 | 14% | merge | `748728N` (5), `712802N` (4), `979190J` (4), `1214216J` (3), `1490089K` (3), … +9 more |
+| AL BADR | matricule_fiscal | 13 | 21% | merge | `977730G` (6), `1045669T` (3), `1386890S` (3), `789285H` (3), `1511088B` (2), … +8 more |
+| CENTRAL | registre_commerce | 13 | 26% | merge | `B0146672013` (11), `B014082007` (7), `B110861996` (5), `B216191302010` (5), `B17646` (3), … +8 more |
+| EL AMEL | matricule_fiscal | 13 | 27% | merge | `1014246C` (9), `1105745Y` (4), `609751N` (4), `1290219N` (2), `1392916Y` (2), … +8 more |
 | EL AMEL | registre_commerce | 13 | 33% | merge | `B1112591998` (11), `B0350862007` (5), `B140191998` (4), `B181321998` (3), `B114322002` (2), … +8 more |
-| ETABLISSEMENT GHORBEL | matricule_fiscal | 13 | 13% | merge | `1068472F` (3), `1035641A` (2), `1400355K` (2), `1410851C` (2), `1438797K` (2), … +8 more |
-| LA PRECISION MECANIQUE | matricule_fiscal | 13 | 12% | merge | `1109331W` (4), `1177100L` (4), `967819K` (4), `10420Y` (3), `1033802Q` (2), … +8 more |
-| LA TUNISIENNE | matricule_fiscal | 13 | 32% | merge | `536917P` (12), `25612G` (5), `1191413L` (3), `580238A` (3), `1037292H` (2), … +8 more |
-| LE RESEAU | matricule_fiscal | 13 | 26% | merge | `1406193L` (10), `1012896Z` (6), `1106189W` (4), `539151D` (3), `1112784Y` (2), … +8 more |
-| LES HORIZONS | matricule_fiscal | 13 | 12% | merge | `1556071K` (4), `1122777E` (3), `1334844A` (3), `1522735V` (3), `867735A` (3), … +8 more |
-| MTC DISTRIBUTION | matricule_fiscal | 13 | 32% | merge | `921426Y` (14), `1398665Z` (6), `1146570T` (5), `1423972E` (3), `1097779K` (2), … +8 more |
-| NOUR DE COMMERCE | matricule_fiscal | 13 | 15% | merge | `1011690G` (4), `1213637Y` (2), `1223534X` (2), `1327138M` (2), `1418789Z` (2), … +8 more |
-| PROMED | matricule_fiscal | 13 | 14% | merge | `1099803A` (4), `710820G` (4), `1167779A` (3), `916085N` (3), `1058670E` (2), … +8 more |
-| SICAV ENTREPRISE | matricule_fiscal | 13 | 26% | merge | `1055155B` (13), `492474R` (7), `770729W` (6), `632956L` (5), `1076646G` (3), … +8 more |
-| SOCIETE AMEUR | registre_commerce | 13 | 30% | merge | `B170131997` (14), `B247502008` (8), `B0251892004` (6), `B115371996` (3), `B25178872011` (3), … +8 more |
-| SOCIETE BW TRADE COMPANY | registre_commerce | 13 | 32% | merge | `B0932162005` (11), `B03187392016` (5), `B0316140215` (3), `B24164102009` (3), `B2414802007` (2), … +8 more |
-| SOCIETE CHAIMA | matricule_fiscal | 13 | 36% | merge | `1039666C` (21), `1048157L` (9), `1042834A` (6), `1042634A` (4), `1261612G` (4), … +8 more |
-| SOCIETE CIVILE IMMOBILIERE | registre_commerce | 13 | 24% | merge | `B0289792013` (8), `C0155972008` (6), `C0139792005` (3), `C0159412003` (3), `C0351752007` (3), … +8 more |
-| SOCIETE COMPTOIR DU SUD | matricule_fiscal | 13 | 18% | merge | `1166034J` (6), `1216161V` (4), `418711S` (3), `859977W` (3), `9613321P` (3), … +8 more |
-| SOCIETE DE DISTRIBUTION ET DE SERVICE | matricule_fiscal | 13 | 19% | merge | `1047453M` (7), `1460645A` (4), `1472843T` (4), `1599979H` (3), `757639P` (3), … +8 more |
-| SOCIETE FOOD SERVICES | matricule_fiscal | 13 | 24% | merge | `1048991P` (10), `1058460W` (7), `1224532Z` (5), `1466912B` (3), `1075509T` (2), … +8 more |
-| SOCIETE INTERACTIVE | matricule_fiscal | 13 | 24% | merge | `911130D` (10), `601887V` (7), `985048R` (4), `136242A` (3), `989017B` (3), … +8 more |
-| SOCIETE LE LABO | matricule_fiscal | 13 | 21% | merge | `1121630F` (7), `1100532P` (4), `1033912W` (2), `1057047G` (2), `1240201A` (2), … +8 more |
-| SOCIETE MUTUELLE DES BASES DES SERVICES AGRICOLES | matricule_fiscal | 13 | 13% | merge | `1330554A` (4), `318026W` (4), `39642L` (4), `1287686N` (3), `1484641Z` (2), … +8 more |
-| SOCIETE RAHMA SERVICES | matricule_fiscal | 13 | 24% | merge | `1016911X` (9), `487623C` (7), `1386155R` (4), `1536056A` (3), `1303818C` (2), … +8 more |
-| SOCIETE SINDBAD | matricule_fiscal | 13 | 22% | merge | `1464437L` (8), `1047255H` (5), `33420X` (4), `1075736D` (3), `1471358F` (3), … +8 more |
-| SOCIETE SIRINE | matricule_fiscal | 13 | 22% | merge | `543776M` (9), `1197390Y` (6), `833559T` (5), `1593035P` (4), `1093680G` (2), … +8 more |
-| SOCIETE SPORT ET LOISIRS | matricule_fiscal | 13 | 14% | merge | `1393054E` (4), `1425590C` (4), `1412265Y` (3), `960770E` (3), `13340030F` (2), … +8 more |
-| SOCIETE TRA SERVICES | matricule_fiscal | 13 | 12% | merge | `1007280M` (3), `1180973F` (2), `1186784D` (2), `1226614J` (2), `1321189Y` (2), … +8 more |
-| TUNISIE DISTRIBUTION | registre_commerce | 13 | 30% | merge | `B140032002` (13), `B154332003` (8), `B1157001997` (6), `B0228062006` (5), `B154761996` (3), … +8 more |
-| AB CORPORATION | registre_commerce | 12 | 34% | merge | `B0162742014` (15), `B2744242010` (5), `B24154152011` (4), `B2422112007` (4), `B01199202011` (3), … +7 more |
-| AMAL SERVICES | matricule_fiscal | 12 | 17% | merge | `1387857W` (4), `1048468Z` (2), `1208059B` (2), `1217815Q` (2), `1276510D` (2), … +7 more |
-| CARTHAGO SA | registre_commerce | 12 | 27% | merge | `B125432011` (10), `B2422622004` (7), `B157572002` (5), `B14462003` (3), `B162372001` (3), … +7 more |
-| COSMOS | matricule_fiscal | 12 | 16% | merge | `1013852Q` (5), `1347030L` (4), `1227369V` (3), `1389678D` (3), `1504826V` (3), … +7 more |
-| EL HAJ DES TRAVAUX PUBLICS | matricule_fiscal | 12 | 14% | merge | `1386161P` (3), `1286722V` (2), `1296259Y` (2), `1376435R` (2), `1426773M` (2), … +7 more |
-| FARAH | registre_commerce | 12 | 38% | merge | `B134802003` (17), `B110671997` (9), `B151302002` (5), `B07107082009` (3), `B02209412012` (2), … +7 more |
-| GENERAL IMMOBILIERE DE L'AVENIR | registre_commerce | 12 | 25% | merge | `B8111272009` (7), `B01164562013` (3), `B01217942017` (3), `B81186452010` (3), `B015422005` (2), … +7 more |
-| GENERAL SERVICES AUTOS GSA | matricule_fiscal | 12 | 17% | merge | `1016198W` (4), `1312445T` (3), `1020336R` (2), `1131899Q` (2), `1173609V` (2), … +7 more |
-| HORIZON 2002 | matricule_fiscal | 12 | 19% | merge | `1201359F` (8), `418136H` (8), `1303493B` (6), `1537442L` (5), `1478753T` (4), … +7 more |
-| KZ PETROLEUM SERVICES | matricule_fiscal | 12 | 12% | merge | `1028145W` (5), `1129465W` (5), `1178536R` (5), `398144V` (5), `1265561F` (4), … +7 more |
-| LA FONDATION | matricule_fiscal | 12 | 19% | merge | `587880A` (6), `835118E` (5), `1064381L` (4), `1459908N` (3), `1028177E` (2), … +7 more |
-| LA TUNISIENNE | registre_commerce | 12 | 41% | merge | `B116451996` (12), `B4481996` (5), `B187242000` (3), `8116451996` (2), `B11645` (2), … +7 more |
-| LE FORUM | matricule_fiscal | 12 | 26% | merge | `341542Y` (9), `1249295N` (5), `17519P` (5), `496235V` (3), `1227089P` (2), … +7 more |
-| NEW TECHNOLOGY ET SERVICES | matricule_fiscal | 12 | 27% | merge | `1346877Z` (8), `1226989P` (3), `1425226J` (3), `1090939C` (2), `1310662S` (2), … +7 more |
-| RANIM | matricule_fiscal | 12 | 25% | merge | `1351380L` (7), `1105069J` (2), `1116658K` (2), `1137437N` (2), `1210708H` (2), … +7 more |
-| SICAF + | matricule_fiscal | 12 | 34% | merge | `381564B` (22), `496267D` (12), `433734P` (6), `40789X` (5), `496214P` (5), … +7 more |
-| SICAF + | registre_commerce | 12 | 36% | merge | `B199991996` (19), `B1681996` (10), `B112811997` (5), `B119171996` (5), `B19381` (3), … +7 more |
-| SOCIETE AL-AMIRA | matricule_fiscal | 12 | 24% | merge | `749148C` (6), `1193605B` (2), `1249689D` (2), `1291729L` (2), `1325438N` (2), … +7 more |
-| SOCIETE AMEUR | matricule_fiscal | 12 | 24% | merge | `1037211P` (8), `1218909A` (6), `539369W` (3), `882091A` (3), `936833M` (3), … +7 more |
-| SOCIETE CHEMS DE TRANSPORT DE MARCHANDISES | registre_commerce | 12 | 21% | merge | `B15662001` (6), `B1124091997` (4), `B117461997` (4), `B2721482008` (3), `B126492001` (2), … +7 more |
-| SOCIETE CIVILE IMMOBILIERE | matricule_fiscal | 12 | 28% | merge | `1196071F` (12), `796816F` (8), `1312254N` (6), `765773R` (3), `819746K` (3), … +7 more |
-| SOCIETE DE PROMOTION IMMOBILIERE AXIA | registre_commerce | 12 | 44% | merge | `B188172000` (14), `B24173452012` (4), `B128872001` (3), `B2415422005` (3), `B113782002` (1), … +7 more |
-| SOCIETE EL-KHADRA | matricule_fiscal | 12 | 30% | merge | `6473H` (12), `1094798A` (8), `1276176K` (4), `1310505E` (2), `1399195T` (2), … +7 more |
-| SOCIETE EL-WIFAK | registre_commerce | 12 | 20% | merge | `B1124851997` (4), `R164762000` (3), `B131042252012` (2), `B25184212011` (2), `D014062010` (2), … +7 more |
-| SOCIETE ENTREPRISE TRABELSI | registre_commerce | 12 | 18% | merge | `B0770222013` (6), `B166081998` (6), `B2510972004` (5), `B1119891998` (4), `B148002000` (3), … +7 more |
-| SOCIETE EZDIHAR | matricule_fiscal | 12 | 19% | merge | `1173444R` (6), `1008211C` (4), `743724M` (4), `1383415E` (3), `1191950H` (2), … +7 more |
-| SOCIETE HAMMAMI POUR LE COMMERCE DES MEUBLES USAGES | registre_commerce | 12 | 55% | merge | `B1134041997` (26), `B119041998` (4), `B0152672004` (3), `B1456352005` (2), `B172791999` (2), … +7 more |
-| SOCIETE INTERNATIONALE DE DISTRIBUTION | matricule_fiscal | 12 | 18% | merge | `326447L` (6), `1044137P` (4), `803835D` (4), `529097K` (3), `1193380D` (2), … +7 more |
-| SOCIETE START | matricule_fiscal | 12 | 26% | merge | `1142207J` (9), `1319887Y` (3), `1372155T` (3), `1424426L` (3), `1512101J` (3), … +7 more |
-| SOCIETE TOURISTIQUE ET HOTELIERE CARTHAGE STHC | registre_commerce | 12 | 18% | merge | `B167491999` (9), `B197511996` (9), `B188161996` (7), `B0175642010` (6), `B134841997` (6), … +7 more |
-| SOCIETE TUNISIE CONCEPT | matricule_fiscal | 12 | 17% | merge | `1057966P` (6), `1004485L` (5), `100448S` (4), `1188572B` (4), `1059019L` (3), … +7 more |
-| SOCIETE TUNISIENNE DE COMMERCE | matricule_fiscal | 12 | 14% | merge | `1118169F` (3), `1501412M` (3), `1286985S` (2), `1335466N` (2), `1340131K` (2), … +7 more |
-| SUD SUD TRAVAUX | registre_commerce | 12 | 47% | merge | `B2538972007` (24), `B2155892006` (4), `B2411372010` (4), `B02231582014` (3), `B11095619000` (3), … +7 more |
-| AL IZ AGRICOLE | matricule_fiscal | 11 | 15% | merge | `1204176N` (4), `1284965E` (3), `1550384Z` (3), `1195477W` (2), `1339803M` (2), … +6 more |
-| ALAA SERVICES | matricule_fiscal | 11 | 14% | merge | `1531724S` (3), `11178131Q` (2), `1200671G` (2), `1202233W` (2), `1269985K` (2), … +6 more |
-| EL HANA | registre_commerce | 11 | 22% | merge | `B2213182004` (8), `B180142000` (7), `B015942004` (4), `B130501996` (4), `B2056892005` (4), … +6 more |
-| H ET R TEXTILE | matricule_fiscal | 11 | 22% | merge | `1026590F` (6), `1119039A` (3), `1482934B` (3), `983934C` (3), `1008340L` (2), … +6 more |
-| INTERNATIONAL PROD SIGN COMPANY TUNISIA | registre_commerce | 11 | 53% | merge | `B152451997` (19), `B01136842015` (3), `B2489642008` (3), `801166832010` (2), `B0144732009` (2), … +6 more |
-| MBM INFORMATIQUE ET SERVICES | matricule_fiscal | 11 | 10% | merge | `1296770J` (2), `1306144V` (2), `1338709L` (2), `1423897L` (2), `1449807D` (2), … +6 more |
-| SOCIETE ALMA | matricule_fiscal | 11 | 19% | merge | `1539560A` (6), `1139174S` (5), `1113716P` (4), `1190459X` (3), `1290723A` (2), … +6 more |
-| SOCIETE COMPTOIR DU SUD | registre_commerce | 11 | 18% | merge | `B1101771997` (5), `B142951996` (5), `B081772004` (3), `B1108621997` (3), `B116501997` (3), … +6 more |
-| SOCIETE DE MAINTENANCE GENERALE | matricule_fiscal | 11 | 25% | merge | `315741E` (7), `901363P` (3), `1025300A` (2), `1211646Q` (2), `1329644K` (2), … +6 more |
-| SOCIETE DE PRODUITS ALIMENTAIRES SPA | registre_commerce | 11 | 30% | merge | `B095742007` (8), `B134911998` (5), `B0390812013` (2), `B146391997` (2), `B15197692012` (2), … +6 more |
-| SOCIETE INTERNATIONALE DE SERVICES | matricule_fiscal | 11 | 27% | merge | `1156754F` (8), `1425308K` (4), `960965P` (3), `1102113G` (2), `1232345V` (2), … +6 more |
-| SOCIETE LE FRIGO | registre_commerce | 11 | 23% | merge | `B08196602014` (6), `B112145` (3), `B1529152015` (3), `B1744852008` (3), `B24122582009` (3), … +6 more |
-| SOCIETE LE LABORATOIRE | registre_commerce | 11 | 32% | merge | `B1192003` (10), `B2462522006` (7), `0181022016` (3), `B0824322004` (2), `B1130041997` (2), … +6 more |
-| SOCIETE LIFE | registre_commerce | 11 | 71% | merge | `B1116511996` (55), `B0134832005` (5), `B24154562009` (4), `B091952006` (3), `B0109422014` (2), … +6 more |
-| SOCIETE LINA | registre_commerce | 11 | 18% | merge | `B02192922016` (5), `1524462010` (4), `B078062013` (3), `B24141752001` (3), `B2415742007` (3), … +6 more |
-| SOCIETE MEGA | registre_commerce | 11 | 25% | merge | `B139401996` (11), `B019932006` (8), `B113771997` (5), `B01191952013` (4), `B187952000` (4), … +6 more |
-| SOCIETE MODERNE DE DISTRIBUTION | matricule_fiscal | 11 | 15% | merge | `1231247P` (4), `1435448C` (3), `1435488L` (3), `1511186C` (3), `111856W` (2), … +6 more |
-| SOCIETE VITAL | matricule_fiscal | 11 | 14% | merge | `979190J` (4), `1214216J` (3), `1490089K` (3), `712802N` (3), `748728N` (3), … +6 more |
-| SOGECO | matricule_fiscal | 11 | 20% | merge | `2011M` (5), `1425086Q` (4), `411618R` (3), `1042231C` (2), `1042241E` (2), … +6 more |
-| TRADING COMPANY TUNISIA TCT | matricule_fiscal | 11 | 21% | merge | `1184265A` (8), `947964H` (8), `1031283F` (4), `1057630R` (4), `1362487G` (3), … +6 more |
-| TUNISIE TEXTILE | matricule_fiscal | 11 | 26% | merge | `381645B` (9), `1399462T` (4), `736433L` (4), `1327318P` (3), `753600F` (3), … +6 more |
-| UNIVERSAL TRADING | matricule_fiscal | 11 | 15% | merge | `1187752Z` (4), `1406667A` (3), `1481667X` (3), `1485685R` (3), `1022450B` (2), … +6 more |
-| AGRO SERVICES | matricule_fiscal | 10 | 28% | merge | `1130081Z` (8), `1278794Q` (5), `1438666Z` (3), `1090393P` (2), `1165691J` (2), … +5 more |
-| ANDY ENGINEERING TUNISIA | matricule_fiscal | 10 | 32% | merge | `1200084S` (11), `1187203Y` (6), `1064042T` (3), `1181374R` (3), `10640421A` (2), … +5 more |
-| B R ET COMPANY | matricule_fiscal | 10 | 15% | merge | `1104278M` (3), `835567C` (3), `1375209D` (2), `1427726J` (2), `1538658F` (2), … +5 more |
-| BEST TELECOM SERVICES | matricule_fiscal | 10 | 22% | merge | `1486868B` (4), `11379451E` (2), `1219247N` (2), `1233940N` (2), `1421205L` (2), … +5 more |
-| BRAVO | matricule_fiscal | 10 | 32% | merge | `858784J` (17), `1179783K` (13), `1147350M` (7), `749429J` (4), `1335480W` (3), … +5 more |
-| EL BARAKA DISTRIBUTION | matricule_fiscal | 10 | 17% | merge | `1342144Z` (3), `1252649V` (2), `1304174S` (2), `1396708J` (2), `1445826P` (2), … +5 more |
-| EL FATH | matricule_fiscal | 10 | 13% | merge | `1282808H` (2), `1290516V` (2), `1382483N` (2), `1516569L` (2), `983473X` (2), … +5 more |
-| EL WIFEK | registre_commerce | 10 | 19% | merge | `B129781996` (3), `B0514372009` (2), `B09231232015` (2), `B26138392010` (2), `B9150152012` (2), … +5 more |
-| FOOD DISTRIBUTION | matricule_fiscal | 10 | 13% | merge | `103200L` (4), `1032100L` (4), `1058747J` (4), `1282114H` (4), `1414083C` (4), … +5 more |
-| GENERALE ELECTRIQUE | matricule_fiscal | 10 | 22% | merge | `1102394G` (5), `1128140X` (2), `1135293G` (2), `1361612N` (2), `1362416Q` (2), … +5 more |
-| HM BUREAUTIQUE ET INFORMATIQUE | registre_commerce | 10 | 24% | merge | `B154701997` (5), `B03213202012` (3), `B15171682012` (3), `B014962012` (2), `B197161996` (2), … +5 more |
-| HORIZON SERVICES | matricule_fiscal | 10 | 10% | merge | `1013282C` (2), `1104168G` (2), `1114473T` (2), `1116481C` (2), `1158135R` (2), … +5 more |
-| INTERNATIONAL CITY CENTER | matricule_fiscal | 10 | 40% | merge | `341544A` (12), `1045341W` (3), `1184058V` (2), `1311955H` (2), `1343669N` (2), … +5 more |
-| LA PERLE | registre_commerce | 10 | 22% | merge | `B03187502009` (4), `B127602003` (3), `B01169212013` (2), `B2457772007` (2), `B25197702010` (2), … +5 more |
-| LA PROMOTION IMMOBILIERE PRIM | matricule_fiscal | 10 | 39% | merge | `1030973X` (18), `1123951E` (7), `1141266R` (4), `578546M` (4), `1068511V` (3), … +5 more |
-| LA SOURCE | matricule_fiscal | 10 | 16% | merge | `1390345A` (3), `1021787W` (2), `1029705L` (2), `1139131F` (2), `1286076M` (2), … +5 more |
-| LE PATRIMOINE | matricule_fiscal | 10 | 49% | merge | `745378Y` (15), `1125006D` (6), `11460765H` (2), `1302263J` (2), `1369707E` (2), … +5 more |
-| LE PILOTE | matricule_fiscal | 10 | 23% | merge | `37603V` (6), `1603785F` (4), `1195167J` (3), `837803V` (3), `1320768H` (2), … +5 more |
-| LINK | registre_commerce | 10 | 33% | merge | `B025042005` (11), `B25159372011` (11), `B1147652014` (2), `B2233692011` (2), `B2478302010` (2), … +5 more |
-| LOGISTIC SERVICES | matricule_fiscal | 10 | 38% | merge | `608110E` (12), `1330632X` (4), `1095268G` (2), `1174590F` (2), `1247537D` (2), … +5 more |
-| MG TRADING | matricule_fiscal | 10 | 14% | merge | `1392969M` (3), `989708Y` (3), `1302737Y` (2), `1402945L` (2), `1403157T` (2), … +5 more |
-| MIA MIA DISTRIBUTION | matricule_fiscal | 10 | 23% | merge | `1394731Z` (6), `1561911K` (3), `1580741R` (3), `1274366F` (2), `1334442K` (2), … +5 more |
-| MODA | registre_commerce | 10 | 21% | merge | `B03117592011` (4), `A1188671998` (2), `B0240342015` (2), `B0270152015` (2), `B03113892010` (2), … +5 more |
-| SOCIETE AM DE SERVICE ET COMMERCE INTERNATIONALE NON RESIDENTE | registre_commerce | 10 | 25% | merge | `B0164922007` (10), `B249052007` (9), `B24211102010` (5), `D2423332007` (5), `B24183762009` (4), … +5 more |
-| SOCIETE AMANI | matricule_fiscal | 10 | 19% | merge | `1455335E` (4), `515524K` (4), `1053292B` (2), `1274815K` (2), `1424340F` (2), … +5 more |
-| SOCIETE HAIFA | matricule_fiscal | 10 | 26% | merge | `798547M` (10), `1130386P` (8), `870190N` (7), `939231D` (4), `1043636A` (2), … +5 more |
-| SOCIETE HAMMAMI POUR LE COMMERCE DES MEUBLES USAGES | matricule_fiscal | 10 | 42% | merge | `6175A` (10), `539731T` (3), `1029409F` (2), `510814W` (2), `942100S` (2), … +5 more |
-| SOCIETE IDEAL SERVICE | matricule_fiscal | 10 | 23% | merge | `382095X` (6), `1175319W` (4), `1361343L` (2), `1379919W` (2), `1451721T` (2), … +5 more |
-| SOCIETE IMEN | registre_commerce | 10 | 21% | merge | `B2427702008` (6), `B183251996` (4), `B161012001` (3), `B2357742007` (3), `B1044782014` (2), … +5 more |
+| EL FATH | matricule_fiscal | 13 | 14% | merge | `1207994E` (3), `1282808H` (2), `1290516V` (2), `1338688Z` (2), `1341914P` (2), … +8 more |
+| INTERNATIONAL PROD SIGN COMPANY TUNISIA | matricule_fiscal | 13 | 31% | merge | `1142790M` (8), `1410775H` (3), `1074561T` (2), `1102146R` (2), `1169223A` (2), … +8 more |
+| LA PRECISION MECANIQUE | matricule_fiscal | 13 | 14% | merge | `1109331W` (4), `967819K` (4), `10420Y` (3), `1033802Q` (2), `1267351F` (2), … +8 more |
+| LA TUNISIENNE | registre_commerce | 13 | 26% | merge | `B116451996` (14), `B1106841996` (13), `B4481996` (12), `B153661999` (5), `B187242000` (3), … +8 more |
+| LE FUTURE | registre_commerce | 13 | 32% | merge | `A1314371998` (22), `B02158572012` (9), `B0268932007` (6), `B01141302009` (5), `B0228062006` (5), … +8 more |
+| LE RESEAU | matricule_fiscal | 13 | 19% | merge | `1406193L` (10), `1012896Z` (9), `893431K` (7), `539151D` (5), `1106189W` (4), … +8 more |
+| SOCIETE EL-WIFAK | matricule_fiscal | 13 | 12% | merge | `283777Q` (3), `4414611N` (3), `74526033N` (3), `1092222D` (2), `1141112Y` (2), … +8 more |
+| SOCIETE HENDA | matricule_fiscal | 13 | 32% | merge | `430134G` (8), `1062289H` (3), `851494W` (3), `1481224X` (2), `1556919K` (2), … +8 more |
+| SOCIETE LE COIN | registre_commerce | 13 | 23% | merge | `B2418192009` (7), `B01175522014` (4), `B25116352011` (4), `D3115232011` (4), `B01187022016` (2), … +8 more |
+| SOCIETE LE LABO | registre_commerce | 13 | 17% | merge | `B0225602005` (5), `B2414322011` (5), `B131682003` (3), `A0123122004` (2), `B0837232006` (2), … +8 more |
+| AMANA | registre_commerce | 12 | 33% | merge | `B0839012010` (9), `B0112672016` (4), `B0148462016` (3), `B1681992013` (3), `A09139872012` (1), … +7 more |
+| CHAMS | registre_commerce | 12 | 16% | merge | `B2479732007` (4), `B1148231997` (3), `B195301997` (3), `D11637` (3), `D25512005` (3), … +7 more |
+| COMPETENCES+ | matricule_fiscal | 12 | 16% | merge | `1266563M` (5), `984221G` (4), `1225655P` (3), `1225756T` (3), `1596181M` (3), … +7 more |
+| EL WIFEK | registre_commerce | 12 | 33% | merge | `B129781996` (8), `B9150152012` (3), `B0514372009` (2), `B09231232015` (2), `B26138392010` (2), … +7 more |
+| EMNA | registre_commerce | 12 | 31% | merge | `B01109232009` (10), `B0265732006` (5), `B1122491997` (4), `B0821262006` (3), `B136632002` (2), … +7 more |
+| KMG SERVICES | matricule_fiscal | 12 | 39% | merge | `1364584Q` (14), `959529F` (3), `1231141E` (2), `1270427J` (2), `1306352B` (2), … +7 more |
+| LA SOURCE | matricule_fiscal | 12 | 15% | merge | `1390345A` (3), `1021787W` (2), `1029705L` (2), `1139131F` (2), `1431601A` (2), … +7 more |
+| SOCIETE AMANI | matricule_fiscal | 12 | 21% | merge | `1455335E` (5), `515524K` (4), `1053292B` (2), `1274815K` (2), `1424340F` (2), … +7 more |
+| SOCIETE ASMA | registre_commerce | 12 | 18% | merge | `B021802004` (4), `B161702001` (4), `B038132015` (2), `B18862002` (2), `B25175112009` (2), … +7 more |
+| SOCIETE EL-IZDIHAR | matricule_fiscal | 12 | 13% | merge | `1082967K` (2), `1241490E` (2), `1438665Y` (2), `1214253P` (1), `1473454N` (1), … +7 more |
+| SOCIETE EL-MAJD | matricule_fiscal | 12 | 31% | merge | `1427173X` (8), `1077297K` (3), `1131592Y` (2), `1143920H` (2), `1181034Y` (2), … +7 more |
+| SOCIETE HAIFA | matricule_fiscal | 12 | 26% | merge | `1130386P` (15), `798547M` (12), `870190N` (8), `939231D` (7), `1605717B` (4), … +7 more |
+| SOCIETE M | registre_commerce | 12 | 25% | merge | `B0731462015` (7), `9171042013` (3), `B0171042013` (3), `B2761102011` (3), `B01239262013` (2), … +7 more |
+| SOCIETE SLAMA | matricule_fiscal | 12 | 19% | merge | `1202915R` (6), `1283594S` (4), `566070G` (4), `899435Q` (4), `1069495S` (2), … +7 more |
+| SOCIETE UNIQUE | registre_commerce | 12 | 38% | merge | `B16242002` (12), `B0317982005` (7), `B1116671996` (2), `B1547832005` (2), `B518912014` (2), … +7 more |
+| SOGECO | matricule_fiscal | 12 | 18% | merge | `2011M` (5), `1425086Q` (4), `1042231C` (3), `1042241E` (3), `411618R` (3), … +7 more |
+| SOMAC | matricule_fiscal | 12 | 20% | merge | `1048884M` (5), `1173161H` (3), `1184741H` (3), `894317N` (3), `1154275L` (2), … +7 more |
+| BRAVO | matricule_fiscal | 11 | 29% | merge | `858784J` (18), `1179783K` (13), `1147350M` (7), `1335480W` (5), `811575Z` (5), … +6 more |
+| DEFI | matricule_fiscal | 11 | 17% | merge | `1168147B` (4), `1549454E` (4), `1147213D` (3), `1018979C` (2), `1436206P` (2), … +6 more |
+| LE PILOTE | matricule_fiscal | 11 | 22% | merge | `37603V` (6), `1603785F` (4), `1195167J` (3), `837803V` (3), `1320768H` (2), … +6 more |
+| LEILA | matricule_fiscal | 11 | 24% | merge | `307285E` (7), `578841R` (6), `1134528C` (4), `1221863D` (2), `1370973N` (2), … +6 more |
+| LES HORIZONS | registre_commerce | 11 | 14% | merge | `B0329022014` (3), `B0412592004` (3), `B15144772013` (3), `B163992005` (3), `B0211042007` (2), … +6 more |
+| MAYA | registre_commerce | 11 | 17% | merge | `B192902000` (3), `B01148352010` (2), `B01208322018` (2), `B0493572007` (2), `B2045222005` (2), … +6 more |
+| MODA | registre_commerce | 11 | 19% | merge | `B03117592011` (4), `B24181922009` (3), `A1188671998` (2), `B0240342015` (2), `B0270152015` (2), … +6 more |
+| NOUR DE COMMERCE | matricule_fiscal | 11 | 22% | merge | `1011690G` (6), `1202168E` (3), `1213637Y` (2), `1223534X` (2), `1418789Z` (2), … +6 more |
+| PNEU | registre_commerce | 11 | 34% | merge | `B11242002` (13), `A0155342006` (8), `B164531998` (5), `B01217942017` (3), `B15178472010` (2), … +6 more |
+| SAAD | registre_commerce | 11 | 23% | merge | `B0376762010` (5), `B2451272011` (4), `B01212932017` (2), `B13211998` (2), `B19225352017` (2), … +6 more |
+| SELECTION | registre_commerce | 11 | 23% | merge | `D3125697` (6), `B24219442011` (5), `B2452082007` (4), `B0813122005` (2), `B112411199` (2), … +6 more |
+| SOCIETE ALMA | matricule_fiscal | 11 | 18% | merge | `1539560A` (6), `1113716P` (5), `1139174S` (5), `1190459X` (4), `1366061A` (3), … +6 more |
+| SOCIETE AMINA | registre_commerce | 11 | 21% | merge | `B0151652006` (8), `B1154371997` (7), `B158762002` (5), `B15876202` (4), `B3135242011` (4), … +6 more |
+| SOCIETE DELIVERY | matricule_fiscal | 11 | 33% | merge | `983313F` (15), `432912K` (12), `1794326Q` (6), `1139138N` (2), `1435032F` (2), … +6 more |
+| SOCIETE EZZAHRA | matricule_fiscal | 11 | 22% | merge | `1392733S` (5), `356712A` (4), `1071398N` (2), `1193099F` (2), `1457726A` (2), … +6 more |
+| SOCIETE JAWHARA | registre_commerce | 11 | 31% | merge | `B1132801997` (10), `B07187442011` (5), `B092042006` (4), `B0911802006` (2), `B0912011` (2), … +6 more |
+| SOCIETE TUNISIENNE DE COMMERCE | matricule_fiscal | 11 | 19% | merge | `1118169F` (4), `1501412M` (3), `1286985S` (2), `1340131K` (2), `1344014Y` (2), … +6 more |
+| SOCIETE YOSR | registre_commerce | 11 | 22% | merge | `B113341997` (6), `B0133332008` (5), `B0268982016` (3), `B08212014` (3), `B01167772014` (2), … +6 more |
+| SPEED | registre_commerce | 11 | 24% | merge | `B2434302007` (13), `B123382002` (7), `B01258392016` (6), `B147352002` (6), `B2644262013` (6), … +6 more |
+| DISCOVERY | matricule_fiscal | 10 | 18% | merge | `955323A` (4), `971451B` (4), `1124325M` (2), `1125906H` (2), `1298513B` (2), … +5 more |
+| EL ALIA | matricule_fiscal | 10 | 24% | merge | `1223544Z` (8), `1226289R` (5), `1472185G` (4), `1501398H` (4), `1144359J` (3), … +5 more |
+| EL FAOUZ | registre_commerce | 10 | 38% | merge | `B2557942007` (11), `A164311999` (7), `B08672004` (2), `B145921997` (2), `D025942013` (2), … +5 more |
+| EL HANA | matricule_fiscal | 10 | 18% | merge | `987297R` (4), `1164832Z` (3), `1170763R` (2), `1324901L` (2), `1409852F` (2), … +5 more |
+| EL HOUDA | registre_commerce | 10 | 21% | merge | `B2526902007` (6), `B117391999` (5), `B17391` (4), `B1858491006` (3), `B195421997` (3), … +5 more |
+| EL WAFA | matricule_fiscal | 10 | 17% | merge | `1042438A` (3), `1014358K` (2), `1229384C` (2), `1403054M` (2), `1451246M` (2), … +5 more |
+| INTERNATIONAL PROD SIGN COMPANY TUNISIA | registre_commerce | 10 | 18% | merge | `B01136842015` (3), `B2489642008` (3), `801166832010` (2), `B0144732009` (2), `B2479212008` (2), … +5 more |
+| SOCIETE ADEM | registre_commerce | 10 | 14% | merge | `B09173892013` (3), `B195422007` (3), `B197691998` (3), `B40165582015` (3), `1612662015` (2), … +5 more |
+| SOCIETE BAYA | registre_commerce | 10 | 29% | merge | `B09206802012` (4), `B2514412004` (2), `B01203742017` (1), `B0198092010` (1), `B02144642013` (1), … +5 more |
+| SOCIETE DE COMMERCE INTERNATIONAL | matricule_fiscal | 10 | 18% | merge | `1040118T` (5), `1036844P` (4), `1419272C` (4), `982996R` (4), `1221081E` (2), … +5 more |
+| SOCIETE GLOBE | registre_commerce | 10 | 24% | merge | `B1112171996` (8), `B31164402012` (5), `B2415782007` (4), `B245492007` (4), `B152392001` (3), … +5 more |
+| SOCIETE HENDA | registre_commerce | 10 | 26% | merge | `191521997` (5), `B154871997` (4), `B191521997` (4), `B2455802008` (3), `D034672006` (2), … +5 more |
+| SOCIETE IMEM | matricule_fiscal | 10 | 23% | merge | `639495H` (6), `1321429V` (5), `1040053T` (2), `1140372N` (2), `1286629Z` (2), … +5 more |
 | SOCIETE JMF | matricule_fiscal | 10 | 17% | merge | `1089766H` (3), `1020630Q` (2), `1038396V` (2), `1181281M` (2), `1372202H` (2), … +5 more |
-| SOCIETE MUTUELLE DE BASE DES SERVICES AGRICOLES EL-FALAH | matricule_fiscal | 10 | 17% | merge | `1598350V` (4), `1597067Q` (3), `580806J` (3), `1146925B` (2), `1191272R` (2), … +5 more |
-| SOCIETE NADINE + | matricule_fiscal | 10 | 32% | merge | `635831L` (8), `1121398S` (2), `1151556E` (2), `1219842C` (2), `1332594S` (2), … +5 more |
-| SOCIETE TOURISME ET LOISIRS | matricule_fiscal | 10 | 34% | merge | `296111V` (10), `1229793R` (5), `1516108J` (4), `312463N` (3), `1499392D` (2), … +5 more |
-| SOCIETE TOURISTIQUE ET HOTELIERE CARTHAGE STHC | matricule_fiscal | 10 | 23% | merge | `646278S` (8), `1147557B` (6), `9912Y` (6), `13760E` (5), `12947K` (3), … +5 more |
-| SOCIETE TUNISIE TRANSPORT | matricule_fiscal | 10 | 25% | merge | `1059240P` (7), `745274Q` (6), `46193Z` (3), `1250641C` (2), `1449242M` (2), … +5 more |
-| SOMAC | matricule_fiscal | 10 | 15% | merge | `1173161H` (3), `1184741H` (3), `894317N` (3), `1048884M` (2), `1154275L` (2), … +5 more |
-| SSAM INTERNATIONAL TRADE | matricule_fiscal | 10 | 29% | merge | `1139531T` (9), `708299R` (7), `1032082C` (2), `1125064P` (2), `1157405Q` (2), … +5 more |
-| TUNISIA GOLF SERVICES | matricule_fiscal | 10 | 31% | merge | `1064613H` (11), `1370238M` (6), `985576M` (5), `1229672H` (3), `1186303J` (2), … +5 more |
-| TUNISIE CAR | matricule_fiscal | 10 | 27% | merge | `815238B` (12), `949040D` (9), `1428617J` (8), `1157350S` (3), `9490400R` (3), … +5 more |
-| YARA DE COMMERCE INTERNATIONAL | matricule_fiscal | 10 | 14% | merge | `1449898Z` (3), `1474932C` (3), `1204173K` (2), `1213219H` (2), `1335239N` (2), … +5 more |
-| YKK TRADING TUNISIA | matricule_fiscal | 10 | 44% | merge | `614513J` (15), `1263975R` (3), `1393411F` (3), `1258431D` (2), `1273925L` (2), … +5 more |
-| AL AMEN | matricule_fiscal | 9 | 30% | merge | `1441773B` (7), `1328221K` (2), `1397723M` (2), `1426086V` (2), `1445142R` (2), … +4 more |
-| AM DISTRIBUTION | matricule_fiscal | 9 | 30% | merge | `1052975T` (7), `1075917G` (3), `1170712E` (2), `1256306Q` (2), `1276505A` (2), … +4 more |
-| AUTO PIECES | registre_commerce | 9 | 22% | merge | `B121682002` (4), `B0332142008` (3), `B2736852006` (3), `B07130312012` (2), `B150932000` (2), … +4 more |
-| CENTRAL | registre_commerce | 9 | 27% | merge | `B0146672013` (9), `B014082007` (5), `B110861996` (5), `B216191302010` (5), `B17646` (3), … +4 more |
-| CHAARI INTERNATIONAL TRADE | matricule_fiscal | 9 | 24% | merge | `1164090J` (5), `1004775T` (3), `1351319F` (2), `1403804C` (2), `14193481F` (2), … +4 more |
-| CHAMS | registre_commerce | 9 | 17% | merge | `B1148231997` (3), `B195301997` (3), `D11637` (3), `B1117711997` (2), `B8160742015` (2), … +4 more |
-| COMPETENCES+ | matricule_fiscal | 9 | 23% | merge | `1266563M` (5), `1281155N` (3), `1189820C` (2), `1234163Z` (2), `1310511C` (2), … +4 more |
-| CONCEPT DESIGN | matricule_fiscal | 9 | 18% | merge | `1165189Z` (5), `1430416X` (4), `1436544F` (4), `769763G` (4), `1181023V` (2), … +4 more |
-| CONSULT INTERNATIONAL | matricule_fiscal | 9 | 33% | merge | `1013401Q` (8), `992709Z` (3), `1120792V` (2), `1154617N` (2), `1167953W` (2), … +4 more |
-| DISCOVERY | matricule_fiscal | 9 | 20% | merge | `971451B` (4), `955323A` (3), `1124325M` (2), `1125906H` (2), `1298513B` (2), … +4 more |
-| EL WAFA | registre_commerce | 9 | 19% | merge | `B029822006` (3), `B9198792009` (3), `B0223562013` (2), `B0821852015` (2), `B0861432007` (2), … +4 more |
-| ELITE + | registre_commerce | 9 | 17% | merge | `B0120572017` (2), `B155322001` (2), `B31205312011` (2), `B0140542012` (1), `B03120822013` (1), … +4 more |
-| ENNASR | matricule_fiscal | 9 | 24% | merge | `896345B` (4), `1189435X` (2), `1221226Q` (2), `1238813P` (2), `1292864N` (2), … +4 more |
-| EQUIPEMENT GENERAL DE BATIMENT EXPORT EGBE | registre_commerce | 9 | 20% | merge | `B1134401997` (3), `B139602000` (3), `B00454372011` (2), `B116882001` (2), `81126721997` (1), … +4 more |
-| EURO MED | matricule_fiscal | 9 | 21% | merge | `1006000J` (4), `1531825Y` (3), `1327136K` (2), `1475549D` (2), `1501661D` (2), … +4 more |
-| FIMCO INTERNATIONAL | matricule_fiscal | 9 | 29% | merge | `632974N` (7), `1048432L` (3), `1096178K` (3), `1071217R` (2), `1129361N` (2), … +4 more |
-| IMMOBILIERE EL-AMANA | matricule_fiscal | 9 | 26% | merge | `758809T` (5), `1071452B` (3), `1182883N` (2), `1292857Y` (2), `1566999H` (2), … +4 more |
+| SOCIETE LINA | matricule_fiscal | 10 | 11% | merge | `1153592S` (2), `1187977Q` (2), `1224096A` (2), `1300655N` (2), `1364799E` (2), … +5 more |
+| SOCIETE SINDBAD | registre_commerce | 10 | 23% | merge | `B128232008` (5), `B0151462005` (3), `B171181997` (3), `B120341997` (2), `B158252000` (2), … +5 more |
+| TUNISIE TRAVAUX | matricule_fiscal | 10 | 18% | merge | `857921V` (6), `111269V` (5), `838552H` (4), `1112692V` (3), `1191070H` (3), … +5 more |
+| AGORA | matricule_fiscal | 9 | 24% | merge | `985808J` (7), `1164697L` (5), `1297218S` (4), `1310651P` (3), `892401Z` (3), … +4 more |
+| ARTEMIS | matricule_fiscal | 9 | 27% | merge | `1237666G` (6), `1049050E` (4), `1191969V` (3), `1213487C` (2), `1326400C` (2), … +4 more |
+| ENGINEERING D'AFFAIRES ET CONSULTING | registre_commerce | 9 | 28% | merge | `B0762982008` (8), `B0378322011` (6), `B08239282013` (3), `B09175612013` (3), `B2427362011` (3), … +4 more |
+| ENNASR | matricule_fiscal | 9 | 22% | merge | `896345B` (4), `1189435X` (3), `1221226Q` (2), `1238813P` (2), `1292864N` (2), … +4 more |
+| FARAH | matricule_fiscal | 9 | 36% | merge | `38228W` (11), `843718W` (5), `1108075V` (3), `1000975H` (2), `1448520L` (2), … +4 more |
+| FLORENCE | matricule_fiscal | 9 | 21% | merge | `9934691G` (5), `983662A` (4), `1031730N` (3), `496239Z` (3), `583987T` (3), … +4 more |
+| LA PERLA DE DEVELOPPEMENT TOURISTIQUE ET IMMOBILIER | matricule_fiscal | 9 | 37% | merge | `1021766Q` (10), `1096227B` (4), `1539491E` (3), `1221590X` (2), `1262445P` (2), … +4 more |
+| LE BON GOUT | matricule_fiscal | 9 | 25% | merge | `620509B` (5), `1312192R` (3), `1231179V` (2), `1286002S` (2), `1332750L` (2), … +4 more |
+| PLASTICS | matricule_fiscal | 9 | 60% | merge | `12866K` (22), `889956G` (5), `1324701E` (3), `1361122Z` (2), `1125315P` (1), … +4 more |
+| POULINA | matricule_fiscal | 9 | 21% | merge | `1025115B` (6), `1013461D` (5), `489910Q` (5), `2970D` (4), `1062980W` (2), … +4 more |
+| SOCIETE ALFA | registre_commerce | 9 | 27% | merge | `B134092000` (4), `B2459002006` (3), `B24106062009` (2), `A09186692010` (1), `A0924652013` (1), … +4 more |
+| SOCIETE DE NUTRITION | registre_commerce | 9 | 41% | merge | `B132882003` (9), `B08253752017` (3), `B117812001` (2), `B15132272009` (2), `B162631999` (2), … +4 more |
+| SOCIETE DE SERVICES ADMINISTRATIFS | matricule_fiscal | 9 | 24% | merge | `1542237R` (5), `1263617W` (3), `1287162N` (3), `1256196D` (2), `1476641C` (2), … +4 more |
+| SOCIETE EL-AMAL | matricule_fiscal | 9 | 48% | merge | `944132K` (15), `1395085W` (5), `1013643H` (2), `1232701V` (2), `1392142Z` (2), … +4 more |
+| SOCIETE ESSAADA | matricule_fiscal | 9 | 21% | merge | `449637W` (4), `881688W` (4), `10305W` (2), `1318653B` (2), `1486299P` (2), … +4 more |
+| SOCIETE ETABLISSEMENT TRIKI | matricule_fiscal | 9 | 14% | merge | `1085881S` (2), `1158872V` (2), `1347391K` (2), `1465588F` (2), `1475586J` (2), … +4 more |
+| SOCIETE EVENT | registre_commerce | 9 | 36% | merge | `B158082002` (15), `B131892002` (11), `B01215832016` (3), `B0177802016` (3), `B1144011997` (3), … +4 more |
+| SOCIETE HOTELIERE ET TOURISTIQUE HOTEL IBN KHALDOUN | registre_commerce | 9 | 57% | merge | `B188161996` (21), `B197511996` (8), `B134841997` (2), `B111531998` (1), `B12751997` (1), … +4 more |
+| SOCIETE IMMOBILIERE | matricule_fiscal | 9 | 40% | merge | `762750W` (12), `1525744J` (6), `411858G` (3), `1355558M` (2), `31459E` (2), … +4 more |
+| SOCIETE NADINE + | matricule_fiscal | 9 | 35% | merge | `635831L` (8), `1121398S` (2), `1151556E` (2), `1219842C` (2), `1332594S` (2), … +4 more |
+| SOCIETE NOUR | registre_commerce | 9 | 26% | merge | `B150052001` (7), `B51118782013` (6), `B0421112005` (5), `B15186122009` (3), `B09126352014` (2), … +4 more |
+| SOCIETE OCTOPUS | matricule_fiscal | 9 | 18% | merge | `1103781T` (3), `1164990N` (2), `1191170L` (2), `1491590Y` (2), `1495147Z` (2), … +4 more |
+| SOCIETE OLIVA | matricule_fiscal | 9 | 33% | merge | `1327542W` (11), `578644N` (8), `814700Y` (3), `1258632L` (2), `1397256F` (2), … +4 more |
+| SOCIETE SARAH | matricule_fiscal | 9 | 20% | merge | `613864B` (4), `1423521E` (3), `307159Z` (3), `1078067B` (2), `1427730E` (2), … +4 more |
+| SOCIETE TAAMIR | matricule_fiscal | 9 | 30% | merge | `896331V` (7), `1058083Q` (3), `1213115M` (3), `1235254F` (2), `1354036K` (2), … +4 more |
+| BANQUE DE TUNISIE BT | matricule_fiscal | 8 | 47% | merge | `120H` (15), `1086260X` (5), `121J` (5), `1385594H` (2), `15094B` (2), … +3 more |
+| BANQUE DE TUNISIE BT | registre_commerce | 8 | 44% | merge | `B140811997` (31), `B1105941996` (14), `B14081` (7), `B1163511197` (6), `B1163511997` (5), … +3 more |
+| COBRA | matricule_fiscal | 8 | 35% | merge | `1007609S` (9), `1381615C` (5), `1260040M` (3), `914776B` (3), `1089150E` (2), … +3 more |
+| L'OLIVIER BLEU DE RESTAURATION ET DE LOISIRS | matricule_fiscal | 8 | 29% | merge | `960643Y` (6), `822681K` (4), `1191422M` (3), `1210944T` (2), `1211004K` (2), … +3 more |
+| LA CONFIANCE | matricule_fiscal | 8 | 15% | merge | `1141087Q` (2), `1186258K` (2), `1270640M` (2), `1352135D` (2), `1528577A` (2), … +3 more |
+| LA SIRENE | matricule_fiscal | 8 | 25% | merge | `1366894L` (5), `997987S` (5), `1119848C` (3), `624486E` (3), `1094410P` (1), … +3 more |
+| LA SOCIETE COOPERATIVE DES SERVICES AGRICOLES | registre_commerce | 8 | 38% | merge | `B1137231997` (8), `B3931995` (4), `B0475832008` (3), `C113211997` (2), `B02792009` (1), … +3 more |
+| LE RESEAU | registre_commerce | 8 | 36% | merge | `B2451512007` (11), `02115312015` (10), `B0178212008` (2), `B0365002013` (2), `B1102541996` (2), … +3 more |
+| MAGHREB INTERNATIONAL PUBLICITE MIP | registre_commerce | 8 | 46% | merge | `B0167672008` (18), `B19582003` (5), `B2410942004` (4), `B2510052009` (4), `B0181482008` (3), … +3 more |
+| MARAM SERVICE | matricule_fiscal | 8 | 23% | merge | `1382020J` (5), `1262150B` (4), `1531233C` (4), `1076946R` (2), `1436764R` (2), … +3 more |
+| POLYMONT INGENIERIE CONSULTING | matricule_fiscal | 8 | 31% | merge | `1017005Z` (4), `1523644X` (2), `1546808Y` (2), `1234980B` (1), `1280036C` (1), … +3 more |
+| PRESTIGE | matricule_fiscal | 8 | 33% | merge | `1025936H` (7), `340668H` (4), `1135848V` (2), `1379288M` (2), `1432779G` (2), … +3 more |
+| ROMA | matricule_fiscal | 8 | 19% | merge | `1076157T` (3), `1149374E` (3), `1195899Q` (2), `1311543Q` (2), `1455675Y` (2), … +3 more |
+| SOCIETE AMIR DE COMMERCE | matricule_fiscal | 8 | 18% | merge | `1468828Q` (3), `1534952R` (3), `825153C` (3), `1275338F` (2), `1526823L` (2), … +3 more |
+| SOCIETE DE COMMERCE INTERNATIONAL | registre_commerce | 8 | 17% | merge | `B03124532013` (2), `B15177012015` (2), `B24190722011` (2), `B243782008` (2), `B0220522015` (1), … +3 more |
+| SOCIETE DE MAINTENANCE EL-FERDAOUS | matricule_fiscal | 8 | 29% | merge | `925137J` (8), `1299241A` (5), `1105228F` (4), `1201600V` (3), `1309002T` (2), … +3 more |
+| SOCIETE DINA | matricule_fiscal | 8 | 21% | merge | `1253454P` (3), `1384029C` (3), `1328329X` (2), `1519701J` (2), `1110382Z` (1), … +3 more |
+| SOCIETE EL-ANDALOUS | matricule_fiscal | 8 | 38% | merge | `1284993J` (9), `552442S` (4), `1223538B` (2), `1453620Y` (2), `1541120Z` (2), … +3 more |
+| SOCIETE EL-BADR | matricule_fiscal | 8 | 55% | merge | `381564B` (24), `900571R` (9), `1105185M` (2), `13868905A` (2), `1425475A` (2), … +3 more |
+| SOCIETE EL-IZDIHAR | registre_commerce | 8 | 35% | merge | `B19251997` (6), `B0247972008` (4), `B265402009` (2), `B0143822005` (1), `B02172202016` (1), … +3 more |
+| SOCIETE GENERALE TRAVAUX | matricule_fiscal | 8 | 26% | merge | `907437R` (7), `906938E` (6), `781271R` (4), `413710V` (3), `1026315M` (2), … +3 more |
+| SOCIETE IMMOBILIERE | registre_commerce | 8 | 42% | merge | `B2420782004` (8), `B01158012017` (2), `B143291997` (2), `B158921996` (2), `B2420002006` (2), … +3 more |
+| SOCIETE INES | registre_commerce | 8 | 50% | merge | `B1123611997` (10), `B0152592005` (4), `A20173582012` (1), `B0172972016` (1), `B1103701997` (1), … +3 more |
+| SOCIETE IRIS | registre_commerce | 8 | 20% | merge | `B138592001` (3), `B248782008` (3), `19582001` (2), `B01173282013` (2), `B07101342009` (2), … +3 more |
+| SOCIETE LE LIVRE | matricule_fiscal | 8 | 25% | merge | `975957R` (3), `1485198F` (2), `1597213G` (2), `1138832A` (1), `1159176E` (1), … +3 more |
+| SOCIETE MODERNE DE BATIMENT | matricule_fiscal | 8 | 18% | merge | `1303517R` (4), `1305051L` (4), `1420980R` (4), `1495847X` (3), `999313M` (3), … +3 more |
+| SOCIETE MS CONSULTING | matricule_fiscal | 8 | 20% | merge | `1319354X` (3), `1255148Q` (2), `1328254V` (2), `1408196Y` (2), `1413101G` (2), … +3 more |
+| SOCIETE RIHAB | matricule_fiscal | 8 | 43% | merge | `644742M` (12), `22762H` (5), `1006590V` (2), `1197481A` (2), `1253930X` (2), … +3 more |
+| SOCIETE SAMAR | matricule_fiscal | 8 | 14% | merge | `1012573G` (2), `1273275Z` (2), `1292714H` (2), `1366668C` (2), `1460649E` (2), … +3 more |
+| SOCIETE TAAMIR | registre_commerce | 8 | 33% | merge | `B187191996` (8), `B0948382004` (4), `B143142002` (4), `B181791996` (3), `B201042008` (2), … +3 more |
+| SOCIETE TRAVAUX ET SERVICES | matricule_fiscal | 8 | 29% | merge | `969478S` (5), `1495308Y` (4), `1106088R` (2), `1422672Q` (2), `1194584R` (1), … +3 more |
+| STEP | registre_commerce | 8 | 58% | merge | `B2440682006` (21), `B27108092012` (6), `B0925691007` (2), `B0925692007` (2), `B119192003` (2), … +3 more |
+| TAYSIR | matricule_fiscal | 8 | 25% | merge | `1202048X` (6), `1350779C` (6), `1446999Q` (3), `1202708L` (2), `1462735K` (2), … +3 more |
+| AGRICO | matricule_fiscal | 7 | 21% | merge | `998159R` (3), `1136515F` (2), `1514794K` (2), `1547041C` (2), `1572177N` (2), … +2 more |
+| AZIZA | registre_commerce | 7 | 39% | merge | `B09181872009` (7), `B31144042012` (3), `B0897792018` (2), `B1103281997` (2), `D14282006` (2), … +2 more |
+| BB | registre_commerce | 7 | 43% | merge | `B0126342006` (6), `B2413162006` (3), `0029872018` (1), `B01192322016` (1), `B02124052015` (1), … +2 more |
+| BRAVO | registre_commerce | 7 | 30% | merge | `B27622004` (10), `B0322962010` (6), `B149962002` (5), `B13402001` (4), `B03222962010` (3), … +2 more |
+| COGEM + | matricule_fiscal | 7 | 60% | merge | `34378S` (21), `418487E` (7), `1353488G` (3), `1278879V` (1), `32593P` (1), … +2 more |
+| DALIA | matricule_fiscal | 7 | 30% | merge | `1292725L` (3), `1203453L` (2), `1381117N` (1), `1417989B` (1), `539000N` (1), … +2 more |
+| ECOLE PRIVEE EL-IMTIEZ | matricule_fiscal | 7 | 66% | merge | `433775Z` (31), `515159J` (4), `864415Y` (4), `1412067E` (2), `1518775Z` (2), … +2 more |
+| ERRAHMA | registre_commerce | 7 | 85% | merge | `B0319512007` (67), `B2538722005` (7), `B0193162015` (2), `80319512007` (1), `B03195` (1), … +2 more |
+| ETABLISSEMENT GHORBEL | registre_commerce | 7 | 25% | merge | `B086852008` (3), `130362001` (2), `B155891996` (2), `B189411999` (2), `B08242532012` (1), … +2 more |
+| FLOWER | matricule_fiscal | 7 | 59% | merge | `5924K` (9), `1139107F` (2), `1520333W` (2), `1329330T` (1), `1402054H` (1), … +2 more |
+| GENERAL MAGHREB SERVICES | matricule_fiscal | 7 | 64% | merge | `900648W` (40), `764626B` (13), `1334343H` (4), `1024399A` (2), `1236475X` (2), … +2 more |
+| GENERAL MAGHREB SERVICES | registre_commerce | 7 | 87% | merge | `B0855112004` (36), `B24246442006` (3), `B0123152014` (2), `B0856112004` (2), `60855112004` (1), … +2 more |
+| GENERAL TRAVAUX DE CONSTRUCTION GTC | matricule_fiscal | 7 | 35% | merge | `1355310N` (7), `1458286B` (4), `1180583V` (2), `1321076P` (2), `1427150P` (2), … +2 more |
+| HAFEDH | matricule_fiscal | 7 | 50% | merge | `1187574Z` (11), `1186453L` (4), `1008727C` (2), `1590073H` (2), `10190311K` (1), … +2 more |
+| HOPE | matricule_fiscal | 7 | 29% | merge | `1449342Q` (4), `1307384P` (2), `1477262Z` (2), `1510085T` (2), `1535596W` (2), … +2 more |
+| JUNIOR | registre_commerce | 7 | 29% | merge | `B0174932007` (7), `B0757932005` (5), `B2550202006` (4), `B0183352013` (3), `B036602009` (3), … +2 more |
+| L'OLIVIER BLEU DE RESTAURATION ET DE LOISIRS | registre_commerce | 7 | 41% | merge | `B2447342011` (7), `B01229412012` (2), `B07143242011` (2), `B14052003` (2), `B25149432011` (2), … +2 more |
+| LA FONDATION | registre_commerce | 7 | 50% | merge | `B123212003` (14), `B243052005` (4), `B0180532007` (3), `B124022001` (3), `B0173772010` (2), … +2 more |
+| LA GENERALE DE DISTRIBUTION | matricule_fiscal | 7 | 31% | merge | `972084C` (4), `1250085W` (3), `895053M` (3), `1110385C` (2), `1320787L` (2), … +2 more |
+| LA PERLE | matricule_fiscal | 7 | 20% | merge | `1496264H` (3), `1195104S` (2), `1298868C` (2), `1421776T` (2), `1535932R` (2), … +2 more |
+| LA ROSA | registre_commerce | 7 | 33% | merge | `B157982002` (4), `B01187332016` (2), `B2724692004` (2), `B0230572013` (1), `B07259082016` (1), … +2 more |
+| LE PROGRES | matricule_fiscal | 7 | 42% | merge | `614801P` (10), `1087443G` (4), `1269316L` (3), `1501956R` (2), `1508718J` (2), … +2 more |
+| MANUF TUNISIENNE DES SERRURES MTS | matricule_fiscal | 7 | 33% | merge | `45372W` (9), `1159808Q` (5), `1174778R` (4), `1245379Z` (4), `1459958Z` (2), … +2 more |
+| MARHABA | matricule_fiscal | 7 | 27% | merge | `989509S` (6), `1091550N` (4), `1200451W` (3), `1595009W` (3), `1312583D` (2), … +2 more |
+| MC CONSULTING | matricule_fiscal | 7 | 50% | merge | `1173994T` (11), `1275241X` (2), `1431619L` (2), `1457616V` (2), `1582485D` (2), … +2 more |
+| ME CONSULTANTS | registre_commerce | 7 | 57% | merge | `B0323562004` (17), `B08100642013` (5), `B125042003` (3), `B12732001` (2), `B0123492004` (1), … +2 more |
+| METALCO | matricule_fiscal | 7 | 22% | merge | `1257855W` (4), `46793T` (4), `623899T` (4), `635539K` (2), `924057F` (2), … +2 more |
+| OXYGEN INTERNATIONAL | registre_commerce | 7 | 25% | merge | `B2492172007` (3), `B1456352005` (2), `B172791999` (2), `B249172007` (2), `B1127271997` (1), … +2 more |
+| PREMIUM | registre_commerce | 7 | 24% | merge | `133202001` (4), `B24199182010` (4), `B01173652012` (2), `B04212132015` (2), `B2456952007` (2), … +2 more |
+| SARA DE CONFECTION | matricule_fiscal | 7 | 21% | merge | `450401S` (3), `1042585C` (2), `1273536B` (2), `1277959P` (2), `1507292Z` (2), … +2 more |
+| SATEX | matricule_fiscal | 7 | 27% | merge | `1002394A` (3), `1566925N` (2), `1590166M` (2), `1533210J` (1), `635890N` (1), … +2 more |
+| SIAM | matricule_fiscal | 7 | 21% | merge | `1290393C` (3), `982529R` (3), `1419678X` (2), `1443611R` (2), `968167A` (2), … +2 more |
+| SILVER SAPHIR | matricule_fiscal | 7 | 20% | merge | `1218390Q` (2), `1316506G` (2), `1397520C` (2), `1247221K` (1), `1270038Z` (1), … +2 more |
+| SMC | matricule_fiscal | 7 | 17% | merge | `1382565P` (2), `141769K` (2), `1512084B` (2), `1575399P` (2), `835909E` (2), … +2 more |
+| SOCIETE ANIS | registre_commerce | 7 | 23% | merge | `B15216382017` (3), `B0967172007` (2), `B24227262010` (2), `B3175472009` (2), `B51231832016` (2), … +2 more |
+| SOCIETE DE REPARATION ET DE MAINTENANCE SRM | matricule_fiscal | 7 | 23% | merge | `1353674G` (3), `1209446N` (2), `1412122H` (2), `1474605P` (2), `452540M` (2), … +2 more |
+| SOCIETE EL-BADR | registre_commerce | 7 | 50% | merge | `B199991996` (19), `B081072005` (9), `B0853472008` (3), `80728562015` (2), `B16691999` (2), … +2 more |
+| SOCIETE GENERALE MAKNI DE COMMERCE GMC | matricule_fiscal | 7 | 59% | merge | `900647V` (13), `1328471C` (2), `1331285C` (2), `1341295K` (2), `1078330X` (1), … +2 more |
+| SOCIETE IDEAL CONFECTION | matricule_fiscal | 7 | 26% | merge | `459621S` (5), `1296797W` (4), `1031120L` (3), `1313127L` (3), `1513157F` (2), … +2 more |
+| SOCIETE INSIDE | matricule_fiscal | 7 | 37% | merge | `1191348V` (7), `993758N` (3), `1221610H` (2), `1458775P` (2), `1595441J` (2), … +2 more |
+| SOCIETE INTERNATIONAL TRADING COMPANY | matricule_fiscal | 7 | 33% | merge | `1432918Z` (11), `1238613X` (7), `1189076T` (4), `31475E` (4), `1135447G` (3), … +2 more |
+| SOCIETE LES ETOILES DE SAHARA RENT A CAR | matricule_fiscal | 7 | 60% | merge | `980211M` (22), `764623Y` (7), `1436900F` (2), `1534252T` (2), `3398B` (2), … +2 more |
+| SOCIETE NARJES | matricule_fiscal | 7 | 28% | merge | `487745M` (5), `505776Z` (4), `610315M` (3), `1037835S` (2), `817570V` (2), … +2 more |
+| SOCIETE NERMINE | matricule_fiscal | 7 | 17% | merge | `1276633P` (2), `1291549J` (2), `1482986P` (2), `1596251J` (2), `1599959D` (2), … +2 more |
+| SOCIETE SMART SPECTRA | matricule_fiscal | 7 | 32% | merge | `1023513D` (5), `910604N` (5), `1341721G` (4), `1085754L` (2), `1023518D` (1), … +2 more |
+| SOCIETE TUNISIAN MINING SERVICES TMS | matricule_fiscal | 7 | 32% | merge | `885534V` (9), `1031655P` (8), `1117724G` (3), `1090453J` (2), `1385234K` (2), … +2 more |
+| SOCIETE TUNISIENNE DE SANTE PLURIDISCIPLINAIRE POLYCLINIQUE AMILCAR | matricule_fiscal | 7 | 44% | merge | `1290626A` (11), `1350045T` (6), `1183416S` (2), `1302718V` (2), `1375994Q` (2), … +2 more |
+| SOCIETE UNITE DE FABRICATION DE MEDICAMENTS UNIMED | matricule_fiscal | 7 | 39% | merge | `20190J` (7), `1410823Y` (4), `928725M` (3), `1036320P` (1), `1157012B` (1), … +2 more |
+| SOCIETE VITAL | registre_commerce | 7 | 35% | merge | `B179052000` (7), `B138672002` (4), `B0280002008` (3), `B0757282006` (2), `B13632003` (2), … +2 more |
+| SOCIETE ¨PALM | registre_commerce | 7 | 29% | merge | `B0963032008` (5), `B169581996` (4), `B1989952008` (3), `B1914712009` (2), `169581996` (1), … +2 more |
+| SOCIETES DES CIMENTS DE BIZERTE | matricule_fiscal | 7 | 47% | merge | `1276692B` (8), `758138B` (3), `1408877S` (2), `1237132E` (1), `1447587C` (1), … +2 more |
+| SOGEBAT | matricule_fiscal | 7 | 20% | merge | `1439263M` (2), `1501115F` (2), `1564500G` (2), `104498J` (1), `1197260N` (1), … +2 more |
+| SOGES | matricule_fiscal | 7 | 42% | merge | `434386T` (8), `513611Z` (3), `846879B` (3), `1597899A` (2), `1247170R` (1), … +2 more |
+| SOGES | registre_commerce | 7 | 41% | merge | `B150112001` (11), `B1582001` (4), `B8170232010` (4), `B125032001` (3), `B139622003` (3), … +2 more |
+| STPH | matricule_fiscal | 7 | 37% | merge | `620545F` (13), `1333416D` (6), `1334455Q` (6), `1113345G` (4), `620861Q` (3), … +2 more |
+| STPH | registre_commerce | 7 | 47% | merge | `B1682001` (8), `B160351999` (3), `101636272009` (2), `1631411998` (1), `B061136272009` (1), … +2 more |
+| TUNISIE TRAVAUX | registre_commerce | 7 | 27% | merge | `B136082000` (4), `B0910232005` (3), `B131362003` (3), `B02234742016` (2), `B0151532007` (1), … +2 more |
+| ACCESSOIRES TEXTILES COMPANY ATC | matricule_fiscal | 6 | 55% | merge | `836930F` (11), `1282365B` (2), `1376096S` (2), `1551001Y` (2), `1598646J` (2), … +1 more |
+| AGENCE METROPOLITAINE DE COMMUNICATION AMC | matricule_fiscal | 6 | 27% | merge | `1121499X` (3), `11338901P` (2), `1426882R` (2), `1565735E` (2), `1125531W` (1), … +1 more |
+| AGHIR | matricule_fiscal | 6 | 27% | merge | `10315Y` (3), `1034536W` (2), `118470L` (2), `24758W` (2), `1184760L` (1), … +1 more |
+| AGRIMED | matricule_fiscal | 6 | 68% | merge | `583952G` (15), `1496292M` (2), `1558373F` (2), `1455672V` (1), `578192F` (1), … +1 more |
+| AL MAJD | matricule_fiscal | 6 | 31% | merge | `1255833F` (4), `853401G` (3), `1224618E` (2), `1587776J` (2), `1334051Y` (1), … +1 more |
+| ALMAS | matricule_fiscal | 6 | 38% | merge | `755592H` (12), `644590P` (8), `1576701D` (5), `1327943K` (3), `15729441E` (2), … +1 more |
+| AMC ERNST ET YOUNG | registre_commerce | 6 | 48% | merge | `B178441996` (20), `B170281997` (15), `B2447072008` (3), `B170701998` (2), `B170281991` (1), … +1 more |
+| ARAMYS | registre_commerce | 6 | 38% | merge | `B248922006` (8), `B110098199` (6), `B117732002` (3), `B05117292010` (2), `110098199` (1), … +1 more |
+| BATINOX | matricule_fiscal | 6 | 78% | merge | `863030E` (21), `761543L` (2), `1207417Z` (1), `312335R` (1), `3624R` (1), … +1 more |
+| CHIC | registre_commerce | 6 | 33% | merge | `B0150892004` (5), `B0147982008` (3), `B034022009` (2), `B0722442005` (2), `B162611996` (2), … +1 more |
+| CLEOPATRE | matricule_fiscal | 6 | 60% | merge | `965474W` (15), `1105965J` (2), `1135518E` (2), `1247132K` (2), `1293602E` (2), … +1 more |
+| COGEM + | registre_commerce | 6 | 76% | merge | `B157671997` (27), `B157651997` (4), `B811522013` (4), `B167651997` (3), `B02118972014` (2), … +1 more |
+| DIAMANT BLEU | matricule_fiscal | 6 | 25% | merge | `1479989S` (3), `1505532M` (2), `1561818P` (2), `1595953E` (2), `993929P` (2), … +1 more |
+| DISTRIBUTION INFINITY PRODUCTS DIP | matricule_fiscal | 6 | 31% | merge | `1415621L` (5), `1388277K` (3), `1567012H` (3), `1450548V` (2), `1550101X` (2), … +1 more |
+| EL ALIA | registre_commerce | 6 | 31% | merge | `B04216532011` (5), `B04148192013` (3), `B137892001` (3), `B04162562014` (2), `B04167522016` (2), … +1 more |
+| EL FATH | registre_commerce | 6 | 33% | merge | `B03149452011` (3), `C1381198` (2), `1612848201` (1), `B0776802011` (1), `B136882002` (1), … +1 more |
+| ETABLISSEMENT ABDELMOULA | registre_commerce | 6 | 44% | merge | `B114121` (4), `B0158391996` (1), `B1110701997` (1), `B1141211997` (1), `B158391996` (1), … +1 more |
+| GROUPEMENT SOBMTI SOTRAP | matricule_fiscal | 6 | 55% | merge | `1064864B` (11), `809635Y` (3), `1463226X` (2), `1573153J` (2), `1524678M` (1), … +1 more |
+| HENKEL ALKI | registre_commerce | 6 | 26% | merge | `B0115402009` (11), `B17691996` (8), `17691996` (7), `B0132772009` (7), `B138881996` (7), … +1 more |
+| ILEF | matricule_fiscal | 6 | 23% | merge | `1193680N` (3), `492443J` (3), `1465231C` (2), `1569028X` (2), `902977V` (2), … +1 more |
+| INGENIUM SA | matricule_fiscal | 6 | 40% | merge | `1351396V` (8), `1228097T` (4), `1349785J` (2), `1465661X` (2), `1472648S` (2), … +1 more |
+| INTERNATIONAL TELE CONSULTANTS | matricule_fiscal | 6 | 33% | merge | `1184858W` (8), `1094354Z` (5), `1482995Q` (5), `1009813D` (3), `1025880S` (2), … +1 more |
+| LA MEDITERRANEENNE | matricule_fiscal | 6 | 31% | merge | `1043200Z` (4), `1292534F` (3), `1131153C` (2), `1334886L` (2), `1139189A` (1), … +1 more |
+| LA PRINCESSE | matricule_fiscal | 6 | 33% | merge | `1343871E` (7), `1431975E` (5), `1185113N` (3), `1276030R` (2), `1417656G` (2), … +1 more |
+| LA SOURCE | registre_commerce | 6 | 30% | merge | `B24124862009` (6), `B0269052008` (5), `B15103912010` (3), `B01203712012` (2), `B016502013` (2), … +1 more |
+| LE GOURMET | matricule_fiscal | 6 | 47% | merge | `382837M` (8), `1246908G` (2), `1340989F` (2), `1361892M` (2), `1581718X` (2), … +1 more |
+| LE MOTEUR | registre_commerce | 6 | 33% | merge | `B15227622016` (6), `B1541998` (4), `B0812102010` (3), `B8120372013` (3), `B15272462018` (1), … +1 more |
+| LE PILOTE | registre_commerce | 6 | 36% | merge | `B148161996` (5), `0840482006` (2), `B013562007` (2), `B1107051996` (2), `B2279322011` (2), … +1 more |
+| NEJMA OILS HOLDING | matricule_fiscal | 6 | 50% | merge | `1347020J` (10), `718567Y` (4), `1051248N` (2), `1490213V` (2), `1095441B` (1), … +1 more |
+| NESRINE | registre_commerce | 6 | 25% | merge | `B0646752004` (2), `B126062000` (2), `B03149412014` (1), `B0719722006` (1), `B127932002` (1), … +1 more |
+| NOURTEX CONFECTION | matricule_fiscal | 6 | 33% | merge | `580168B` (5), `1248880W` (4), `1326235H` (2), `1439806X` (2), `1032117W` (1), … +1 more |
+| PANORAMA | registre_commerce | 6 | 56% | merge | `B17741996` (13), `B110311199` (5), `B1125262017` (2), `B112482000` (1), `B154402001` (1), … +1 more |
+| POLYMONT INGENIERIE CONSULTING | registre_commerce | 6 | 22% | merge | `B01148362017` (2), `B2456162007` (2), `B405452018` (2), `B02185952016` (1), `B027882013` (1), … +1 more |
+| PYRAMIDE PLUS | matricule_fiscal | 6 | 20% | merge | `1113396T` (2), `1156199A` (2), `1326996V` (2), `1554391Q` (2), `1218321B` (1), … +1 more |
+| SOCIETE BS DIAGNOSTICS | matricule_fiscal | 6 | 35% | merge | `1554065D` (7), `1203042V` (4), `642728F` (4), `1121428F` (2), `1512196J` (2), … +1 more |
+| SOCIETE CARTE | matricule_fiscal | 6 | 43% | merge | `927109N` (9), `1246349X` (4), `1180567V` (3), `1383617N` (2), `205M` (2), … +1 more |
+| SOCIETE CHAARI FRERES SCF | matricule_fiscal | 6 | 36% | merge | `1358093M` (5), `995441C` (4), `634900C` (2), `503092S` (1), `537309Z` (1), … +1 more |
+| SOCIETE CHAARI FRERES SCF | registre_commerce | 6 | 25% | merge | `B0818052007` (2), `B16902001` (2), `8084432006` (1), `B1107481997` (1), `B1121491997` (1), … +1 more |
+| SOCIETE EL-ANDALOUS | registre_commerce | 6 | 33% | merge | `B023142013` (5), `B1513311998` (4), `B144061999` (3), `231412013` (1), `B0231412012` (1), … +1 more |
+| SOCIETE EL-MAJD | registre_commerce | 6 | 22% | merge | `B1114241997` (2), `B151422003` (2), `B2210022007` (2), `A2218312009` (1), `B2287302010` (1), … +1 more |
+| SOCIETE EL-YOSR | registre_commerce | 6 | 48% | merge | `B27116112009` (15), `B24752008` (5), `B1339142014` (4), `B0220922016` (3), `B1010582016` (2), … +1 more |
+| SOCIETE ELEMENTS + | matricule_fiscal | 6 | 33% | merge | `1307434G` (4), `1573509S` (2), `1586756A` (2), `496781S` (2), `419049P` (1), … +1 more |
+| SOCIETE HAIFA | registre_commerce | 6 | 36% | merge | `B134542002` (13), `B2414932004` (8), `B198252010` (6), `B2453392005` (6), `B2489432008` (2), … +1 more |
+| SOCIETE HASNA | matricule_fiscal | 6 | 39% | merge | `917596M` (7), `1201933P` (3), `11158996G` (2), `1285721P` (2), `1319817H` (2), … +1 more |
+| SOCIETE IDEAL SERVICE | matricule_fiscal | 6 | 32% | merge | `382095X` (6), `1538563Z` (4), `1020508T` (3), `1077576P` (2), `1361343L` (2), … +1 more |
+| SOCIETE INOV | matricule_fiscal | 6 | 36% | merge | `1260904M` (4), `1596777L` (2), `858940C` (2), `1044134L` (1), `565640Q` (1), … +1 more |
+| SOCIETE INTERACTIVE | registre_commerce | 6 | 32% | merge | `B0314032005` (6), `B012292007` (4), `0122912214` (3), `B1108451997` (2), `B139312003` (2), … +1 more |
+| SOCIETE MAGHREBINE DES PRODUITS CERAMIQUES SMPC | registre_commerce | 6 | 55% | merge | `B620919971` (12), `B16209` (3), `B162091997` (3), `60744612007` (2), `024021` (1), … +1 more |
+| SOCIETE MODERNE DEQUIPEMENTS ET DE COMMERCE SOMECO | matricule_fiscal | 6 | 25% | merge | `418537X` (3), `761724P` (3), `34215Y` (2), `34280Y` (2), `418817C` (1), … +1 more |
+| SOCIETE MULTISERVICES | registre_commerce | 6 | 25% | merge | `B0159532006` (2), `B1128441997` (2), `B0863152006` (1), `B136641999` (1), `B20159902010` (1), … +1 more |
+| SOCIETE NARJES | registre_commerce | 6 | 38% | merge | `B157181998` (2), `B158362002` (2), `B16088` (1), `B160881996` (1), `D1583998` (1), … +1 more |
+| SOCIETE SAHA | matricule_fiscal | 6 | 27% | merge | `1263991R` (4), `1543653J` (3), `1031968F` (2), `1288850L` (2), `1319810A` (2), … +1 more |
+| SOCIETE SALMA | registre_commerce | 6 | 27% | merge | `B026352005` (3), `B01105882015` (2), `B01198202015` (2), `B0590082008` (2), `B2428312006` (1), … +1 more |
+| SOCIETE SIRINE | registre_commerce | 6 | 41% | merge | `B147491997` (12), `B2577952011` (6), `B133592003` (5), `B0834992009` (4), `B08197052013` (1), … +1 more |
+| SOCIETE SOUAD | matricule_fiscal | 6 | 20% | merge | `1491816X` (3), `505682T` (3), `859416Q` (3), `1564749G` (2), `1569233D` (2), … +1 more |
+| SOCIETE TOURISTIQUE | registre_commerce | 6 | 60% | merge | `B110781199` (12), `B150761997` (3), `B116262001` (2), `B0116062016` (1), `B10781199` (1), … +1 more |
+| SOCIETE TUNISIENNE DE SERVICES | matricule_fiscal | 6 | 52% | merge | `886782P` (11), `1336481B` (3), `1129804V` (2), `1219184Q` (2), `1259241D` (2), … +1 more |
+| STEG ENERGIES RENOUVELABLES STEG ER | matricule_fiscal | 6 | 36% | merge | `996151Z` (4), `1231993T` (2), `1295958Q` (2), `1152542C` (1), `1307823R` (1), … +1 more |
+| STUDI | matricule_fiscal | 6 | 39% | merge | `1031438G` (11), `1227137E` (7), `1328566J` (6), `1549501T` (2), `1227131E` (1), … +1 more |
+| TAIBA | matricule_fiscal | 6 | 33% | merge | `1150389D` (4), `1404909Q` (3), `1485156V` (2), `1186194L` (1), `1258183G` (1), … +1 more |
+| TELECONTROL DETECTION SYSTEM TDS | matricule_fiscal | 6 | 52% | merge | `1054860R` (12), `635747R` (5), `1248870T` (2), `1485084W` (2), `1413792X` (1), … +1 more |
+| TRACE | matricule_fiscal | 6 | 27% | merge | `1175380B` (3), `1335287X` (2), `1489996X` (2), `1551467F` (2), `1198992Z` (1), … +1 more |
+| VENUS | registre_commerce | 6 | 29% | merge | `B9112862014` (2), `B0190702008` (1), `B082782007` (1), `B1149011997` (1), `B144911996` (1), … +1 more |
+| VICTOIRE POUR LA FEMME RURALE | matricule_fiscal | 6 | 30% | merge | `349466R` (3), `1298800F` (2), `1486945X` (2), `829456H` (1), `838167C` (1), … +1 more |
+| WELCOME | matricule_fiscal | 6 | 36% | merge | `1002147L` (8), `941374P` (5), `1277222C` (3), `995751P` (3), `1375601H` (2), … +1 more |
+| AB FINANCES CONSULTING | matricule_fiscal | 5 | 33% | merge | `1504184H` (3), `1273720Z` (2), `1405390K` (2), `1178645W` (1), `810686B` (1) |
+| ACADEMIE PYTHAGORE AP | matricule_fiscal | 5 | 57% | merge | `1452156Q` (7), `1278300D` (2), `1294538T` (2), `1582969V` (2), `1452166Q` (1) |
+| AMAL DE COMMERCE | matricule_fiscal | 5 | 20% | merge | `1155339P` (2), `1282405R` (2), `1304910B` (2), `1429085G` (2), `923836S` (2) |
+| ASTERIA | matricule_fiscal | 5 | 29% | merge | `1214241K` (4), `1324224W` (4), `1485976A` (2), `1499044K` (2), `961393D` (2) |
+| ASTUCE FORMATION | matricule_fiscal | 5 | 25% | merge | `1328505V` (2), `1461316P` (2), `980795A` (2), `1135256B` (1), `1463012J` (1) |
+| BATIMENT + | registre_commerce | 5 | 40% | merge | `B01179942014` (4), `B115791997` (2), `B40131962012` (2), `B1684332015` (1), `B246342004` (1) |
+| BATIMENT ET TRAVAUX PUBLICS | matricule_fiscal | 5 | 45% | merge | `1414945A` (9), `1127460G` (4), `1593369K` (3), `433032P` (3), `612263B` (1) |
+| BATINOX | registre_commerce | 5 | 44% | merge | `B015262004` (4), `B160232002` (2), `B0757702005` (1), `B1102251997` (1), `B129521998` (1) |
+| CEDRIA | matricule_fiscal | 5 | 57% | merge | `397032H` (8), `1197975T` (2), `1394572C` (2), `1020245P` (1), `1049282V` (1) |
+| CERAMICA | matricule_fiscal | 5 | 38% | merge | `1393309J` (8), `857792E` (5), `1515571A` (4), `1200381Z` (3), `1296278B` (1) |
+| COBRA | registre_commerce | 5 | 30% | merge | `B086482015` (3), `B24149162012` (3), `B1113501996` (2), `B01221762012` (1), `B2447292005` (1) |
+| CREATIVE TUNISIA | matricule_fiscal | 5 | 38% | merge | `918461B` (5), `1136604F` (2), `1252790Z` (2), `1431614F` (2), `1574971R` (2) |
+| DISCOVERY INFORMATIQUE | registre_commerce | 5 | 40% | merge | `A153992003` (17), `B017832005` (14), `B01783` (9), `3017832005` (1), `B116931996` (1) |
+| DOLCE VITA DE PROMOTION IMMOBILIERE | matricule_fiscal | 5 | 33% | merge | `1176253Z` (4), `1088524L` (3), `1412915K` (2), `601697Q` (2), `878163V` (1) |
+| EL HILEL | matricule_fiscal | 5 | 38% | merge | `1313093T` (5), `1118994H` (3), `1427200G` (2), `22514S` (2), `4842E` (1) |
+| ENNAJEH | matricule_fiscal | 5 | 33% | merge | `918476J` (4), `1146381Q` (3), `1198243R` (2), `1536547Q` (2), `840327W` (1) |
+| ENNASR | registre_commerce | 5 | 56% | merge | `B111576199` (5), `B0328592008` (1), `B0939842011` (1), `B129001997` (1), `B4011192015` (1) |
+| ENTREPRISE EL-AMEN | registre_commerce | 5 | 59% | merge | `B13195922010` (16), `B114132003` (5), `B0357942008` (4), `B153541999` (1), `B5162692017` (1) |
+| ESSALEM | matricule_fiscal | 5 | 60% | merge | `1036121J` (26), `470858K` (8), `956062C` (6), `1357866F` (2), `772329R` (1) |
+| ETABLISSEMENT ABDELMOULA | matricule_fiscal | 5 | 33% | merge | `11987P` (4), `1546849H` (2), `1569363N` (2), `18126E` (2), `368326H` (2) |
+| FARAH | registre_commerce | 5 | 52% | merge | `B134802003` (17), `B110671997` (11), `B07107082009` (3), `B072880201` (1), `B0728802012` (1) |
+| FLORENCE | registre_commerce | 5 | 36% | merge | `B0217292007` (5), `0765812006` (3), `B0248492006` (3), `05688880482` (2), `B0765812006` (1) |
+| FRESH FISH | matricule_fiscal | 5 | 42% | merge | `1223217L` (5), `1449839M` (2), `1563700J` (2), `1568073B` (2), `1272084P` (1) |
+| GALLAND ETABLISSEMENT STABLE | registre_commerce | 5 | 50% | merge | `B0171712011` (4), `B01124452016` (1), `B0152132004` (1), `B136312003` (1), `B197021999` (1) |
+| GENERALE TEXTILE | registre_commerce | 5 | 58% | merge | `A0114072008` (26), `B154451999` (11), `B140701997` (5), `B251942009` (2), `B0115392008` (1) |
+| GLOBAL BUSINESS | matricule_fiscal | 5 | 44% | merge | `898397Y` (7), `829905M` (4), `12500882S` (2), `1378166Y` (2), `1104401W` (1) |
+| GLOBAL DISTRIBUTION | matricule_fiscal | 5 | 57% | merge | `418157N` (12), `1495802H` (5), `1076540X` (2), `1312341L` (1), `965434M` (1) |
+| GOLDEN INSPECTION SERVICES GIS | matricule_fiscal | 5 | 30% | merge | `1264567H` (3), `1346173X` (2), `1599067Z` (2), `1604134D` (2), `5439755A` (1) |
+| HORIZON SERVICES | matricule_fiscal | 5 | 22% | merge | `1104168G` (2), `1114473T` (2), `1116481C` (2), `1386286C` (2), `1596333K` (1) |
+| INFORMATION TECHNOLOGY SERVICES ITS | matricule_fiscal | 5 | 62% | merge | `1002774J` (15), `386641T` (4), `1289248C` (2), `1552387L` (2), `1419293H` (1) |
+| KATEX SARL | matricule_fiscal | 5 | 38% | merge | `40603V` (6), `473993E` (4), `1046891C` (2), `1536900M` (2), `40260R` (2) |
+| KENZA CREATION ARTISANALE | matricule_fiscal | 5 | 22% | merge | `1163803P` (2), `1184411R` (2), `1310891E` (2), `31101A` (2), `857482S` (1) |
+| KILANI | matricule_fiscal | 5 | 25% | merge | `1381961T` (2), `1456406G` (2), `372369Z` (2), `1166994B` (1), `284133M` (1) |
+| LA SOCIETE COOPERATIVE DES SERVICES AGRICOLES | matricule_fiscal | 5 | 62% | merge | `318026W` (10), `1265327X` (2), `31697S` (2), `1562697D` (1), `34444K` (1) |
+| LA SOCIETE TUNISIENNE DE DISTRIBUTION SOTUDIS | registre_commerce | 5 | 76% | merge | `B154332003` (31), `B150601997` (7), `B019872007` (1), `B162971999` (1), `B3170182011` (1) |
+| LE BON GOUT | registre_commerce | 5 | 44% | merge | `B148891998` (4), `B0933832014` (2), `B034692016` (1), `B09161052013` (1), `B122152001` (1) |
+| LE PROFILE ALUMINIUM | registre_commerce | 5 | 39% | merge | `B1060332016` (9), `B2414532005` (9), `B1414531005` (3), `B15159552015` (1), `D2414532005` (1) |
+| LES GRANDES CARRIERES DU SAHEL GCS | matricule_fiscal | 5 | 29% | merge | `1124455X` (4), `1297035M` (4), `1349265N` (2), `1443479G` (2), `15568251E` (2) |
+| LES PYRAMIDES | matricule_fiscal | 5 | 33% | merge | `1116039M` (5), `1235287Q` (4), `846852P` (3), `1544600Z` (2), `1516623Z` (1) |
+| MAC | matricule_fiscal | 5 | 36% | merge | `1187270K` (5), `1259841Y` (3), `1130970A` (2), `1536133W` (2), `849834A` (2) |
+| MACO | matricule_fiscal | 5 | 44% | merge | `1019585R` (8), `1184874W` (6), `1586395V` (2), `369348T` (1), `38524B` (1) |
+| MADAJEN EL-FIRMA | matricule_fiscal | 5 | 33% | merge | `1019127S` (3), `1493102B` (2), `1514445Q` (2), `1292417B` (1), `703277N` (1) |
+| MAGA | matricule_fiscal | 5 | 46% | merge | `860136B` (10), `978182E` (6), `1220966F` (2), `1266713H` (2), `1309586G` (2) |
+| MAGASIN GENERAL | matricule_fiscal | 5 | 59% | merge | `32792V` (17), `33128W` (6), `1522968L` (2), `1578030V` (2), `479976E` (2) |
 
-_3848 further conflicts are in `org_identifiers.csv`, where `is_conflicting = 1`._
+_3753 further conflicts are in `org_identifiers.csv`, where `is_conflicting = 1`._
