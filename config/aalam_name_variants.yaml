@@ -1,0 +1,166 @@
+# Arabic name normalisation rules for the A'lam Tunisiyun build.
+#
+# Parallel to config/name_variants.yaml, which serves the French-language
+# builds. That file cannot be reused: its normaliser uppercases into [A-Z0-9' ]
+# and strips Arabic to the empty string.
+#
+# The same two-key discipline applies. Identity folding is orthographic only;
+# anything that is a judgement about who someone is belongs in the resolver's
+# score or in config/overrides/, not in an irreversible identifier.
+
+# Nasab and filiation particles. Fused to the following token so that
+# "بن عاشور" and "ابن عاشور" give one surname, the way BEN-SALEM fuses to
+# BENSALEM in the French build.
+particles:
+  - "بن"
+  - "ابن"
+  - "بنت"
+  - "أبو"
+  - "أبي"
+  - "أبا"
+  - "بو"
+  - "ولد"
+  - "آل"
+  - "ذو"
+
+# Particle spellings that mean the same thing. The left form is canonical, so
+# "ابن عاشور" and "بن عاشور" fuse to one surname instead of two.
+particle_canonical:
+  "ابن": "بن"
+  "أبا": "أبي"
+  "أبو": "أبي"
+  "بو": "أبي"
+
+# Compound names whose elements are never separated in use. Fused before
+# particles so that "خير الدين" stays one given name; without this the article
+# rule reduces its second element to دين and the man's identifier reads as
+# though his surname were "al-Din".
+compounds:
+  - ["خير", "الدين"]
+  - ["نور", "الدين"]
+  - ["عز", "الدين"]
+  - ["زين", "العابدين"]
+  - ["محيي", "الدين"]
+  - ["صلاح", "الدين"]
+  - ["شمس", "الدين"]
+  - ["بدر", "الدين"]
+  - ["سيف", "الدين"]
+  - ["خير", "الله"]
+  - ["عبد", "الله"]
+  - ["جار", "الله"]
+
+# Theophoric compounds. "عبد السلام" is one given name, not a particle plus a
+# word, and splitting it would make Abd al-Salam al-Bakkouche collide with
+# every other Abd-. Always fused.
+theophoric_heads:
+  - "عبد"
+  - "عبيد"
+
+# Titles and honorifics. Stripped from the identity key: the book calls the
+# same man الجنرال خير الدين on one page and خير الدين باشا on another, and
+# these must resolve to one person. They are kept in the display string and
+# recorded separately as evidence of rank.
+honorifics:
+  - "الشيخ"
+  - "الشيخة"
+  - "السيد"
+  - "السيدة"
+  - "الأستاذ"
+  - "الحاج"
+  - "المرحوم"
+  - "المغفور له"
+  - "سيدي"
+  - "الجنرال"
+  - "باشا"
+  - "آغة"
+  - "أغا"
+  - "بيك"
+  - "باي"
+  - "الأمير"
+  - "الأميرة"
+  - "الوزير"
+  - "الدكتور"
+  - "مولاي"
+
+# Which side of the name a title sits on. A pre-nominal title introduces the
+# name that follows it and is therefore a reliable anchor for finding one. A
+# post-nominal title follows the name (مصطفى باي, خير الدين باشا) and must not
+# anchor a span forward: treating باي as pre-nominal made "خلفاً لشقيقه حسين"
+# into a person's name. Both kinds still terminate a span and are still
+# stripped from the identity key.
+postnominal:
+  - "باشا"
+  - "آغة"
+  - "أغا"
+  - "بيك"
+  - "باي"
+
+# Rank titles worth keeping as an attribute even though they are stripped from
+# the identity key. Maps the surface form to a canonical rank.
+rank_titles:
+  "باشا": pasha
+  "آغة": agha
+  "أغا": agha
+  "بيك": bey
+  "باي": bey
+  "الجنرال": general
+  "الأمير": prince
+  "الأميرة": princess
+  "الوزير": minister
+  "الشيخ": shaykh
+  "الحاج": hajj
+
+# The definite article. Stripped from the match key only: al-Wardani and
+# Wardani are the same surname, but the display string keeps the article.
+article: "ال"
+
+# Transliteration for the ASCII identifier. Deliberately lossy and
+# deterministic, not a scholarly scheme: its only job is to make an id
+# greppable and eye-joinable with the other builds' PERSON_BENACHOUR_MOHAMED
+# form. Ayn and hamza are dropped rather than marked.
+translit:
+  "ا": "A"
+  "ب": "B"
+  "ت": "T"
+  "ث": "TH"
+  "ج": "J"
+  "ح": "H"
+  "خ": "KH"
+  "د": "D"
+  "ذ": "DH"
+  "ر": "R"
+  "ز": "Z"
+  "س": "S"
+  "ش": "SH"
+  "ص": "S"
+  "ض": "D"
+  "ط": "T"
+  "ظ": "Z"
+  "ع": ""
+  "غ": "GH"
+  "ف": "F"
+  "ق": "Q"
+  "ك": "K"
+  "ل": "L"
+  "م": "M"
+  "ن": "N"
+  "ه": "H"
+  "و": "W"
+  "ي": "Y"
+  "ء": ""
+  "ئ": ""
+  "ؤ": ""
+
+# Equivalence classes for matching only. Each list's first member is canonical.
+# Members are variants of one name; distinct names are never listed together.
+equivalence_classes:
+  - ["محمد", "محمّد", "مُحمد", "مَحمّد"]
+  - ["أحمد", "احمد"]
+  - ["الطاهر", "طاهر"]
+  - ["خير الدين", "خيرالدين"]
+  - ["إبراهيم", "ابراهيم", "براهيم"]
+  - ["الصادق", "صادق"]
+  - ["علي", "علىّ"]
+  - ["حسين", "الحسين"]
+  - ["يوسف", "يوسوف"]
+  - ["محمود", "محمودو"]

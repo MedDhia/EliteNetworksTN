@@ -91,3 +91,38 @@ bourse-verify:   ## re-read the filings and check every record against the page 
 
 bourse-test:     ## parser and entity-resolution unit tests
 	$(BPY) tests/test_bourse_extract.py
+
+# --- aalam-tunisiyun --------------------------------------------------------
+# A fourth build, independent of the three above and sharing only the data/
+# root. Source: Sadok Zmerli, *A'lam Tunisiyun* (Dar al-Gharb al-Islami, 2000),
+# 38 biographical essays on the Tunisian elite of roughly 1606-1973.
+#
+# Unlike the other three this one reads a printed book, so the first stage is
+# an OCR pass rather than an HTTP mirror. The scan is not redistributed:
+# `aalam-fetch` pulls it from the Internet Archive and checks it against a
+# pinned sha256 before anything downstream runs.
+APY := PYTHONPATH=src python3
+
+.PHONY: aalam aalam-fetch aalam-ingest aalam-segment aalam-extract aalam-model \
+        aalam-relations aalam-codebook aalam-validate aalam-test
+
+aalam: aalam-segment aalam-extract aalam-model aalam-relations aalam-codebook aalam-validate
+
+aalam-fetch:      ## download the scan and verify it against the pinned digest
+	$(APY) -m aalam.ingest --fetch --limit 0
+aalam-ingest:     ## OCR every page at native resolution, write the page manifest
+	$(APY) -m aalam.ingest
+aalam-segment:    ## cut the volume into its 38 entries using the printed contents
+	$(APY) -m aalam.segment
+aalam-extract:    ## rule pass: cue table over clause-sized spans
+	$(APY) -m aalam.extract
+aalam-model:      ## model pass: verify committed assertions quote their entry
+	$(APY) -m aalam.llm --strict
+aalam-relations:  ## registers and the layered edge list
+	$(APY) -m aalam.relations
+aalam-codebook:   ## regenerate the codebook from the data and config
+	$(APY) -m aalam.codebook
+aalam-validate:   ## consistency, coverage and the verbatim-quote guard
+	$(APY) -m aalam.validate --strict
+aalam-test:       ## parser and normalisation tests
+	$(APY) -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py -q

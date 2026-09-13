@@ -1,0 +1,18 @@
+org_id,name_ar,name_translit,org_kind,n_ties,first_seen_entry
+COURT_MHKMH_QARYH_MKHTLTH,المحكمة العقارية المختلطة,ALMHKM ALQARY ALMKHTLT,court,1,aalam:3.12
+ORG_AQWM_MSALK,أقوم المسالك,QWM ALMSALK,work,1,aalam:1.09
+ORG_LJNH_MALYH_DWLYH,اللجنة المالية الدولية,ALLJN ALMALY ALDWLY,org,1,aalam:1.09
+ORG_MDRS,مدرس,MDRS,office,1,aalam:3.12
+ORG_MJLS_MDRSY_JAM_AZM,مجلس مدرسي الجامع الأعظم,MJLS MDRSY ALJAM ALZM,org,1,aalam:3.12
+ORG_QAD_MALKY,قاض مالكي,QAD MALKY,office,1,aalam:3.12
+ORG_RYS_MJLS_AKBR,رئيس المجلس الأكبر,RYS ALMJLS ALKBR,office,1,aalam:1.09
+ORG_SHYKH_JAM_AZM,شيخ الجامع الأعظم,SHYKH ALJAM ALZM,office,1,aalam:3.12
+ORG_WZYR_AKBR,الوزير الأكبر,ALWZYR ALKBR,office,1,aalam:1.09
+ORG_WZYR_BHRYH,وزير البحرية,WZYR ALBHRY,office,1,aalam:1.09
+ORG_WZYR_WRYS_MJLS,الوزير ورئيس المجلس,ALWZYR WRYS ALMJLS,office,1,aalam:1.09
+SCH_JAMH_ZYTWNYH,الجامعة الزيتونية,ALJAM ALZYTWNY,school,1,aalam:3.12
+SCH_MDRSH_DBAT,مدرسة الضباط,MDRS ALDBAT,school,1,aalam:1.09
+SCH_MDRSH_SADQYH,المدرسة الصادقية,ALMDRS ALSADQY,school,3,aalam:1.09
+SCH_MDRSH_SGHAR_MMALYK,مدرسة صغار المماليك,MDRS SGHAR ALMMALYK,school,1,aalam:1.09
+SCH_MHD_SADQY,المعهد الصادقي,ALMHD ALSADQY,school,1,aalam:3.12
+SCH_MHD_SAN_LWYS_BBARYS,معهد سان لويس بباريس,MHD SAN LWYS BBARYS,school,1,aalam:2.02

@@ -1,0 +1,48 @@
+# Scope and source of the A'lam Tunisiyun build. Single source of truth for
+# every stage, following config/scope.yaml in the multiplex build.
+
+volume:
+  title_ar: "أعلام تونسيون"
+  title_translit: "A'lam Tunisiyun"
+  author_ar: "الصادق الزمالي"
+  author_translit: "Sadok Zmerli"
+  publisher: "دار الغرب الإسلامي"
+  publisher_translit: "Dar al-Gharb al-Islami"
+  place: "Beirut"
+  pub_year: 2000
+  language: ar
+  n_pdf_pages: 384
+  # Printed folio 59 sits on PDF page 61. Folios OCR unreliably (97 reads as
+  # "07"), so the PDF page index is authoritative everywhere and the printed
+  # folio is recorded for citation only.
+  folio_offset: 2
+
+source:
+  # The scan is not redistributed. The manifest carries a sha256 per page and
+  # for the PDF itself, so the corpus is reconstructible and verifiable from
+  # the Internet Archive without this repository shipping the book.
+  archive_item: "https://archive.org/details/alfirdwsiy2018_gmail_0288"
+  pdf_url: "https://dn760004.eu.archive.org/0/items/alfirdwsiy2018_gmail_0288/0288%20-%20%D8%A3%D8%B9%D9%84%D8%A7%D9%85%20%D8%AA%D9%88%D9%86%D8%B3%D9%8A%D9%88%D9%86%20%D9%84%D8%B5%D8%A7%D8%AF%D9%82%20%D8%A7%D9%84%D8%B2%D9%85%D8%A7%D9%84%D9%8A%20%20%D9%83%D8%AA%D8%A7%D8%A8%20%D8%A7%D9%82%D8%B1%D8%A7%20%20%D8%A7%D9%88%D9%86%D9%84%D8%A7%D9%8A%D9%86%20%20.pdf"
+  pdf_sha256: "6379aa8e9d7052f0e21afca211d953e72ad5beb530a5af0c9cc097023f3bdbeb"
+  pdf_bytes: 11960336
+
+ocr:
+  # Every page is a full-page CCITT bilevel scan; there is no text layer at all
+  # (zero /Font, zero /ToUnicode, 0 extractable characters), so OCR is the only
+  # route to text. The settings were chosen by testing against pages
+  # transcribed by eye: proper names, which are what the extractor needs, come
+  # through correct, and errors fall on function words and punctuation.
+  engine: tesseract
+  lang: ara
+  # The embedded scan is 2144x3024 px, already about 350 dpi for a page this
+  # size, and is used as-is. Re-rendering at a nominal 300 dpi upscales it more
+  # than fourfold (the page box is in points) and measurably loses words.
+  native_resolution: true
+  psm: 6
+
+# Coverage claim of the volume: Aziza Othmana (b. 1606) to Mohamed Tahar Ben
+# Achour (d. 1973). This is the span of the subjects' lives, not a claim that
+# the book covers every elite in it.
+window:
+  start_year: 1606
+  end_year: 1973
