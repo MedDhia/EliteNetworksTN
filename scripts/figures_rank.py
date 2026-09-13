@@ -5,19 +5,35 @@ they cluster with their namesakes. This asks *how high* they rise, which is a
 different question and gets a different answer: barely at all in the career
 bureaucracy, and sharply at the political apex.
 
-**The design.** For each rank threshold, the statistic is the chance that two
-people sharing a surname *both* reached it. The null shuffles the outcome —
-who reached the rank — within strata of entry decade × career span, which
-leaves every surname group exactly as it is and destroys only the link between
-name and attainment. Those two controls are not optional: the high-rank rate
+**The design.** For each band of the hierarchy, the statistic is the chance
+that two people sharing a surname *both* ended their careers there. The null
+shuffles the outcome — who ended where — within strata of entry decade ×
+career span, which leaves every surname group exactly as it is and destroys
+only the link between name and attainment. Those two controls are not
+optional: the high-rank rate
 runs from 5% for someone recorded in a single year to 44% for someone with a
 career spanning twenty-one or more, and from 21% for the 1980s cohort to 7%
 for the 2020s, so an unstratified null would credit families with the effects
 of longevity and of when the record happens to stop.
 
+**Why bands and not "X and above".** Nested thresholds make the effect look
+like a gradient climbing the scale — 1.01× at sous-directeur and above rising
+to 1.83× at ministre and above — and the gradient is mostly inherited rather
+than real. Every "X and above" set contains the people who finished at
+gouverneur or above, and as the threshold rises that group makes up more of
+the set and pulls the statistic with it. Cut the scale into bands that do not
+overlap and the climb disappears: the band running from directeur général to
+conseiller, on its own, sits at chance. The effect is not spread up the
+hierarchy, it is concentrated in one place at the top, and the nested view
+hides that.
+
+The same cut answers the mirror question. Namesakes do **not** share low
+destinies: neither the local-and-cadre band nor the administrateur band
+departs from chance, and no band anywhere on the scale falls significantly
+below it. There is no surname signal in failure, only in arrival.
+
 **Why the outcome and not the surname is shuffled.** Shuffling surnames also
-works for the headline — it gives 1.06×, 1.40×, 1.82× against the 1.06×,
-1.38×, 1.86× here — but it breaks as soon as the sample is split by how common
+reproduces the headline, but it breaks as soon as the sample is split by how common
 a surname is, because the split is defined on a person's real surname while
 the permutation hands them somebody else's. The group sizes inside the subset
 then differ between observation and null and the ratio stops meaning anything.
@@ -65,15 +81,30 @@ MAIN = CAT4[1]
 SEED = 20260913
 N_PERM = 400
 
-# The ordinal rank scale, by the lowest score that clears each threshold.
-THRESHOLDS = [
-    (45, "Sous-directeur\nand above"),
-    (55, "Directeur\nand above"),
-    (65, "Directeur général\nand above"),
-    (70, "Secrétaire général\nand above"),
-    (80, "Gouverneur\nand above"),
-    (90, "Ministre\nand above"),
+# Disjoint bands, not nested "X and above" thresholds.
+#
+# Nested thresholds read as a gradient climbing the scale, and the gradient is
+# largely inherited: every "X and above" set contains the people who peaked at
+# gouverneur or above, so as the threshold rises that group makes up more of
+# it and drags the statistic with it. Cut into bands that do not overlap and
+# the apparent climb disappears — the band from directeur général to
+# conseiller, taken by itself, sits at chance. Where a career *stopped* is the
+# question these answer, and only one band has an answer.
+#
+# Unclassified and parallel tracks are excluded rather than ranked: `autre`
+# and a missing peak_rank are the extractor failing to classify a post, not a
+# person doing badly, and a doctor, academic or magistrate peaking in their
+# own hierarchy is not a junior administrator.
+PEAK_BANDS = [
+    ("Local or cadre", lambda s: s <= 20),
+    ("Administrateur or\nchef de service", lambda s: (s > 20) & (s <= 35)),
+    ("Sous-directeur or\ndirecteur", lambda s: (s > 35) & (s <= 55)),
+    ("Directeur général, secrétaire\ngénéral or conseiller",
+     lambda s: (s > 55) & (s < 80)),
+    ("Gouverneur or above", lambda s: s >= 80),
 ]
+
+NOT_A_RANK = {"autre", "medical", "academique", "magistrat"}
 
 # The threshold the right panel splits by rarity. High enough that the effect
 # is unambiguous, low enough that four of the five bands still hold pairs.
@@ -88,6 +119,11 @@ def prepare(persons: pd.DataFrame) -> pd.DataFrame:
     p["name"] = p.name.fillna("")
     p["surname"] = [split_name(n)[1] for n in p.name]
     p = p[[usable(s) for s in p.surname]].copy()
+    # dropna first: `isin` is False for NaN, so a bare ~isin keeps the 1,696
+    # people whose rank was never classified, and they are the largest group
+    # at the bottom of the scale.
+    p = p.dropna(subset=["peak_rank"])
+    p = p[~p.peak_rank.isin(NOT_A_RANK)].copy()
     p["span"] = p.last_year - p.first_year
     p["spanband"] = pd.cut(p.span, SPAN_BINS, labels=SPAN_LABELS)
     p = p.dropna(subset=["spanband"]).copy()
@@ -137,14 +173,15 @@ def test(p: pd.DataFrame, outcome: np.ndarray, strata, rng,
             "n": int(len(names[sel]))}
 
 
-def by_threshold(p: pd.DataFrame, strata, rng) -> list[dict]:
+def by_peak_band(p: pd.DataFrame, strata, rng) -> list[dict]:
+    """Where a career stopped, in bands that do not overlap."""
     out = []
-    for score, label in THRESHOLDS:
-        outcome = (p.peak_rank_score >= score).values
+    for label, pick in PEAK_BANDS:
+        outcome = pick(p.peak_rank_score).values
         r = test(p, outcome, strata, rng)
         if r is None:
             continue
-        r |= {"score": score, "label": label, "base": outcome.mean() * 100,
+        r |= {"label": label, "base": outcome.mean() * 100,
               "reached": int(outcome.sum())}
         out.append(r)
     return out
@@ -186,18 +223,18 @@ def draw_left(ax, rows) -> None:
     # The base counts ride in the tick label. As a separate annotation inside
     # the axes they were wide enough in data units to run back under the rank
     # names and collide with them.
-    ax.set_yticklabels([f"{r['label']}\n{r['reached']:,} reached it · "
+    ax.set_yticklabels([f"{r['label']}\n{r['reached']:,} ended here · "
                         f"{r['base']:.1f}%" for r in rows],
                        fontsize=8.2, color=INK, linespacing=1.45)
     ax.set_ylim(-0.6, len(rows) - 0.1)
-    ax.set_xlim(0.62, 2.35)
-    ax.set_xticks([0.75, 1.0, 1.25, 1.5, 1.75, 2.0])
+    ax.set_xlim(0.70, 1.72)
+    ax.set_xticks([0.75, 1.0, 1.25, 1.5])
     ax.set_xlabel("shared-fate rate ÷ rate under the permutation", fontsize=8.2)
     ax.xaxis.grid(True, lw=0.6)
     ax.set_axisbelow(True)
     ax.spines["left"].set_visible(False)
     ax.tick_params(axis="y", length=0)
-    ax.set_title("How high the rank", fontsize=9.8)
+    ax.set_title("Where the career stopped", fontsize=9.8)
 
 
 def draw_right(ax, rows) -> None:
@@ -249,7 +286,7 @@ def fig_rank(persons: pd.DataFrame) -> None:
     rng = np.random.default_rng(SEED)
     p = prepare(persons)
     strata = _strata(p)
-    left = by_threshold(p, strata, rng)
+    left = by_peak_band(p, strata, rng)
     right = by_rarity(p, strata, rng)
 
     fig, axes = plt.subplots(1, 2, figsize=(13.8, 6.6),
@@ -259,22 +296,27 @@ def fig_rank(persons: pd.DataFrame) -> None:
     draw_left(axes[0], left)
     draw_right(axes[1], right)
 
-    lo, hi = left[0], left[-1]
+    top = left[-1]
+    rest = left[:-1]
     drawn = [r for r in right if not r["empty"]]
     rare, common = drawn[0], drawn[-1]
     headline(
         fig,
-        "A surname says little about becoming a director and a good deal about becoming a minister",
-        f"Left: how much more often two people sharing a surname both reach a "
-        f"rank than when the outcome is shuffled among people of the same "
-        f"entry decade and career span. The effect climbs the scale — "
-        f"{lo['ratio']:.2f}× at {lo['label'].replace(chr(10), ' ').lower()}, "
-        f"where {lo['base']:.0f}% of the register arrives, and "
-        f"{hi['ratio']:.2f}× at {hi['label'].replace(chr(10), ' ').lower()}, "
-        f"where {hi['base']:.1f}% does. Right: the same statistic at "
-        f"gouverneur and above, split by how many people carry the surname. It "
-        f"runs from {rare['ratio']:.2f}× for a name held by "
-        f"{rare['band'].replace('-', ' to ')} people down to "
+        "A surname counts for reaching the top of the state and for nothing below it",
+        f"Left: how much more often two people sharing a surname end their "
+        f"careers in the same band of the hierarchy than when that outcome is "
+        f"shuffled among people of the same entry decade and career span. The "
+        f"bands do not overlap. Only the top one departs from chance — "
+        f"{top['ratio']:.2f}× for the {top['reached']:,} people who finish at "
+        f"gouverneur or above. The other {len(rest)} bands, covering "
+        f"{sum(r['base'] for r in rest):.0f}% of the administrative line, run "
+        f"between {min(r['ratio'] for r in rest):.2f}× and "
+        f"{max(r['ratio'] for r in rest):.2f}×, and none of them is "
+        f"separable from chance in either direction: namesakes share an "
+        f"arrival at the top, not a ceiling further down. Right: the top band "
+        f"split by how many people carry the surname, running from "
+        f"{rare['ratio']:.2f}× for a name held by "
+        f"{rare['band'].replace('-', ' to ')} people to "
         f"{common['ratio']:.2f}× for one held by more than sixty — the "
         f"direction kinship predicts, since a rare name shared is evidence of "
         f"a family and a common one shared is mostly not.",
@@ -282,20 +324,37 @@ def fig_rank(persons: pd.DataFrame) -> None:
     )
     save(fig, "fig34_surname_rank",
          SOURCE + "  Rank is the highest position a person is recorded "
-                  "holding, on the ordinal scale the codebook sets out. The "
+                  "holding, on the ordinal scale the codebook sets out, and "
+                  "the bands here partition that scale rather than nesting. "
+                  "Nesting matters: read as 'X and above' the same data give "
+                  "1.01× at sous-directeur rising to 1.83× at ministre, but "
+                  "that climb is mostly inherited, since every such set "
+                  "contains the people who finish at gouverneur or above and "
+                  "the higher the threshold the more of the set they are. In "
+                  "disjoint bands the middle of the hierarchy sits at chance. "
+                  "People whose peak rank the extractor never classified are "
+                  "dropped rather than counted as low-ranked — there are 1,696 "
+                  "of them and they would otherwise be the largest group at "
+                  "the bottom of the scale, carrying a spurious 4× — and so "
+                  "are the parallel tracks, since a doctor, academic or "
+                  "magistrate who peaks in their own hierarchy is not a junior "
+                  "administrator. The "
                   "null shuffles who reached the rank within strata of entry "
                   "decade and career span, leaving surname groups untouched; "
                   "both controls are needed, because the rate of reaching "
                   "directeur général and above runs from 5% for someone "
                   "recorded in a single year to 44% for someone whose career "
                   "spans twenty-one or more, and from 21% for the 1980s cohort "
-                  "to 7% for the 2020s. Shuffling surnames instead gives the "
-                  "same headline (1.06×, 1.40×, 1.82× against 1.06×, 1.38×, "
-                  "1.86×) but cannot be split by rarity, because the split is "
-                  "defined on a person's own surname while the permutation "
+                  "to 7% for the 2020s. Shuffling surnames instead reproduces "
+                  "the result but cannot be split by rarity, because the split "
+                  "is defined on a person's own surname while the permutation "
                   "gives them another. A filled marker means fewer than 5% of "
-                  "permutations reached the observed value. The top of the "
-                  "scale is "
+                  "permutations reached the observed value; the two-sided "
+                  "reading is on the figure too, in that no band falls "
+                  "significantly below chance either. Five bands are tested, "
+                  "so a Bonferroni threshold would be 0.010, which the top "
+                  "band's 0.005 clears and nothing else approaches. The top of "
+                  "the scale is "
                   "thin and the reader should hold it lightly: at ministre and "
                   "above, 459 people carry 381 distinct surnames, of which 54 "
                   "are held by two or more, giving 114 pairs; the largest such "
