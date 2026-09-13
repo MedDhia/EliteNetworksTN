@@ -143,6 +143,48 @@ reader's call. At ERROR level:
 * the node table's row count and its degree-0 count match the widest tier's
   reported figures
 
+## The figure
+
+`python scripts/figure_giant_component.py` → `figures/fig10_giant_component.{png,pdf}`
+
+Five panels on the `all_sources` giant component, and three findings the
+tables above do not carry:
+
+**The component is a state appointment fan, not an elite club.** 60% of its
+nodes have exactly one tie, and its organisation hubs are ministries — the
+Ministry of the Interior alone at 5,600 ties. It peels to nothing: the
+innermost core, `k≥7`, is **193 nodes, 0.10%** of it.
+
+**That core is the state, by a factor of about 160.** State bodies are
+**369 of 70,658 organisations (0.5%)** in the component but **54 of the 63**
+in the core (86%); private SARL/SA firms are a third of all organisations
+and 8% of the core. Almost everything the register and the SARL/SA officer
+layer contributed sits on the rim.
+
+**The core is one cadre, not a set of ministerial cliques.** Collapsing the
+core's 127 individuals into ties between the organisations they share gives
+a graph of **density 0.594**, and **95% of the top 24×24 ministry pairs
+share at least one individual in the core**. This is also why panel (d) is a
+matrix: a node-link drawing of a near-complete graph on 63 long ministry
+names is a hairball with labels on it. The first draft of the figure was
+exactly that, and it was thrown away.
+
+### What the figure will not let you read
+
+**The person side of the core is homonyms.** 100% of the five
+widest-bridging individuals, and 90% of the top ten, are named
+"Mohamed …" — against a 46% base rate for that name among core
+individuals. Nodes carrying the commonest Tunisian male given name touch
+8.44 core organisations on average against 6.65 for everyone else. Those
+nodes are several men merged, so the core's brokers are not a finding and
+the figure says so on its face.
+
+**Three of the twenty highest-degree organisations are extraction noise**:
+the rubric heading "Associations, partis, syndicats et syndics" (1,488
+ties), the clause word "Objectifs" (533), and one unlabelled node (532).
+They are excluded from panel (d) and named in its note rather than deleted
+quietly.
+
 ## Known limitations
 
 * **Gazette-only people are mention clusters, not verified individuals.** Two
