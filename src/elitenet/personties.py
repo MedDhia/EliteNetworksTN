@@ -81,6 +81,7 @@ FIELDS_SPELLS = [
     "kin_spell_id", "person_id", "person_label", "kin_id", "kin_label",
     "relation", "is_marriage", "layer", "undirected_key",
     "onset", "terminus", "onset_lo", "onset_hi", "terminus_lo", "terminus_hi",
+    "last_seen",
     "left_censored", "right_censored", "onset_rule", "terminus_rule",
     "evidence_n", "evidence_tier", "confidence", "needs_review",
 ]
@@ -270,8 +271,9 @@ def build_spells(obs: list[dict]) -> tuple[list[dict], dict]:
              "inferred_endpoint": 0}
     for (pid, kid, relation), rows in by_dyad.items():
         rows.sort(key=lambda r: (r["obs_date"] or "9999", r["event_id"]))
-        dates = [d for d in (_d(r["obs_date"]) for r in rows) if d]
+        dates = sorted(d for d in (_d(r["obs_date"]) for r in rows) if d)
         first = dates[0] if dates else None
+        last = dates[-1] if dates else None
         closing = [r for r in rows if r["obs_kind"] == "closing"]
         close_d = min((d for d in (_d(r["obs_date"]) for r in closing) if d),
                       default=None)
@@ -298,6 +300,11 @@ def build_spells(obs: list[dict]) -> tuple[list[dict], dict]:
             # and only the bound is given: the tie existed at or before the
             # first date it was printed.
             "onset": "", "onset_lo": "", "onset_hi": _iso(first),
+            # The last date the tie was seen in print. Not a terminus -- the
+            # marriage was not observed to end -- but the only bound an
+            # analyst has for truncating a panel that otherwise runs a 1960
+            # marriage through to 2026. See build_panel.
+            "last_seen": _iso(last),
             "terminus": _iso(close_d), "terminus_lo": "",
             "terminus_hi": _iso(close_d),
             "left_censored": "True",
@@ -321,6 +328,16 @@ def build_panel(spells: list[dict]) -> list[dict]:
     what `certainty` says. Undated spells are excluded for the reason
     `panel_edges` gives: placing an undated tie in a time slice asserts a
     presence the evidence does not support.
+
+    The upper edge is the honest problem here, and it is worse than in the
+    ownership layer. A marriage first seen in 1960 and never seen to end runs
+    through to the end of the window, which asserts in 2026 something the
+    sources support only for 1960 -- and people die. Nothing in the evidence
+    resolves that, so the rows are emitted (dropping them would assert the
+    opposite, that the marriage ended when the printing stopped) and
+    `last_seen` is carried on every spell so an analyst can truncate at the
+    last sighting. `certainty` is never better than `probable` anywhere in
+    this layer for the same reason.
     """
     out: list[dict] = []
     for period, p_start, p_end in periods("yearly"):

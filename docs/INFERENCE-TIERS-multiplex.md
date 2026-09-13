@@ -87,6 +87,15 @@ would be measuring how often a couple appear in print.
 the filing date — and it bounds `terminus` from above, the way a cession bounds
 an ownership tie. That is why it is a separate relation.
 
+The **upper** edge is the honest problem, and it is worse here than in the
+ownership layer. A marriage first seen in 1960 and never seen to end runs
+through to the end of the window, which asserts in 2026 what the sources
+support only for 1960 — and people die. Nothing in the evidence resolves it, so
+the rows are emitted (dropping them would assert the opposite: that the
+marriage ended when the printing stopped) and `last_seen` is carried on every
+spell so an analyst can truncate at the last sighting. `certainty` is never
+better than `probable` anywhere in this layer, for the same reason.
+
 This layer is **one-mode over persons**, in its own tables. Putting a
 person-person tie in `spells.csv` would break mode-blocked vertex ids,
 `bipartite = n1`, `gwb1degree` and `gwb2degree` silently.

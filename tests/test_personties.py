@@ -263,3 +263,24 @@ def test_resolve_gives_both_kinship_ends_a_dyad():
     role = {"event_type": "appointed", "person_mention": "A Ben Ali",
             "counterparty_mention": "Societe Beta"}
     assert R._persons_of(role) == ["A Ben Ali"]
+
+
+def test_last_seen_is_carried_so_a_long_panel_can_be_truncated():
+    """A marriage first seen in 1960 and never seen to end runs to the end of
+    the window, which asserts in 2026 what the sources support for 1960.
+    Nothing in the evidence resolves that, so the bound is carried rather than
+    the rows being dropped -- dropping them would assert the opposite, that the
+    marriage ended when the printing stopped."""
+    idx = _idx(_res("Ali Ben Salah", "Societe Alpha", "P_A"),
+               _res("Leila Trabelsi", "Societe Alpha", "P_B"))
+    obs, _q, _s = PT.observations(
+        [_ev(event_id="E1", date="2008-04-01"),
+         _ev(event_id="E2", date="2011-09-09")], idx)
+    spells, _stats = PT.build_spells(obs)
+    assert spells[0]["onset_hi"] == "2008-04-01"
+    assert spells[0]["last_seen"] == "2011-09-09"
+    assert spells[0]["terminus"] == ""
+    assert spells[0]["right_censored"] == "True"
+    # The panel does run past the last sighting; that is what last_seen is for.
+    years = {r["panel_id"] for r in PT.build_panel(spells)}
+    assert "yearly:2012" in years

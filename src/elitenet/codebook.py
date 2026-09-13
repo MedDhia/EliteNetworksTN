@@ -252,6 +252,12 @@ COLUMN_NOTES: dict[str, str] = {
                            "person. Ambiguous by itself -- see `person_ties.csv`, which "
                            "separates a marriage from a birth name.",
     "is_marriage": "1 for `spouse_of` and `widow_of`, 0 for `maiden_name_of`.",
+    "last_seen": "The last date a kinship tie was seen in print. NOT a terminus -- the "
+                 "marriage was not observed to end -- but the only bound available for "
+                 "truncating a panel that otherwise runs a 1960 marriage through to the "
+                 "end of the window. Nothing in the sources resolves that, so the rows "
+                 "are emitted and the bound is carried: dropping them would assert the "
+                 "opposite, that the marriage ended when the printing stopped.",
     "s_org": "Organisation agreement. Required for a resolution: a name-only link is not an "
              "identification.",
     "s_name": "Name similarity. The surname gates the score and the given names decide it, so a "
