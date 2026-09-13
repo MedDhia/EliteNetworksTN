@@ -586,7 +586,17 @@ def run(events_path: Path | None = None) -> dict:
                 org_cache[org_men] = org_match(org_men, idx)
             om = org_cache[org_men]
             oid, osc = (om.org_id if om.is_identity else ""), om.score
-            if oid and osc >= 0.99:
+            # Any IDENTITY-GRADE match may seed the map, not only an exact one.
+            # The 0.99 floor here predates the specificity gate and is now
+            # redundantly strict: `is_identity` already requires an exact hit,
+            # an acronym, or a fuzzy match resting on a discriminating token,
+            # which is the same bar every other stage uses. Requiring 0.99 on
+            # top of it silently excluded the acronym and discriminating-fuzzy
+            # identifications, and with them 15,780 unresolved dyad events
+            # whose firm is identified by its matricule AND is a seed
+            # organisation -- the strongest anchor available anywhere in the
+            # pipeline, discarded for want of an exact name.
+            if oid:
                 for col in HARD_IDS:
                     if d[col]:
                         id_to_org[col].setdefault(d[col], oid)
