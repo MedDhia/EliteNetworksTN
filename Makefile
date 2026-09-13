@@ -164,3 +164,33 @@ aalam-gold-score: ## coded sheets -> precision/recall with Wilson intervals
 aalam-test:       ## parser and normalisation tests
 	$(APY) -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py \
 	  tests/test_gold_aalam.py tests/test_romanise_aalam.py -q
+
+# --- rodovid ----------------------------------------------------------------
+# A fifth build, independent of the four above and sharing only the data/ root.
+# Source: a crawl of rodovid.org seeded on Tunisian elite families, exported to
+# a workbook whose two sheets are committed as gzipped CSV under
+# data/processed/rodovid/source/. The relation is kinship rather than office,
+# so nothing here joins the other builds on a person id.
+#
+# The three table stages read only committed files and use the standard library
+# alone -- no mirror, no PDFs, no OCR, about fifteen seconds end to end, and
+# byte-identical on every run, which is what lets CI rebuild and diff them.
+# rodovid-figures is the exception: it needs matplotlib and numpy and takes
+# about six minutes, so it is out of the default chain and out of CI.
+RPY := PYTHONPATH=src python3
+
+.PHONY: rodovid rodovid-build rodovid-families rodovid-audit rodovid-figures \
+        rodovid-test
+
+rodovid: rodovid-build rodovid-families rodovid-audit
+
+rodovid-build:    ## score every person in the export, keep the Tunisians
+	$(RPY) -m rodovid.build
+rodovid-families: ## collapse the kinship graph to marriage alliances between families
+	$(RPY) -m rodovid.families
+rodovid-audit:    ## re-measure what the network figures may be read to say
+	$(RPY) -m rodovid.audit
+rodovid-figures:  ## the three network plates (~6 min; needs matplotlib)
+	$(RPY) -m rodovid.figures
+rodovid-test:     ## filter and family-collapse unit tests
+	$(RPY) -m pytest tests/test_rodovid.py -q
