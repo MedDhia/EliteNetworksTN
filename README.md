@@ -272,13 +272,20 @@ Why the CMF filings:
 - **directors declare ties beyond the cote.** The mandates section names
   unlisted companies too, so the network reaches into the private economy that
   no listing-based source sees;
-- **movements are dated.** Tender offers, capital increases and
-  threshold-crossing declarations record stake changes to the day. They are
-  harvested into the registry; parsing them is the obvious next extension.
+- **movements are dated.** Tender offers and their result notices, capital
+  increases, admissions and withdrawals record changes to the day. 400 of them
+  are parsed into `movements.csv`, which is what lets ownership be read as
+  change rather than as a series of stills;
+- **boards are dated too.** Adopted AGM resolutions date every appointment,
+  co-optation and renewal to the meeting that took it, and name the departing
+  director a co-optation replaces — a handover the source states rather than
+  one inferred from consecutive snapshots.
 
-Current build: **213 registration documents → 2,764 entities → 11,982 observed
-ties across nine layers**, 1994–2026, with 75 entities linked to a BVMT security
-by ISIN. Ownership weights are percentages of capital as reported; interlock
+Current build: **213 registration documents, 400 operation notices and 529
+adopted-resolution filings → 3,285 entities → 12,604 observed ties across
+thirteen layers**, 1994–2026, with 75 entities linked to a BVMT security by
+ISIN, plus 400 dated operations, 606 dated board decisions and 29 listing
+events. Ownership weights are percentages of capital as reported; interlock
 weights are counts of shared directors. Coverage thins sharply before ~2008 —
 treat the usable panel as roughly 2008–2026 and check
 `data/processed/bourse/layer_year_coverage.csv` before reading any time trend,
@@ -291,8 +298,8 @@ disclosure thresholds truncate ownership, homonyms merge, and carry-forward in
 the panel is an assumption rather than an observation.
 
 ```bash
-make bourse          # spine -> crawl -> resolve -> fetch -> extract
-                     # -> build -> export -> validate
+make bourse          # spine -> crawl -> resolve -> fetch -> extract -> movements
+                     # -> resolutions -> build -> export -> validate
 make bourse-test
 ```
 
