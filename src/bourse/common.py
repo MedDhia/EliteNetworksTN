@@ -12,6 +12,7 @@ import hashlib
 import io
 import json
 import logging
+import os
 import random
 import time
 from pathlib import Path
@@ -113,12 +114,31 @@ def now_iso() -> str:
 
 
 def write_jsonl(path: Path, rows: Iterable[dict[str, Any]]) -> int:
+    """Replace ``path`` with ``rows``, atomically.
+
+    Written to a temporary file in the same directory and renamed over the
+    target, so a reader either sees the whole previous file or the whole new
+    one. That is what lets downloading and extraction run at the same time:
+    the fetcher rewrites the manifest every few files while the extractor is
+    reading it, and an in-place write would hand the reader a truncated file.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
+    # The temporary name has to keep the ".gz" suffix: open_text decides
+    # whether to compress from the file name, so a temp file called
+    # "...jsonl.gz.1234.tmp" would be written as plain text and then renamed
+    # over a path everything else opens with gzip.
+    suffix = ".gz" if str(path).endswith(".gz") else ""
+    tmp = path.with_name(f".{path.name}.{os.getpid()}.tmp{suffix}")
     n = 0
-    with open_text(path, "w") as fh:
-        for row in rows:
-            fh.write(json.dumps(row, ensure_ascii=False) + "\n")
-            n += 1
+    try:
+        with open_text(tmp, "w") as fh:
+            for row in rows:
+                fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+                n += 1
+        os.replace(tmp, path)
+    finally:
+        if tmp.exists():
+            tmp.unlink(missing_ok=True)
     return n
 
 

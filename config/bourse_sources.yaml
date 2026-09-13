@@ -32,8 +32,11 @@ sections:
     doc_type: "operation_sur_capital"
     priority: 1
     note: >-
-      Other capital operations, including threshold-crossing declarations
-      (franchissements de seuil) - the cleanest dated record of stake changes.
+      Other capital operations: completed and announced capital increases,
+      reductions, mergers. Note that this section does NOT carry
+      threshold-crossing declarations (franchissements de seuil); the CMF does
+      not publish those here, so stake changes have to be read from tender
+      offers and their result notices instead.
 
   - key: augmentation_capital
     slug: "augmentations-de-capital-r-alis-es"
@@ -45,7 +48,13 @@ sections:
     slug: "r-solutions-adopt-es-par-les-assembl-s-g-n-rales-des-soci-t-s-faisant-ape"
     doc_type: "resolutions_ag"
     priority: 1
-    note: Adopted AGM resolutions; dated board appointments and renewals.
+    note: >-
+      Adopted AGM resolutions. Each filing dates its general meeting to the day
+      and states the decisions taken: appointments, co-optations and their
+      ratification, renewals, terminations, and the mandate expiry. Co-optations
+      name the departing director, which gives a succession tie the source
+      states outright. Roughly half the filings are routine financial meetings
+      carrying no governance decision.
 
   - key: prospectus
     slug: "prospectus-vis-s-par-le-cmf"
@@ -56,8 +65,16 @@ sections:
   - key: rapport_annuel_societe
     slug: "rapports-annuels-des-soci-t-s"
     doc_type: "rapport_annuel"
-    priority: 2
-    note: Company annual reports.
+    priority: 1
+    note: >-
+      Company annual reports. Filed by far more issuers than file a registration
+      document, so they are the second source of board and blockholder tables.
+      Their tables are not CMF-standardised, which is why the extractor keys on
+      table headers rather than section numbering. Two cautions: a report is
+      filed the year *after* the year it covers, so the reference year has to be
+      read out of the document (see `detect_report_year`); and reports for
+      financial years up to 2011 are scanned images with no text layer, so they
+      yield nothing without OCR.
 
   - key: convocation_assemblee
     slug: "convocation-des-assembl-es"
