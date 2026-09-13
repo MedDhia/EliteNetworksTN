@@ -1,14 +1,34 @@
 edge_id,layer,relation,from_id,from_name,to_id,to_name,to_kind,subjects_studied,year,year_lo,year_hi,date_precision,evidence_tier,extractor,pattern_id,confidence,entry_uid,evidence_quote
+ED_27270b32471923898f81,office,appointed_to,PERSON_ABYHAJB_KHLYL,خليل بو حاجب,OFFICE_WZARH_KBRY,الوزارة الكبرى,office,,1927,1927-01-01,1932-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"خليل بو حاجب الذي تولى الوزارة الكبرى من سئة 1927
+إلى سنة 1932"
 ED_a034f5c65c105b9258d9,office,appointed_to,PERSON_ABYHAJB_SALM,سالم بو حاجب,OFFICE_AMAMH_WKHTABH_JAM_SBHAN_LH,إمامة وخطابة جامع سبحان الله,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,كان الشيخ سالم بوحاجب إماماً خطيباً ل«ابجامع سبحان الله، في تونس
 ED_7cafa574aa815e6515d9,office,appointed_to,PERSON_ABYHAJB_SALM,سالم بو حاجب,OFFICE_KHTH_FTYA_MALKYH,خطة الفتيا المالكية,office,,1906,1906-01-01,1906-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,إذ تقلّد في تلك السنة خطة الفتيا المالكية وتدرّج في سلكها
 ED_0052bee732b6b205778a,office,appointed_to,PERSON_ABYHAJB_SALM,سالم بو حاجب,OFFICE_MSHYKHH_ASLAM_MALKYH,مشيخة الإسلام المالكية,office,,1919,1919-01-01,1919-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,ارتقى إلى خطة مشيخة الإسلام المالكية في سنة
 ED_2400e3e93ab570b80e7b,office,patronised_by,PERSON_ABYHAJB_SALM,سالم بو حاجب,ORG_ALH_BYRM,عائلة بيرم,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,التمتع برعاية أية عائلة مشهورة من عائلات العاصمة، ما عدا عائلة بيرم
 ED_dcd03367c928f4497d68,office,commissioned_by,PERSON_ABYHAJB_SALM,سالم بو حاجب,PERSON_KHYRALDYN,خير الدين,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,استعان بالشيخ سالم بوحاجب وكذلك بصديقه الشيخ محمد بيرم لتحرير كتابه
+ED_04d5bfdbfa335d2d8f31,office,left_post,PERSON_ASRM_MHMD,محمد الأصرم,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,بعد مغادرة عضوين من أبرز أعضا، هيئتها المديرة
+ED_7b3922e10ed608b4484b,office,appointed_to,PERSON_ASRM_MHMD,محمد الأصرم,OFFICE_ASHRAF_LY_DRWS_TRJMH_WALANSHA,الإشراف على دروس الترجمة والإنشاء,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,كُلّفَ بالإشراف على دروس الترجمة والإنشاء
+ED_f065a75a4256991177a0,office,appointed_to,PERSON_ASRM_MHMD,محمد الأصرم,OFFICE_MDYR_ADARH_GHABH,مدير إدارة الغابة,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,ألا وهو منصب مدير إدارة الغابة
+ED_a0baaae2d3c13fe0897c,office,appointed_to,PERSON_ASRM_MHMD,محمد الأصرم,OFFICE_MLM_BALMDRSH,معلّم بالمدرسة,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,عاد إلى تونس بعد إتمام دراسته حتى عيّن معلّماً بالمدرسة
+ED_62835b9285156b5b2bd3,office,left_post,PERSON_ASRM_MHMD,محمد الأصرم,OFFICE_TLYM,التعليم,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,وجد نفسه مضطراً إلى الانقطاع عن مهمة التعليم التي طالما
+ED_9d4d4dce92f1b73890ec,office,patronised_by,PERSON_ASRM_MHMD,محمد الأصرم,PERSON_KHYRALDYN,خير الدين,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,حسب رغبة الوزير خير الدين العظيم. بالاضطلاع بمهمة الإشراف
 ED_36d886b32247457a09c8,office,succeeded,PERSON_AWL_AHMD,أحمد باي الأول,PERSON_MSTFY,مصطفى باي,person,,1837,1837-10-10,1837-10-10,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,خلفاً لوالده
+ED_bf7de0db053236db0b34,office,recommended,PERSON_AZM_SDR,الصدر الأعظم,PERSON_WRDANY_LY,علي الورداني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,بأنه قد اقترح على السلطان تعيينه كاتبا للبعثة
+ED_55fbe3ae0713af2cce1b,office,patronised,PERSON_BDHMYD_SLTAN,السلطان عبد الحميد,PERSON_KHYRALDYN,خير الدين باشا,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"حرصاً منه
+على إظهار ما يوليه من عناية لأسرة وزيره الأكبر السابق خير الدين باشا"
+ED_2b8122a15e81545bf905,office,appointed_to,PERSON_BDH_MHMD,محمد عبده,OFFICE_MFTY_DYAR_MSRYH,مفتي الديار المصرية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"مفتي الديار المصرية الشيخ محمد
+عبده(ة) الذي اجتازت شهرته حدود وادي النيل"
+ED_9b780d663da37f8398e8,office,appointed_to,PERSON_BDH_MHMD,محمد عبده,OFFICE_MFTY_DYAR_MSRYH,مفتي الديار المصرية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,الشيخ محمد عبده مفتي الديار المصرية محاضرته الخالدة الذكر
 ED_5235982cf6f3fd52282b,office,appointed_to,PERSON_BHRY_MHMD,محمد البحري,OFFICE_QADY_JMAH,قاضي الجماعة,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.04,ولا استحسان قاضي الجماعة الشيخ محمد البحري
+ED_ae0207a45012c5589c3a,office,patronised_by,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,PERSON_THANY_HSN,مولاي الحسن الثاني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,انتباه مولاي الحسن الثاني، الملك الشهم والمثقف الثاقب الفكر
+ED_be284fdacc56b4e3ed70,office,commissioned_by,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,PERSON_THANY_HSN,مولاي الحسن الثاني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,دعوته كلّ سنة إلى زيارة المغرب (خلال شهر رمضان المعظم)
 ED_bcdce7ef651e8fe2ab41,office,appointed_to,PERSON_BNASHWR_MHMD_TAHR,محمد الطاهر بن عاشور,OFFICE_MDRS,مدرس,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.12,وارتقى وهو لا يزال شان إلى خحطة مدرس ثم أستاذ
 ED_49adc181c218105aa317,office,appointed_to,PERSON_BNASHWR_MHMD_TAHR,محمد الطاهر بن عاشور,OFFICE_QAD_MALKY,قاض مالكي,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.12,إلى أن أصبح قاضياً مالكيّا
 ED_269fcd3743cad7240037,office,appointed_to,PERSON_BNASHWR_MHMD_TAHR,محمد الطاهر بن عاشور,OFFICE_SHYKH_JAM_AZM,شيخ الجامع الأعظم,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.12,ولم تنقض مدة طويلة حتى كلف بمهام «شيخ الجامع الأعظم وفرّوعه)
+ED_d4e941039407476cec7a,office,appointed_to,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,OFFICE_QADY_HADRH_MALKY,قاضي الحاضرة المالكي,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,قبل أن يشغل نخخطة قاضى الحاضرة المالكى
+ED_562a4b5575c92e32721b,office,appointed_to,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,OFFICE_RASH_MDHHB_MALKY,رئاسة المذهب المالكي,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,ويتولى مهمة الإفتا، ورئاسة المذهب المالكي
+ED_bb07b4a5208168222fcd,office,appointed_to,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,OFFICE_SHYKH_JAM_ZYTWNH,شيخ جامع الزيتونة,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,ويعين فيما بعد شيخاً لجامع الزيتونة
+ED_ec02e1385afe9c89cd79,office,patronised,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,حرص على إعطا، ابنه الأكبر محمد الفاضل تربية مثالية
 ED_bb709cd252796798fa8f,office,headed,PERSON_BNASMAYL_MSTFY,مصطفى بن إسماعيل,ORG_HKWMH_TWNSYH,الحكومة التونسية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.07,مصطفى بن إسماعيل على رأس الحكومة
 ED_cac2b006046e58665a27,office,appointed_to,PERSON_BNHSYN_AHMD,أحمد بن حسين,OFFICE_BASH_MFTY_KAF,باش مفتي الكاف,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.04,ألا وهو باش مفتي© مدينة الكاف الشيخ أحمد بن حسين
 ED_057a15af71f937a77d1d,office,appointed_to,PERSON_BNHSYN_AHMD,أحمد بن حسين,OFFICE_KBYR_AHL_SHWRY,كبير أهل الشورى,office,,1850,1850-01-01,1850-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.04,وبهذه الصفة دعي بعد وفاة شيخه في سنة 1850 إلى تعويضه
@@ -30,7 +50,46 @@ ED_4465200f85b1a6f1f441,office,opposed_by,PERSON_BNKHWJH_MHMD,محمد بن ال
 الجترال محمد بن الخوجة من البلاط الملكي"
 ED_327eebf6a69a2755d1c1,office,succeeded,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,PERSON_SFR_BSHYR,البشير صفر,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,"خلفه صاحب الترجمة
 في رئاسة قسم المحاسبة"
+ED_f4b6a53cf8edfe072d45,office,appointed_to,PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,OFFICE_AML_WSLATYH,عامل الوسلاتية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,وبعد ذلك عيّن عاملاً (واليا) بالوسلاتية مدة بضع سنوات
+ED_b946cdc594fc3d0a79bd,office,appointed_to,PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,OFFICE_MDYR_ADARH_GHABH,مدير إدارة الغابة,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"ثم سمي
+مديراً لإدارة الغابة (غابة الزيتون)"
+ED_4ba5a320091ac7fe98b3,office,appointed_to,PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,OFFICE_MTMD_SKRY_LDY_FYLQ_TWNSY,معتمد عسكري لدى الفيلق التونسي,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"فعيّلوه في خطة معتمد عسكري لدى الفيلق
+التونسي المساهم في حرب القرم"
+ED_ed38fa0f638e82c0453d,office,patronised_by,PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,PERSON_KAMBWN_BWL,بول كامبون,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,استقبله المقيم العام كامبون
+ED_4c785b496a3a4a3cb388,office,patronised_by,PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,PERSON_KHYRALDYN,خير الدين,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"انتباه الجنرال خير الدين. فكان يدعوه بانتظام إلى تناول الطعام على مائدته
+ويخصّه برعايته"
+ED_f2d15b1bccda54360ff5,office,appointed_to,PERSON_BNMSTFY_JD_RSHYD,جد رشيد بن مصطفى,OFFICE_AGHA_MDYNH_QYSRLY,آغا مدينة قيصرلي,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,وكان جِدّه يشغل خطة اغا مدينة قيصرلي
+ED_99583e891ef213313a7a,office,appointed_to,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,OFFICE_MDYR_TSHRYFAT_SNYH,مدير التشريفات السنية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"سمي
+مديرا للتشريفات السنية في بلاط الملك محمد الناصر باي"
+ED_b8974c606177e9bd1cb4,office,appointed_to,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,OFFICE_MTRJM_DLY_LDY_MHKMH_MKHTLTH_BTWNS,مترجم عدلي لدى المحكمة المختلطة بتونس,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"انتداب المترجمين العدليين لدى المحكمة المختلطة بتونس ونجح فيها
+بامتياز"
+ED_56ef9d3b7420d7fd1ae4,office,succeeded,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,PERSON_BNKHWJH_MHMD,محمد بن الخوجة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"تخلفا للجنرال
+محمد بن الخوجة"
+ED_43e4b401310062956c86,office,patronised_by,PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,PERSON_NASR_MHMD,محمد الناصر باي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"أبواب قصور الملوك الحسيئيين، لا سيما منهم المرحوم محمد
+الناصر باي"
+ED_fb253341bd05d7cbcce2,office,patronised,PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,ASSOC_JMYH_KHYRYH_ASLAMYH,الجمعية الخيرية الإسلامية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,فلقد أولى عناية خاصة بالجمعية الخيرية الإسلامية
+ED_da5a2d38590eea03c193,office,appointed_to,PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,OFFICE_NAB_RYS_JMYH_KHLDWNYH,نائب رئيس الجمعية الخلدونية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,وما لبث أن أصبح عضواً بارزاً في هيئتها المديرة ثم نائبا
+ED_9d9f7fe7bf00926f3245,office,patronised,PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,ORG_MKTBH_KHLDWNYH,المكتبة الخلدونية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,حتى أثراها بعدد كبير من الكتب والمجلات التي أهداها إليها
+ED_54c7e8f8c9d5859e34b9,office,appointed_to,PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,ORG_MSLHH_TWBWGHRAFYH,المصلحة الطوبوغرافية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,فقد كُلْف بوظيفة مسح الأراضي في المصلحة الطوبوغرافية
+ED_2ed08eb5f291e92673d1,office,patronised,PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,PERSON_HDAD_TAHR,الطاهر الحداد,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,كان من بين المثقفين التونسيين القلائل الذين دافعوا عن كتاب الأديب المنكود الحظ
+ED_8c013b8e32de53daf3ba,office,appointed_to,PERSON_BNYWSF_SALH,صالح بن يوسف,OFFICE_AMYN_AM_LLHZB_DSTWRY_JDYD,الأمين العام للحزب الدستوري الجديد,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,الأمين العام للحزب الدستوري الجديد، الآستاذ صالح بن يوسف
+ED_293d0256e6c825c8e80b,office,appointed_to,PERSON_BWHAJB_KHLYL,خليل بوحاجب,OFFICE_WZYR_AKBR,الوزير الأكبر,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"صالون خاله
+الوزير الأكبر السابق، خليل بوحاجب"
+ED_581c6df09ef0b6895c95,office,appointed_to,PERSON_BWHAJB_LY,علي بوحاجب,OFFICE_WZARH_SHH_WALSHWN_AJTMAYH,وزارة الصحة والشؤون الاجتماعية,office,,1947,1947-01-01,1947-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"وأسندت إليه وزارة الصحة والشؤون
+الاجتماعية"
+ED_2cf6c5e0e578ea971d2e,office,left_post,PERSON_BWHAJB_LY,علي بوحاجب,OFFICE_WZARH_SHH_WALSHWN_AJTMAYH,وزارة الصحة والشؤون الاجتماعية,office,,1950,1950-08-01,1950-08-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,وعندما اضطرٌ إلى التخلي عن مهمّته؛ بعد تكوين وزارة شنيق
+ED_25ac604360a805f740ba,office,appointed_to,PERSON_BWRD_BWL,بول بورد,OFFICE_MDYR_FLAHH,مدير الفلاحة,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,لمدير الفلاحة الفرنسي المأسوف عليه بول بورد
+ED_ce3d45a5c1c4da797428,office,appointed_to,PERSON_BWRQYBH_MHMD,الشيخ محمد بورقيبة,OFFICE_MHNH_MHAMAH_LDY_MHAKM_TWNSYH,مهنة المحاماة لدى المحاكم التونسية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,فاختار مهنة المحاماة لدى المحاكم التونسية
+ED_b5a25f4e65b21f9f0ddc,office,opposed_by,PERSON_BWRQYBH_MHMD,الشيخ محمد بورقيبة,PERSON_ABYHDY,الشيخ أبو الهدى,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,بزوّار الشيخين ظافر وأبي الهدى
+ED_aa1e6472cd26992d45be,office,opposed_by,PERSON_BWRQYBH_MHMD,الشيخ محمد بورقيبة,PERSON_ZAFR,الشيخ ظافر,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,فقد استغل ساعات الانتظار فى القاعات المكتظة بزوّار الشيخين
+ED_b8e0799ee9205fdb0010,office,commissioned_by,PERSON_BWSHWSHH_LY,علي بوشوشة,ORG_SLTH_LYA,السلطة العليا,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"علي بوشوشة من بين التلامذة الأولين الذين اختارتهم السلطة العليا لإتمام
+دراستهم بأروبا"
+ED_cfbb648302e138ace695,office,appointed_to,PERSON_BWTWR_MHMD_ZYZ,محمد العزيز بوعتور,OFFICE_WZARH_KBRY,الوزارة الكبرى,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.10,وإنجازاته الإدارية التي حققها عندما تقلّد الوزارة الكبرى
+ED_eaf096c26ae5e4a0b701,office,appointed_to,PERSON_BYRM_AHMD,أحمد بيرم,OFFICE_SHYKH_ASLAM_HNFY,شيخ الإسلام الحنفي,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,وشيخ الإسلام الحنفي أحمد بيرم
 ED_5a532e78f9abf47dc977,office,commissioned_by,PERSON_BYRM_MHMD,محمد بيرم,PERSON_KHYRALDYN,خير الدين,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,بالشيخ سالم بوحاجب وكذلك بصديقه الشيخ محمد بيرم لتحرير كتابه «أقوم
+ED_7ed2d2f793bddb4efaf3,office,appointed_to,PERSON_BYRWTWN_MARSAL,مارسال بيروتون,OFFICE_MQYM_AM_LFRNSA_BTWNS,مقيم عام لفرنسا بتونس,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,مارسال بيروتون، مقيماً عاماً لفرنسا بتونس
+ED_d972c5dc2c13c6455dfe,office,left_post,PERSON_BYRWTWN_MARSAL,مارسال بيروتون,OFFICE_MQYM_AM_LFRNSA_BTWNS,مقيم عام لفرنسا بتونس,office,,,1933-01-01,1936-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,شغل بيروتون خطة مقيم عام لفرنسا بتونس من 1933 إلى 1936
+ED_4b704d49f79bcdb49950,office,commissioned_by,PERSON_BYRWTWN_MARSAL,مارسال بيروتون,ORG_HKWMH_FRNSYH,الحكومة الفرنسية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,عيّنت الحكومة الفرنسية الوالي السابق بالمستعمرات
 ED_fde7115803bec6fa935b,office,appointed_to,PERSON_DAR_MHMD_KHZNH,محمد خزنة دار,OFFICE_WZYR_AKBR,الوزير الأكبر,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,الوزير الأكبر الجديد محمد خزنة دار علامات المودة والتقدير
 ED_0d6b8fd750b17b867ae9,office,appointed_to,PERSON_DAY_THMAN,عثمان داي,OFFICE_DAY_TWNS,داي تونس,office,,,1598-01-01,1610-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:1.01,مدة عثمان داي : 1610-1598
 ED_2b3f9850d45c561f8e80,office,appointed_to,PERSON_DYAF_AHMD_BNABY,أحمد بن أبي الضياف,OFFICE_AMYR_AMRA,أمير أمراء,office,,1861,1861-01-01,1861-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.06,ومع ذلك فقد رقاه الصادق باي سنة 1861 إلى رتبة أمير أمرا
@@ -49,6 +108,21 @@ ED_32a89f5589e249e9f60a,office,commissioned_by,PERSON_DYAF_AHMD_BNABY,أحمد �
 ED_9734282bb168fd3409dd,office,recommended,PERSON_DYAF_AHMD_BNABY,أحمد بن أبي الضياف,PERSON_BNHSYN_AHMD,أحمد بن حسين,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.04,وأشار عليه بأن يكلف بتلك المهمة أحد رجال الشرع بالآفاق
 ED_10348a18a9163654c3ce,office,patronised_by,PERSON_DYAF_AHMD_BNABY,أحمد بن أبي الضياف,PERSON_THANY_HSYN,حسين باي الثاني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.06,"إلآ أن الأمير
 حسين باي الثاني الذي كان يتابع عن كثب ما أحرزه ذلك الشاب من تقدّم"
+ED_38f089be7356d5872fdb,office,appointed_to,PERSON_FRANS_BYAR_MNDAS,بيار منداس فرانس,OFFICE_RASH_HKWMH_FRNSYH,رئاسة الحكومة الفرنسية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,كان رئيس الحكومة الفرنسية أنذاك المسيور بيار منداس فرانس
+ED_8fa581656a2fcec152e6,office,appointed_to,PERSON_FRHAT_SALH,صالح فرحات,OFFICE_WZARH_DL,وزارة العدل,office,,1943,1943-01-01,1943-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,وصالح فرحات (وزير عدل)
+ED_85a254ade4ef45caf2d8,office,appointed_to,PERSON_GHTAS_AHMD,أحمد الغطاس,OFFICE_MHAM,محام,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,باعتباره أول محام تونسي [متخرج من الجامعات
+ED_c59fd0079444b55676be,office,opposed_by,PERSON_GHTAS_AHMD,أحمد الغطاس,ORG_FH_AJTMAYH_MTKHLFH,فئة اجتماعية متخلفة,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,ما ألحقته فئة اجتماعية متخلفة من إهانة خفيّة وفي غير محلها
+ED_35d7d437b40d2eb67546,office,recommended,PERSON_GHTAS_AHMD,أحمد الغطاس,PERSON_BDWHAB_HSN_HSNY,حسن حسني عبد الوهاب,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,كما كان من أول المقترحين لتنظيم دروس في الفرنسية، وقد عَهِدَ بها لأول مرّة إلى الأستاذ حسن حسني عبد الوهاب
+ED_e6c1e04c36bd0d89fb49,office,appointed_to,PERSON_HANBH_LY_BASH,علي باش حانبة,OFFICE_WKYL_MDRSH_SADQYH,وكيل المدرسة الصادقية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,الإشراف على إدارتها بصفة وكيل
+ED_dd47b5fd9e66bb0e0aaf,office,opposed_by,PERSON_HANBH_LY_BASH,علي باش حانبة,ORG_ADARH,الإدارة,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"وتعطيل جريدة «التونسي) وطرد سبعة أعضا، من هيئة تحريرها
+من بينهم مدير الجريدة"
+ED_4f18a92c051c3be34ab4,office,commissioned_by,PERSON_HANBH_LY_BASH,علي باش حانبة,ORG_HRKH_SHBAN_TWNSYYN,حركة الشبان التونسيين,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"وكلفوه
+بمهمة تحرير برنامج الحركة الجديدة التي ظهرت للوجود"
+ED_ffa42758053432584a10,office,opposed_by,PERSON_HANBH_LY_BASH,علي باش حانبة,PERSON_BAY,الباي,person,,1912,1912-01-01,1912-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,فلم يفاجئهما قرار القبض عليهما فجر يوم 12 مارس 21912
+ED_97f5b9395c2e5939674e,office,patronised_by,PERSON_HANBH_LY_BASH,علي باش حانبة,PERSON_RSHAD_SLTAN_MHMD,السلطان محمد رشاد,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.04,"ولا سيما قصر السلطان محمد رشاد الفنان المولع بالأثريات هو
+أيضاً"
+ED_55dba8a7644056d86010,office,appointed_to,PERSON_HBYB_MHMD,محمد الحبيب باي,OFFICE_RSH_MMLKH_TWNSYH,عرش المملكة التونسية,office,,,1922-01-01,1929-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,هو الأمير محمد الحبيب باي الذي دامت مدته من سئة 1922 إلى سئة 1929
+ED_7a759eec2b1f880d00d3,office,opposed_by,PERSON_HDAD_TAHR,الطاهر الحداد,PERSON_RSMYWN_MFKRWN,المفكرون الرسميون,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,الذي أثار تهجمات المفكرين الرسميين
 ED_1f187ee18cb826f8f4ec,office,succeeded,PERSON_HMWDH,حمودة باشا,PERSON_LY,علي باي,person,,1782,1782-05-27,1782-05-27,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,وعندما خلف الأمير حمودة باشا والده يوم 13 جمادى الثانية 1197 (27
 ED_7176966d1840030435a8,office,appointed_to,PERSON_HSYN,الجنرال حسين,OFFICE_AMYR_AMRA,أمير أمراء,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.07,ترقيته إلى رتبة «فريك، أي أمير أمراء
 ED_0a8e404570c51d08dc43,office,appointed_to,PERSON_HSYN,الجنرال حسين,OFFICE_AMYR_AY,أمير آلاي,office,,1859,1859-01-01,1859-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.07,فقد قرّر ترقية التلميذ حسين إلى رتبة أمير الاي
@@ -65,9 +139,20 @@ ED_6ab6ae300e0b4d5fe35c,office,opposed_by,PERSON_HSYN,الجنرال حسين,PE
 خصمه اللدود مصطفى بن إسماعيل على رأس الحكومة"
 ED_921781f81d4333b1041b,office,commissioned_by,PERSON_HSYN,الجنرال حسين,PERSON_SADQ_MHMD,محمد الصادق باي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.07,تم تكليفه بالتحول إلى اسطنبول رفقة الجنرال خير الدين
 ED_8c396e097e7893000ec1,office,appointed_to,PERSON_JLWLY_BKAR,بكار الجلولي,OFFICE_WALY_SFAQS,والي صفاقس,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,نجد القايد بكار الجلولي الذي كان يشغل آنذاك خطة
+ED_d18812d7c38df1638d11,office,appointed_to,PERSON_JLWLY_MHMD_ZYZ,محمد العزيز الجلولي,OFFICE_WZYR_AWQAF,وزير الأوقاف,office,,1943,1943-01-01,1943-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"ومحمد العزيز
+الجلولي (وزير أوقاف)"
+ED_87cc330d5a8fe46f940b,office,appointed_to,PERSON_JLWLY_TYB,الطيب الجلولي,OFFICE_WZYR_AKBR,وزير أكبر,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,يشير المؤلف إلى الخلاف الذي ظهر بين الوزير الأكبر الطيب الجلّولي
+ED_0af64f9ca51c89f53d22,office,opposed_by,PERSON_JLWLY_TYB,الطيب الجلولي,PERSON_BYRM_AHMD,أحمد بيرم,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,الخلاف الذي ظهر بين الوزير الأكبر الطيب الجلّولي وشيخ الإسلام الحنفي أحمد بيرم
+ED_81ae8666d473477f53eb,office,appointed_to,PERSON_KAK_MSTFY,مصطفى الكعاك,OFFICE_MYD_HYH_MHAMYN,عميد هيئة المحامين,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"فدعت عميد هيئة المحامين الآستاذ مصطفى الكعاك
+إلى تشكيل وزارة"
+ED_a6c6ebed49740d54bb04,office,appointed_to,PERSON_KAK_MSTFY,مصطفى الكعاك,OFFICE_WZARH_KBRY,الوزارة الكبرى,office,,,1947-01-01,1950-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,تولّى الأستاذ مصطفى الكعاك الوزارة الكرى من سنئة 1947 إلى سئة 1950
+ED_2a91efeb32008a36166f,office,left_post,PERSON_KAK_MSTFY,مصطفى الكعاك,OFFICE_WZARH_KBRY,الوزارة الكبرى,office,,1950,1950-01-01,1950-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,في شهر أورت 1950 تم تعويض وزارة الكعاك بوزارة جديدة
+ED_d14fcef2380c24dd6c16,office,commissioned_by,PERSON_KAK_MSTFY,مصطفى الكعاك,ORG_SLTH_HMAYH,سلطة الحماية,org,,1947,1947-01-01,1947-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"وفى سنة 1947, حاولت الحماية إيجاد حل متحرّر للأزمة"
+ED_59db958cb2ef30951c9e,office,succeeded,PERSON_KAK_MSTFY,مصطفى الكعاك,PERSON_SFR_MSTFY,مصطفى صفر,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.14,بفضل ما تميّر به خلفه الأستاذ مصطفى الكعاك من حزم
 ED_00579472c3206518ee52,office,headed,PERSON_KALYGHARYS,كاليغاريس,SCH_MDRSH_HRBYH_BBARDW,المدرسة الحربية بباردو,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,"عهد بمهمة الإشراف عليها في أول
 الأمر إلى الكولونيل كاليغاريس"
 ED_9459763b90dbedd8dddf,office,headed,PERSON_KAMBNWN,كامبنون,SCH_MDRSH_HRBYH_BBARDW,المدرسة الحربية بباردو,school,,1852,1852-01-01,1852-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,ثم إلى القبطان كامبنون (1852)
+ED_e3929a0ba2b81fe88e83,office,appointed_to,PERSON_KAMBWN_BWL,بول كامبون,OFFICE_MQYM_AM,المقيم العام,office,,,1882-01-01,1886-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,باشر بول كامبون خطة مقيم عام من سنة 1882 إلى سنة 1886
 ED_780583213e4a75417381,office,appointed_to,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,OFFICE_MDRS_MN_TBQH_AWLY,مدرس من الطبقة الأولى,office,,1867,1867-01-01,1867-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,ثم في مناظرة التدريس من الطبقة الأولى (1867)
 ED_061602716bbecf71e09d,office,appointed_to,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,OFFICE_MDRS_MN_TBQH_THANYH,مدرس من الطبقة الثانية,office,,1861,1861-01-01,1861-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,فقد نجح محمّد بيرم أولاً في مناظرة التدريس من الطبقة الثانية
 ED_e1839a5971ccff92b97b,office,headed,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,ORG_ADARH_AWQAF,إدارة الأوقاف,org,,1874,1874-01-01,1874-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,"فقد عهد إليه الوزير
@@ -75,11 +160,22 @@ ED_e1839a5971ccff92b97b,office,headed,PERSON_KHAMS_MHMD_BYRM,محمد بيرم �
 ED_344db18ae52445fc9411,office,headed,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,ORG_MSTSHFY_SADQY,المستشفى الصادقي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,ولما رجع من تلك الرحلة إلى تونس تولى تنظيم المستشفى الصادقي
 ED_a40cb7e3ab74b702ed9d,office,headed,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,ORG_MTBH_RSMYH,المطبعة الرسمية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,وفي نفس السنة دُعِيّ إلى الإشراف على المطبعة الرسمية
 ED_51cd3d87038d98c3d3f1,office,patronised_by,PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,PERSON_KHYRALDYN,الجنرال خير الدين,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,ولكثه بقى منذ ذلك الحين على اتصال مستمر بالجنرال خير الدين
+ED_e55766d150e2d6982c9a,office,appointed_to,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,OFFICE_MNSB_FY_DYWAN_RYS_HKWMH_TWNSYH,منصب في ديوان رئيس الحكومة التونسية,office,,1947,1947-01-01,1947-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,"عرض عليه رئيس الحكومة التونسية الجديد؟؟؛ منصباً
+هامًاً في ديوانه، فقبل العرض"
+ED_d27c5f4cab0f421828e3,office,appointed_to,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,OFFICE_MTRJM_DLY,مترجم عدلي,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,"وبعد نجاحه بامتياز في امتحان المترجمين العدليين، تفرغ لوظيفته
+الجديدة"
+ED_08db00326728a93a1ef6,office,patronised_by,PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,PERSON_KAK_MSTFY,مصطفى الكعاك,person,,1947,1947-01-01,1947-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,وفى سنة 1947 عرض عليه رئيس الحكومة التونسية الجديد
+ED_d7976cc238f74e92eb3c,office,commissioned_by,PERSON_KHMYRY_TAHR,الطاهر الخميري,ORG_MSSH_JWHR_HWBKYNS,مؤسسة جوهر هوبكينس,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.13,دعته مؤسّسة «جوهر هوبكينس، إلى المساهمة في دراسة
 ED_ac025cc4ebbf1da5edad,office,appointed_to,PERSON_KHWJH_MHMWD,محمود خوجة,OFFICE_WZYR_HRB,وزير الحرب,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,"محمود خوجة وزير الحرب في عهد
 الأمير أحمد باي الأول"
 ED_472d6684b3522872cdc6,office,appointed_to,PERSON_KHWJH_MSTFY,مصطفى خوجة,OFFICE_WZYR_AKBR,الوزير الأكبر,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,عهد بها الباي إلى وزيره الأكبر مصطفى خوجة
 ED_9c50538613bea6b519d8,office,appointed_to,PERSON_KHYRALDYN,الجنرال خير الدين,OFFICE_RYS_MJLS_AKBR,رئيس المجلس الأكبر,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,وبعد ذلك ببضع سئوات رئيساً للمجلس الأكبر الاستشاري
+ED_ff63a370f81dc41e1e4c,office,appointed_to,PERSON_KHYRALDYN,خير الدين,OFFICE_RYS_MJLS_RSH,رئيس مجلس العرش,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,"الذي أصبح في الأثنا، رئيساً لمجلس
+العرش على مدى الحياة"
+ED_818a5e74e9608031004d,office,appointed_to,PERSON_KHYRALDYN,خير الدين,OFFICE_SDR_AZM_LLDWLH_TRKYH,الصدر الأعظم للدولة التركية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,السلطان عبد الحميد قد عهد إليه بخطة الصدر الأعظم للدولة التركية
 ED_caa0e2639c50ab3e413a,office,appointed_to,PERSON_KHYRALDYN,خير الدين,OFFICE_WZARH_KBRY,الوزارة الكبرى,office,,1873,1873-01-01,1873-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,تولى الجنرال خير الدين الوزارة الكبرى في سئة 1873
+ED_6e66237dc18b500eef17,office,appointed_to,PERSON_KHYRALDYN,خير الدين باشا,OFFICE_WZYR_AKBR,الوزير الأكبر,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"صحبة والده
+الوزير الأكبر خير الدين باشا رحمة الله عليه وبقيّة أفراد أسرته"
 ED_386d6701fbf224117cf0,office,appointed_to,PERSON_KHYRALDYN,الجنرال خير الدين,OFFICE_WZYR_AKBR,الوزير الأكبر,office,,1873,1873-01-01,1873-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.08,"إلى أن
 تولى هذا الأخير الحكم في سنة 1873"
 ED_40abf6f98b024aecc410,office,appointed_to,PERSON_KHYRALDYN,الجنرال خير الدين,OFFICE_WZYR_AKBR,الوزير الأكبر,office,,1873,1873-01-01,1873-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,فاضطرٌ الباي إلى التخلّي عن وزيره الأكبر وتعويضه بالجنرال خير الدين
@@ -89,20 +185,96 @@ ED_bbe2bf550f795fc45b4c,office,left_post,PERSON_KHYRALDYN,الجنرال خير 
 ED_333ff705f8eea2739098,office,appointed_to,PERSON_KHYRALDYN,الجنرال خير الدين,OFFICE_WZYR_BHRYH,وزير البحرية,office,,1855,1855-01-01,1855-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,فعيّنه وزيراً للبحرية
 ED_309b3fb8e96f1a3899fe,office,appointed_to,PERSON_KHYRALDYN,خير الدين,OFFICE_WZYR_MBASHR,وزير مباشر,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,وعندما أصبح خير الدين وزيراً مباشراً مكلفاً بإدارة المملكة
 ED_224c3c10643d528138b6,office,left_post,PERSON_KHYRALDYN,الجنرال خير الدين,OFFICE_WZYR_WRYS_MJLS,الوزير ورئيس المجلس,office,,1863,1863-06-01,1863-06-30,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,فقد استقال خير الدين من منصب الوزير ورئيس المجلس وتخلّى عن كل نشاط عمومي
+ED_923553101ad7b167cbe7,office,commissioned_by,PERSON_KHYRALDYN,خير الدين,ORG_BAB_ALY,الباب العالي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,وعندما غادر خخير الدين البلاد التونسية. تلبية لدعوة الباب العالى
 ED_d111f317e14369808e3a,office,headed,PERSON_KHYRALDYN,الجنرال خير الدين,ORG_LJNH_MALYH_DWLYH,اللجنة المالية الدولية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,فقد تم تعبينه على رأس تلك اللجنة، بالإضافة إلى اضطلاعه بخطة وزير مباشر
 ED_54402ed1e36ee21f9f25,office,commissioned_by,PERSON_KHYRALDYN,الجنرال خير الدين,PERSON_AWL_AHMD,أحمد باي الأول,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,المهمّة الأولى والأخيرة التي كلّفه بها المشير أحمد باي الأول
+ED_054327b01d26086da6c5,office,patronised_by,PERSON_KHYRALDYN,خير الدين,PERSON_BDHMYD_SLTAN,السلطان عبد الحميد,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,الذي كان السلطان عبد الحميد قد عهد إليه بخطة الصدر الأعظم
 ED_d9f8e7d4da55de8b221a,office,opposed_by,PERSON_KHYRALDYN,الجنرال خير الدين,PERSON_DAR_MSTFY_KHZNH,مصطفى خزنه دار,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,خاب أمله بسبب دسائس رجال البلاط ومؤامرات الوزير الأكبر القوي النفوذ مصطفى خزنه دار
 ED_4604e7f71a0662750b6d,office,succeeded,PERSON_KHYRALDYN,الجنرال خير الدين,PERSON_DAR_MSTFY_KHZNH,مصطفى خزنه دار,person,,1873,1873-01-01,1873-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,فاضطرٌ الباي إلى التخلّي عن وزيره الأكبر وتعويضه بالجنرال خير الدين
 ED_f5acafe7853ca02eca37,office,patronised_by,PERSON_KHYRALDYN,الجنرال خير الدين,PERSON_MHMD,محمد باي,person,,1855,1855-01-01,1855-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,أبى ابن عمه الملك الجديد مَحمّد باي إلا أن يعرب عن رضاه لخادمه البارع، فعيّنه وزيراً للبحرية
 ED_6b174c5d1a2f33ef0357,office,commissioned_by,PERSON_KHYRALDYN,الجنرال خير الدين,PERSON_SADQ,الصادق باي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.09,فما إن رجع إلى تونس حتى كلفه الأمير الصادق باي بالدفاع لدى الباب العالي
+ED_a4b2b32993b22dc6045d,office,appointed_to,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,OFFICE_MNDWB_BMJLS_DWLH,مندوب بمجلس الدولة,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,عين أبله محمد مندوياً بمجلس الدولة
+ED_eb7c99ff4e3b891065a8,office,patronised_by,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,ORG_BLAT_SLTANY,البلاط السلطاني,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"ولا
+العروض المغرية المقدمة إليه من طرف البلاط السلطانى"
+ED_42ebb5fc58f8630ec6ca,office,opposed_by,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,PARTY_HZB_HAKM,الحزب الحاكم,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"فرأى الحزب
+الحاكم أن الوقت قد حان لوضع حدّ لذلك الوضع"
+ED_3a7172464527c2d13d7b,office,opposed_by,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,PARTY_LJNH_ATHAD_WALTRQY,لجنة الاتحاد والترقي,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"وبدأت
+سياسة لجنة «الاتحاد والترقى) المليئة بالمخاطر تثير الغضب فى صفوف
+الحزب نفسه"
+ED_12cf4574fc2d2104ce93,office,commissioned_by,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,PERSON_BDHMYD_SLTAN,السلطان عبد الحميد,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,ذلك أن السلطان عبد الحميد، حرصاً منه
+ED_6a5d48ff61b91c1480f0,office,patronised_by,PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,PERSON_KTANY_MHMD,الشيخ محمد الكتاني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,كانت آراؤه تحظى في أغلب الأحيان بتأييد ومساندة معلّم فاس الأكبر
+ED_8c20be800c2b4689462f,office,opposed_by,PERSON_KHYRALDYN_SALH,صالح خير الدين,COURT_MHKMH_HRBYH,المحكمة الحربية,court,,1913,1913-06-18,1913-06-18,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,فقد أحيلوا على المحكمة الحربية التي استنطقتهم على جناح السرعة
+ED_bb9a6d127d0ab87f3c36,office,appointed_to,PERSON_KHYRALDYN_SHQYQ_MHMD,شقيق محمد باي خير الدين,OFFICE_WZYR_DL_FY_HKWMH_TWNSYH,وزير العدل في الحكومة التونسية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"وشقيقه الذي سيصبح فيما بعد
+وزيرا للعدل في الحكومة التونسية"
+ED_0e945f7954ac1924eed4,office,appointed_to,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_MYN_HDRH_SLTANYH,معين الحضرة السلطانية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,والحق في الحين بقصر يلدز للاضطلاع بمهمة معين الحضرة السلطانية
+ED_7db26a3cd6bce5b077b1,office,left_post,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_QYADH_LWA,قيادة اللواء,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,كما تخلّى بعد ذلك بمدة قليلة عن قيادة اللوا، الموكول إلى عهدته
+ED_96138837d31f4dc3edd1,office,appointed_to,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_RTBH_AMYR_AY,رتبة أمير آلاي,office,,1901,1901-12-01,1901-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,وفي شهر ديسمبر 1901 ارتقى إلى رتبة أمير آلاي (عقيد)
+ED_78d6302ea5b56bf2923f,office,appointed_to,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_RTBH_AMYR_LWA,رتبة أمير لواء,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,ارتقى إلى رتبة أمير لوا، (جنرال)
+ED_69695811bcf993d595f5,office,appointed_to,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_RTBH_BNBASHY,رتبة بنباشي,office,,1894,1894-01-01,1894-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,وفي سنة 1894 عين طاهر خير الدين في رتبة بنباشي (مقدّم)
+ED_cbb06d1852b144733249,office,appointed_to,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_RTBH_QAMQAM,رتبة قائمقام,office,,1897,1897-10-25,1897-10-25,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,ويتحصل على رتبة قائمقام (ملازم أول). التي منحها له السلطان
+ED_d8a3f533a8a3bf24f82f,office,appointed_to,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_RTBH_YWZBASHY,رتبة يوزباشي,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,وتخرج منها بعد سنتين برتبة يوزباشي (قبطان)
+ED_37ed7424f328d172b1f9,office,appointed_to,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_TDRYS_TARYKH,تدريس التاريخ,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,المسؤولية التربوية الملقاة على عاتقه والمتمثلة في تدريس التاريخ
+ED_7fe593b0ff19651269b3,office,left_post,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_WLAYH_FLSTYN,ولاية فلسطين,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,فاستقال طاهر خير الدين في الحين من منصبه
+ED_2b6497f992b2b8ff3191,office,appointed_to,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_WLAYH_FLSTYN,ولاية فلسطين,office,,1912,1912-12-11,1912-12-11,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,مؤرخ في 11 ديسمبر 1912 أسئدّت إلى طاهر خير الدين ولاية فلسطين
+ED_40513737f71a4d4ab4e9,office,appointed_to,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_WZARH_DL,وزارة العدل,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"أوّل تونسي تقلّدها، ألا وهو الجنرال
+طاهر خير الدين"
+ED_bc4940cf24df6b129a08,office,appointed_to,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_WZARH_DL,وزارة العدل,office,,1921,1921-04-26,1921-04-26,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,وإحداث وزارة العدل، وكان أوّل من تقلّدها الجنرال طاهر نخير الدين
+ED_1cf49b98b25f3d2ea0ff,office,left_post,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_WZARH_DL,وزارة العدل,office,,1934,1934-04-01,1934-04-30,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,ولقد قدّم استقالته خلال شهر إفريل 1934
+ED_1945b41d9387e80eb900,office,left_post,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_WZARH_ZRAH_WALTJARH,وزارة الزراعة والتجارة,office,,1919,1919-10-11,1919-10-11,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,فقد فضل الاستقالة من منصبه والرجوع في الحين إلى تونس: 11 أكتوبر 1919
+ED_575fac91d524909801b0,office,appointed_to,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_WZARH_ZRAH_WALTJARH,وزارة الزراعة والتجارة,office,,1919,1919-08-02,1919-08-02,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,وألح عليه في قبول وزارة الزراعة والتتجارة التى كانت شاغرة أنذاك
+ED_31c8e91201940ea65e5b,office,left_post,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,OFFICE_WZYFH_BALBLAT,وظيفة بالبلاط,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,فتخلى بمحض إرادته عن وظيفته بالبلاط
+ED_e53e55d7c64c79fa89c5,office,patronised_by,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,PERSON_BDHMYD_SLTAN,السلطان عبد الحميد,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,باعتباره الوصيٌ الأكبر على أبنا، الصدر الأعظم ورئيس مجلس العرش
+ED_d271edbc7054cf3d1f74,office,commissioned_by,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,PERSON_BDHMYD_SLTAN,السلطان عبد الحميد,person,,1897,1897-04-01,1897-04-30,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,تلقى إذناً من السلطان يقضي بإقصائه فجأة عن معارفه ودراساته المفضلة
+ED_27aa69aa41cc8c84fa7c,office,opposed_by,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,PERSON_BYRM_AHMD,أحمد بيرم,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,عكرت صفو العلاقات بين ذلك الموظف الديني السامي وبين المسؤول عن وزارة العدل
+ED_75210eb6d2189a5010de,office,patronised_by,PERSON_KHYRALDYN_TAHR,طاهر خير الدين,PERSON_DYN_SLTAN_WHYD,السلطان وحيد الدين,person,,1919,1919-08-02,1919-08-02,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,استقبله السلطان وحيك الدين وعرض عليه منصب وزاري
+ED_d308fab096586ca671bb,office,appointed_to,PERSON_LATY_LY_BNAHMD,علي بن أحمد لاتي,OFFICE_MTRJM_DLY,المترجم العدلي,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,لاتي المترجم العدلي، إلى سوسة ومنها إلى تونس
+ED_2d9c3ce3ac59d1aab091,office,appointed_to,PERSON_MATRY_AHMD,أحمد الماطري,OFFICE_AMAM_KHTYB_BJAM_QSR,إمام خطيب بجامع القصر,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,وإمامين خطيبين بجامع القصر
+ED_5248e846a2e0e06ac223,office,appointed_to,PERSON_MATRY_MHMWD,محمود الماطري,OFFICE_MLM_BDAHYH_MRSY,معلم بضاحية المرسى,office,,1916,1916-01-01,1916-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,"عُيّن
+في شهر أكتوبر 1916 معلّماً بضاحية المرسي"
+ED_7a5180f9f0be097a93b5,office,appointed_to,PERSON_MATRY_MHMWD,محمود الماطري,OFFICE_WZYR_DAKHLYH,وزير الداخلية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,حتى عندما أصبح وزيراً للداخلية (في عهد المنصف باي)
+ED_8a098980dce05cc0824c,office,left_post,PERSON_MATRY_MHMWD,محمود الماطري,OFFICE_WZYR_DAKHLYH,وزير الداخلية,office,,1943,1943-01-01,1943-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,وغادر الحكومة بعد خحلع الملك الشهيد في 14 ماي 1943
+ED_9bd7ff0d6b9bb72ca9ae,office,appointed_to,PERSON_MATRY_MHMWD,محمود الماطري,OFFICE_WZYR_DAKHLYH,وزير الداخلية,office,,1943,1943-01-01,1943-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,والدكتور محمود الماطري (وزير داخلية)
+ED_49d5be6a6b69bd65b332,office,appointed_to,PERSON_MATRY_MHMWD,محمود الماطري,OFFICE_WZYR_DAKHLYH,وزير الداخلية,office,,1950,1950-01-01,1950-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,وعيّن من جديد وزيراً للداخلية في الوزارة التفاوضية
+ED_45af31edf1cd4f110f49,office,appointed_to,PERSON_MATRY_MHMWD,محمود الماطري,OFFICE_WZYR_SHH_MWMYH,وزير الصحة العمومية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,كلفه الرئيس الحبيب بورقيبة بوزارة الصحة العمومية
+ED_788dbb7d0b8f0cee86c0,office,commissioned_by,PERSON_MATRY_MHMWD,محمود الماطري,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,كلفه الرئيس الحبيب بورقيبة بوزارة الصحة العمومية
+ED_44eee9bc71bad9b05e5c,office,opposed_by,PERSON_MATRY_MHMWD,محمود الماطري,PERSON_BYRWTWN_MARSAL,مارسال بيروتون,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,ومن بينهم الدكتور محمود الماطري الذي كان ذا بنية ضعيفة
+ED_b7b33b8279b909aae334,office,recommended,PERSON_MATRY_MHMWD,محمود الماطري,PERSON_BYRWTWN_MARSAL,مارسال بيروتون,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,وقد كان المقيم العام أؤل من نوه باستقامته
+ED_eba49855646c697b8173,office,commissioned_by,PERSON_MATRY_MHMWD,محمود الماطري,PERSON_MNSF,المنصف باي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,"في الحكومة الوطنية التي شكلها المغفور له
+المنصف باي"
+ED_0addbd86c05b044eeed6,office,appointed_to,PERSON_MATRY_MHMWD,محمود الماطري,SCH_MDRSH_TTBYQYH_LLTJARH_WALSNAH,المدرسة التطبيقية للتجارة والصناعة,school,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,ثم في المدرسة التطبيقية للتجارة والصناعة
+ED_e61c747149a2334bc4f4,office,appointed_to,PERSON_MATRY_MKHTAR,المختار الماطري,OFFICE_AMAM_KHTYB_BJAM_QSR,إمام خطيب بجامع القصر,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,وإمامين خطيبين بجامع القصر
 ED_d6c049eac83e36fd5ef9,office,succeeded,PERSON_MHMD,محمد باي,PERSON_AWL_AHMD,أحمد باي الأول,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,أواخر عهد الأمير أحمد باي الأول وفي مذة خخلفه وابن عمه الأمير محمّد باي
+ED_2f9c4f18ffdf2f51f2f6,office,founded,PERSON_MNSF_MHMD,محمد المنصف باي,ORG_WZARH_WTNYH,الوزارة الوطنية,org,,1943,1943-01-01,1943-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"الوزارة الوطنية التي ألفها في
+جانفي 1943 المقدّس المبرور محمد المنصف باي"
+ED_8f249d253162fbe76142,office,opposed_by,PERSON_MSTFY,مصطفى آغة,PERSON_MRY_ABYLA,أبو العلاء المعري,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.11,"اقتدا، بمعارضه المتزهد فيما ورا،
+القبر"
 ED_73d80bca608a25f836c4,office,succeeded,PERSON_MSTFY,مصطفى باي,PERSON_THANY_HSYN,حسين باي الثاني,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.03,وعندما ارتقى إلى العرش الأمير مصطفى باي خلفاً لشقيقه حسين باي
+ED_d47ba5001c9a62564196,office,succeeded,PERSON_MSTFY,مصطفى آغة,PERSON_THLATY_MR,عمر ثلاتي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.11,"يتولى رئاسته على إثر وفاة المقدّم
+عمر ثلاتي"
+ED_7703a7d23b78f54c3258,office,appointed_to,PERSON_MYLRAN,ميلران,OFFICE_RYS_JMHWRYH_FRNSYH,رئيس الجمهورية الفرنسية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,إلا أن زيارة رئيس الجمهورية الفرنسية ميلران إلى تونس
+ED_e5d8d19e7d9ba65ba75b,office,patronised,PERSON_MYY_LWYS_RWNY,لويس روني ميي,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.08,"بتشجيع من ممثل فرنسا انذاك, المأسوف عليه السفير لويس روني ميي"
+ED_98808030be2688e359f7,office,appointed_to,PERSON_MYY_RWNY,روني ميي,OFFICE_MQYM_AM_FRNSY_BTWNS,المقيم العام الفرنسي بتونس,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.07,خصّصها روني ميِي سفير فرنسا والمقيم العام الفرنسي بتونس سابقاً
+ED_e9509e381b99024f3434,office,appointed_to,PERSON_NASR_MHMD,محمد الناصر باي,OFFICE_RSH_MMLKH_TWNSYH,عرش المملكة التونسية,office,,,1906-01-01,1922-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,الجالس على العرشس آأنذاك هو الأمير محمد الناصر باي
 ED_52753425a629430875ee,office,appointed_to,PERSON_QABADW_MHMWD,محمود قابادو,OFFICE_MDRS_MN_TBQH_AWLY_BJAM_ZYTWNH,مدرس من الطبقة الأولى بجامع الزيتونة,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,"حتى ولآه أمر
 التدريس بجامع الزيتونة المعمور بصفة مدرّس من الطبقة الأولى"
 ED_c1a6edad2f82d2b8e10f,office,appointed_to,PERSON_QABADW_MHMWD,محمود قابادو,OFFICE_MFTY_BALMJLS_SHRY,مفتي بالمجلس الشرعي,office,,1868,1868-01-01,1868-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,"إلى أن ارتقى إلى خطة مفتي
 بالمجلس الشرعي بالعاصمة (سنة 1868"
 ED_78ef3e1dd405a468d441,office,appointed_to,PERSON_QABADW_MHMWD,محمود قابادو,OFFICE_QADY_BARDW,قاضي باردو,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,"أولاه الأمير الجديد
 محمد الصادق باي), خطة قاضي باردو"
+ED_5ccce4a3b48d63aa3beb,office,opposed_by,PERSON_QLATY_HSN,حسن قلاتي,PERSON_BAY,الباي,person,,1912,1912-01-01,1912-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,بمقتضى أمر علي صادر عن الباي، وإبعادهما إلى أماكن مختلفة
+ED_79a510be800ee3a9c527,office,appointed_to,PERSON_RDWAN_MHMD,محمد رضوان,OFFICE_QADY_ASMH_HNFY,قاضي العاصمة الحنفي,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,كُلّف بخطة قاضي العاصمة الحنفي
+ED_0d439d7572050c01cec9,office,appointed_to,PERSON_RDWAN_MHMD,محمد رضوان,OFFICE_RYS_DARH_MHASBAT,رئيس دائرة المحاسبات,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,وتقلّد منصب رئيس دائرة المحاسبات
+ED_da107886aee4bf9c5e72,office,headed,PERSON_RDWAN_MHMD,محمد رضوان,ORG_MKTB_TRJMH,مكتب الترجمة,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,وبعدما أشرف بكفاءة نادرة على مكتب الترجمة
+ED_e9a9c49831c164dc46d4,office,succeeded,PERSON_RDWAN_MHMD,محمد رضوان,PERSON_RDWAN_MSTFY,مصطفى رضوان,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,فأمّا الابن محمد الذي تلقى مثل شقيقه تربية مزدوجة اللغة، فقد خحلف أباه في إدارة المال
+ED_5e23eb09022a36f29643,office,succeeded,PERSON_RDWAN_MHMD,محمد رضوان,PERSON_RDWAN_TYB,الطيب رضوان,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,ما لبث أن أحاله على مضض إلى أخيه الأكبر الذي أصبح هو أيضاً مدرّساً بجامع الزيتونة
+ED_bddaffb1d13b5149e669,office,appointed_to,PERSON_RDWAN_MSTFY,مصطفى رضوان,OFFICE_RYS_QSM_ANSHA_BADARH_MALYH,رئيس قسم الإنشاء بإدارة المالية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,مصطفى » رئيس قسم الإنشا، بإدارة المال
+ED_8afdd9fe587853926867,office,patronised,PERSON_RDWAN_TYB,الطيب رضوان,ASSOC_JMYH_KHYRYH_ASLAMYH,الجمعية الخيرية الإسلامية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,وجلب إليها عدداً كبيراً من الطلبة وأسند إلى البعض منهم من ماله الخاصٌ منحاً دراسية
+ED_823230ac6bbf43c838b7,office,appointed_to,PERSON_RDWAN_TYB,الطيب رضوان,OFFICE_AMYN_MAL_JMYH_KHYRYH_ASLAMYH,أمين مال الجمعية الخيرية الإسلامية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,وظل مدة سنوات عديدة أمين مالها الذي لا مأخذ عليه
+ED_3446df3c24f35d4d5019,office,left_post,PERSON_RDWAN_TYB,الطيب رضوان,OFFICE_MNSB_FY_SLK_TDRYS,منصب في سلك التدريس,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,وقد شغل في سلك التدريس منصباً ممتازاً ما لبث أن أحاله على مضض إلى أخيه الأكبر
+ED_d644aeeb0e6f5d5558f1,office,patronised,PERSON_RDWAN_TYB,الطيب رضوان,PARTY_HZB_HR_DSTWRY_TWNSY,الحزب الحر الدستوري التونسي,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,فإنه قد أيْد من أول وهلة الحزب الحر الدستوري التونسي
+ED_954c2d188b066daadb26,office,patronised,PERSON_RDWAN_TYB,الطيب رضوان,PERSON_NASR_MLK_MHMD,الملك محمد الناصر باي,person,,1922,1922-01-01,1922-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.01,أبدى تضامنه سنة 1922 مع المغفور له الملك محمد الناصر باي
+ED_05ebf0f2a8c5a8ce978e,office,recommended,PERSON_RSHYD,الجنرال رشيد,PERSON_BNMSTFY_HSWNH,حسونة بن مصطفى,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.05,"تلقى
+تشكرات الجنرال رشيد الذي أعرب عن كامل رضاه"
 ED_de4b9484fe18ac5bd729,office,appointed_to,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,OFFICE_BASH_MFTY,باش مفتي,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.03,تولّى الشيخ إبراهيم الرياحي خخطة باش مفتي، أي رئاسة المذهب
 ED_26a363992fe855ab5b5e,office,appointed_to,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,OFFICE_KBYR_AHL_SHWRY,كبير أهل الشورى,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.04,عندما انتقل الشيخ إبراهيم الرياحي كبير أهل الشورى إلى جوار ربه
 ED_0af0ce20fe2687224277,office,headed,PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,ORG_MJLS_SHRY,المجلس الشرعي,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.03,كان يرأس بالاشتراك مع نظيره الحنفي جلسات المجلس
@@ -110,11 +282,31 @@ ED_b785a7614f88271dbb45,office,commissioned_by,PERSON_RYAHY_ABRAHYM,إبراهي
 ED_c0788c3add86340312cc,office,appointed_to,PERSON_SADQ_MHMD,محمد الصادق باي,OFFICE_RSH_HSYNY,العرش الحسيني,office,,1859,1859-09-22,1859-09-22,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.05,ارتقى المشير محمد الصادق باي إلى العرش في 22 سبتمبر 1859
 ED_66c276aad6f1e84a278d,office,appointed_to,PERSON_SAFY_AHMD,أحمد الصافي,OFFICE_AMYN_AM_LLJNH_TNFYDHYH_LLHZB,الأمين العام للجنة التنفيذية للحزب,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,"أحمد الصافي الأمين
 العام للجنة التنفيذية للحزب"
+ED_21f65649f9678501d279,office,appointed_to,PERSON_SAN_LWSYAN,لوسيان سان,OFFICE_MQYM_AM_BTWNS,المقيم العام بتونس,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,فعينت على رأس الإقامة العامة [السفارة الفرنسية بتونس] المسيو لوسيان سان
+ED_b6ab96139cd77f238ea4,office,left_post,PERSON_SFR_BSHYR,البشير صفر,ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,association,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,للاضطلاع بمهام أخرى، وهما البشير صفر ومحمد الأصرم
 ED_dece6ae43964efc61132,office,appointed_to,PERSON_SFR_BSHYR,البشير صفر,OFFICE_RASH_JMYH_AWQAF,رئاسة جمعية الأوقاف,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.10,وعندما سمّى البشير صفر رئيساً لجمعية الأوقاف
+ED_5df87a27cf6ff7583c8d,office,appointed_to,PERSON_SFR_BSHYR,البشير صفر,OFFICE_RYS_JMYH_AWQAF,رئيس جمعية الأوقاف,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,"وقد تسبّيت لمحرّرها المتولّى آنذاك خطة رئيس جمعية
+الأوقاف"
+ED_f8aec7d249f69eac0708,office,appointed_to,PERSON_SFR_BSHYR,البشير صفر,OFFICE_WALY_BSWSH,والي بسوسة,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,فى إقصائه من تونس وتعيينه واليابسوسة. وذلك من أجل مواقفه
 ED_11a0d38b79a11648305a,office,appointed_to,PERSON_SFR_BSHYR,البشير صفر,OFFICE_WALY_SWSH,والي سوسة,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,سيصبحان فيما بعد، الواحد تلو الآخر، واليبن على سوسة
 ED_5ade71f28d04650a080a,office,patronised_by,PERSON_SFR_BSHYR,البشير صفر,PERSON_KHYRALDYN,الجنرال خير الدين,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.02,كان يحظى، دوماً وأبداً بتشجيعات الجنرال خخير الدين أثنا، زياراته المتكررة للمدرسة الصادقية
+ED_f74afc6a34c32e4e0f1a,office,appointed_to,PERSON_SHABY_MHMD_AMYN,محمد الأمين الشابي,OFFICE_WZYR_TRBYH_QWMYH,وزير التربية القومية,office,,,1956-01-01,1958-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:3.14,إلا بتكليفه غداة الاستقلال بمهمة وزير التربية القومية
+ED_d242b12f3750a47f83b2,office,left_post,PERSON_SHABY_MHMD_AMYN,محمد الأمين الشابي,OFFICE_WZYR_TRBYH_QWMYH,وزير التربية القومية,office,,1958,1958-01-01,1958-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.14,"التي اضطلع
+بها مدة سنتين (2)1958-1956"
+ED_42d9b0692ad90d105279,office,patronised_by,PERSON_SHABY_MHMD_AMYN,محمد الأمين الشابي,ORG_SLTH_LYA_BALBLAD,السلطة العليا بالبلاد,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.14,ولقد استرعى النتباه السلطة العليا بالبلاد
 ED_b603edf6103405538239,office,appointed_to,PERSON_SHMAMH_NSYM,نسيم شمامة,OFFICE_QAYD,قايد,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.07,ضدٌ القايد نسيم شمامة المتهم باختلاس مبالغ طائلة من المال
 ED_3e4b5072b9677d60f72e,office,opposed_by,PERSON_SHMAMH_NSYM,نسيم شمامة,ORG_HKWMH_TWNSYH,الحكومة التونسية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.06,القضية المرفوعة ضدٌ القائد نسيم شمامة المتهم باختلاس أموال الدولة التونسية
+ED_129eb23e9a40884b916b,office,appointed_to,PERSON_SHNYQ_MHMD,محمد شنيق,OFFICE_RASH_WZARH_TWNSYH,رئاسة الوزارة التونسية,office,,1950,1950-01-01,1950-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,بوزارة جديدة برئاسة السيد محمد شنيق
+ED_5a7779dd672d39c10c91,office,appointed_to,PERSON_SHNYQ_MHMD,محمد شنيق,OFFICE_WZYR_AKBR,وزير أكبر,office,,1943,1943-01-01,1943-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"وهي تتركب من: محمد شنيق (وزير
+أكبر)"
+ED_1be0f0f7ddf7ebbfbba8,office,appointed_to,PERSON_SHWKT_MHMD,محمد شوكت باشا,OFFICE_SDR_AZM,الصدر الأعظم,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.05,"حادث اغتيال الصدر الأعظم ووزير الحرب محمد
+شوكت باشا"
+ED_92118186fcf7b63b2004,office,appointed_to,PERSON_SHWKT_MHMWD,محمود شوكت باشا,OFFICE_SDR_AZM,الصدر الأعظم,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,وقعت حادثة اغتيال الصدر الأعظم محمود شوكت باشا
+ED_df32d2cc7d448d35794a,office,appointed_to,PERSON_SNWSY_MHMD,محمد السنوسي,COURT_MHKMH_QARYH_MKHTLTH,المحكمة العقارية المختلطة,court,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,وألحقته بسلك القضا، (المحكمة العقارية المسختلطة)
+ED_1791f56ba33179fb8f12,office,appointed_to,PERSON_SNWSY_MHMD,محمد السنوسي,OFFICE_MDYR_MTBH_RSMYH,مدير المطبعة الرسمية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,خطة مدرس بجامع الزيتونة فمدير للمطبعة الرسمية
+ED_33ce11e5ef2e6320c59d,office,opposed_by,PERSON_SNWSY_MHMD,محمد السنوسي,ORG_SLT_FRNSYH,السلط الفرنسية,org,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,حكمت عليه السلط الفرنسية بالإقامة الجبرية بقابس
+ED_eb31c05d2404d82962a5,office,commissioned_by,PERSON_SNWSY_MNWBY,المنوبي السنوسي,PERSON_LANJY_BARWN_DYR,البارون دير لانجي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.04,السيد المنوبي السئوسي - بمهمة مراجعة ونشر ذلك الكتاب
+ED_3cac982182bae8b76b18,office,appointed_to,PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,OFFICE_ADARH_MTBH_RSMYH,إدارة المطبعة الرسمية,office,,1956,1956-01-01,1956-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,إثر الاستقلال (1956) بإدارة المطبعة الرسمية
 ED_6995412085ba84529084,office,appointed_to,PERSON_TAB_SHAKYR_SAHB,شاكير صاحب الطابع,OFFICE_WZYR_AKBR,الوزير الأكبر,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.06,تحت إشراف الوزير الأكبر شاكير صاحب الطابع
 ED_55ea9fc359353c70fab6,office,appointed_to,PERSON_TAB_YWSF_SAHB,يوسف صاحب الطابع,OFFICE_ADARH_JHAT,إدارة الجهات,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,تكليف خادمه المفضل بمهمّة السهر شخصياً على إعادة تنظيم الإدارة
 ED_b24ff4e075c8afe85f39,office,appointed_to,PERSON_TAB_YWSF_SAHB,يوسف صاحب الطابع,OFFICE_QYADH_JYSH,قيادة الجيش,office,,1807,1807-01-01,1807-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,فجهز بمنتهى السرعة جيشا جديدا وعهد بقيادته إلى وزيره الأكبر
@@ -125,10 +317,49 @@ ED_b48078f47ef07a785ff7,office,patronised_by,PERSON_TAB_YWSF_SAHB,يوسف صا�
 ED_68ebb23554a06e8207f6,office,succeeded,PERSON_TAB_YWSF_SAHB,يوسف صاحب الطابع,PERSON_KHWJH_MSTFY,مصطفى خوجة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,عندما لبى داعي ربه الوزير الأكبر مصطفى خحوجة وأصبح من الضروري اختيار أحسن
 ED_866936cc6676f989c678,office,patronised,PERSON_TAB_YWSF_SAHB,يوسف صاحب الطابع,PERSON_THMAN,عثمان باي,person,,1814,1814-09-15,1814-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,ثم أسرع إلى مبايعته رسميّاً رغم ما أظهره
 ED_06154a6c1f62663c5004,office,opposed_by,PERSON_TAB_YWSF_SAHB,يوسف صاحب الطابع,PERSON_ZRWQ_RBY,العربي زروق,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,كان هناك شخص قد تميز بشدّة حقده وكرهه للوزير، ألا وهو العربي زروق
+ED_3e338988afc6565c5d39,office,opposed_by,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,COURT_MHKMH_SKRYH,المحكمة العسكرية,court,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.07,القي عليه القبض ونقل إلى تونس، حيث أحيل على المحكمة العسكرية
+ED_59718c95a8b7f4861b06,office,opposed_by,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,COURT_MHKMH_SKRYH,المحكمة العسكرية,court,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,أحيل على المحكمة العسكرية. بتهمة المس من أمن الدولة
+ED_6b20ca14d8c6f512cc73,office,commissioned_by,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,PARTY_HZB_HR_DSTWRY_TWNSY,الحزب الحر الدستوري التونسي,party,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,وهو الشيخ عبد العزيز الثعالبي الذي تم تكليفه بمهمّة التحول إلى باريس
+ED_786af9741552c1c9e5d6,office,commissioned_by,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,PARTY_HZB_HR_DSTWRY_TWNSY,الحزب الحر الدستوري التونسي,party,,1919,1919-01-01,1919-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.06,"وأوفد زعيمه
+
+الشيخ عبد العزيز الثعالبي إلى باريس للدفاع عن قضية بلاده"
+ED_439e180e242e3bc3b9e6,office,opposed_by,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,PERSON_BWRQYBH_HBYB,الحبيب بورقيبة,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,فانفصلا عنهم وبادرا إلى عقد مؤتمر وطني في بلدة قصر هلال
+ED_f1440cae077d6eebb287,office,opposed_by,PERSON_THALBY_BDZYZ,عبد العزيز الثعالبي,PERSON_MATRY_MHMWD,محمود الماطري,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.11,فانفصلا عنهم وبادرا إلى عقد مؤتمر وطني في بلدة قصر هلال
+ED_d784419da6f12a3ec0d7,office,appointed_to,PERSON_THANY_AHMD,أحمد باي الثاني,OFFICE_AMARH,الإمارة,office,,,1929-01-01,1942-12-31,year_range,book_stated,llm,aalam-model-v1,0.80,aalam:3.08,الذي تولّى الإمارة من سنة 1929 إلى سنة 1942
+ED_9771294ff1045f1ed1f5,office,appointed_to,PERSON_THANY_AHMD,أحمد باي الثاني,OFFICE_RSH_MMLKH_TWNSYH,عرش المملكة التونسية,office,,1929,1929-02-11,1929-02-11,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.09,ارتقى الأمير أحمد باي الثاني إلى العرش في 11 فيفري 1929
 ED_30ee42997c9eff706ab0,office,left_post,PERSON_THMAN,عثمان باي,OFFICE_RSH_HSYNY,العرش الحسيني,office,,1814,1814-12-20,1814-12-21,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,وقد حصلت الفاجعة في الليلة الفاصلة بين 20 و21 ديسمبر 1814
 ED_235b54fe9d3624739575,office,succeeded,PERSON_THMAN,عثمان باي,PERSON_HMWDH,حمودة باشا,person,,1814,1814-09-15,1814-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,عندما توفي حمودة باشا فجأة يوم 15 سبتمبر 1814
+ED_eda8db6e99170e3134ca,office,appointed_to,PERSON_TLATLY_BDQADR,عبد القادر التلاتلي,COURT_MHKMH_ASTNAF_BTWNS,محكمة الاستئناف بتونس,court,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,وقد أصبح مستشاراً بمحكمة الاستكناف بتونس
+ED_ec923f553d8a12e7c75f,office,appointed_to,PERSON_TLATLY_SADQ,الصادق التلاتلي,OFFICE_MFTSH_TLYM_ABTDAY_RBY,مفتش التعليم الابتدائي العربي,office,,1908,1908-01-01,1908-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,إحداث التعليم الابتدائي العربي وتنظيمه وتسييره بصفة
+ED_bc30921468bd38fc4425,office,left_post,PERSON_TLATLY_SADQ,الصادق التلاتلي,OFFICE_MFTSH_TLYM_ABTDAY_RBY,مفتش التعليم الابتدائي العربي,office,,1930,1930-01-01,1930-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,الاحتفال الفخم المقام على شرفه يوم 18 أفريل 1930»
+ED_c7b5dd499610aefdc1c0,office,appointed_to,PERSON_TLATLY_SADQ,الصادق التلاتلي,OFFICE_SLK_TLYM,سلك التعليم,office,,1892,1892-01-01,1892-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,الانتقطاع عن الدراسة والالتحاق سنة 1892 بسلك التعليم
+ED_b472f33eeac53aba99e5,office,commissioned_by,PERSON_TLATLY_SADQ,الصادق التلاتلي,PERSON_SHARLYTY,شارليتي,person,,1908,1908-01-01,1908-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,كلفه مدير العلوم والمعارف شارليتي بمهمة إحداث التعليم الابتدائي العربي
+ED_f03c998aaa4e5e134986,office,commissioned_by,PERSON_TLATLY_SADQ,الصادق التلاتلي,PERSON_THALBY_BDZYZ,الشيخ عبد العزيز الثعالبي,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,الشيخ عبد العزيز الثعالبي قد كلّفه بإعداد الفصل المخصّص للتعليم
+ED_7433dfacff688d8d44e9,office,opposed_by,PERSON_TLATLY_SLAHALDYN,صلاح الدين التلاتلي,PERSON_BYRWTWN_MQYM_AM,المقيم العام بيروطون,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.15,بالرغم من معارضة المقيم العام الفرنسي بيروطون
+ED_fe013c2f17e684b2cd12,office,appointed_to,PERSON_TRKY_MHMD,محمد التركي,OFFICE_MDYR_TSHRYFAT,مدير التشريفات,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.03,مدير التشريفات السابق الجنرال محيّد التركي الذي
+ED_e5f85b5e68b5ebc04941,office,appointed_to,PERSON_WRDANY_LY,علي الورداني,OFFICE_AMYN_SR_KHYR_DYN,أمين سر خير الدين,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,قبل تكليفه بمهمة أمانة سرّه
+ED_2b016c9bee5b1c54c7a1,office,appointed_to,PERSON_WRDANY_LY,علي الورداني,OFFICE_KATB_BTHH_LMYH,كاتب البعثة العلمية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,اقترح على السلطان تعيينه كاتبا للبعثة
+ED_e71111891a9a988b6542,office,appointed_to,PERSON_WRDANY_LY,علي الورداني,OFFICE_MNSH_BALQSM_AWL_TAB_LLWZARH_KBRY,منشئ بالقسم الأول التابع للوزارة الكبرى,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,"ثم منشئاً بالقسم الأول التابع للوزارة
+الكبرى"
+ED_833b6aabee66f97a4698,office,appointed_to,PERSON_WRDANY_LY,علي الورداني,OFFICE_MTRJM_LDY_MSALH_DLYH,مترجم لدى المصالح العدلية,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,عُيْن مترجماً لدى المصالح العدلية
+ED_763c666d241252d6ed07,office,patronised_by,PERSON_WRDANY_LY,علي الورداني,PERSON_KHYRALDYN,خير الدين,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.01,كثيراً ما دعاه إلى تناول الطعام على مائدته، قبل تكليفه بمهمة أمانة سرّه
 ED_17a476ff0f36195afaad,office,appointed_to,PERSON_YASHY_HSWNH,حسونة العياشي,OFFICE_MLM_BALMSTYR,معلم بالمستير,office,,1893,1893-01-01,1893-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,"سمي معلّماً بالمستير
 (1893)"
 ED_bb907810252a20082570,office,appointed_to,PERSON_YASHY_HSWNH,حسونة العياشي,OFFICE_MTRJM_BADARH_FLAHH,مترجم بإدارة الفلاحة,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,عُميّن لمدة قصيرة في منصب مترجم بإدارة الفلاحة
+ED_ab3db30744432d5adbdd,office,patronised_by,PERSON_ZAFR,الشيخ ظافر,PERSON_BDHMYD_SLTAN,السلطان عبد الحميد,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.02,قصر السلطان عبد الحميد واكتساب ثقة الشيخين المؤتمنين على سياسته
+ED_d0963c90d697237a6a2c,office,member_of,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,COURT_MHKMH_JNAYH,المحكمة الجنائية,court,,1911,1911-01-01,1911-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"المحكمة
+الجنائية حيث كان يشارك في إحدى جلساتها بوصفه عضواً محلفاً"
+ED_60127cbd2fb4e61ee9d3,office,appointed_to,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,OFFICE_SHYKH_MDYNH_TWNS,شيخ مدينة تونس,office,,1934,1934-01-01,1934-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,وفى 18 ماي 1934 هين في منصب شيخ مدينة تونس
 ED_c831d648765840f12bef,office,appointed_to,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,OFFICE_WALY_SWSH,والي سوسة,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:3.03,سيصبحان فيما بعد، الواحد تلو الآخر، واليبن على سوسة
+ED_d5744641ccbfad67bbb0,office,appointed_to,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,OFFICE_WALY_SWSH,والي سوسة,office,,1917,1917-01-01,1917-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,عيّنته فى 15 مارس 1917 والياً على سوسة
+ED_acffcf5df7800989e8ee,office,appointed_to,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,OFFICE_WZARH_DL,وزارة العدل,office,,1936,1936-01-01,1936-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"عَيِّن على رأس وزارة
+العدل التي ما فتى، يخيّم عليها ظلّ"
+ED_dab8b11007f0a7442cf4,office,left_post,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,OFFICE_WZARH_DL,وزارة العدل,office,,1943,1943-01-01,1943-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,وفى أول جانفى 1943 استقال من منصبه
+ED_40b58bd7059426a2dce7,office,appointed_to,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,OFFICE_WZYR_QLM_WALASTSHARH,وزير القلم والاستشارة,office,,1935,1935-01-01,1935-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,وفى السئة الموالية (7 أكتوير 1935) سمي وزيراً للقلم والاستشارة
+ED_cc2f2e22172502d13787,office,member_of,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,ORG_MJLS_BLDY_BTWNS,المجلس البلدي بتونس,org,,1911,1911-01-01,1911-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"بوصفه عضواً في
+المجلس البلدي"
+ED_6d58e607fd22200ed0e3,office,appointed_to,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,ORG_MJLS_SHWRY,المجلس الشوري,org,,1907,1907-01-01,1907-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,"وتعيين 16 نائبا
+
+من الأعيان التونسيين من بينهم عبد الجليل الزاوش"
+ED_c242461ace0c05e18165,office,succeeded,PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,PERSON_SFR_BSHYR,البشير صفر,person,,1917,1917-01-01,1917-12-31,year,book_stated,llm,aalam-model-v1,0.80,aalam:2.13,والياً على سوسة؛ خلفاً لصديقه البشير صفر
 ED_c272e41b2eecee631302,office,appointed_to,PERSON_ZYZ_HMWDH_BNBD,حمودة بن عبد العزيز,OFFICE_MSTSHAR_BAY,مستشار الباي,office,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:1.02,حمودة بن عبد العزيز: مستشار الباي

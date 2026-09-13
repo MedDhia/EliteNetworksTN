@@ -1,29 +1,74 @@
 org_id,name_ar,name_translit,org_kind,n_ties,first_seen_entry
+ASSOC_JMYH_ADAB,جمعية الآداب,JMY ALDAB,association,1,aalam:3.02
+ASSOC_JMYH_ADAB_MSRHYH,جمعية الآداب المسرحية,JMY ALDAB ALMSRHY,association,1,aalam:3.07
+ASSOC_JMYH_ADAB_TMTHYLYH,جمعية الآداب التمثيلية,JMY ALDAB ALTMTHYLY,association,1,aalam:2.11
 ASSOC_JMYH_AWQAF_HRMYN_SHRYFYN,جمعية أوقاف الحرمين الشريفين,JMY WQAF ALHRMYN ALSHRYFYN,association,1,aalam:2.10
-ASSOC_JMYH_KHYRYH_ASLAMYH,الجمعية الخيرية الإسلامية,ALJMY ALKHYRY ALSLAMY,association,2,aalam:3.03
-ASSOC_NADY_TWNSY,النادي التونسي,ALNADY ALTWNSY,association,1,aalam:3.03
-COURT_MHKMH_QARYH_MKHTLTH,المحكمة العقارية المختلطة,ALMHKM ALQARY ALMKHTLT,court,1,aalam:3.12
+ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,ALJMY ALKHLDWNY,association,16,aalam:2.07
+ASSOC_JMYH_KHYRYH_ASLAMYH,الجمعية الخيرية الإسلامية,ALJMY ALKHYRY ALSLAMY,association,5,aalam:2.14
+ASSOC_JMYH_NHDH_AQTSADYH,جمعية النهضة الاقتصادية,JMY ALNHD ALAQTSADY,association,1,aalam:3.07
+ASSOC_JMYH_QDMA_MDRSH_SADQYH,جمعية قدماء المدرسة الصادقية,JMY QDMA ALMDRS ALSADQY,association,1,aalam:2.04
+ASSOC_JMYH_QDMA_SADQYH,جمعية قدماء الصادقية,JMY QDMA ALSADQY,association,4,aalam:3.01
+ASSOC_JMYH_TMTHYLYH_ADAB,الجمعية التمثيلية الآداب,ALJMY ALTMTHYLY ALDAB,association,3,aalam:3.06
+ASSOC_NADY_MSTFY_AGHH,نادي مصطفى آغة,NADY MSTF GH,association,1,aalam:3.04
+ASSOC_NADY_QDMA_SADQYH,نادي قدماء الصادقية,NADY QDMA ALSADQY,association,1,aalam:3.04
+ASSOC_NADY_TWNSY,النادي التونسي,ALNADY ALTWNSY,association,8,aalam:2.08
+COURT_MHKMH_ASTNAF_BTWNS,محكمة الاستئناف بتونس,MHKM ALASTNAF BTWNS,court,1,aalam:2.15
+COURT_MHKMH_HRBYH,المحكمة الحربية,ALMHKM ALHRBY,court,1,aalam:2.09
+COURT_MHKMH_JNAYH,المحكمة الجنائية,ALMHKM ALJNAY,court,1,aalam:2.13
+COURT_MHKMH_QARYH_MKHTLTH,المحكمة العقارية المختلطة,ALMHKM ALQARY ALMKHTLT,court,2,aalam:3.08
+COURT_MHKMH_SKRYH,المحكمة العسكرية,ALMHKM ALSKRY,court,2,aalam:2.09
 MSQ_JAM_HLFAWYN,جامع الحلفاوين,JAM ALHLFAWYN,mosque,1,aalam:1.03
 MSQ_JAM_SAHB_TAB,جامع صاحب الطابع,JAM SAHB ALTAB,mosque,2,aalam:1.02
-MSQ_JAM_ZYTWNH,جامع الزيتونة,JAM ALZYTWN,mosque,5,aalam:1.03
+MSQ_JAM_ZYTWNH,جامع الزيتونة,JAM ALZYTWN,mosque,19,aalam:1.03
 NEWS_DBYSH,الدبيش,ALDBYSH,newspaper,1,aalam:3.03
+NEWS_FRNSA_ASLAMYH,فرنسا الإسلامية,FRNSA ALSLAMY,newspaper,1,aalam:2.04
 NEWS_HADRH,الحاضرة,ALHADR,newspaper,1,aalam:3.03
 NEWS_JRYDH_ALAM,جريدة الإعلام,JRYD ALLAM,newspaper,1,aalam:1.08
-NEWS_JRYDH_HADRH,جريدة الحاضرة,JRYD ALHADR,newspaper,6,aalam:2.10
+NEWS_JRYDH_AQDAM,جريدة الإقدام,JRYD ALQDAM,newspaper,2,aalam:2.09
+NEWS_JRYDH_BRHAN,جريدة البرهان,JRYD ALBRHAN,newspaper,2,aalam:3.02
+NEWS_JRYDH_HADRH,جريدة الحاضرة,JRYD ALHADR,newspaper,20,aalam:2.01
+NEWS_JRYDH_LSAN_HQ,جريدة لسان الحق,JRYD LSAN ALHQ,newspaper,1,aalam:3.02
+NEWS_JRYDH_MBSHR,جريدة المبشر,JRYD ALMBSHR,newspaper,1,aalam:3.02
+NEWS_JRYDH_MNTZR,جريدة المنتظر,JRYD ALMNTZR,newspaper,1,aalam:3.02
+NEWS_JRYDH_NHDH,جريدة النهضة,JRYD ALNHD,newspaper,3,aalam:3.02
+NEWS_JRYDH_NTAJ_AKHBAR,جريدة نتائج الأخبار,JRYD NTAJ ALKHBAR,newspaper,2,aalam:3.02
+NEWS_JRYDH_SHAHRAH,جريدة شاهراه,JRYD SHAHRAH,newspaper,2,aalam:2.05
+NEWS_JRYDH_SWT_TWNSY,جريدة صوت التونسي,JRYD SWT ALTWNSY,newspaper,2,aalam:3.09
+NEWS_JRYDH_TWNS,جريدة تونس,JRYD TWNS,newspaper,2,aalam:3.08
+NEWS_JRYDH_TWNSY,جريدة التونسي,JRYD ALTWNSY,newspaper,10,aalam:2.04
+NEWS_JRYDH_TWNS_MSAYH,جريدة تونس المسائية,JRYD TWNS ALMSAY,newspaper,1,aalam:2.15
+NEWS_MJLH_ALM_ADBY,مجلة العالم الأدبي,MJL ALALM ALDBY,newspaper,1,aalam:3.08
+NEWS_ML_TWNSY,العمل التونسي,ALML ALTWNSY,newspaper,2,aalam:3.06
+NEWS_MNARH,المنارة,ALMNAR,newspaper,1,aalam:3.06
+NEWS_NSHRH_RBYH_LJRYDH_TWNSY,النشرة العربية لجريدة التونسي,ALNSHR ALRBY LJRYD ALTWNSY,newspaper,2,aalam:2.04
 NEWS_RAD_TWNSY,الرائد التونسي,ALRAD ALTWNSY,newspaper,2,aalam:1.07
-NEWS_TWNSY,التونسي,ALTWNSY,newspaper,1,aalam:3.03
+NEWS_RJAL_WWALM,رجال وعوالم,RJAL WWALM,newspaper,1,aalam:3.06
+NEWS_SHF_HZB_HR_DSTWRY_TWNSY,صحف الحزب الحر الدستوري التونسي,SHF ALHZB ALHR ALDSTWRY ALTWNSY,newspaper,1,aalam:3.09
+NEWS_SWT_SHB,صوت الشعب,SWT ALSHB,newspaper,1,aalam:3.06
+NEWS_SWT_TWNSY,صوت التونسي,SWT ALTWNSY,newspaper,1,aalam:3.06
+NEWS_TWNSY,التونسي,ALTWNSY,newspaper,4,aalam:3.03
 NEWS_ZHRH,الزهرة,ALZHR,newspaper,1,aalam:3.03
 OFFICE_ADARH_JHAT,إدارة الجهات,DAR ALJHAT,office,1,aalam:1.02
+OFFICE_ADARH_MTBH_RSMYH,إدارة المطبعة الرسمية,DAR ALMTB ALRSMY,office,1,aalam:3.08
+OFFICE_AGHA_MDYNH_QYSRLY,آغا مدينة قيصرلي,GHA MDYN QYSRLY,office,1,aalam:2.14
 OFFICE_AMAMH_WKHTABH_JAM_SBHAN_LH,إمامة وخطابة جامع سبحان الله,MAM WKHTAB JAM SBHAN ALLH,office,1,aalam:2.06
+OFFICE_AMAM_KHTYB_BJAM_QSR,إمام خطيب بجامع القصر,MAM KHTYB BJAM ALQSR,office,2,aalam:3.11
+OFFICE_AMARH,الإمارة,ALMAR,office,1,aalam:3.08
 OFFICE_AML_BNZRT,عامل بنزرت,AML BNZRT,office,1,aalam:2.10
 OFFICE_AML_QABS,عامل قابس,AML QABS,office,1,aalam:2.10
+OFFICE_AML_WSLATYH,عامل الوسلاتية,AML ALWSLATY,office,1,aalam:3.05
+OFFICE_AMYN_AM_LLHZB_DSTWRY_JDYD,الأمين العام للحزب الدستوري الجديد,ALMYN ALAM LLHZB ALDSTWRY ALJDYD,office,1,aalam:3.04
 OFFICE_AMYN_AM_LLJNH_TNFYDHYH_LLHZB,الأمين العام للجنة التنفيذية للحزب,ALMYN ALAM LLJN ALTNFYDHY LLHZB,office,1,aalam:3.03
+OFFICE_AMYN_MAL_JMYH_KHYRYH_ASLAMYH,أمين مال الجمعية الخيرية الإسلامية,MYN MAL ALJMY ALKHYRY ALSLAMY,office,1,aalam:3.01
+OFFICE_AMYN_SR_KHYR_DYN,أمين سر خير الدين,MYN SR KHYR ALDYN,office,1,aalam:2.01
 OFFICE_AMYR_AMRA,أمير أمراء,MYR MRA,office,2,aalam:1.06
 OFFICE_AMYR_AY,أمير آلاي,MYR LAY,office,1,aalam:1.07
 OFFICE_AMYR_LWA,أمير لواء,MYR LWA,office,1,aalam:1.06
+OFFICE_ASHRAF_LY_DRWS_TRJMH_WALANSHA,الإشراف على دروس الترجمة والإنشاء,ALSHRAF L DRWS ALTRJM WALNSHA,office,1,aalam:2.07
 OFFICE_BASH_MFTY,باش مفتي,BASH MFTY,office,1,aalam:1.03
 OFFICE_BASH_MFTY_KAF,باش مفتي الكاف,BASH MFTY ALKAF,office,1,aalam:1.04
 OFFICE_DAY_TWNS,داي تونس,DAY TWNS,office,1,aalam:1.01
+OFFICE_KATB_BTHH_LMYH,كاتب البعثة العلمية,KATB ALBTH ALLMY,office,1,aalam:2.01
 OFFICE_KBYR_AHL_SHWRY,كبير أهل الشورى,KBYR HL ALSHWR,office,2,aalam:1.04
 OFFICE_KHTH_FTYA_MALKYH,خطة الفتيا المالكية,KHT ALFTYA ALMALKY,office,1,aalam:2.06
 OFFICE_KTABH,الكتابة,ALKTAB,office,1,aalam:1.06
@@ -31,98 +76,292 @@ OFFICE_MDRS,مدرس,MDRS,office,1,aalam:3.12
 OFFICE_MDRS_MN_TBQH_AWLY,مدرس من الطبقة الأولى,MDRS MN ALTBQ ALWL,office,1,aalam:1.08
 OFFICE_MDRS_MN_TBQH_AWLY_BJAM_ZYTWNH,مدرس من الطبقة الأولى بجامع الزيتونة,MDRS MN ALTBQ ALWL BJAM ALZYTWN,office,1,aalam:1.05
 OFFICE_MDRS_MN_TBQH_THANYH,مدرس من الطبقة الثانية,MDRS MN ALTBQ ALTHANY,office,1,aalam:1.08
-OFFICE_MDYR_MTBH_RSMYH,مدير المطبعة الرسمية,MDYR ALMTB ALRSMY,office,1,aalam:2.10
-OFFICE_MDYR_TSHRYFAT,مدير التشريفات,MDYR ALTSHRYFAT,office,1,aalam:2.10
+OFFICE_MDYR_ADARH_GHABH,مدير إدارة الغابة,MDYR DAR ALGHAB,office,2,aalam:2.07
+OFFICE_MDYR_FLAHH,مدير الفلاحة,MDYR ALFLAH,office,1,aalam:2.07
+OFFICE_MDYR_MTBH_RSMYH,مدير المطبعة الرسمية,MDYR ALMTB ALRSMY,office,2,aalam:2.10
+OFFICE_MDYR_TSHRYFAT,مدير التشريفات,MDYR ALTSHRYFAT,office,2,aalam:2.03
+OFFICE_MDYR_TSHRYFAT_SNYH,مدير التشريفات السنية,MDYR ALTSHRYFAT ALSNY,office,1,aalam:3.05
 OFFICE_MDYR_TSHRYFAT_SNYH_WALMTRJM_AWL_BALQSR_MLKY,مدير التشريفات السنية والمترجم الأول بالقصر الملكي,MDYR ALTSHRYFAT ALSNY WALMTRJM ALWL BALQSR ALMLKY,office,1,aalam:2.10
+OFFICE_MFTSH_TLYM_ABTDAY_RBY,مفتش التعليم الابتدائي العربي,MFTSH ALTLYM ALABTDAY ALRBY,office,2,aalam:2.15
 OFFICE_MFTY_BALMJLS_SHRY,مفتي بالمجلس الشرعي,MFTY BALMJLS ALSHRY,office,1,aalam:1.05
+OFFICE_MFTY_DYAR_MSRYH,مفتي الديار المصرية,MFTY ALDYAR ALMSRY,office,2,aalam:2.03
+OFFICE_MHAM,محام,MHAM,office,1,aalam:2.08
+OFFICE_MHNH_MHAMAH_LDY_MHAKM_TWNSYH,مهنة المحاماة لدى المحاكم التونسية,MHN ALMHAMA LD ALMHAKM ALTWNSY,office,1,aalam:3.02
+OFFICE_MLM_BALMDRSH,معلّم بالمدرسة,MLM BALMDRS,office,1,aalam:2.07
 OFFICE_MLM_BALMSTYR,معلم بالمستير,MLM BALMSTYR,office,1,aalam:3.03
+OFFICE_MLM_BDAHYH_MRSY,معلم بضاحية المرسى,MLM BDAHY ALMRS,office,1,aalam:3.11
+OFFICE_MNDWB_BMJLS_DWLH,مندوب بمجلس الدولة,MNDWB BMJLS ALDWL,office,1,aalam:2.05
+OFFICE_MNSB_FY_DYWAN_RYS_HKWMH_TWNSYH,منصب في ديوان رئيس الحكومة التونسية,MNSB FY DYWAN RYS ALHKWM ALTWNSY,office,1,aalam:3.04
+OFFICE_MNSB_FY_SLK_TDRYS,منصب في سلك التدريس,MNSB FY SLK ALTDRYS,office,1,aalam:3.01
+OFFICE_MNSH_BALQSM_AWL_TAB_LLWZARH_KBRY,منشئ بالقسم الأول التابع للوزارة الكبرى,MNSH BALQSM ALWL ALTAB LLWZAR ALKBR,office,1,aalam:2.01
+OFFICE_MQYM_AM,المقيم العام,ALMQYM ALAM,office,1,aalam:3.05
+OFFICE_MQYM_AM_BTWNS,المقيم العام بتونس,ALMQYM ALAM BTWNS,office,1,aalam:2.09
+OFFICE_MQYM_AM_FRNSY_BTWNS,المقيم العام الفرنسي بتونس,ALMQYM ALAM ALFRNSY BTWNS,office,1,aalam:2.07
+OFFICE_MQYM_AM_LFRNSA_BTWNS,مقيم عام لفرنسا بتونس,MQYM AM LFRNSA BTWNS,office,2,aalam:3.11
 OFFICE_MSHYKHH_ASLAM_MALKYH,مشيخة الإسلام المالكية,MSHYKH ALSLAM ALMALKY,office,1,aalam:2.06
 OFFICE_MSTSHAR_BAY,مستشار الباي,MSTSHAR ALBAY,office,1,aalam:1.02
 OFFICE_MSTSHAR_HKWMH,مستشار الحكومة,MSTSHAR ALHKWM,office,1,aalam:2.10
+OFFICE_MTMD_SKRY_LDY_FYLQ_TWNSY,معتمد عسكري لدى الفيلق التونسي,MTMD SKRY LD ALFYLQ ALTWNSY,office,1,aalam:3.05
 OFFICE_MTRJM_BADARH_FLAHH,مترجم بإدارة الفلاحة,MTRJM BDAR ALFLAH,office,1,aalam:3.03
+OFFICE_MTRJM_DLY,مترجم عدلي,MTRJM DLY,office,2,aalam:3.04
+OFFICE_MTRJM_DLY_LDY_MHKMH_MKHTLTH_BTWNS,مترجم عدلي لدى المحكمة المختلطة بتونس,MTRJM DLY LD ALMHKM ALMKHTLT BTWNS,office,1,aalam:3.05
+OFFICE_MTRJM_LDY_MSALH_DLYH,مترجم لدى المصالح العدلية,MTRJM LD ALMSALH ALDLY,office,1,aalam:2.01
+OFFICE_MYD_HYH_MHAMYN,عميد هيئة المحامين,MYD HY ALMHAMYN,office,1,aalam:3.06
+OFFICE_MYN_HDRH_SLTANYH,معين الحضرة السلطانية,MYN ALHDR ALSLTANY,office,1,aalam:2.09
+OFFICE_NAB_RYS_JMYH_KHLDWNYH,نائب رئيس الجمعية الخلدونية,NAB RYS ALJMY ALKHLDWNY,office,1,aalam:2.14
 OFFICE_NAB_RYS_MJLS_AKBR,نائب رئيس المجلس الأكبر,NAB RYS ALMJLS ALKBR,office,1,aalam:1.06
+OFFICE_QADY_ASMH_HNFY,قاضي العاصمة الحنفي,QADY ALASM ALHNFY,office,1,aalam:3.01
 OFFICE_QADY_BARDW,قاضي باردو,QADY BARDW,office,1,aalam:1.05
+OFFICE_QADY_HADRH_MALKY,قاضي الحاضرة المالكي,QADY ALHADR ALMALKY,office,1,aalam:3.10
 OFFICE_QADY_JMAH,قاضي الجماعة,QADY ALJMA,office,1,aalam:1.04
 OFFICE_QAD_MALKY,قاض مالكي,QAD MALKY,office,1,aalam:3.12
 OFFICE_QAYD,قايد,QAYD,office,1,aalam:1.07
 OFFICE_QDA_SHRY_BALKAF,القضاء الشرعي بالكاف,ALQDA ALSHRY BALKAF,office,1,aalam:1.04
 OFFICE_QYADH_JYSH,قيادة الجيش,QYAD ALJYSH,office,1,aalam:1.02
+OFFICE_QYADH_LWA,قيادة اللواء,QYAD ALLWA,office,1,aalam:2.09
+OFFICE_RASH_HKWMH_FRNSYH,رئاسة الحكومة الفرنسية,RAS ALHKWM ALFRNSY,office,1,aalam:3.04
 OFFICE_RASH_JMYH_AWQAF,رئاسة جمعية الأوقاف,RAS JMY ALWQAF,office,1,aalam:2.10
+OFFICE_RASH_MDHHB_MALKY,رئاسة المذهب المالكي,RAS ALMDHHB ALMALKY,office,1,aalam:3.10
+OFFICE_RASH_WZARH_TWNSYH,رئاسة الوزارة التونسية,RAS ALWZAR ALTWNSY,office,1,aalam:3.04
 OFFICE_RSH_HSYNY,العرش الحسيني,ALRSH ALHSYNY,office,2,aalam:1.02
+OFFICE_RSH_MMLKH_TWNSYH,عرش المملكة التونسية,RSH ALMMLK ALTWNSY,office,3,aalam:2.09
+OFFICE_RTBH_AMYR_AY,رتبة أمير آلاي,RTB MYR LAY,office,1,aalam:2.09
+OFFICE_RTBH_AMYR_LWA,رتبة أمير لواء,RTB MYR LWA,office,1,aalam:2.09
+OFFICE_RTBH_BNBASHY,رتبة بنباشي,RTB BNBASHY,office,1,aalam:2.09
+OFFICE_RTBH_QAMQAM,رتبة قائمقام,RTB QAMQAM,office,1,aalam:2.09
+OFFICE_RTBH_YWZBASHY,رتبة يوزباشي,RTB YWZBASHY,office,1,aalam:2.09
+OFFICE_RYS_DARH_MHASBAT,رئيس دائرة المحاسبات,RYS DAR ALMHASBAT,office,1,aalam:3.01
+OFFICE_RYS_JMHWRYH_FRNSYH,رئيس الجمهورية الفرنسية,RYS ALJMHWRY ALFRNSY,office,1,aalam:2.09
+OFFICE_RYS_JMYH_AWQAF,رئيس جمعية الأوقاف,RYS JMY ALWQAF,office,1,aalam:2.03
 OFFICE_RYS_MJLS_AKBR,رئيس المجلس الأكبر,RYS ALMJLS ALKBR,office,1,aalam:1.09
+OFFICE_RYS_MJLS_RSH,رئيس مجلس العرش,RYS MJLS ALRSH,office,1,aalam:2.01
+OFFICE_RYS_QSM_ANSHA_BADARH_MALYH,رئيس قسم الإنشاء بإدارة المالية,RYS QSM ALNSHA BDAR ALMALY,office,1,aalam:3.01
 OFFICE_SAHB_TAB,صاحب الطابع,SAHB ALTAB,office,1,aalam:1.02
+OFFICE_SDR_AZM,الصدر الأعظم,ALSDR ALZM,office,2,aalam:2.05
+OFFICE_SDR_AZM_LLDWLH_TRKYH,الصدر الأعظم للدولة التركية,ALSDR ALZM LLDWL ALTRKY,office,1,aalam:2.09
 OFFICE_SHAHD_DL,شاهد عدل,SHAHD DL,office,1,aalam:1.06
+OFFICE_SHYKH_ASLAM_HNFY,شيخ الإسلام الحنفي,SHYKH ALSLAM ALHNFY,office,1,aalam:2.09
 OFFICE_SHYKH_JAM_AZM,شيخ الجامع الأعظم,SHYKH ALJAM ALZM,office,1,aalam:3.12
+OFFICE_SHYKH_JAM_ZYTWNH,شيخ جامع الزيتونة,SHYKH JAM ALZYTWN,office,1,aalam:3.10
+OFFICE_SHYKH_MDYNH_TWNS,شيخ مدينة تونس,SHYKH MDYN TWNS,office,1,aalam:2.13
+OFFICE_SLK_TLYM,سلك التعليم,SLK ALTLYM,office,1,aalam:2.15
+OFFICE_TDRYS_TARYKH,تدريس التاريخ,TDRYS ALTARYKH,office,1,aalam:2.09
+OFFICE_TLYM,التعليم,ALTLYM,office,1,aalam:2.07
+OFFICE_WALY_BSWSH,والي بسوسة,WALY BSWS,office,1,aalam:2.03
 OFFICE_WALY_SFAQS,والي صفاقس,WALY SFAQS,office,1,aalam:1.02
-OFFICE_WALY_SWSH,والي سوسة,WALY SWS,office,2,aalam:3.03
-OFFICE_WZARH_KBRY,الوزارة الكبرى,ALWZAR ALKBR,office,1,aalam:2.10
+OFFICE_WALY_SWSH,والي سوسة,WALY SWS,office,3,aalam:2.13
+OFFICE_WKYL_MDRSH_SADQYH,وكيل المدرسة الصادقية,WKYL ALMDRS ALSADQY,office,1,aalam:2.04
+OFFICE_WLAYH_FLSTYN,ولاية فلسطين,WLAY FLSTYN,office,2,aalam:2.09
+OFFICE_WZARH_DL,وزارة العدل,WZAR ALDL,office,6,aalam:2.09
+OFFICE_WZARH_KBRY,الوزارة الكبرى,ALWZAR ALKBR,office,5,aalam:2.03
+OFFICE_WZARH_SHH_WALSHWN_AJTMAYH,وزارة الصحة والشؤون الاجتماعية,WZAR ALSH WALSHWN ALAJTMAY,office,2,aalam:3.06
+OFFICE_WZARH_ZRAH_WALTJARH,وزارة الزراعة والتجارة,WZAR ALZRA WALTJAR,office,2,aalam:2.09
+OFFICE_WZYFH_BALBLAT,وظيفة بالبلاط,WZYF BALBLAT,office,1,aalam:2.09
 OFFICE_WZYR,وزير,WZYR,office,1,aalam:1.06
-OFFICE_WZYR_AKBR,الوزير الأكبر,ALWZYR ALKBR,office,8,aalam:1.02
+OFFICE_WZYR_AKBR,الوزير الأكبر,ALWZYR ALKBR,office,12,aalam:1.02
 OFFICE_WZYR_ASTSHARH,وزير الاستشارة,WZYR ALASTSHAR,office,1,aalam:1.07
+OFFICE_WZYR_AWQAF,وزير الأوقاف,WZYR ALWQAF,office,1,aalam:2.13
 OFFICE_WZYR_BHRYH,وزير البحرية,WZYR ALBHRY,office,1,aalam:1.09
+OFFICE_WZYR_DAKHLYH,وزير الداخلية,WZYR ALDAKHLY,office,4,aalam:2.13
+OFFICE_WZYR_DL_FY_HKWMH_TWNSYH,وزير العدل في الحكومة التونسية,WZYR ALDL FY ALHKWM ALTWNSY,office,1,aalam:2.05
 OFFICE_WZYR_HRB,وزير الحرب,WZYR ALHRB,office,1,aalam:1.08
 OFFICE_WZYR_MARF_WALNAFH,وزير المعارف والنافعة,WZYR ALMARF WALNAF,office,1,aalam:1.07
 OFFICE_WZYR_MBASHR,وزير مباشر,WZYR MBASHR,office,1,aalam:2.06
+OFFICE_WZYR_QLM_WALASTSHARH,وزير القلم والاستشارة,WZYR ALQLM WALASTSHAR,office,1,aalam:2.13
+OFFICE_WZYR_SHH_MWMYH,وزير الصحة العمومية,WZYR ALSH ALMWMY,office,1,aalam:3.11
+OFFICE_WZYR_TRBYH_QWMYH,وزير التربية القومية,WZYR ALTRBY ALQWMY,office,3,aalam:3.10
 OFFICE_WZYR_WRYS_MJLS,الوزير ورئيس المجلس,ALWZYR WRYS ALMJLS,office,1,aalam:1.09
+ORG_ADARH,الإدارة,ALDAR,org,1,aalam:2.04
 ORG_ADARH_AWQAF,إدارة الأوقاف,DAR ALWQAF,org,1,aalam:1.08
+ORG_ADARH_FLAHH,إدارة الفلاحة,DAR ALFLAH,org,1,aalam:2.07
+ORG_ADHAH_TWNSYH,الإذاعة التونسية,ALDHA ALTWNSY,org,1,aalam:2.11
 ORG_AJTMAAT_HZB_DSTWRY_JDYD_AWLY_BSWSH,اجتماعات الحزب الدستوري الجديد الأولى بسوسة,AJTMAAT ALHZB ALDSTWRY ALJDYD ALWL BSWS,org,1,aalam:3.03
 ORG_ALH_BYRM,عائلة بيرم,AL BYRM,org,1,aalam:2.06
+ORG_ATHAD_TJARY,الاتحاد التجاري,ALATHAD ALTJARY,org,1,aalam:2.13
+ORG_BAB_ALY,الباب العالي,ALBAB ALALY,org,1,aalam:2.01
+ORG_BLAT_SLTANY,البلاط السلطاني,ALBLAT ALSLTANY,org,1,aalam:2.05
+ORG_BTHH_LMYH,البعثة العلمية,ALBTH ALLMY,org,1,aalam:2.01
+ORG_DWLH_HSYNYH,الدولة الحسينية,ALDWL ALHSYNY,org,1,aalam:3.11
+ORG_FH_AJTMAYH_MTKHLFH,فئة اجتماعية متخلفة,F AJTMAY MTKHLF,org,1,aalam:2.08
+ORG_FRW_ZYTWNYH,الفروع الزيتونية,ALFRW ALZYTWNY,org,1,aalam:3.10
+ORG_HKWMH_FRNSYH,الحكومة الفرنسية,ALHKWM ALFRNSY,org,1,aalam:3.11
+ORG_HKWMH_THMANYH,الحكومة العثمانية,ALHKWM ALTHMANY,org,1,aalam:2.09
+ORG_HKWMH_THMANYH_JDYDH,الحكومة العثمانية الجديدة,ALHKWM ALTHMANY ALJDYD,org,1,aalam:2.09
 ORG_HKWMH_TWNSYH,الحكومة التونسية,ALHKWM ALTWNSY,org,4,aalam:1.07
+ORG_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,HRK ALSHBAB ALTWNSY,org,7,aalam:2.13
+ORG_HRKH_SHBAN_TWNSYYN,حركة الشبان التونسيين,HRK ALSHBAN ALTWNSYYN,org,2,aalam:2.04
+ORG_HYH_MDYRH_LLJMYH_KHLDWNYH,الهيئة المديرة للجمعية الخلدونية,ALHY ALMDYR LLJMY ALKHLDWNY,org,3,aalam:2.03
+ORG_HYH_THRYR_JRYDH_HADRH,هيئة تحرير جريدة الحاضرة,HY THRYR JRYD ALHADR,org,1,aalam:2.03
+ORG_JMYH_KHLDWNYH,الجمعية الخلدونية,ALJMY ALKHLDWNY,org,2,aalam:2.03
 ORG_JMYH_WQTYH_LFD_NZAAT,الجمعية الوقتية لفض النزاعات,ALJMY ALWQTY LFD ALNZAAT,org,1,aalam:1.06
+ORG_JYSH_TRKY,الجيش التركي,ALJYSH ALTRKY,org,1,aalam:3.05
 ORG_KHLDWNYH,الخلدونية,ALKHLDWNY,org,1,aalam:2.10
 ORG_LJAN_MHDTHH_LDBT_ASLAHAT_ASASYH,اللجان المحدثة لضبط الاصلاحات الأساسية,ALLJAN ALMHDTH LDBT ALASLAHAT ALSASY,org,1,aalam:2.06
+ORG_LJNH_ASLAH_TLYM_ZYTWNY,لجنة إصلاح التعليم الزيتوني,LJN SLAH ALTLYM ALZYTWNY,org,1,aalam:2.15
 ORG_LJNH_BRAMJ_MDRSH_SADQYH,لجنة برامج المدرسة الصادقية,LJN BRAMJ ALMDRS ALSADQY,org,1,aalam:1.08
 ORG_LJNH_MALYH_DWLYH,اللجنة المالية الدولية,ALLJN ALMALY ALDWLY,org,1,aalam:1.09
+ORG_LJNH_ML_LAGHATHH_TRABLSYYN,لجنة عمل لإغاثة الطرابلسيين,LJN ML LGHATH ALTRABLSYYN,org,2,aalam:3.07
+ORG_LJNH_THQAFYH_QWMYH,اللجنة الثقافية القومية,ALLJN ALTHQAFY ALQWMY,org,1,aalam:3.14
+ORG_MHAFL_LMYH_AFRYQYH_WALSHRQYH,المحافل العلمية الإفريقية والشرقية,ALMHAFL ALLMY ALFRYQY WALSHRQY,org,1,aalam:3.10
+ORG_MHD_DRASAT_RBYH_BLNDN,معهد الدراسات العربية بلندن,MHD ALDRASAT ALRBY BLNDN,org,1,aalam:3.13
+ORG_MHD_RSHYDY,المعهد الرشيدي,ALMHD ALRSHYDY,org,2,aalam:2.14
 ORG_MJLS_AKBR,المجلس الأكبر,ALMJLS ALKBR,org,1,aalam:1.07
+ORG_MJLS_ALY_LLBLAD_TWNSYH,المجلس الأعلى للبلاد التونسية,ALMJLS ALL LLBLAD ALTWNSY,org,1,aalam:2.15
+ORG_MJLS_ALY_LLTLYM_MWMY,المجلس الأعلى للتعليم العمومي,ALMJLS ALL LLTLYM ALMWMY,org,1,aalam:2.15
 ORG_MJLS_BLDY_BALHADRH,المجلس البلدي بالحاضرة,ALMJLS ALBLDY BALHADR,org,1,aalam:1.07
+ORG_MJLS_BLDY_BTWNS,المجلس البلدي بتونس,ALMJLS ALBLDY BTWNS,org,1,aalam:2.13
+ORG_MJLS_DWLH,مجلس الدولة,MJLS ALDWL,org,1,aalam:2.04
+ORG_MJLS_KBYR,المجلس الكبير,ALMJLS ALKBYR,org,3,aalam:2.15
+ORG_MJLS_MBWTHAN,مجلس المبعوثان,MJLS ALMBWTHAN,org,1,aalam:2.09
 ORG_MJLS_MDRSY_JAM_AZM,مجلس مدرسي الجامع الأعظم,MJLS MDRSY ALJAM ALZM,org,1,aalam:3.12
 ORG_MJLS_SHRY,المجلس الشرعي,ALMJLS ALSHRY,org,2,aalam:1.03
+ORG_MJLS_SHWRY,المجلس الشوري,ALMJLS ALSHWRY,org,1,aalam:2.13
 ORG_MJLS_SHWRY_MLK,مجلس شورى الملك,MJLS SHWR ALMLK,org,1,aalam:1.07
+ORG_MJLS_THLATHA_BQSR_KRM,مجلس الثلاثاء بقصر الكرم,MJLS ALTHLATHA BQSR ALKRM,org,1,aalam:2.11
 ORG_MKTBH_JAM_ZYTWNH,مكتبة جامع الزيتونة,MKTB JAM ALZYTWN,org,1,aalam:1.08
+ORG_MKTBH_KHLDWNYH,المكتبة الخلدونية,ALMKTB ALKHLDWNY,org,1,aalam:2.14
+ORG_MKTB_SYASY_LLHZB_DSTWRY_JDYD,المكتب السياسي للحزب الدستوري الجديد,ALMKTB ALSYASY LLHZB ALDSTWRY ALJDYD,org,5,aalam:3.11
+ORG_MKTB_TRJMH,مكتب الترجمة,MKTB ALTRJM,org,1,aalam:3.01
+ORG_MSHRW_AHBA_TLBH,مشروع أحباء الطلبة,MSHRW HBA ALTLB,org,1,aalam:3.01
+ORG_MSLHH_TWBWGHRAFYH,المصلحة الطوبوغرافية,ALMSLH ALTWBWGHRAFY,org,1,aalam:2.14
+ORG_MSSH_JWHR_HWBKYNS,مؤسسة جوهر هوبكينس,MSS JWHR HWBKYNS,org,2,aalam:3.13
 ORG_MSTSHFY_SADQY,المستشفى الصادقي,ALMSTSHF ALSADQY,org,1,aalam:1.08
 ORG_MSTSHFY_ZAFYN,مستشفى العزافين,MSTSHF ALZAFYN,org,1,aalam:1.01
+ORG_MTBH_RB,مطبعة العرب,MTB ALRB,org,1,aalam:3.08
 ORG_MTBH_RSMYH,المطبعة الرسمية,ALMTB ALRSMY,org,2,aalam:1.07
+ORG_MTHNH_SRYH,مطحنة عصرية,MTHN SRY,org,1,aalam:2.13
+ORG_MTMR_ASTMARY_BMRSYLYA,المؤتمر الاستعماري بمرسيليا,ALMTMR ALASTMARY BMRSYLYA,org,2,aalam:2.04
+ORG_MTMR_SHMAL_AFRYQYA,مؤتمر شمال إفريقيا,MTMR SHMAL FRYQYA,org,1,aalam:3.05
+ORG_MTMR_SHMAL_AFRYQYA_BBARYS,مؤتمر شمال إفريقيا بباريس,MTMR SHMAL FRYQYA BBARYS,org,3,aalam:2.07
 ORG_MTMR_SHMAL_AFRYQY_BBARYS,مؤتمر الشمال الإفريقي بباريس,MTMR ALSHMAL ALFRYQY BBARYS,org,1,aalam:2.10
+ORG_NADY_AMYRH_NAZLY,نادي الأميرة نازلي,NADY ALMYR NAZLY,org,1,aalam:2.13
 ORG_QSM_MHASBH,قسم المحاسبة,QSM ALMHASB,org,1,aalam:2.10
 ORG_QSR_BARDW,قصر باردو,QSR BARDW,org,1,aalam:1.02
+ORG_SALWN_AMYRH_NAZLY,صالون الأميرة نازلي,SALWN ALMYR NAZLY,org,2,aalam:2.01
+ORG_SALWN_KHLYL_BWHAJB,صالون خليل بوحاجب,SALWN KHLYL BWHAJB,org,1,aalam:3.06
+ORG_SLTH_HMAYH,سلطة الحماية,SLT ALHMAY,org,1,aalam:3.06
+ORG_SLTH_LYA,السلطة العليا,ALSLT ALLYA,org,1,aalam:2.03
+ORG_SLTH_LYA_BALBLAD,السلطة العليا بالبلاد,ALSLT ALLYA BALBLAD,org,1,aalam:3.14
+ORG_SLT_FRNSYH,السلط الفرنسية,ALSLT ALFRNSY,org,1,aalam:3.08
+ORG_TRYQH_KTANYH,الطريقة الكتانية,ALTRYQ ALKTANY,org,1,aalam:2.05
 ORG_TRYQH_MDNYH,الطريقة المدنية,ALTRYQ ALMDNY,org,1,aalam:1.05
 ORG_TRYQH_TYJANYH,الطريقة التيجانية,ALTRYQ ALTYJANY,org,1,aalam:1.03
+ORG_WFD_ARBYN,وفد الأربعين,WFD ALRBYN,org,1,aalam:3.01
+ORG_WFD_DSTWRY_AWL,الوفد الدستوري الأول,ALWFD ALDSTWRY ALWL,org,1,aalam:2.09
 ORG_WFD_DSTWRY_AWL_ALY_BARYS,الوفد الدستوري الأول إلى باريس,ALWFD ALDSTWRY ALWL L BARYS,org,2,aalam:3.03
+ORG_WFD_DSTWRY_THANY,الوفد الدستوري الثاني,ALWFD ALDSTWRY ALTHANY,org,1,aalam:2.09
 ORG_WFD_DSTWRY_THANY_ALY_BARYS,الوفد الدستوري الثاني إلى باريس,ALWFD ALDSTWRY ALTHANY L BARYS,org,4,aalam:3.03
+ORG_WZARH_MHMD_SHNYQ,وزارة محمد شنيق,WZAR MHMD SHNYQ,org,1,aalam:3.04
+ORG_WZARH_MSTFY_KAK,وزارة مصطفى الكعاك,WZAR MSTF ALKAK,org,1,aalam:3.06
+ORG_WZARH_TFAWDYH,الوزارة التفاوضية,ALWZAR ALTFAWDY,org,1,aalam:3.11
+ORG_WZARH_WTNYH,الوزارة الوطنية,ALWZAR ALWTNY,org,1,aalam:2.13
+ORG_ZAWYH_KTANYH_BMRAKSH,الزاوية الكتانية بمراكش,ALZAWY ALKTANY BMRAKSH,org,1,aalam:2.05
 ORG_ZAWYH_SYDY_AHMD_BN_RWS,زاوية سيدي أحمد بن عروس,ZAWY SYDY HMD BN RWS,org,1,aalam:1.01
+PARTY_HZB_ASLAHY,الحزب الإصلاحي,ALHZB ALSLAHY,party,3,aalam:3.02
+PARTY_HZB_ATHAD_WALTRQY,حزب الاتحاد والترقي,HZB ALATHAD WALTRQY,party,1,aalam:2.14
+PARTY_HZB_ATLAF_HR,حزب الائتلاف الحر,HZB ALATLAF ALHR,party,2,aalam:2.09
+PARTY_HZB_DSTWRY,الحزب الدستوري,ALHZB ALDSTWRY,party,1,aalam:3.07
+PARTY_HZB_DSTWRY_JDYD,الحزب الدستوري الجديد,ALHZB ALDSTWRY ALJDYD,party,2,aalam:3.04
+PARTY_HZB_HAKM,الحزب الحاكم,ALHZB ALHAKM,party,1,aalam:2.05
+PARTY_HZB_HR_DSTWRY,الحزب الحر الدستوري,ALHZB ALHR ALDSTWRY,party,3,aalam:3.11
 PARTY_HZB_HR_DSTWRY_JDYD,الحزب الحر الدستوري الجديد,ALHZB ALHR ALDSTWRY ALJDYD,party,1,aalam:3.03
+PARTY_HZB_HR_DSTWRY_TWNSY,الحزب الحر الدستوري التونسي,ALHZB ALHR ALDSTWRY ALTWNSY,party,5,aalam:2.09
 PARTY_JNAH_MTHRR_LLHZB_DSTWRY,الجناح المتحرر للحزب الدستوري,ALJNAH ALMTHRR LLHZB ALDSTWRY,party,2,aalam:3.03
+PARTY_LJNH_ATHAD_WALTRQY,لجنة الاتحاد والترقي,LJN ALATHAD WALTRQY,party,1,aalam:2.05
 SCH_DAR_MLMYN,دار المعلمين,DAR ALMLMYN,school,1,aalam:3.03
+SCH_DAR_MLMYN_BTWNS,دار المعلمين بتونس,DAR ALMLMYN BTWNS,school,3,aalam:2.15
+SCH_DYH_MDRSYH_BALANSARYN,الضيعة المدرسية بالأنصارين,ALDY ALMDRSY BALNSARYN,school,2,aalam:2.13
+SCH_JAMH_AMRYKYH_BALQAHRH,الجامعة الأمريكية بالقاهرة,ALJAM ALMRYKY BALQAHR,school,1,aalam:3.13
 SCH_JAMH_AZHR,جامعة الأزهر,JAM ALZHR,school,1,aalam:1.03
-SCH_JAMH_ZYTWNYH,الجامعة الزيتونية,ALJAM ALZYTWNY,school,1,aalam:3.12
-SCH_KLYH_HQWQ_BBARYS,كلية الحقوق بباريس,KLY ALHQWQ BBARYS,school,1,aalam:3.03
+SCH_JAMH_HMBWRGH,جامعة همبورغ,JAM HMBWRGH,school,3,aalam:3.13
+SCH_JAMH_SWRBWN,جامعة الصوربون,JAM ALSWRBWN,school,3,aalam:2.05
+SCH_JAMH_ZYTWNYH,الجامعة الزيتونية,ALJAM ALZYTWNY,school,3,aalam:3.10
+SCH_KHLDWNYH,الخلدونية,ALKHLDWNY,school,2,aalam:3.10
+SCH_KLYH_ADAB_SWRBWN,كلية الآداب (السوربون),KLY ALDAB ALSWRBWN,school,1,aalam:2.13
+SCH_KLYH_HQWQ_BAKS_AN_BRWFANS,كلية الحقوق بإكس آن بروفانس,KLY ALHQWQ BKS N BRWFANS,school,1,aalam:2.15
+SCH_KLYH_HQWQ_BBARYS,كلية الحقوق بباريس,KLY ALHQWQ BBARYS,school,3,aalam:2.13
+SCH_KLYH_HQWQ_BMDYNH_AKS,كلية الحقوق بمدينة اكس,KLY ALHQWQ BMDYN AKS,school,1,aalam:2.08
+SCH_KLYH_HQWQ_BTWLWZ,كلية الحقوق بتولوز,KLY ALHQWQ BTWLWZ,school,1,aalam:3.07
+SCH_KLYH_LWM_WALMDRSH_TBYH_BMDYNH_DYJWN,كلية العلوم والمدرسة الطبية بمدينة ديجون,KLY ALLWM WALMDRS ALTBY BMDYN DYJWN,school,1,aalam:3.11
+SCH_KLYH_TB_BBARYS,كلية الطب بباريس,KLY ALTB BBARYS,school,1,aalam:3.11
+SCH_KTAB,الكتاب,ALKTAB,school,2,aalam:3.04
+SCH_KWLYJ_DY_FRANS,كوليج دي فرانس,KWLYJ DY FRANS,school,2,aalam:2.05
+SCH_MDARS_HRH_LAKYH_AW_DYNYH,المدارس الحرة اللائكية أو الدينية,ALMDARS ALHR ALLAKY W ALDYNY,school,1,aalam:3.11
+SCH_MDRSH_BANKALDY_HRBYH,مدرسة بانكالدي الحربية,MDRS BANKALDY ALHRBY,school,1,aalam:2.09
 SCH_MDRSH_BYR_AHJAR,مدرسة بير الأحجار,MDRS BYR ALHJAR,school,1,aalam:1.03
-SCH_MDRSH_DBAT,مدرسة الضباط,MDRS ALDBAT,school,1,aalam:1.09
-SCH_MDRSH_HRBYH_BBARDW,المدرسة الحربية بباردو,ALMDRS ALHRBY BBARDW,school,5,aalam:1.05
+SCH_MDRSH_DBAT,مدرسة الضباط,MDRS ALDBAT,school,2,aalam:1.09
+SCH_MDRSH_HRBYH_BBARDW,المدرسة الحربية بباردو,ALMDRS ALHRBY BBARDW,school,6,aalam:1.05
+SCH_MDRSH_HRBYH_BMNWBH,المدرسة الحربية بمنوبة,ALMDRS ALHRBY BMNWB,school,2,aalam:3.05
 SCH_MDRSH_HWANYT_ASHWR,مدرسة حوانيت عاشور,MDRS HWANYT ASHWR,school,1,aalam:1.03
-SCH_MDRSH_LYA_LLGHH_WALADAB_RBYH,المدرسة العليا للغة والآداب العربية,ALMDRS ALLYA LLGH WALDAB ALRBY,school,1,aalam:2.10
-SCH_MDRSH_SADQYH,المدرسة الصادقية,ALMDRS ALSADQY,school,4,aalam:1.09
+SCH_MDRSH_LWM_SYASYH_BBARYS,مدرسة العلوم السياسية بباريس,MDRS ALLWM ALSYASY BBARYS,school,1,aalam:2.13
+SCH_MDRSH_LWYH,المدرسة العلوية,ALMDRS ALLWY,school,1,aalam:3.05
+SCH_MDRSH_LYA_LLGHH_WALADAB_RBYH,المدرسة العليا للغة والآداب العربية,ALMDRS ALLYA LLGH WALDAB ALRBY,school,2,aalam:2.07
+SCH_MDRSH_QRANYH,المدرسة القرآنية,ALMDRS ALQRNY,school,1,aalam:3.04
+SCH_MDRSH_QRANYH_SRYH,المدرسة القرآنية العصرية,ALMDRS ALQRNY ALSRY,school,1,aalam:3.05
+SCH_MDRSH_SADQYH,المدرسة الصادقية,ALMDRS ALSADQY,school,12,aalam:1.09
 SCH_MDRSH_SGHAR_MMALYK,مدرسة صغار المماليك,MDRS SGHAR ALMMALYK,school,2,aalam:1.07
 SCH_MDRSH_SLYMANYH,المدرسة السليمانية,ALMDRS ALSLYMANY,school,1,aalam:1.04
+SCH_MDRSH_TARYN,مدرسة العطارين,MDRS ALTARYN,school,1,aalam:3.10
+SCH_MDRSH_TTBYQYH_LLTJARH_WALSNAH,المدرسة التطبيقية للتجارة والصناعة,ALMDRS ALTTBYQY LLTJAR WALSNA,school,1,aalam:3.11
 SCH_MDRSH_YWSF_SAHB_TAB,مدرسة يوسف صاحب الطابع,MDRS YWSF SAHB ALTAB,school,1,aalam:1.04
-SCH_MHD_KARNW,معهد كارنو,MHD KARNW,school,1,aalam:3.03
-SCH_MHD_SADQY,المعهد الصادقي,ALMHD ALSADQY,school,2,aalam:3.03
+SCH_MHD_KARNW,معهد كارنو,MHD KARNW,school,6,aalam:2.15
+SCH_MHD_LWY,المعهد العلوي,ALMHD ALLWY,school,1,aalam:2.15
+SCH_MHD_SADQY,المعهد الصادقي,ALMHD ALSADQY,school,7,aalam:2.03
 SCH_MHD_SAN_LWYS_BBARYS,معهد سان لويس بباريس,MHD SAN LWYS BBARYS,school,1,aalam:2.02
+SCH_MHD_SAN_SHARL,معهد سان شارل,MHD SAN SHARL,school,1,aalam:2.13
+SCH_MHD_THANWY_BBARYS,المعهد الثانوي بباريس,ALMHD ALTHANWY BBARYS,school,1,aalam:2.07
+SCH_MHD_THANWY_BKHZNDAR,المعهد الثانوي بخزندار,ALMHD ALTHANWY BKHZNDAR,school,1,aalam:3.14
+SCH_MJM_FRNSY,المجمع الفرنسي,ALMJM ALFRNSY,school,1,aalam:2.09
+SCH_THANWYH_QDYS_LWYS_BTWNS,ثانوية القديس لويس بتونس,THANWY ALQDYS LWYS BTWNS,school,1,aalam:2.08
+WORK_ADB_TWNSY_FY_QRN_RAB_SHR,الأدب التونسي في القرن الرابع عشر,ALDB ALTWNSY FY ALQRN ALRAB SHR,work,1,aalam:3.08
+WORK_ADWA_LY_SHAFH_TWNSYH,أضواء على الصحافة التونسية,DWA L ALSHAF ALTWNSY,work,1,aalam:3.02
+WORK_AMRATNA_FY_SHRYH_WALMJTM,امرأتنا في الشريعة والمجتمع,AMRTNA FY ALSHRY WALMJTM,work,1,aalam:2.14
 WORK_AQWM_MSALK,أقوم المسالك,QWM ALMSALK,work,1,aalam:1.09
 WORK_AQWM_MSALK_FY_MRFH_AHWAL_MMALK,أقوم المسالك في معرفة أحوال الممالك,QWM ALMSALK FY MRF HWAL ALMMALK,work,1,aalam:2.06
+WORK_ARD_QBL_KL_SHY,الأرض قبل كل شيء,ALRD QBL KL SHY,work,1,aalam:3.06
 WORK_ATHAF_AHL_ZMAN,إتحاف أهل الزمان,THAF HL ALZMAN,work,2,aalam:1.01
+WORK_BHYRH,البحيرة,ALBHYR,work,1,aalam:3.04
+WORK_BYNY_WBYN_MRY,بيني وبين المعري,BYNY WBYN ALMRY,work,1,aalam:2.11
+WORK_DRS_DYWAN_HMASH,درس ديوان الحماسة,DRS DYWAN ALHMAS,work,1,aalam:3.10
+WORK_DSTWR_THMANY,الدستور العثماني,ALDSTWR ALTHMANY,work,1,aalam:2.09
 WORK_DYWAN_QABADW,ديوان قابادو,DYWAN QABADW,work,1,aalam:1.05
 WORK_DYWAN_SHR,ديوان شعر,DYWAN SHR,work,1,aalam:2.06
 WORK_FHRS_LMY_LMKTBH_JAM_ZYTWNH_AZM,الفهرس العلمي لمكتبة جامع الزيتونة الأعظم,ALFHRS ALLMY LMKTB JAM ALZYTWN ALZM,work,1,aalam:2.10
+WORK_GHADH_KAMYLYA,غادة الكاميليا,GHAD ALKAMYLYA,work,2,aalam:3.04
+WORK_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,HRK ALSHBAB ALTWNSY,work,2,aalam:2.13
+WORK_HRKH_TTWYRYH_TWNSYH,الحركة التطويرية التونسية,ALHRK ALTTWYRY ALTWNSY,work,1,aalam:3.09
+WORK_JRBH_WALJRBYWN,جربة والجربيون,JRB WALJRBYWN,work,1,aalam:2.15
+WORK_KNASH,كناش,KNASH,work,1,aalam:2.08
+WORK_KTYB_FY_DRWS_SKRYH_BALRBYH,كتيب في الدروس العسكرية بالعربية,KTYB FY ALDRWS ALSKRY BALRBY,work,1,aalam:3.05
 WORK_MALM_TWHYD,معالم التوحيد,MALM ALTWHYD,work,1,aalam:2.10
+WORK_MHD_RSHYDY_LLMWSYQY_TWNSYH,المعهد الرشيدي للموسيقى التونسية,ALMHD ALRSHYDY LLMWSYQ ALTWNSY,work,2,aalam:2.14
+WORK_MJML_TARYKH_ADB_TWNSY,مجمل تاريخ الأدب التونسي,MJML TARYKH ALDB ALTWNSY,work,1,aalam:3.04
+WORK_MJM_DWAWYN,مجمع الدواوين,MJM ALDWAWYN,work,1,aalam:3.08
 WORK_MKHTARAT_MN_KHTB_JMYH,مختارات من الخطب الجمعية,MKHTARAT MN ALKHTB ALJMY,work,1,aalam:2.06
 WORK_MNS_FY_AKHBAR_AFRYQYA_WTWNS,المؤنس في أخبار إفريقيا وتونس,ALMNS FY KHBAR FRYQYA WTWNS,work,1,aalam:1.01
+WORK_MQAMAT_BYNH_WBYN_ABY_LA_MRY,المقامات بينه وبين أبي العلاء المعري,ALMQAMAT BYNH WBYN BY ALLA ALMRY,work,1,aalam:2.11
+WORK_MSAL_TWNSYH,مسائل تونسية,MSAL TWNSY,work,2,aalam:2.07
+WORK_MSHR_MLKY_FY_SLTNH_AWLAD_HSYN_BN_LY_TRKY,المشرع الملكي في سلطنة أولاد حسين بن علي تركي,ALMSHR ALMLKY FY SLTN WLAD HSYN BN LY TRKY,work,2,aalam:2.07
+WORK_NAZLH_TWNSYH,النازلة التونسية,ALNAZL ALTWNSY,work,2,aalam:3.05
+WORK_QSYDH_FY_FYH_ABY_LA_MRY,قصيدة في ألفية أبي العلاء المعري,QSYD FY LFY BY ALLA ALMRY,work,1,aalam:3.04
+WORK_RHLH_ALY_BLAD_SNWSYH,الرحلة إلى بلاد السنوسية,ALRHL L BLAD ALSNWSY,work,2,aalam:2.07
+WORK_RHLH_ANDLSYH,الرحلة الأندلسية,ALRHL ALNDLSY,work,2,aalam:2.01
 WORK_RHLH_FLYARYH,الرحلة الفليارية,ALRHL ALFLYARY,work,1,aalam:2.10
 WORK_RHLH_NASRYH,الرحلة الناصرية,ALRHL ALNASRY,work,1,aalam:2.10
 WORK_RZNAMH_TWNSYH,الرزنامة التونسية,ALRZNAM ALTWNSY,work,1,aalam:2.10
+WORK_SBYH_ND_ABN_KHLDWN,العصبية عند ابن خلدون,ALSBY ND ABN KHLDWN,work,1,aalam:3.13
 WORK_SFWH_ATBAR_BMSTWD_AMSAR_WALAQTAR,صفوة الاعتبار بمستودع الأمصار والأقطار,SFW ALATBAR BMSTWD ALMSAR WALQTAR,work,1,aalam:1.08
 WORK_SHHYRAT_TWNSYAT,شهيرات التونسيات,SHHYRAT ALTWNSYAT,work,1,aalam:1.01
 WORK_TARYKH_BASHY,التاريخ الباشي,ALTARYKH ALBASHY,work,1,aalam:1.02
+WORK_TARYKH_HRKH_WTNYH_TWNSYH,تاريخ الحركة الوطنية التونسية,TARYKH ALHRK ALWTNY ALTWNSY,work,1,aalam:3.09
 WORK_TARYKH_MALM_TWHYD,تاريخ معالم التوحيد,TARYKH MALM ALTWHYD,work,1,aalam:1.02
+WORK_TARYKH_MWSYQY_RBYH,تاريخ الموسيقى العربية,TARYKH ALMWSYQ ALRBY,work,1,aalam:3.04
+WORK_THLATH_QSAD_BALLGHH_FRNSYH,ثلاث قصائد باللغة الفرنسية,THLATH QSAD BALLGH ALFRNSY,work,1,aalam:3.04
+WORK_TLYM_ABTDAY_MKHSS_LLAHALY_FY_BLAD_TWNSYH,التعليم الابتدائي المخصص للأهالي في البلاد التونسية,ALTLYM ALABTDAY ALMKHSS LLHALY FY ALBLAD ALTWNSY,work,1,aalam:3.05
+WORK_TRAJM_ALAM,تراجم الأعلام,TRAJM ALLAM,work,1,aalam:3.10
 WORK_TRJMH_ABN_ABY_DYAF,ترجمة ابن أبي الضياف,TRJM ABN BY ALDYAF,work,1,aalam:1.06
+WORK_TRYQH_SRYH,الطريقة العصرية,ALTRYQ ALSRY,work,1,aalam:2.15
+WORK_TWNS_JDYDH,تونس الجديدة,TWNS ALJDYD,work,1,aalam:2.15
+WORK_TWNS_SHHYDH,تونس الشهيدة,TWNS ALSHHYD,work,4,aalam:2.09
 WORK_WFWD_DSTWRYH,الوفود الدستورية 1920-1919,ALWFWD ALDSTWRY,work,1,aalam:3.03
+WORK_WRQAT,الورقات,ALWRQAT,work,1,aalam:2.01

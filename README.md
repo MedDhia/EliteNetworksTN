@@ -363,15 +363,21 @@ begins with OCR rather than a download. The scan is not redistributed;
 and flags per page, and the OCR'd text is committed so the tables rebuild — and
 the provenance guard runs — without an OCR engine installed.
 
-Current build: **384 pages → 455,131 characters → 38 entries → 48 persons,
-17 organisations and 33 ties across four layers** (tutelage, office, kinship,
-membership).
+Current build: **384 pages → 455,131 characters → all 38 entries → 242 persons,
+366 organisations and 873 ties across four layers** (tutelage, office, kinship,
+membership). 28 of the 38 subjects are tied to at least one other subject, and
+the institutions that bind them are legible: Zaytuna (10 subjects), the Sadiqi
+college (8), the newspaper *al-Hadira* (7), the Khaldouniyya and the Young
+Tunisians (6 each).
 
 **Read [`docs/LIMITATIONS-aalam-tunisiyun.md`](docs/LIMITATIONS-aalam-tunisiyun.md)
-before using any of it.** In particular: the model pass has so far been run on
-**3 of the 38 entries (9.5% of the text)**, so this is a working pipeline rather
-than a census of the book's content, and there is **no gold-standard score yet**
-— the counts are lower bounds of unknown tightness.
+before using any of it.** In particular: there is **no gold-standard score yet**
+— the sample is drawn and waiting to be coded (206 ties and 60 passages in
+`gold/`, seeded so it reproduces), so every count is a lower bound of unknown
+tightness; 709 of the 873 ties carry no
+date, because a biography states that a relation existed far more often than it
+says when; and 866 of 873 ties come from the model pass rather than the rule
+table, for the reason given below.
 
 ### How it reads narrative prose
 
@@ -386,20 +392,39 @@ matched on a bare verb cannot tell a clause's subject from its object. An
 earlier version that ignored this made Yusuf Sahib al-Tabi the son of Hammuda
 Pasha. Cues marked `vso` are recorded but never emitted.
 
-The **model pass** covers the remainder, and is not trusted. Every assertion
-must quote its entry verbatim; `aalam.validate` checks each quote against the
-entry text on **every row rather than a sample**, and drops any that is not
-literally present. A tie the book does not state has no sentence to quote. The
-pass output is committed as a record and everything downstream is
-deterministic, so the tables rebuild byte-identically and re-running the model
-is a reviewable diff — the arrangement the bourse build already uses.
+The **model pass** covers the remainder, and carries almost the whole dataset.
+It is not trusted. Every assertion must quote its entry verbatim;
+`aalam.validate` checks each quote against the entry text on **every row rather
+than a sample**, and drops any that is not literally present. A tie the book
+does not state has no sentence to quote. The pass output is committed as a
+record and everything downstream is deterministic, so the tables rebuild
+byte-identically and re-running the model is a reviewable diff — the
+arrangement the bourse build already uses.
+
+That gate catches invention but not misreading, and the difference is not
+academic. The book names what a man read by listing its authors
+(«والغزالي وابن رشد، قد استأثروا بعنايته»), which read as a teaching tie makes
+a scholar dead in 1198 the teacher of a man born in 1871. Ten such ties got
+through, 12% of the tutelage layer at the time, every quote genuine. They are
+now reclassified to `read_work_of`, flagged for review, and a validation check
+fails the build if one survives. The class was found by reading twelve rows at
+random, which is the honest measure of how much else may be there.
 
 ```bash
-make aalam-fetch     # download the scan, verified against a pinned sha256
-make aalam-ingest    # OCR 384 pages at native resolution (~6 min)
-make aalam           # segment -> extract -> model -> relations -> codebook -> validate
+make aalam-fetch       # download the scan, verified against a pinned sha256
+make aalam-ingest      # OCR 384 pages at native resolution (~6 min)
+make aalam             # segment -> extract -> model -> relations -> codebook -> validate
+make aalam-gold-draw   # seeded stratified sample -> coding sheets in gold/
+make aalam-gold-score  # coded sheets -> precision/recall with Wilson intervals
 make aalam-test
 ```
+
+The gold pass is two sheets because precision and recall are not answerable
+from the same unit. Precision is judged per tie, stratified by layer and by
+extractor so the rule pass and the model pass are scored apart. Recall is
+judged per passage: a tie the extractor never found is not in the table to be
+sampled, so a coder reads paragraphs of the book and counts what they state
+against what came back.
 
 Code is `src/aalam/`, outputs are `data/processed/aalam-tunisiyun/`. See
 [`docs/CODEBOOK-aalam-tunisiyun.md`](docs/CODEBOOK-aalam-tunisiyun.md) for

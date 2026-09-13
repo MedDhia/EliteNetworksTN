@@ -163,3 +163,49 @@ def test_an_unstated_birth_year_is_not_invented():
     got = parse_header("الجنرال حسين\n(... - 1887)\nالرجل والمواطن")
     assert got["death_year"] == 1887
     assert got["birth_year"] == ""
+
+
+# --------------------------------------------------------------------------- #
+# the error class the quote gate cannot catch
+# --------------------------------------------------------------------------- #
+
+def test_reading_an_author_is_not_studying_under_him():
+    # «الغزالي وابن رشد، قد استأثروا بعنايته» says he gave his attention to
+    # their writings. Read as a teaching tie it makes Ibn Rushd, dead in 1198,
+    # the teacher of a man born in 1871. Ten such ties reached the first model
+    # pass and every quote was genuine, so the verbatim check passed all of
+    # them: this is the one class that guard is blind to by construction.
+    from aalam.llm import reclassify_anachronistic
+    rows = [
+        {"relation": "studied_under", "counterparty_name": "ابن رشد"},
+        {"relation": "studied_under", "counterparty_name": "الشيخ الغزالي"},
+        {"relation": "studied_under", "counterparty_name": "أحمد الأبي"},
+    ]
+    assert reclassify_anachronistic(rows) == 2
+    assert rows[0]["relation"] == "read_work_of"
+    assert rows[0]["needs_review"] == "yes"
+    # A real teacher the book names is untouched.
+    assert rows[2]["relation"] == "studied_under"
+
+
+def test_the_guard_matches_a_whole_name_not_a_substring():
+    # A first version matched substrings and reclassified خليل مطران, who died
+    # in 1949 and was the subject's contemporary, because "خليل" was on the
+    # list as the Maliki digest Mukhtasar Khalil. A guard that silently
+    # rewrites the wrong man is worse than the error it was built to catch.
+    from aalam.llm import is_classical
+    assert is_classical("ابن رشد")
+    assert is_classical("الشيخ الغزالي")
+    assert not is_classical("خليل")
+    assert not is_classical("محمود قابادو")   # really did teach, in person
+
+
+def test_a_person_placed_only_by_a_relation_is_marked_not_named():
+    # «ابنة الأصرم» is a real tie to a woman the book never names. Kept,
+    # because dropping it deletes a tie the source states; marked, because
+    # counting her as an identified person overcounts the population and
+    # invites a merge with some other unnamed daughter.
+    from aalam.relations import name_kind
+    assert name_kind("ابنة الأصرم") == "described"
+    assert name_kind("شقيق محمد باي خير الدين") == "described"
+    assert name_kind("البشير صفر") == "named"

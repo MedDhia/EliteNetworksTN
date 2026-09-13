@@ -1,0 +1,263 @@
+coding_id,stratum,edge_id,entry_uid,subject_name,relation,layer,counterparty_name,counterparty_kind,year,extractor,pattern_id,folio,evidence_quote,verdict,correct_relation,correct_counterparty,coder,coder_note
+E0001,kinship|llm,ED_088fad777a758d5230d3,aalam:3.14,محمد الأمين الشابي,sibling_of,kinship,أبو القاسم الشابي,person,,llm,aalam-model-v1,373-376,"وشقيق الشاعر الملهم
+
+أبي القاسم الشابي",,,,,
+E0002,kinship|llm,ED_1f412c6263bd5fe1a756,aalam:2.10,البشير بن الخوجة,child_of,kinship,شيخ الإسلام محمد بن الخوجة,person,,llm,aalam-model-v1,225-236,"أصغر أبنا،
+شيخ الإسلام محمد بن الخوجة الخالد الذكر",,,,,
+E0003,kinship|llm,ED_2c038bb5c2ad03cb5c65,aalam:3.05,مصطفى,married_to,kinship,زوجته الثانية القيروانية,person,,llm,aalam-model-v1,319-326,"حيث تزوج مرتين وأنجب من
+زوجته الثانية القيروانية ابنه حسونة",,,,,
+E0004,kinship|llm,ED_2e27f2215415adfbd25a,aalam:2.15,الصادق التلاتلي,child_of,kinship,محمد التلاتلي الأمين الزراعي,person,,llm,aalam-model-v1,277-286,وقد كان والده محمد التلاتلي الأمين الزراعي، فلاحاً غليظاً ومستقيماً,,,,,
+E0005,kinship|llm,ED_5a428846e37fc13cd3ab,aalam:1.02,العربي زروق,kin_of,kinship,العائلة الحسينية,person,,llm,aalam-model-v1,33-48,ذلك أنه بفضل مصاهرته للعائلة المالكة وارتباطه ببعض العائلات البرجوازية,,,,,
+E0006,kinship|llm,ED_65f4b3fcdb6ccb39e167,aalam:3.06,خالد بوحاجب,child_of,kinship,علي بوحاجب,person,,llm,aalam-model-v1,327-332,عطف قرينته الوفية وابنيه خالد والسيدة حرم صالح بن خليفة,,,,,
+E0007,kinship|llm,ED_697b2d9d99e98605e702,aalam:1.02,عثمان باي,sibling_of,kinship,حمودة باشا,person,,llm,aalam-model-v1,33-48,واقترح عليهم تنصيب الأمير عثمان باي شقيق الملك الراحل، على العرش الشاغر,,,,,
+E0008,kinship|llm,ED_6c17cf9695c432b46f7b,aalam:3.09,الشاذلي خير الله,child_of,kinship,خير الله بن مصطفى,person,,llm,aalam-model-v1,345-348,هو الابن الأكبر للمرحوم الجنرال خير الله بن مصطفى,,,,,
+E0009,kinship|llm,ED_81b0b0e7d9a02d94d3d9,aalam:3.11,محمود الماطري,kin_of,kinship,أحمد الماطري,person,,llm,aalam-model-v1,355-360,وكان جدّه ووالده، الشيخان أحمد والمختار الماطري مدرسين حنفيين,,,,,
+E0010,kinship|llm,ED_916bae71dccf939758df,aalam:2.09,الداماد فريد باشا,kin_of,kinship,السلطان وحيد الدين,person,,llm,aalam-model-v1,193-224,بين الوزارة وبين السلطان المتعلق دائماً بصهره,,,,,
+E0011,kinship|llm,ED_a82159debf861e95aab5,aalam:2.02,البشير صفر,child_of,kinship,مصطفى صفر,person,,llm,aalam-model-v1,121-132,وكان هو ثالث الأبنا، الذكور الذين أنجبهم أمير اللوا، مصطفى صفر,,,,,
+E0012,kinship|llm,ED_b3ccb66122849b89973d,aalam:3.08,محيي الدين السنوسي,child_of,kinship,محمد السنوسي,person,,llm,aalam-model-v1,341-344,وقد ترك بعد وفاته طفلين أكبرهما يدعى محيي الدين,,,,,
+E0013,kinship|llm,ED_b44842866d329192a999,aalam:2.06,محمد باي,kin_of,kinship,أحمد باي الأول,person,,llm,aalam-model-v1,169-176,عهد الأمير أحمد باي الأول وفي مذة خخلفه وابن عمه الأمير محمّد باي,,,,,
+E0014,kinship|llm,ED_b8eb2ed9992aa9faebd9,aalam:2.09,طاهر خير الدين,child_of,kinship,خير الدين,person,,llm,aalam-model-v1,193-224,التحق مع بقيّة إخوته وعائلته بوالده الجنرال خير الدين العظيم,,,,,
+E0015,kinship|llm,ED_b9a93e2ed37a243170c4,aalam:1.01,أبو العباس أحمد,child_of,kinship,عثمان داي,person,,llm,aalam-model-v1,25-32,وبإعانة ابنه أبى العباس أحمد المشارك له,,,,,
+E0016,kinship|llm,ED_bd331cc9ca328b808457,aalam:2.10,محمد بن الخوجة,child_of,kinship,البشير بن الخوجة,person,,llm,aalam-model-v1,225-236,وهو رابع أبنا، الشيخ البشير بن الخوجة,,,,,
+E0017,kinship|rule,ED_269997ec370fe1ad7b77,aalam:3.08,زين العابدين السنوسي,child_of,kinship,محمد السئوسي,person,,rule,KIN01,341-344,ذلك أن والده هو الشيخ محمد السئوسي الذي شغل,,,,,
+E0018,kinship|rule,ED_9b0a18fe623d45b8132d,aalam:3.07,حسن ڤلاتي,child_of,kinship,علي بن احمد,person,,rule,KIN01,333-340,عندما نقل والده المرحوم علي بن أحمد,,,,,
+E0019,kinship|rule,ED_b8eb2ed9992aa9faebd9,aalam:2.09,طاهر باشا خير الدين,child_of,kinship,خير الدين,person,,rule,KIN01,193-224,التحق مع بقيّة إخوته وعائلته بوالده الجنرال خير الدين العظيم الذي كان,,,,,
+E0020,kinship|rule,ED_cb50377344cf4bc34c3b,aalam:3.01,الطيب رضوان,child_of,kinship,مصطفى آغة,person,,rule,KIN01,287-294,وقد أز نلجب أبوه مصطفى » رئيس قسم الإنشا,,,,,
+E0021,kinship|rule,ED_e6422c0fd5999d788ce7,aalam:3.10,محمد الفاضل بن عاشور,child_of,kinship,الطاهر بن عاشور,person,,rule,KIN01,349-354,الذي وجد في شخص والده العلامة الشيخ الطاهر بن عاشور,,,,,
+E0022,membership|llm,ED_013fd3e5e10303781650,aalam:3.06,حسن قلاتي,headed,membership,الجمعية التمثيلية الآداب,association,,llm,aalam-model-v1,327-332,"مجموعة من الشبان التونسيين، على رأسهم
+حسن قلاتي",,,,,
+E0023,membership|llm,ED_0143eaabc111817f08a4,aalam:3.04,محمد السعيد الخلصي,colleague_of,membership,محمد باي خير الدين,person,,llm,aalam-model-v1,307-318,"على غرار محمد باي
+خير الدين الذي كان قد تعرّف عليه وأعجب به",,,,,
+E0024,membership|llm,ED_04c96367b9836d848823,aalam:2.01,علي الورداني,member_of,membership,البعثة العلمية,org,,llm,aalam-model-v1,113-120,العلمية المكلّفة بإحصا، المؤلفات العربية المحفوظة في مكتبات اسبانيا,,,,,
+E0025,membership|llm,ED_06e39b91110ed9575251,aalam:1.01,عزيزة عثمانة,member_of,membership,زاوية سيدي أحمد بن عروس,org,,llm,aalam-model-v1,25-32,وحولت بيتا من البيوت الكائنة بزنقة الشماعية إلى تربة محاذية لضريح الولي,,,,,
+E0026,membership|llm,ED_08ae25250a754fe57fde,aalam:2.07,محمد الأصرم,headed,membership,الجمعية الخلدونية,association,,llm,aalam-model-v1,177-186,سوا، كعضو في الهيئة المديرة للجمعية أو كرئيس، عن العمل والنضال,,,,,
+E0027,membership|llm,ED_0d7421fba70dfc30ca5b,aalam:3.11,محمود الماطري,colleague_of,membership,الحبيب بورقيبة,person,,llm,aalam-model-v1,355-360,"بعد التقائه بباريس مع الزعيم
+الحبيب بورقيبة",,,,,
+E0028,membership|llm,ED_0d95afd3361acaae0796,aalam:2.03,البشير صفر,wrote_for,membership,جريدة الحاضرة,newspaper,,llm,aalam-model-v1,133-140,"وعلى وسجه الخصوص البشير صفر الذي
+كان لفصوله المتعلقة بمطامع بعض الدول العظمى",,,,,
+E0029,membership|llm,ED_0de7399b609a435294e9,aalam:3.11,الطاهر صفر,member_of,membership,المكتب السياسي للحزب الدستوري الجديد,org,1934,llm,aalam-model-v1,355-360,"والطاهر صفر (أمين
+عام مساعد)",,,,,
+E0030,membership|llm,ED_0e90b1f73e440e2a75f2,aalam:2.07,محمد الصغير بن يوسف,authored,membership,المشرع الملكي في سلطنة أولاد حسين بن علي تركي,work,,llm,aalam-model-v1,177-186,علي تركي) (1771-1705): لمحمد الصغير بن يوسف,,,,,
+E0031,membership|llm,ED_0fdfd2a20c059abde1d4,aalam:2.04,علي باش حانبة,founded,membership,جمعية قدماء المدرسة الصادقية,association,1905,llm,aalam-model-v1,141-158,فأنشأ جمعية قدما، المدرسة الصادقية,,,,,
+E0032,membership|llm,ED_11b77a239e815449f280,aalam:3.05,خير الله بن مصطفى,founded,membership,المدرسة القرآنية العصرية,school,1905,llm,aalam-model-v1,319-326,أسّس خير الله بن مصطفى في سنة 1905 «المدرسة القرآنية العصرية) بتونس,,,,,
+E0033,membership|llm,ED_152ef55348967fade41a,aalam:2.15,الصادق التلاتلي,member_of,membership,المجلس الأعلى للبلاد التونسية,org,,llm,aalam-model-v1,277-286,أو بوصفه عضرا في المجلس الأعلى للبلاد,,,,,
+E0034,membership|llm,ED_172f7cb8a67610fe7405,aalam:2.04,عبد العزيز الثعالبي,headed,membership,النشرة العربية لجريدة التونسي,newspaper,1909,llm,aalam-model-v1,141-158,ظهرت النشرة العربية من جريدة التونسي في سنة 1909 بإشراف الشيخ عبد العزيز الثعالبي,,,,,
+E0035,membership|llm,ED_174d37a8363980cbba82,aalam:3.11,محمد بورقيبة,member_of,membership,المكتب السياسي للحزب الدستوري الجديد,org,1934,llm,aalam-model-v1,355-360,ومّحمد بورقيبة (أمين مال),,,,,
+E0036,membership|llm,ED_195d543908c8857f276d,aalam:2.03,محمد الحشايشي,wrote_for,membership,جريدة الحاضرة,newspaper,,llm,aalam-model-v1,133-140,وعلي الورداني ومتحمد الحشايشي ومعحمدل الأصرم وسحجوج,,,,,
+E0037,membership|llm,ED_21fbee7ad29dbbdc6db2,aalam:1.08,محمد بيرم الخامس,colleague_of,membership,الجنرال حسين,person,,llm,aalam-model-v1,87-96,"ومن هناك توجه إلى مدينة فلورنسا لتحرير وصية
+صديقه الكبير الجئرال حسين",,,,,
+E0038,membership|llm,ED_260396cf7b2f1934f578,aalam:2.09,طاهر خير الدين,wrote_for,membership,جريدة الإقدام,newspaper,,llm,aalam-model-v1,193-224,وكان يتولّى بنفسه تحرير المقالات الأساسية,,,,,
+E0039,membership|llm,ED_2787f697f9fd40919a77,aalam:2.03,علي بوشوشة,member_of,membership,صالون الأميرة نازلي,org,,llm,aalam-model-v1,133-140,"كان مواظباً على حضور الجلسات التى كانت
+تعقد بصالون الأميرة نازلى",,,,,
+E0040,membership|llm,ED_27afdb0ddb9b324e136b,aalam:2.02,الجنرال خير الدين,founded,membership,المدرسة الصادقية,school,1875,llm,aalam-model-v1,121-132,أسس الجنرال شخير الدين المدرسة الصادقية سنة 1875,,,,,
+E0041,membership|llm,ED_29d0bd79e9366459b602,aalam:1.06,البشير بن الخوجة,authored,membership,ترجمة ابن أبي الضياف,work,,llm,aalam-model-v1,71-78,انظر ترجمة ابن أبي الضياف بقلم البشير بن البخوجة,,,,,
+E0042,membership|llm,ED_2b5e79c0799f35f89d76,aalam:1.08,محمد بيرم الخامس,colleague_of,membership,محمد السنوسي,person,,llm,aalam-model-v1,87-96,حمزة فتح الله المصري والشيخ محمد السئوسي التونسي,,,,,
+E0043,membership|llm,ED_2e4731d236e4b3036ce8,aalam:2.06,سالم بو حاجب,colleague_of,membership,عبد الجليل الزاوش,person,,llm,aalam-model-v1,169-176,كانت تعقد تارة بضاحية المرسي في بيت عبد الجليل الزاوش,,,,,
+E0044,membership|llm,ED_32bbdae8d81950a828ee,aalam:3.04,محمد السعيد الخلصي,authored,membership,البحيرة,work,,llm,aalam-model-v1,307-318,"ومنها قصيدة لامرتين:
+«البحيرة»)",,,,,
+E0045,membership|llm,ED_36b194be1357813466a1,aalam:2.10,علي بوشوشة,founded,membership,جريدة الحاضرة,newspaper,,llm,aalam-model-v1,225-236,«الحاضرة) التي أسّسها صديقه على بوشوشة بمشاركة عدد كبير,,,,,
+E0046,membership|llm,ED_3e88c8deea582ef7fc0a,aalam:3.04,محمد السعيد الخلصي,member_of,membership,نادي قدماء الصادقية,association,,llm,aalam-model-v1,307-318,ومن بينها نادي قدما، الصادقية,,,,,
+E0047,membership|llm,ED_495b823499736f229273,aalam:3.04,محمد السعيد الخلصي,member_of,membership,نادي مصطفى آغة,association,,llm,aalam-model-v1,307-318,وكان يتردّد أيضاً على نادي الشاعر الفيلسوف مصطفى آغة,,,,,
+E0048,membership|llm,ED_496bf71570e7d0aa65d8,aalam:2.15,الصادق التلاتلي,authored,membership,الطريقة العصرية,work,,llm,aalam-model-v1,277-286,مثل كتاب «الطريقة العصرية، الرائع، الذي أصدره الصادق التلاتلي في جزأين,,,,,
+E0049,membership|llm,ED_4983acab1e782d6df247,aalam:1.02,محمد بن الخوجة,authored,membership,تاريخ معالم التوحيد,work,,llm,aalam-model-v1,33-48,«تاريخ معالم التوحيد»» تأليف محمد بن البخوجة,,,,,
+E0050,membership|llm,ED_4ec5325bbb075b6dc1f3,aalam:2.03,علي الورداني,wrote_for,membership,جريدة الحاضرة,newspaper,,llm,aalam-model-v1,133-140,"دعوة مؤسس الجريدة أمثال: محمد
+بن الخوجة وعلي الورداني ومتحمد الحشايشي",,,,,
+E0051,membership|llm,ED_576786efeea787cc9ee3,aalam:2.04,علي باش حانبة,headed,membership,جريدة التونسي,newspaper,,llm,aalam-model-v1,141-158,واختاروا بالإجماع على باش حانبة للإشراف على تلك الجريدة,,,,,
+E0052,membership|llm,ED_5e0b7b8d02a17b99c8bf,aalam:3.13,الطاهر الخميري,authored,membership,العصبية عند ابن خلدون,work,,llm,aalam-model-v1,369-372,كان عنوان أطروحته: «العصبية عند ابن خلدون,,,,,
+E0053,membership|llm,ED_6059c709b95fd14716dd,aalam:2.13,خير الله بن مصطفى,member_of,membership,مؤتمر شمال إفريقيا بباريس,org,1908,llm,aalam-model-v1,253-270,"هما السيدان عبد الجليل
+الزاوش وخخير الله",,,,,
+E0054,membership|llm,ED_63ae154d1458827117ed,aalam:3.07,حسن قلاتي,colleague_of,membership,عبد الجليل الزاوش,person,,llm,aalam-model-v1,333-340,بالتعاون مع صديقيه علي باش حانبة وعبد الجليل الزاوش,,,,,
+E0055,membership|llm,ED_66ce5b934fe375136246,aalam:3.09,الشاذلي خير الله,headed,membership,جريدة صوت التونسي,newspaper,,llm,aalam-model-v1,345-348,بواسطة جريدة الشاذلي خير الله التي كانت تورّع عليهم بانتظام,,,,,
+E0056,membership|llm,ED_7001ec766c3ef725355d,aalam:3.11,الحبيب بورقيبة,member_of,membership,الحزب الحر الدستوري,party,,llm,aalam-model-v1,355-360,"كلا من محمود الماطري
+والحبيب بورقيبة ولم يترددا عن الانضمام إلى حركته الناشئة",,,,,
+E0057,membership|llm,ED_70c7788edade64ccd262,aalam:3.07,عبد العزيز الثعالبي,founded,membership,الحزب الدستوري,party,,llm,aalam-model-v1,333-340,وأحد مؤسّسي الحزب الدستوري، الاتصال,,,,,
+E0058,membership|llm,ED_7495f85f792a0109bf1e,aalam:2.15,الصادق التلاتلي,member_of,membership,المجلس الأعلى للتعليم العمومي,org,,llm,aalam-model-v1,277-286,أو عضواً في المجلس الأعلى للتعليم العمومي,,,,,
+E0059,membership|llm,ED_7b7e046e8fcb81cee2f3,aalam:3.02,الشيخ محمد بورقيبة,founded,membership,جريدة نتائج الأخبار,newspaper,,llm,aalam-model-v1,295-300,أنشأ أوؤل صحيفة عربية ظهرت فى تونس بعد انتصاب الحماية الفرنسية,,,,,
+E0060,membership|llm,ED_7cf6b24bf84ee0a46e17,aalam:2.13,عبد الجليل الزاوش,founded,membership,جريدة التونسي,newspaper,1907,llm,aalam-model-v1,253-270,"أصدر عبد الجليل الزاوش وحوالي عشرة
+شبان تونسيين من أصدقائه العدد الأول من «التونسي)",,,,,
+E0061,membership|llm,ED_821630d649577feca416,aalam:3.03,الطاهر بن عمار,headed,membership,الوفد الدستوري الثاني إلى باريس,org,,llm,aalam-model-v1,301-306,الطاهر بن عمار (رئيس) ‏ حمودة المنستيري,,,,,
+E0062,membership|llm,ED_84cd459434eb1d8a229a,aalam:3.06,علي بوحاجب,wrote_for,membership,المنارة,newspaper,,llm,aalam-model-v1,327-332,"سبق له أن نشر محاولتين أو ثلاث محاولاات معتبرة فى
+المجلة الشهرية «المنارة»",,,,,
+E0063,membership|llm,ED_891e20813dbfb45b910b,aalam:3.04,صالح بن يوسف,member_of,membership,وزارة محمد شنيق,org,1950,llm,aalam-model-v1,307-318,"برئاسة السيد محمد شنيق وبمشاركة
+الأمين العام للحزب الدستوري الجديد، الآستاذ صالح بن يوسف",,,,,
+E0064,membership|llm,ED_897b4dae2ef1854e1b2a,aalam:3.09,الشاذلي خير الله,colleague_of,membership,أحمد الغطاس,person,,llm,aalam-model-v1,345-348,وحسونة العياشي وأحمد الغطاس,,,,,
+E0065,membership|llm,ED_91c28a827f33e52983cf,aalam:1.05,أحمد باي الأول,founded,membership,المدرسة الحربية بباردو,school,,llm,aalam-model-v1,63-70,إحداث مدرسة حربية بباردو,,,,,
+E0066,membership|llm,ED_93234fba545380a3c9b0,aalam:1.07,الجنرال حسين,member_of,membership,مجلس شورى الملك,org,,llm,aalam-model-v1,79-86,"حتى عُيّن الجئرال حسين عضواً
+في المجلس الأكبر المسمّى آنذاك بمجلس شورى الملك",,,,,
+E0067,membership|llm,ED_991f760ad6b6b19fe670,aalam:2.09,طاهر خير الدين,colleague_of,membership,الطيب الجلولي,person,,llm,aalam-model-v1,193-224,الذي كان طاهر خير الدين متحالفاً معه,,,,,
+E0068,membership|llm,ED_993fa173db7f78bd3f07,aalam:2.06,سالم بو حاجب,colleague_of,membership,محمد بيرم,person,,llm,aalam-model-v1,169-176,أو بالعاصمة في بيت الشيخ محمد بيرم,,,,,
+E0069,membership|llm,ED_9c1cece8d8003155e35f,aalam:3.04,محمد السعيد الخلصي,authored,membership,غادة الكاميليا,work,,llm,aalam-model-v1,307-318,أقدم الخلصي على ترجمة أثر نثري هذه المرةع,,,,,
+E0070,membership|llm,ED_9dcac7e168df0b073419,aalam:2.15,محمد التلاتلي,member_of,membership,المجلس الكبير,org,,llm,aalam-model-v1,277-286,الذي قام بدور معتبر في المجلس الكبير وفى المنظمات الثقافية,,,,,
+E0071,membership|llm,ED_a44459d82ea3ac2ebfc5,aalam:3.06,علي بوحاجب,member_of,membership,الجمعية التمثيلية الآداب,association,,llm,aalam-model-v1,327-332,فانضم علي بوحاجب إلى الجمعية التمثيلية «الآداب،,,,,,
+E0072,membership|llm,ED_a90c5ac6482ccbcd8bf6,aalam:2.13,الصادق الزمرلي,member_of,membership,حركة الشباب التونسي,org,,llm,aalam-model-v1,253-270,ومحمد بن الخوجة والصادق الزمرلي والطاهر الأسود,,,,,
+E0073,membership|llm,ED_aa54516c2a2395f873e7,aalam:3.03,حسونة العياشي,wrote_for,membership,التونسي,newspaper,,llm,aalam-model-v1,301-306,«التونسي): فصولا متينة السبك حول مختلف المسائل,,,,,
+E0074,membership|llm,ED_b0150845b39b0c14aab1,aalam:2.04,محمد الأصرم,member_of,membership,المؤتمر الاستعماري بمرسيليا,org,1906,llm,aalam-model-v1,141-158,"ما لقيه ممحمل الأصرم من صدىق
+طيّب في المؤتمر الاستعماري المنعقد بمرسيليا سنة 1906",,,,,
+E0075,membership|llm,ED_b02be97c88e63a76c446,aalam:3.02,حسين المقدم,founded,membership,جريدة نتائج الأخبار,newspaper,1889,llm,aalam-model-v1,295-300,جريدة «نتائج الأخبار، لصاحبها حسين المقدّم؛ فقد ظهرت في سنة 1889,,,,,
+E0076,membership|llm,ED_b6bbcbfd9372949ac616,aalam:3.03,حسونة العياشي,member_of,membership,الحزب الحر الدستوري الجديد,party,,llm,aalam-model-v1,301-306,"انضِمٌ إلى الحزب
+'الدستورى الجديد وترأس اجتماعاته الأولى",,,,,
+E0077,membership|llm,ED_bd53bda0ee4b63b3b865,aalam:2.10,علي الورداني,wrote_for,membership,جريدة الحاضرة,newspaper,,llm,aalam-model-v1,225-236,الحشايشي وعلي الورداني وغيرهم من المحررين,,,,,
+E0078,membership|llm,ED_bdb544f8cdaf00c62f40,aalam:2.03,عمر بو حاجب,wrote_for,membership,جريدة الحاضرة,newspaper,,llm,aalam-model-v1,133-140,وعمر بو حاجب، وعلى وسجه الخصوص البشير صفر الذي,,,,,
+E0079,membership|llm,ED_bfcbaabed94dc52821c7,aalam:3.05,محمد الصادق بسيس,authored,membership,النازلة التونسية,work,,llm,aalam-model-v1,319-326,تاليف محمد السئوسي وتحقيق محمد الصادق بسيّس,,,,,
+E0080,membership|llm,ED_c0b4847ac621c939e758,aalam:3.05,خير الله بن مصطفى,headed,membership,جمعية قدماء الصادقية,association,1905,llm,aalam-model-v1,319-326,"تم الاتفاق على إسناد رئاسة تلك الجمعية
+إلى خخير الله",,,,,
+E0081,membership|llm,ED_c1add5389237ae23f08f,aalam:3.02,الشاذلي القسطلي,headed,membership,جريدة النهضة,newspaper,,llm,aalam-model-v1,295-300,أصبحت الجريدة تعبّر عن رأي صاحبها الشاذلي القسطلي,,,,,
+E0082,membership|llm,ED_c5834aedcea12cc204fa,aalam:3.02,جريدة البرهان,member_of,membership,الحزب الإصلاحي,party,,llm,aalam-model-v1,295-300,جريدة «البرهان) هي لسان حال الحزب الإصلاحي,,,,,
+E0083,membership|llm,ED_c5ddc5172083e945fff6,aalam:3.03,أحمد الصافي,headed,membership,الوفد الدستوري الأول إلى باريس,org,1920,llm,aalam-model-v1,301-306,الوفد الدستوري الأول إلى باريس في 6 جوان 1920» برئاسة الأستاذ أحمد الصافي,,,,,
+E0084,membership|llm,ED_cc078882773a50470f74,aalam:2.11,عمر ثلاتي,headed,membership,النادي التونسي,association,,llm,aalam-model-v1,237-242,"قبل أن يتولى رئاسته على إثر وفاة المقدّم
+عمر ثلاتي",,,,,
+E0085,membership|llm,ED_cd6b42eda438e223c04f,aalam:3.02,حسن قلاتي,founded,membership,الحزب الإصلاحي,party,1921,llm,aalam-model-v1,295-300,هي لسان حال الحزب الإصلاحي الذي أسّسه حسن قلاتي سنة 1921,,,,,
+E0086,membership|llm,ED_d56181894903cd46b2b3,aalam:2.11,مصطفى آغة,member_of,membership,جمعية الآداب التمثيلية,association,,llm,aalam-model-v1,237-242,فسوا، في جمعية (الآداب، التمثيلية أو في النادي التونسي,,,,,
+E0087,membership|llm,ED_d849d9aee72088b8d9ea,aalam:1.01,أحمد بن أبي الضياف,authored,membership,إتحاف أهل الزمان,work,,llm,aalam-model-v1,25-32,أحمد بن أبي الضياف: «إتحاف أهل,,,,,
+E0088,membership|llm,ED_d99d1be72e88aa436bab,aalam:3.04,محمد السعيد الخلصي,colleague_of,membership,صالح فرحات,person,,llm,aalam-model-v1,307-318,من نظم صديقه صالح فرحات وكيف اختطفها منه,,,,,
+E0089,membership|llm,ED_da5aac414f4f35de36a9,aalam:2.04,علي باش حانبة,member_of,membership,مجلس الدولة,org,,llm,aalam-model-v1,141-158,فقد دُعي بعد مدّة قليلة إلى الانتما، إلى مجلس الدولة,,,,,
+E0090,membership|llm,ED_df3bbc510498116d0f81,aalam:3.07,حسن قلاتي,headed,membership,الجمعية الخلدونية,association,,llm,aalam-model-v1,333-340,المسرحية ثم للجمعية الخلدونية بعد مغادرة عضوين,,,,,
+E0091,membership|llm,ED_e1314e206a0652457b13,aalam:3.05,حسونة بن مصطفى,colleague_of,membership,دي تافرن,person,,llm,aalam-model-v1,319-326,"زميليه «كمبلون) و«دي تافرن، اللذين أسبغا
+عليه المديح",,,,,
+E0092,membership|llm,ED_e6a715643a7d7fc804f5,aalam:1.01,ابن أبي دينار,authored,membership,المؤنس في أخبار إفريقيا وتونس,work,,llm,aalam-model-v1,25-32,ابن أبي ديئار: «المؤنس في أخبار إفريقيا وتونس,,,,,
+E0093,membership|llm,ED_e933534387a302ce42be,aalam:2.03,علي بوشوشة,colleague_of,membership,محمد عبده,person,,llm,aalam-model-v1,133-140,"تعرّف على مفتي الديار المصرية الشيخ محمد
+عبده",,,,,
+E0094,membership|llm,ED_ead600be618fbf985076,aalam:2.07,محمد الأصرم,authored,membership,المشرع الملكي في سلطنة أولاد حسين بن علي تركي,work,,llm,aalam-model-v1,177-186,كتاب «المشرع الملكي في سلطنة أولاد حسين بن علي تركي),,,,,
+E0095,membership|llm,ED_ed778be186ec549475da,aalam:2.10,محمد بن الخوجة,member_of,membership,الخلدونية,org,1896,llm,aalam-model-v1,225-236,عضواأً في الهيئة المديرة لتلك المؤسسة الجديدة,,,,,
+E0096,membership|llm,ED_eef13d032a3152184065,aalam:3.01,الطيب رضوان,member_of,membership,جمعية قدماء الصادقية,association,,llm,aalam-model-v1,287-294,عضواً ناشطاً وسخياً من بين أعضا، جمعية قدما، الصادقية,,,,,
+E0097,membership|llm,ED_ef9b0630192ee2cbcfdb,aalam:2.04,علي باش حانبة,colleague_of,membership,الدكتور بروزون,person,,llm,aalam-model-v1,141-158,"بالتعاون مع
+الدكتور بروزون جريدة أسبوعية",,,,,
+E0098,membership|llm,ED_f533780c2f9cb95813ef,aalam:2.15,صلاح الدين التلاتلي,authored,membership,جربة والجربيون,work,,llm,aalam-model-v1,277-286,أصدر أطروحته «جربة والجربيّون»,,,,,
+E0099,membership|llm,ED_f7cf8e6da1cd89d735d3,aalam:3.06,عبد العزيز الثعالبي,headed,membership,الحزب الحر الدستوري التونسي,party,1919,llm,aalam-model-v1,327-332,"وأوفد زعيمه
+
+الشيخ عبد العزيز الثعالبي إلى باريس",,,,,
+E0100,membership|llm,ED_fc184a4e2d7a1b019062,aalam:3.04,الحبيب بورقيبة,headed,membership,الحزب الدستوري الجديد,party,1952,llm,aalam-model-v1,307-318,الزعيم الحبيب بورقيبة رئيس الحزب الدستوري الجديد في 18 جانفي,,,,,
+E0101,office|llm,ED_0052bee732b6b205778a,aalam:2.06,سالم بو حاجب,appointed_to,office,مشيخة الإسلام المالكية,office,1919,llm,aalam-model-v1,169-176,ارتقى إلى خطة مشيخة الإسلام المالكية في سنة,,,,,
+E0102,office|llm,ED_05ebf0f2a8c5a8ce978e,aalam:3.05,الجنرال رشيد,recommended,office,حسونة بن مصطفى,person,,llm,aalam-model-v1,319-326,"تلقى
+تشكرات الجنرال رشيد الذي أعرب عن كامل رضاه",,,,,
+E0103,office|llm,ED_0a8e404570c51d08dc43,aalam:1.07,الجنرال حسين,appointed_to,office,أمير آلاي,office,1859,llm,aalam-model-v1,79-86,فقد قرّر ترقية التلميذ حسين إلى رتبة أمير الاي,,,,,
+E0104,office|llm,ED_0af64f9ca51c89f53d22,aalam:2.09,الطيب الجلولي,opposed_by,office,أحمد بيرم,person,,llm,aalam-model-v1,193-224,الخلاف الذي ظهر بين الوزير الأكبر الطيب الجلّولي وشيخ الإسلام الحنفي أحمد بيرم,,,,,
+E0105,office|llm,ED_0d439d7572050c01cec9,aalam:3.01,محمد رضوان,appointed_to,office,رئيس دائرة المحاسبات,office,,llm,aalam-model-v1,287-294,وتقلّد منصب رئيس دائرة المحاسبات,,,,,
+E0106,office|llm,ED_0d77784f50ada7a46514,aalam:2.10,محمد بن الخوجة,appointed_to,office,مستشار الحكومة,office,,llm,aalam-model-v1,225-236,"ألا وهي خطة مستشار
+الحكومة",,,,,
+E0107,office|llm,ED_10348a18a9163654c3ce,aalam:1.06,أحمد بن أبي الضياف,patronised_by,office,حسين باي الثاني,person,,llm,aalam-model-v1,71-78,"إلآ أن الأمير
+حسين باي الثاني الذي كان يتابع عن كثب ما أحرزه ذلك الشاب من تقدّم",,,,,
+E0108,office|llm,ED_1be0f0f7ddf7ebbfbba8,aalam:2.05,محمد شوكت باشا,appointed_to,office,الصدر الأعظم,office,,llm,aalam-model-v1,159-168,"حادث اغتيال الصدر الأعظم ووزير الحرب محمد
+شوكت باشا",,,,,
+E0109,office|llm,ED_235b54fe9d3624739575,aalam:1.02,عثمان باي,succeeded,office,حمودة باشا,person,1814,llm,aalam-model-v1,33-48,عندما توفي حمودة باشا فجأة يوم 15 سبتمبر 1814,,,,,
+E0110,office|llm,ED_2a91efeb32008a36166f,aalam:3.04,مصطفى الكعاك,left_post,office,الوزارة الكبرى,office,1950,llm,aalam-model-v1,307-318,في شهر أورت 1950 تم تعويض وزارة الكعاك بوزارة جديدة,,,,,
+E0111,office|llm,ED_327eebf6a69a2755d1c1,aalam:2.10,محمد بن الخوجة,succeeded,office,البشير صفر,person,,llm,aalam-model-v1,225-236,"خلفه صاحب الترجمة
+في رئاسة قسم المحاسبة",,,,,
+E0112,office|llm,ED_32a89f5589e249e9f60a,aalam:1.06,أحمد بن أبي الضياف,commissioned_by,office,أحمد باي الأول,person,,llm,aalam-model-v1,71-78,"واستصحبه في سفره إلى باريس بصفة مستشاره
+وأمين سرّه",,,,,
+E0113,office|llm,ED_37ed7424f328d172b1f9,aalam:2.09,طاهر خير الدين,appointed_to,office,تدريس التاريخ,office,,llm,aalam-model-v1,193-224,المسؤولية التربوية الملقاة على عاتقه والمتمثلة في تدريس التاريخ,,,,,
+E0114,office|llm,ED_3a7172464527c2d13d7b,aalam:2.05,محمد باي خير الدين,opposed_by,office,لجنة الاتحاد والترقي,party,,llm,aalam-model-v1,159-168,"وبدأت
+سياسة لجنة «الاتحاد والترقى) المليئة بالمخاطر تثير الغضب فى صفوف
+الحزب نفسه",,,,,
+E0115,office|llm,ED_42d9b0692ad90d105279,aalam:3.14,محمد الأمين الشابي,patronised_by,office,السلطة العليا بالبلاد,org,,llm,aalam-model-v1,373-376,ولقد استرعى النتباه السلطة العليا بالبلاد,,,,,
+E0116,office|llm,ED_42ebb5fc58f8630ec6ca,aalam:2.05,محمد باي خير الدين,opposed_by,office,الحزب الحاكم,party,,llm,aalam-model-v1,159-168,"فرأى الحزب
+الحاكم أن الوقت قد حان لوضع حدّ لذلك الوضع",,,,,
+E0117,office|llm,ED_43e4b401310062956c86,aalam:3.05,خير الله بن مصطفى,patronised_by,office,محمد الناصر باي,person,,llm,aalam-model-v1,319-326,"أبواب قصور الملوك الحسيئيين، لا سيما منهم المرحوم محمد
+الناصر باي",,,,,
+E0118,office|llm,ED_44eee9bc71bad9b05e5c,aalam:3.11,محمود الماطري,opposed_by,office,مارسال بيروتون,person,,llm,aalam-model-v1,355-360,ومن بينهم الدكتور محمود الماطري الذي كان ذا بنية ضعيفة,,,,,
+E0119,office|llm,ED_472d6684b3522872cdc6,aalam:1.02,مصطفى خوجة,appointed_to,office,الوزير الأكبر,office,,llm,aalam-model-v1,33-48,عهد بها الباي إلى وزيره الأكبر مصطفى خوجة,,,,,
+E0120,office|llm,ED_49d5be6a6b69bd65b332,aalam:3.11,محمود الماطري,appointed_to,office,وزير الداخلية,office,1950,llm,aalam-model-v1,355-360,وعيّن من جديد وزيراً للداخلية في الوزارة التفاوضية,,,,,
+E0121,office|llm,ED_4ba5a320091ac7fe98b3,aalam:3.05,حسونة بن مصطفى,appointed_to,office,معتمد عسكري لدى الفيلق التونسي,office,,llm,aalam-model-v1,319-326,"فعيّلوه في خطة معتمد عسكري لدى الفيلق
+التونسي المساهم في حرب القرم",,,,,
+E0122,office|llm,ED_54cae80e3fe27366341f,aalam:2.10,محمد بن الخوجة,succeeded,office,أمير الأمراء بلنسي,person,1914,llm,aalam-model-v1,225-236,"عوضاً عن أمير الأمرا،
+بلنسي الذي أحيل على التقاعد سنة 1914",,,,,
+E0123,office|llm,ED_55ea9fc359353c70fab6,aalam:1.02,يوسف صاحب الطابع,appointed_to,office,إدارة الجهات,office,,llm,aalam-model-v1,33-48,تكليف خادمه المفضل بمهمّة السهر شخصياً على إعادة تنظيم الإدارة,,,,,
+E0124,office|llm,ED_56ef9d3b7420d7fd1ae4,aalam:3.05,خير الله بن مصطفى,succeeded,office,محمد بن الخوجة,person,,llm,aalam-model-v1,319-326,"تخلفا للجنرال
+محمد بن الخوجة",,,,,
+E0125,office|llm,ED_58cae3ea039315dd6032,aalam:1.06,أحمد بن أبي الضياف,appointed_to,office,شاهد عدل,office,1822,llm,aalam-model-v1,71-78,فقد تم تعيينه سنة 1822 في خخطة شاهد عدل,,,,,
+E0126,office|llm,ED_5ade71f28d04650a080a,aalam:2.02,البشير صفر,patronised_by,office,الجنرال خير الدين,person,,llm,aalam-model-v1,121-132,كان يحظى، دوماً وأبداً بتشجيعات الجنرال خخير الدين أثنا، زياراته المتكررة للمدرسة الصادقية,,,,,
+E0127,office|llm,ED_60127cbd2fb4e61ee9d3,aalam:2.13,عبد الجليل الزاوش,appointed_to,office,شيخ مدينة تونس,office,1934,llm,aalam-model-v1,253-270,وفى 18 ماي 1934 هين في منصب شيخ مدينة تونس,,,,,
+E0128,office|llm,ED_6ab6ae300e0b4d5fe35c,aalam:1.07,الجنرال حسين,opposed_by,office,مصطفى بن إسماعيل,person,,llm,aalam-model-v1,79-86,"وتعيين
+خصمه اللدود مصطفى بن إسماعيل على رأس الحكومة",,,,,
+E0129,office|llm,ED_6b174c5d1a2f33ef0357,aalam:1.09,الجنرال خير الدين,commissioned_by,office,الصادق باي,person,,llm,aalam-model-v1,97-112,فما إن رجع إلى تونس حتى كلفه الأمير الصادق باي بالدفاع لدى الباب العالي,,,,,
+E0130,office|llm,ED_6e66237dc18b500eef17,aalam:2.05,خير الدين باشا,appointed_to,office,الوزير الأكبر,office,,llm,aalam-model-v1,159-168,"صحبة والده
+الوزير الأكبر خير الدين باشا رحمة الله عليه وبقيّة أفراد أسرته",,,,,
+E0131,office|llm,ED_757c553f2a01a3cd842e,aalam:2.10,محمد بن الخوجة,appointed_to,office,عامل بنزرت,office,1924,llm,aalam-model-v1,225-236,وكانت مديئة بنزرت التي نقل إليها سنة 1924 بنفس الصفة,,,,,
+E0132,office|llm,ED_78d6302ea5b56bf2923f,aalam:2.09,طاهر خير الدين,appointed_to,office,رتبة أمير لواء,office,,llm,aalam-model-v1,193-224,ارتقى إلى رتبة أمير لوا، (جنرال),,,,,
+E0133,office|llm,ED_78ef3e1dd405a468d441,aalam:1.05,محمود قابادو,appointed_to,office,قاضي باردو,office,,llm,aalam-model-v1,63-70,"أولاه الأمير الجديد
+محمد الصادق باي), خطة قاضي باردو",,,,,
+E0134,office|llm,ED_85a254ade4ef45caf2d8,aalam:2.08,أحمد الغطاس,appointed_to,office,محام,office,,llm,aalam-model-v1,187-192,باعتباره أول محام تونسي [متخرج من الجامعات,,,,,
+E0135,office|llm,ED_866936cc6676f989c678,aalam:1.02,يوسف صاحب الطابع,patronised,office,عثمان باي,person,1814,llm,aalam-model-v1,33-48,ثم أسرع إلى مبايعته رسميّاً رغم ما أظهره,,,,,
+E0136,office|llm,ED_9771294ff1045f1ed1f5,aalam:2.09,أحمد باي الثاني,appointed_to,office,عرش المملكة التونسية,office,1929,llm,aalam-model-v1,193-224,ارتقى الأمير أحمد باي الثاني إلى العرش في 11 فيفري 1929,,,,,
+E0137,office|llm,ED_ab3db30744432d5adbdd,aalam:3.02,الشيخ ظافر,patronised_by,office,السلطان عبد الحميد,person,,llm,aalam-model-v1,295-300,قصر السلطان عبد الحميد واكتساب ثقة الشيخين المؤتمنين على سياسته,,,,,
+E0138,office|llm,ED_ac025cc4ebbf1da5edad,aalam:1.08,محمود خوجة,appointed_to,office,وزير الحرب,office,,llm,aalam-model-v1,87-96,"محمود خوجة وزير الحرب في عهد
+الأمير أحمد باي الأول",,,,,
+E0139,office|llm,ED_ad19700df4e087f87e97,aalam:2.06,خير الدين,appointed_to,office,وزير أكبر,office,1873,llm,aalam-model-v1,169-176,بعد تولّى خير الدين خطة وزير أكبر فى سنة 1873,,,,,
+E0140,office|llm,ED_b24ff4e075c8afe85f39,aalam:1.02,يوسف صاحب الطابع,appointed_to,office,قيادة الجيش,office,1807,llm,aalam-model-v1,33-48,فجهز بمنتهى السرعة جيشا جديدا وعهد بقيادته إلى وزيره الأكبر,,,,,
+E0141,office|llm,ED_b6ab96139cd77f238ea4,aalam:3.07,البشير صفر,left_post,office,الجمعية الخلدونية,association,,llm,aalam-model-v1,333-340,للاضطلاع بمهام أخرى، وهما البشير صفر ومحمد الأصرم,,,,,
+E0142,office|llm,ED_bc30921468bd38fc4425,aalam:2.15,الصادق التلاتلي,left_post,office,مفتش التعليم الابتدائي العربي,office,1930,llm,aalam-model-v1,277-286,الاحتفال الفخم المقام على شرفه يوم 18 أفريل 1930»,,,,,
+E0143,office|llm,ED_bddaffb1d13b5149e669,aalam:3.01,مصطفى رضوان,appointed_to,office,رئيس قسم الإنشاء بإدارة المالية,office,,llm,aalam-model-v1,287-294,مصطفى » رئيس قسم الإنشا، بإدارة المال,,,,,
+E0144,office|llm,ED_c7b5dd499610aefdc1c0,aalam:2.15,الصادق التلاتلي,appointed_to,office,سلك التعليم,office,1892,llm,aalam-model-v1,277-286,الانتقطاع عن الدراسة والالتحاق سنة 1892 بسلك التعليم,,,,,
+E0145,office|llm,ED_c831d648765840f12bef,aalam:3.03,عبد الجليل الزاوش,appointed_to,office,والي سوسة,office,,llm,aalam-model-v1,301-306,سيصبحان فيما بعد، الواحد تلو الآخر، واليبن على سوسة,,,,,
+E0146,office|llm,ED_ce3d45a5c1c4da797428,aalam:3.02,الشيخ محمد بورقيبة,appointed_to,office,مهنة المحاماة لدى المحاكم التونسية,office,,llm,aalam-model-v1,295-300,فاختار مهنة المحاماة لدى المحاكم التونسية,,,,,
+E0147,office|llm,ED_d111f317e14369808e3a,aalam:1.09,الجنرال خير الدين,headed,office,اللجنة المالية الدولية,org,,llm,aalam-model-v1,97-112,فقد تم تعبينه على رأس تلك اللجنة، بالإضافة إلى اضطلاعه بخطة وزير مباشر,,,,,
+E0148,office|llm,ED_d14fcef2380c24dd6c16,aalam:3.06,مصطفى الكعاك,commissioned_by,office,سلطة الحماية,org,1947,llm,aalam-model-v1,327-332,"وفى سنة 1947, حاولت الحماية إيجاد حل متحرّر للأزمة",,,,,
+E0149,office|llm,ED_d242b12f3750a47f83b2,aalam:3.14,محمد الأمين الشابي,left_post,office,وزير التربية القومية,office,1958,llm,aalam-model-v1,373-376,"التي اضطلع
+بها مدة سنتين (2)1958-1956",,,,,
+E0150,office|llm,ED_d308fab096586ca671bb,aalam:3.07,علي بن أحمد لاتي,appointed_to,office,المترجم العدلي,office,,llm,aalam-model-v1,333-340,لاتي المترجم العدلي، إلى سوسة ومنها إلى تونس,,,,,
+E0151,office|llm,ED_da5a2d38590eea03c193,aalam:2.14,رشيد بن مصطفى,appointed_to,office,نائب رئيس الجمعية الخلدونية,office,,llm,aalam-model-v1,271-276,وما لبث أن أصبح عضواً بارزاً في هيئتها المديرة ثم نائبا,,,,,
+E0152,office|llm,ED_de4b9484fe18ac5bd729,aalam:1.03,إبراهيم الرياحي,appointed_to,office,باش مفتي,office,,llm,aalam-model-v1,49-56,تولّى الشيخ إبراهيم الرياحي خخطة باش مفتي، أي رئاسة المذهب,,,,,
+E0153,office|llm,ED_df32d2cc7d448d35794a,aalam:3.08,محمد السنوسي,appointed_to,office,المحكمة العقارية المختلطة,court,,llm,aalam-model-v1,341-344,وألحقته بسلك القضا، (المحكمة العقارية المسختلطة),,,,,
+E0154,office|llm,ED_e1839a5971ccff92b97b,aalam:1.08,محمد بيرم الخامس,headed,office,إدارة الأوقاف,org,1874,llm,aalam-model-v1,87-96,"فقد عهد إليه الوزير
+بالإشراف على إدارة الأوقاف (1874)",,,,,
+E0155,office|llm,ED_e3929a0ba2b81fe88e83,aalam:3.05,بول كامبون,appointed_to,office,المقيم العام,office,,llm,aalam-model-v1,319-326,باشر بول كامبون خطة مقيم عام من سنة 1882 إلى سنة 1886,,,,,
+E0156,office|llm,ED_e53e55d7c64c79fa89c5,aalam:2.09,طاهر خير الدين,patronised_by,office,السلطان عبد الحميد,person,,llm,aalam-model-v1,193-224,باعتباره الوصيٌ الأكبر على أبنا، الصدر الأعظم ورئيس مجلس العرش,,,,,
+E0157,office|llm,ED_e5d8d19e7d9ba65ba75b,aalam:2.08,لويس روني ميي,patronised,office,الجمعية الخلدونية,association,,llm,aalam-model-v1,187-192,"بتشجيع من ممثل فرنسا انذاك, المأسوف عليه السفير لويس روني ميي",,,,,
+E0158,office|llm,ED_e9a9c49831c164dc46d4,aalam:3.01,محمد رضوان,succeeded,office,مصطفى رضوان,person,,llm,aalam-model-v1,287-294,فأمّا الابن محمد الذي تلقى مثل شقيقه تربية مزدوجة اللغة، فقد خحلف أباه في إدارة المال,,,,,
+E0159,office|llm,ED_ec02e1385afe9c89cd79,aalam:3.10,الطاهر بن عاشور,patronised,office,محمد الفاضل بن عاشور,person,,llm,aalam-model-v1,349-354,حرص على إعطا، ابنه الأكبر محمد الفاضل تربية مثالية,,,,,
+E0160,office|llm,ED_eda8db6e99170e3134ca,aalam:2.15,عبد القادر التلاتلي,appointed_to,office,محكمة الاستئناف بتونس,court,,llm,aalam-model-v1,277-286,وقد أصبح مستشاراً بمحكمة الاستكناف بتونس,,,,,
+E0161,office|llm,ED_f065a75a4256991177a0,aalam:2.07,محمد الأصرم,appointed_to,office,مدير إدارة الغابة,office,,llm,aalam-model-v1,177-186,ألا وهو منصب مدير إدارة الغابة,,,,,
+E0162,office|llm,ED_f1440cae077d6eebb287,aalam:3.11,عبد العزيز الثعالبي,opposed_by,office,محمود الماطري,person,,llm,aalam-model-v1,355-360,فانفصلا عنهم وبادرا إلى عقد مؤتمر وطني في بلدة قصر هلال,,,,,
+E0163,office|llm,ED_f5acafe7853ca02eca37,aalam:1.09,الجنرال خير الدين,patronised_by,office,محمد باي,person,1855,llm,aalam-model-v1,97-112,أبى ابن عمه الملك الجديد مَحمّد باي إلا أن يعرب عن رضاه لخادمه البارع، فعيّنه وزيراً للبحرية,,,,,
+E0164,office|llm,ED_f74afc6a34c32e4e0f1a,aalam:3.14,محمد الأمين الشابي,appointed_to,office,وزير التربية القومية,office,,llm,aalam-model-v1,373-376,إلا بتكليفه غداة الاستقلال بمهمة وزير التربية القومية,,,,,
+E0165,office|llm,ED_f8aec7d249f69eac0708,aalam:2.03,البشير صفر,appointed_to,office,والي بسوسة,office,,llm,aalam-model-v1,133-140,فى إقصائه من تونس وتعيينه واليابسوسة. وذلك من أجل مواقفه,,,,,
+E0166,office|llm,ED_fb64cf0647a9d6ea2187,aalam:1.06,أحمد بن أبي الضياف,appointed_to,office,نائب رئيس المجلس الأكبر,office,,llm,aalam-model-v1,71-78,ونائباً لرئيس المجلس الأكبر,,,,,
+E0167,office|llm,ED_ff63a370f81dc41e1e4c,aalam:2.01,خير الدين,appointed_to,office,رئيس مجلس العرش,office,,llm,aalam-model-v1,113-120,"الذي أصبح في الأثنا، رئيساً لمجلس
+العرش على مدى الحياة",,,,,
+E0168,tutelage|llm,ED_0b4a42017ace5f3eeced,aalam:3.05,حسونة بن مصطفى,taught_at,tutelage,المدرسة الحربية بباردو,school,,llm,aalam-model-v1,319-326,"عُيّن أستاذاً بالمدرسة
+الحربية بباردو",,,,,
+E0169,tutelage|llm,ED_0e1e6b1eca9f2f034007,aalam:2.15,الصادق التلاتلي,taught_at,tutelage,دار المعلمين بتونس,school,,llm,aalam-model-v1,277-286,بمعهد كارنو وأستاذ فرنسية بدار المعلمين,,,,,
+E0170,tutelage|llm,ED_10b04d6b8cfe7ed07d5e,aalam:3.01,الطيب رضوان,taught_at,tutelage,جامع الزيتونة,mosque,,llm,aalam-model-v1,287-294,بجامع الزيتونة الذي درس ودرس فيه، وكان لا يفوت,,,,,
+E0171,tutelage|llm,ED_1f08502ce9d3050e61ec,aalam:3.13,الطاهر الخميري,taught_at,tutelage,جامعة همبورغ,school,,llm,aalam-model-v1,369-372,بالجامعة الأمريكية بالقاهرة ثم بجامعة همبورغ,,,,,
+E0172,tutelage|llm,ED_2a78820cef3aad1c2d3d,aalam:2.12,عبد السلام البكوش,read_work_of,tutelage,ابن سينا,person,,llm,aalam-model-v1,243-252,"من أمثال الأشعري وابن
+سينا والزمخشري والغزالي وابن رشد، قد استأئروا بعنايته",,,,,
+E0173,tutelage|llm,ED_35b433647de04e6723fc,aalam:3.05,خير الله بن مصطفى,taught,tutelage,البشير باي,person,,llm,aalam-model-v1,319-326,"دروس خاصة للأمرا،
+الطاهر والبشير والمنصف باي",,,,,
+E0174,tutelage|llm,ED_494005d53813159df576,aalam:2.12,عبد السلام البكوش,read_work_of,tutelage,حافظ إبراهيم,person,,llm,aalam-model-v1,243-252,وخليل مطران وحافظ إبراهيم. وعلى وجه الخصوص الشاعر التونسي,,,,,
+E0175,tutelage|llm,ED_53254aa071cf15e86b43,aalam:2.12,عبد السلام البكوش,studied_under,tutelage,الفرزدق,person,,llm,aalam-model-v1,243-252,نذكر على سبيل المثال، الفرزدق والشريف الرضي وأبا تمام والمعري,,,,,
+E0176,tutelage|llm,ED_65848a8795385c43e309,aalam:2.12,عبد السلام البكوش,read_work_of,tutelage,ابن رشد,person,,llm,aalam-model-v1,243-252,والزمخشري والغزالي وابن رشد، قد استأئروا بعنايته,,,,,
+E0177,tutelage|llm,ED_65f1052c873e9c3e845d,aalam:2.03,محمد عبده,taught_at,tutelage,الجمعية الخلدونية,org,,llm,aalam-model-v1,133-140,وقد ألقى على منبر الخلدونية محاضرة بليغة,,,,,
+E0178,tutelage|llm,ED_69dd22fadcc295519fbe,aalam:2.06,سالم بو حاجب,studied_under,tutelage,محمد النيفر,person,,llm,aalam-model-v1,169-176,النيفر والشيخ محمد بيرم، دون أن ننسى آخرهم عهداً,,,,,
+E0179,tutelage|llm,ED_6ca00546793c399ac546,aalam:3.07,حسن قلاتي,studied_at,tutelage,معهد كارنو,school,,llm,aalam-model-v1,333-340,وفي معهد كارنو المعروف أيضاً باسم معهد سان لويس,,,,,
+E0180,tutelage|llm,ED_700e8f5d1660a0b383cb,aalam:2.12,عبد السلام البكوش,studied_under,tutelage,محمود قابادو,person,,llm,aalam-model-v1,243-252,"وعلى وجه الخصوص الشاعر التونسي محمود
+قابادو، الذي استهواه نظمه البديع",,,,,
+E0181,tutelage|llm,ED_7cd3074ee920b01f4fa6,aalam:1.07,الجنرال حسين,studied_at,tutelage,المدرسة الحربية بباردو,school,,llm,aalam-model-v1,79-86,"حتى التحق بالمدرسة الحربية
+بباردو الحديثة العهدى",,,,,
+E0182,tutelage|llm,ED_7fed366f976df7173665,aalam:3.10,محمد الفاضل بن عاشور,studied_at,tutelage,الخلدونية,school,,llm,aalam-model-v1,349-354,فتردّد على التوالى على الخلدونية ومدرسة العطارين,,,,,
+E0183,tutelage|llm,ED_80cb3d16f48ebc0e60d3,aalam:1.04,أحمد بن حسين,taught,tutelage,الطيب الرياحي,person,,llm,aalam-model-v1,57-62,عهد إليه الشيخ إبراهيم الرياحي بتعليم ابنه الطيّب,,,,,
+E0184,tutelage|llm,ED_841bcd0cc869df4ecf87,aalam:3.02,الشيخ محمد بورقيبة,studied_at,tutelage,جامع الزيتونة,mosque,,llm,aalam-model-v1,295-300,بجامع الزيتونة المعمور لمواصلة دراسات مطوّلة وشاقة,,,,,
+E0185,tutelage|llm,ED_8ff315338e8cf1b3921a,aalam:2.08,محمد عبده,studied_under,tutelage,جمال الدين الأفغاني,person,,llm,aalam-model-v1,187-192,تحت تأثير جمال الدين الأفغاني وتلميذه الشيخ محمد عبدهع,,,,,
+E0186,tutelage|llm,ED_99c37369efbe4523f72e,aalam:3.13,الطاهر الخميري,taught_at,tutelage,مؤسسة جوهر هوبكينس,org,,llm,aalam-model-v1,369-372,"وتوضيح المشاكل الناجمة عن تحرير القارة
+السمراء، لطلبة المؤسسة المذكورة",,,,,
+E0187,tutelage|llm,ED_9ae26b4389b8bb12a8cb,aalam:1.03,إبراهيم الرياحي,taught,tutelage,محمد البحري,person,,llm,aalam-model-v1,49-56,إلى أن عارضه ذات يوم أحد قدما، تلاميذه، القاضي المالكي والفقيه الشهير، الشيخ محمد البحري,,,,,
+E0188,tutelage|llm,ED_9eabe026d7a6af135479,aalam:2.12,عبد السلام البكوش,read_work_of,tutelage,ابن الرومي,person,,llm,aalam-model-v1,243-252,وابن رومي، يضاف إليهم من المحدثين أحمد تيمور,,,,,
+E0189,tutelage|llm,ED_a425db1969cce792e601,aalam:3.11,أحمد الماطري,taught_at,tutelage,جامع الزيتونة,mosque,,llm,aalam-model-v1,355-360,الشيخان أحمد والمختار الماطري مدرسين حنفيين من مدرسي جامع الزيتونة,,,,,
+E0190,tutelage|llm,ED_a6c1bfd4bf06f361e6bc,aalam:2.07,محمد الأصرم,studied_at,tutelage,جامع الزيتونة,mosque,,llm,aalam-model-v1,177-186,أو في جامع الريتونة الذي كان يتردد على بعض ذروسه,,,,,
+E0191,tutelage|llm,ED_a7219d057bba0f09bd07,aalam:2.12,مصطفى آغة,studied_under,tutelage,الأساتذة الذين ساهموا في تكوينهما,person,,llm,aalam-model-v1,243-252,"الرجلين قد تغذّيا من نفس المنابع وأعجبا بنفس
+الأساتذة",,,,,
+E0192,tutelage|llm,ED_a8fc8820acb8d37a85c4,aalam:2.06,سالم بو حاجب,taught_at,tutelage,جامع الزيتونة,mosque,,llm,aalam-model-v1,169-176,فتصدّى لتدريس العلم بجامع الزيتونة المعمور,,,,,
+E0193,tutelage|llm,ED_b1bb471fd1243dd3235a,aalam:3.05,خير الله بن مصطفى,studied_under,tutelage,محمد باي خير الدين,person,1917,llm,aalam-model-v1,319-326,"أعنيى محمد باي خير الدين الذي اختار الإقامة على تلك
+الربوة الملهمة",,,,,
+E0194,tutelage|llm,ED_b34f4f11be1277fcdd47,aalam:2.09,طاهر خير الدين,studied_at,tutelage,مدرسة بانكالدي الحربية,school,,llm,aalam-model-v1,193-224,وبعد إتمام تلك الدراسة التمهيدية التحق بمدرسة بانكالدي الحربية,,,,,
+E0195,tutelage|llm,ED_b5515781cd15d41aa90f,aalam:3.13,الطاهر الخميري,licensed_by,tutelage,جامعة همبورغ,school,,llm,aalam-model-v1,369-372,قبل الحصول على شهادة الماجستير في العلوم العصرية من نفس الجامعة,,,,,
+E0196,tutelage|llm,ED_c2843e83c544d55b304a,aalam:3.10,الطاهر بن عاشور,taught_at,tutelage,الجامعة الزيتونية,school,,llm,aalam-model-v1,349-354,درس مدة طويلة بالمعهد الصادقى والجامعة الزيتونية، قبل أن يشغل,,,,,
+E0197,tutelage|llm,ED_c86846969e223a865c90,aalam:3.05,خير الله بن مصطفى,studied_at,tutelage,المدرسة العلوية,school,,llm,aalam-model-v1,319-326,ولقد وقع اختياره على المدرسة العلويّة الحديثة العهد. فاألحق بها ابنه,,,,,
+E0198,tutelage|llm,ED_cad629ad685a3ea246a9,aalam:1.03,إبراهيم الرياحي,taught_at,tutelage,جامع الحلفاوين,mosque,,llm,aalam-model-v1,49-56,وعهد إليه بالإضافة إلى ذلك بإلقا، عدّة دروس بجامع,,,,,
+E0199,tutelage|llm,ED_d119cdf3b159f49759f5,aalam:2.14,رشيد بن مصطفى,studied_at,tutelage,المعهد الصادقي,school,,llm,aalam-model-v1,271-276,أرسل إلى الكتاب ثم إلى المعهد الصادقي حيث أنهى دراسته الثانوية,,,,,
+E0200,tutelage|llm,ED_d388d2817ffe22cecfe6,aalam:1.03,إبراهيم الرياحي,studied_at,tutelage,جامع الزيتونة,mosque,,llm,aalam-model-v1,49-56,التي ستفتح في وجهه أبواب جامع الزيتونة المعمور على مصراعيها,,,,,
+E0201,tutelage|llm,ED_e4249bdd4f703a88ee34,aalam:2.06,سالم بو حاجب,studied_under,tutelage,محمود قابادو,person,,llm,aalam-model-v1,169-176,ألا وهو الشيخ محمود قابادو الذي استحكمت بينه وبين مترجمنا أسباب المودة,,,,,
+E0202,tutelage|llm,ED_ef3d1202ecaed24dae4a,aalam:2.13,عبد الجليل الزاوش,studied_under,tutelage,بوترو,person,,llm,aalam-model-v1,253-270,من أمثال دوركايم وبوترو وبواتكاري وبواسي وأولار، ولافيس,,,,,
+E0203,tutelage|llm,ED_f30efd05ee10ee96d396,aalam:3.11,محمود الماطري,studied_at,tutelage,كلية العلوم والمدرسة الطبية بمدينة ديجون,school,,llm,aalam-model-v1,355-360,ثم انخرط في كلية العلوم والمدرسة الطبية بمدينة ديجون,,,,,
+E0204,tutelage|llm,ED_f8cc23c0e50fa8790310,aalam:2.12,عبد السلام البكوش,read_work_of,tutelage,المتنبي,person,,llm,aalam-model-v1,243-252,والمتنبى وابن رومي، يضاف إليهم من المحدثين,,,,,
+E0205,tutelage|rule,ED_e974891f7c588a4a2855,aalam:1.04,أحمد بن حسين,studied_under,tutelage,الطاهر بن مسعود,person,,rule,TUT01,57-62,وارتبط من أول وهلة بشيخها الطاهر بن مسعود وقرأ عليه الفقه والنحو,,,,,
+E0206,tutelage|rule,ED_ecb4517d440026e45af9,aalam:1.04,أحمد بن حسين,studied_under,tutelage,احمد الابي,person,,rule,TUT01,57-62,كما قرأ على الشيخ أحمد الأبي «البيان,,,,,
