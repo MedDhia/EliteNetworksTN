@@ -301,7 +301,19 @@ the panel is an assumption rather than an observation.
 make bourse          # spine -> crawl -> resolve -> fetch -> extract -> movements
                      # -> resolutions -> build -> export -> validate
 make bourse-test
+make bourse-verify   # re-read the filings; check each record against its page
 ```
+
+`make bourse-verify` is the check the rest of the suite cannot do. Every other
+check tests the dataset against itself, and a figure read off the wrong row
+passes all of them, because a misread figure is still internally consistent.
+This one re-opens each source PDF, accepts it only if the bytes hash to the
+digest recorded in the corpus manifest, and asks of every record whether its
+name and its figure appear on the page it cites. The current pass confirms
+**100.0% of 7,593 names and 99.9% of figures** across 179 filings; the result
+is written to `data/processed/bourse/source_verification.md`, which names every
+record that did not confirm. Running it is what turned up the four extraction
+defects recorded in §6.1 of the codebook.
 
 CI (`.github/workflows/ci.yml`) runs the test suite on Python 3.11 and 3.12, and
 rebuilds this dataset from the committed extraction records to check that the
