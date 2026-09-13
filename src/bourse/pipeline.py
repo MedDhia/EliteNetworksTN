@@ -46,6 +46,50 @@ _DOC_PREFIX = re.compile(
 _QUOTES = "\"'«»“”‹›"
 
 
+# A prospectus or note d'operation is titled by its *operation*, and names the
+# issuer at the end: "relatif a l'augmentation de capital de la Societe Tunis
+# Re", "relative a l'emission et l'admission au marche obligataire ... de
+# l'emprunt obligataire subordonne TLF". Stripping only the leading document
+# word leaves the operation standing where the company should be, and 74 of
+# those descriptions became firms in the network, carrying 1,094 ties between
+# them. The issuer is what follows the last "de"-phrase.
+_OPERATION_HEAD = re.compile(
+    # Greedy up to the *last* "de"-phrase: the title stacks several ("de
+    # capital de la Societe X"), and the company is after the final one.
+    r"^(?:abr[ée]g[ée]\s+)?relati[fv]e?s?\s+(?:[àa]|au|aux)\s+.*"
+    r"\bde\s+(?:la\s+soci[ée]t[ée]\s+|l[ae]\s+|l['’]|du\s+|des\s+)?(?=\S)"
+    r"|^d['’]?\s*[ée]mission\b.*(?:\bde\b\s+|:\s*)(?=\S)",
+    re.I,
+)
+
+
+# Words a title uses for the operation rather than the company.
+_OPERATION_WORD = re.compile(
+    r"^\s*(augmentation|r[ée]duction|[ée]mission|admission|capital|emprunt|"
+    r"obligation|obligataire|introduction|ouverture|fusion|offre|note)\b", re.I)
+
+
+def _issuer_after_operation(t: str) -> str:
+    """Cut a title down to the issuer named after the operation it describes.
+
+    Only applied when the head really is an operation description; a title that
+    is already a company name is returned untouched.
+    """
+    m = _OPERATION_HEAD.match(t)
+    if m:
+        tail = t[m.end():].strip(_QUOTES + " \t:-–,")
+        # A tail that is itself another operation clause carries no company.
+        t = tail if len(tail) >= 2 else t
+    # "D'EMISSION AUGMENTATION DE CAPITAL -UBCI" names the company after a
+    # dash instead. Taken only when what precedes the dash is the operation,
+    # so that "SOTUVER 2019 - actualise" still keeps its head.
+    if _OPERATION_WORD.match(t):
+        parts = re.split(r"\s*[-–:]\s*", t)
+        if len(parts) > 1 and len(parts[-1].strip()) >= 2:
+            t = parts[-1].strip(_QUOTES + " \t:-–,")
+    return t
+
+
 def issuer_from_title(title: str, issuer_hint: str | None = None) -> tuple[str | None, int | None]:
     """Recover (issuer name, reference year) from a filing title.
 
@@ -55,6 +99,7 @@ def issuer_from_title(title: str, issuer_hint: str | None = None) -> tuple[str |
     t = (title or "").strip()
     t = _DOC_PREFIX.sub("", t)
     t = t.strip(_QUOTES + " \t:-–")
+    t = _issuer_after_operation(t)
     year = None
     m = re.search(r"\b(19|20)\d{2}\b", t)
     if m:

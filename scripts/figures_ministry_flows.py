@@ -4,7 +4,7 @@ The companion figure to the interior–defence exchange, which showed everything
 beyond the security apparatus as a single block of 1,654 moves. This opens that
 block and names it.
 
-Naming it is most of the work. A portfolio-only classifier leaves 28% of these
+Naming it is most of the work. A portfolio-only classifier leaves 27% of these
 destinations unplaced, because roughly half the directorates in the table carry
 no portfolio at all; reading the body's own name for the ministry it hangs off
 brings that to 8%. What remains unplaced is shown rather than folded into a
@@ -209,7 +209,7 @@ def fig_ministry_flows(spells: pd.DataFrame) -> None:
          SOURCE + "  Destination is named from the post's portfolio where it "
                   "has one and from the body's own name where it does not — "
                   "roughly half the directorates in the table carry no "
-                  "portfolio, and a portfolio-only rule leaves 28% of these "
+                  "portfolio, and a portfolio-only rule leaves 27% of these "
                   "destinations unplaced against "
                   f"{unplaced / (n_int + n_def) * 100:.0f}% here. Where a "
                   "portfolio names several merged ministries, the lead one "

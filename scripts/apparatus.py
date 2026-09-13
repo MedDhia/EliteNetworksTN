@@ -310,6 +310,9 @@ MINISTRY_ENGLISH = {
     "emploi": "Employment", "economie": "Economy", "plan": "Planning",
     "femme_famille": "Women and Family", "technologies": "Technologies",
     "fonction_publique": "Public Service", "droits_homme": "Human Rights",
+    "communications": "Communications", "cooperation": "International Cooperation",
+    "investissement": "Investment",
+    "relations_assemblee": "Relations with Parliament",
 }
 
 # Where a post carries no portfolio, its own name is read for the ministry it
@@ -331,7 +334,18 @@ _MINISTRY_BY_NAME = [
     ("equipement", re.compile(
         r"minist[eè]re de l'[ée]quipement|ponts et chauss[ée]es|"
         r"agence fonci[eè]re", re.I)),
-    ("transport", re.compile(r"minist[eè]re du transport", re.I)),
+    # The register writes the plural far more often than the singular, and for
+    # most of the record "ministère des transports" was the actual title.
+    ("transport", re.compile(
+        r"minist[eè]re du transport|minist[eè]re des transports", re.I)),
+    # Interior and defence had no name rule at all. Their posts are usually
+    # placed from the portfolio field, so the omission was invisible until a
+    # body had to be placed from its name alone. Interior comes before
+    # development so that "ministère de l'intérieur et du développement local"
+    # files under interior, which is the ministry it is.
+    ("interieur", re.compile(r"minist[eè]re de l'int[ée]rieur", re.I)),
+    ("defense", re.compile(
+        r"minist[eè]re de la d[ée]fense", re.I)),
     ("industrie", re.compile(r"minist[eè]re de l'industrie", re.I)),
     ("energie", re.compile(r"minist[eè]re de l'[ée]nergie", re.I)),
     ("commerce", re.compile(r"minist[eè]re du commerce", re.I)),
@@ -356,6 +370,34 @@ _MINISTRY_BY_NAME = [
     ("presidence_republique", re.compile(
         r"pr[ée]sidence de la r[ée]publique|"
         r"secr[ée]tariat d'etat [aà] la pr[ée]sidence", re.I)),
+    ("communications", re.compile(
+        r"minist[eè]re des communications|"
+        r"minist[eè]re des technologies de la communication", re.I)),
+    ("cooperation", re.compile(r"coop[ée]ration internationale", re.I)),
+    # The remaining ministries in MINISTRY_ENGLISH that carried no name rule.
+    # Each is reachable from a portfolio, so these only bite where a body has
+    # to be placed from its own name — which is every edge in the organisation
+    # chart.
+    ("femme_famille", re.compile(
+        r"minist[eè]re de la femme|minist[eè]re de la famille|"
+        r"affaires de la femme", re.I)),
+    ("technologies", re.compile(r"technologies de l'information", re.I)),
+    ("developpement", re.compile(r"minist[eè]re du d[ée]veloppement", re.I)),
+    ("information", re.compile(r"minist[eè]re de l'information", re.I)),
+    ("fonction_publique", re.compile(r"fonction publique", re.I)),
+    ("droits_homme", re.compile(r"droits de l'homme", re.I)),
+    ("investissement", re.compile(r"minist[eè]re de l'investissement", re.I)),
+    ("relations_assemblee", re.compile(
+        r"relations avec (?:l'assembl[ée]e|les assembl[ée]es|la chambre)",
+        re.I)),
+]
+
+# Bodies that are not ministries and are not identified by their form either.
+# Parliament's secretariat files as `autre`, so only the name places it.
+_NOT_A_MINISTRY_BY_NAME = [
+    ("Parliament", re.compile(
+        r"assembl[ée]e des repr[ée]sentants du peuple|"
+        r"chambre des d[ée]put[ée]s|chambre des conseillers", re.I)),
 ]
 
 # Destinations that are not ministries and should not be forced into one. A
@@ -381,14 +423,23 @@ def ministry_of(portfolio, org: str) -> str | None:
     stands for it. That is a convention and not a fact — but compounds are 9%
     of destinations here, and the alternative, counting one move into several
     destinations, would make the flows sum to more than the people.
+
+    The lead domain is the first one that can actually be named. Returning the
+    literal first domain instead threw away posts the record places perfectly
+    well: `min_cooperation+developpement` led with a domain that had no English
+    name, so the post fell through to "not identifiable" while "developpement"
+    sat unread behind it. A portfolio that names nothing recognisable is not a
+    reason to stop either — the body's own name is tried after it, not instead
+    of it.
     """
     d = portfolio_domains(portfolio)
-    if d:
-        return d[0]
+    for dom in d:
+        if dom in MINISTRY_ENGLISH:
+            return dom
     for key, pat in _MINISTRY_BY_NAME:
         if pat.search(org):
             return key
-    return None
+    return d[0] if d else None
 
 
 def ministry_destination(portfolio, org: str, form: str) -> str:
@@ -410,4 +461,7 @@ def ministry_destination(portfolio, org: str, form: str) -> str:
         return MINISTRY_ENGLISH[key]
     if form in NOT_A_MINISTRY:
         return NOT_A_MINISTRY[form]
+    for label, pat in _NOT_A_MINISTRY_BY_NAME:
+        if pat.search(org):
+            return label
     return "Not identifiable"

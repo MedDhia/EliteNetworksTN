@@ -111,6 +111,24 @@ jobs:
       - name: Rebuild the dataset
         run: make bourse-build
 
+      # The political-connection coding is committed output like any other
+      # table, and its rules live in a config file that is easy to edit
+      # without rebuilding. Re-running it here puts it under the same
+      # byte-for-byte diff check as the edge list, so a changed rule cannot
+      # reach main without the coded firm-years that follow from it.
+      - name: Recode political connections
+        run: make bourse-political
+
+      # Both analyses write committed markdown derived from the tables above,
+      # so they belong under the same diff check: a changed rule or a changed
+      # edge must not leave a stale conclusion in the repository. Both are
+      # deterministic - exact betweenness, seeded permutations - so they
+      # reproduce byte for byte. The centrality pass is the slow one at about
+      # 100s, which is the price of having its numbers verified rather than
+      # asserted.
+      - name: Re-run the analyses
+        run: make bourse-analysis bourse-centrality
+
       # Fails the build on any ERROR-level finding (referential integrity,
       # self-loops, ownership weights outside (0, 100]).
       - name: Validate

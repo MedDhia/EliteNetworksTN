@@ -1,0 +1,89 @@
+rule_kind,pattern,category,tenure,note,source
+# Coding rules for the political-connection variable. Every rule is here rather
+# than in code so that a reader can see exactly what was counted as a
+# connection, disagree with a line, and rebuild.
+#
+# Columns:
+#   rule_kind   office_title | state_owned_firm | political_figure
+#   pattern     Python regex, matched case-insensitively against the cell with
+#               accents stripped ("Ministère" -> "ministere"). Anchor it.
+#   category    the connection category the rule assigns
+#   tenure      current | former   (office_title only; blank elsewhere)
+#   note        why this rule exists; read before changing it
+#   source      the literature or document the rule follows
+#
+# THE ACRONYM TRAP: "administrateur" contains the letters "minist". Every
+# office pattern below is anchored on a word boundary for that reason. A rule
+# without \b will silently mark every director in the corpus as a minister.
+#
+# ORDER IS PRECEDENCE. The first matching rule assigns the category, except
+# that a `former` match always beats a `current` one. So rules naming a
+# *person's* office come before rules naming an *organ*: "Fonctionnaire au
+# Ministere des Finances" is a civil servant sitting on a board, not the
+# ministry itself holding the seat, and the organ rule would otherwise claim
+# it because the ministry's name is in the title.
+#
+# --- rule_kind = office_title -------------------------------------------
+# Faccio (2006) counts a firm as connected when a top officer or large
+# shareholder is a minister, an MP, a head of state, or closely related to
+# one. These patterns read the office out of the title a filing prints next
+# to the name. Senior civil servants are included as a separate category, not
+# folded into "minister": the Tunisian boards in this corpus seat ministry
+# staff far more often than ministers, and whether that counts is a choice the
+# analyst should make, not one the coding should make for them.
+office_title,"\b(ex|anciens?)[\s.-]*ministres?\b",minister,former,"Former minister. Faccio and Hillman treat former office as a weaker but real tie; kept separate so it can be dropped.",Hillman 2005 JoM
+office_title,"\b(ex|anciens?)[\s.-]*secretaires?\s+d.?\s*etat\b",secretary_of_state,former,"Former junior minister.",Hillman 2005 JoM
+office_title,"\b(ex|anciens?|vice)[\s.-]*(vice[\s.-]*)?gouverneur\b",governor,former,"Former or deputy governor.",Hillman 2005 JoM
+office_title,"\b(ex|anciens?|retraite\w*)\b[^.]{0,40}\bministere\b",civil_servant,former,"A retired or former ministry official - 'Retraite, ancien cadre au Ministere de l'Economie'. Without this the ministry-organ rule reads the person as the ministry itself.",Hillman 2005 JoM
+office_title,"\bchef\s+de\s+cabinet\b",cabinet_staff,current,"Chef de cabinet of a minister or of the Prime Minister: political appointee, not career staff. MUST precede the bare minister rule - 'Chef de cabinet du Premier Ministre' contains the word and was being coded as a sitting Prime Minister.",Blanes i Vidal et al. 2012 AER
+office_title,"\bconseill\w*\s+(du|de\s+la|aupres\s+du)\s+ministre\b",ministerial_adviser,current,"Adviser to a minister. A real tie to the office but not the office: also must precede the bare minister rule.",Blanes i Vidal et al. 2012 AER
+office_title,\bministres?\b,minister,current,"A sitting minister named in a board or executive table. Runs after the rules for people attached to a minister, or it claims their rows.",Faccio 2006 AER
+office_title,"\bsecretaires?\s+d.?\s*etat\b",secretary_of_state,current,"Secretaire d'Etat: junior minister.",Faccio 2006 AER
+office_title,"\bdeputes?\b",parliament,current,"Member of parliament.",Faccio 2006 AER
+office_title,"\bgouverneur\b",governor,current,"Governor - of the central bank or of a gouvernorat. Both are state office.",Faccio 2006 AER
+office_title,"\bfonctionnaire\b",civil_servant,current,"Career civil servant, typically 'Fonctionnaire au Ministere des Finances'. Must precede the ministry-organ rule or the ministry's name in the title claims the row. The weakest office tie here: include or drop deliberately.",Khwaja and Mian 2005 QJE
+office_title,"\brepresentant\w*\s+(de\s+)?l.?\s*etat\b",state_representative,current,"A seat held explicitly on the State's behalf. Often printed as a section heading over a block of directors rather than against one name.",Boubakri et al. 2008 JCF
+office_title,"\bministeres?\b",ministry_organ,current,"A ministry itself holding the seat, e.g. 'Ministere des Finances' as a board member. An organ, not a person - so this rule runs last, after every person-office rule has had its chance.",Boubakri et al. 2008 JCF
+office_title,"\bbanque\s+centrale\s+de\s+tunisie\b",central_bank,current,"The BCT itself on a board, or a serving BCT officer identified by it. Organ-level, so it runs after the person rules.",Diwan et al. 2020 JDE
+#
+# --- rule_kind = state_owned_firm ---------------------------------------
+# Khwaja and Mian (2005) identify political connection through lending by
+# state-owned banks; Diwan, Keefer and Schiffbauer (2020) apply the same logic
+# across MENA. Tunisia's three majority state-owned commercial banks are the
+# channel. Patterns are anchored to the parent bank only. Their subsidiaries
+# (STB SICAR, BNA CAPITAUX, BH LEASING) are NOT included by default: a stake
+# in a bank's leasing arm is not the same instrument as a credit relationship
+# with the bank, and folding them in would roughly double the flagged set on
+# an assumption the analyst has not made. Add them here to widen it.
+state_owned_firm,"^stb( bank)?$",public_bank,,"Societe Tunisienne de Banque. Majority state-owned throughout the period.",Diwan et al. 2020 JDE
+state_owned_firm,"^(stb )?societe tunisienne de banque$",public_bank,,"Full-name spelling of STB.",Diwan et al. 2020 JDE
+state_owned_firm,"^bna$",public_bank,,"Banque Nationale Agricole. Majority state-owned.",Diwan et al. 2020 JDE
+state_owned_firm,"^banque nationale agricole$",public_bank,,"Full-name spelling of BNA.",Diwan et al. 2020 JDE
+state_owned_firm,"^bh( bank)?$",public_bank,,"Banque de l'Habitat. Majority state-owned.",Diwan et al. 2020 JDE
+state_owned_firm,"^banque de l.?habitat( - bh)?$",public_bank,,"Full-name spelling of BH.",Diwan et al. 2020 JDE
+#
+# --- rule_kind = political_figure ---------------------------------------
+# DELIBERATELY EMPTY. Rijkers, Freund and Nucifora (2017) code Tunisian
+# political connection by matching firm owners and directors against a named
+# roster of 114 Ben Ali family members and associates, taken from the
+# post-revolution confiscation decrees. That is the strongest identification
+# strategy available for this country and this dataset can carry it - the
+# matching code below is written and tested.
+#
+# It ships with no names in it, and that is a research-integrity decision
+# rather than an oversight. Adding a name here asserts that a specific, often
+# living private individual was connected to an authoritarian regime. That
+# assertion needs a citable primary source - the confiscation decrees in the
+# Journal Officiel, a published minister list, a court record - attached to
+# the row. A name recalled from memory, or inferred because it is a common
+# elite surname, would be defamatory where it is wrong and unverifiable where
+# it is right, and Tunisian elite families reuse given names across
+# generations, so surname matching alone WILL produce false positives.
+#
+# To use it: add rows below with the full name, the office or relationship in
+# `category`, and the document that establishes it in `source`. Matching is on
+# the same order-insensitive person key the resolver uses, so "BEN ALI Leila"
+# and "Leila Ben Ali" are one person. Then rebuild.
+#
+# rule_kind,pattern,category,tenure,note,source
+# political_figure,Some Named Person,ben_ali_family,,"Decree 2011-xx of ...",JORT 2011 no. xx

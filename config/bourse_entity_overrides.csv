@@ -23,3 +23,27 @@ raw_name,entity_id,entity_type,canonical_name,note
 #
 # UBCI Bourse,F00000000a,firm,Union Capital,renamed after 2024 COFIB merger
 # COFIB Capital Finances,F00000000a,firm,Union Capital,absorbed into Union Capital 2024
+#
+# --- State bodies, consolidated ------------------------------------------
+# Each of these is one institution written several ways across filings, and
+# left apart the state's footprint is divided by the number of its spellings.
+# The IDs are arbitrary but stable; what matters is that rows sharing one ID
+# merge. Acronym and expansion are the same body in every case here.
+CNSS,S0000000c01,state,Caisse Nationale de Sécurité Sociale (CNSS),acronym of the same body
+Caisse Nationale de Sécurité Sociale,S0000000c01,state,Caisse Nationale de Sécurité Sociale (CNSS),expansion of CNSS
+"Caisse Nationale de Sécurité Sociale ""CNSS""",S0000000c01,state,Caisse Nationale de Sécurité Sociale (CNSS),acronym quoted after the expansion
+CNSS idem,S0000000c01,state,Caisse Nationale de Sécurité Sociale (CNSS),"""idem"" is the table repeating the row above"
+ETAP,S0000000e01,state,Entreprise Tunisienne d'Activités Pétrolières (ETAP),acronym of the same body
+Entreprise Tunisienne d'Activités Pétrolières - ETAP,S0000000e01,state,Entreprise Tunisienne d'Activités Pétrolières (ETAP),expansion of ETAP
+ENTREPRISE TUNISIENNE DES ACTIVITES PETROLIERES « ETAP »,S0000000e01,state,Entreprise Tunisienne d'Activités Pétrolières (ETAP),expansion of ETAP
+ETAP POUR LE COMPTE DE L'ETAT,S0000000e01,state,Entreprise Tunisienne d'Activités Pétrolières (ETAP),ETAP holding on the state's behalf is still ETAP
+CDC,S0000000d01,state,Caisse des Dépôts et Consignations (CDC),acronym of the same body
+Caisse des Dépôts et Consignations,S0000000d01,state,Caisse des Dépôts et Consignations (CDC),expansion of CDC
+"Caisse des Dépôts et Consignations ""CDC""",S0000000d01,state,Caisse des Dépôts et Consignations (CDC),acronym quoted after the expansion
+L’ETAT tunisien,S0000000a01,state,État Tunisien,the state itself
+État Tunisien,S0000000a01,state,État Tunisien,the state itself
+Etat,S0000000a01,state,État Tunisien,bare form of the same holder
+l'Etat,S0000000a01,state,État Tunisien,bare form of the same holder
+Office du Commerce de Tunisie,S0000000f01,state,Office du Commerce de Tunisie,one office written three ways
+Office de Commerce de Tunisie,S0000000f01,state,Office du Commerce de Tunisie,one office written three ways
+Office du Commerce de la Tunisie,S0000000f01,state,Office du Commerce de Tunisie,one office written three ways

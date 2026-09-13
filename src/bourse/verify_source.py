@@ -167,6 +167,15 @@ def fetch(url: str, sha: str, local_path: str | None = None) -> Path | None:
 
 
 def page_texts(pdf_path: Path, wanted: set[int]) -> dict[int, str]:
+    """Text of the cited pages, read the same way the extractor read them.
+
+    A third of the corpus is scanned paper with no text layer at all. Those
+    pages are extracted by OCR, so verifying them against ``extract_text`` -
+    which returns nothing from an image - would fail every record drawn from
+    them and report a sound dataset as broken. Where a cited page comes back
+    empty, it is re-read with the same OCR reader the extraction used, so the
+    comparison is like for like.
+    """
     import pdfplumber
 
     out: dict[int, str] = {}
@@ -176,6 +185,20 @@ def page_texts(pdf_path: Path, wanted: set[int]) -> dict[int, str]:
             # Records cite 1-based page numbers.
             if 1 <= p <= n:
                 out[p] = pdf.pages[p - 1].extract_text() or ""
+
+    blank = [p for p, t in out.items() if not t.strip()]
+    if blank:
+        try:
+            from .extract.ocr import ocr_document
+            # OCR renders from page 1, so read as far as the deepest cited page
+            # and keep the ones asked for.
+            doc = ocr_document(pdf_path, max_pages=max(blank))
+            by_page = {pg.page_number: pg.extract_text() for pg in doc.pages}
+            for p in blank:
+                if by_page.get(p):
+                    out[p] = by_page[p]
+        except Exception as exc:  # noqa: BLE001
+            LOG.debug("OCR fallback failed for %s: %s", pdf_path.name, exc)
     return out
 
 
