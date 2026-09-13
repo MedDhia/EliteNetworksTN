@@ -128,8 +128,9 @@ _CORPORATE_WORD = re.compile(
 # seats, before this. The single-word forms are already caught at extraction;
 # these are the phrases, which are only recognisable from how they open.
 _ORGAN_PHRASE = re.compile(
-    r"^(le|la|les|l|un|une|nos|notre|leur)?\s*"
+    r"^(?:(?:le|la|les|l|d|du|de|des|un|une|nos|notre|leur)\s+){0,2}"
     r"(conseil|president|presidente|presidence|directeur|directrice|direction|"
+    r"administration|"
     r"membre|membres|administrateur|administrateurs|comite|commission|"
     r"organe|organes|role|assemblee|bureau\s+du|secretaire|gerance|"
     r"composition|nomination|revocation|mandat\s+d|directoire|censeur|"
@@ -140,6 +141,13 @@ _ORGAN_PHRASE = re.compile(
 # organ test rather than matched on its own: a leading digit is also how
 # "1 Holding SA" and "3M Tunisie" begin.
 _LEADING_ITEM_NUMBER = re.compile(r"^\d{1,2}\s+(?=[a-z])")
+
+# A status written where a name belongs: "en fonction", "en exercice".
+_STATUS_PHRASE = re.compile(r"^(en|hors)\s+(fonction|exercice|cours|activite)\b")
+
+# Footnote markers attached to a display spelling: "Saloua ARAB ***",
+# "La Societe HIKMA PARTICIPATIONS (*)".
+_MARKED = re.compile(r"[*]|\(\s*\*+\s*\)")
 
 
 def is_not_an_entity(name: str) -> bool:
@@ -153,6 +161,8 @@ def is_not_an_entity(name: str) -> bool:
     if not n:
         return True
     if _ORGAN_PHRASE.match(n) or _ORGAN_PHRASE.match(_LEADING_ITEM_NUMBER.sub("", n)):
+        return True
+    if _STATUS_PHRASE.match(n):
         return True
     if _CORPORATE_WORD.search(n):
         return False
@@ -441,7 +451,13 @@ class Resolver:
             for name, n in c.items():
                 merged[_HONORIFIC.sub("", name).strip(" .,;:-")] += n
             c = merged
-        best = max(c.items(), key=lambda kv: (kv[1], len(kv[0])))
+        # Footnote markers travel with a name through the matching key, which
+        # strips them, but not through the display vote: "Saloua ARAB ***"
+        # and "Saloua ARAB" are one entity, and the starred spelling should
+        # not be the one it is shown under. Marked spellings lose to unmarked
+        # ones of equal weight rather than being discarded, so an entity only
+        # ever seen marked still gets a name.
+        best = max(c.items(), key=lambda kv: (kv[1], not _MARKED.search(kv[0]), len(kv[0])))
         return best[0]
 
     def entity_rows(self) -> list[dict]:
