@@ -1,6 +1,6 @@
 # Inference tiers: what is read off the page, and what is reasoned from it
 
-Four strategies widen coverage beyond what a single dyad-anchored pass can
+Five strategies widen coverage beyond what a single dyad-anchored pass can
 reach. Each is a **labelled, additive tier** rather than a loosened threshold,
 and each is droppable in one filter. That discipline is not stylistic: an
 earlier change to this pipeline loosened a guard instead of adding a tier and
@@ -13,6 +13,7 @@ silently deleted 372 resolved dyads, 854 spells and 7,171 panel rows.
 | address corroboration | two spellings at one seat | `org_entities.csv`, `entity_basis = address_corroborated` | `entity_basis` |
 | identifier bridge | a matricule or RC number on two filings | `resolution.csv`, `org_match_basis = identifier_bridge` | `resolve_pass == 0` |
 | snowballing | an anchor a later pass supplied | `resolution.csv`, `resolve_pass` > 0 and `link_status = snowball` | `resolve_pass == 0` |
+| **national register** | an identifier the RNE also carries | `rne_org_links.csv`; `org_match_basis = hard_identifier` | delete `rne_org_links.csv` |
 
 ## What each tier actually produced
 
@@ -22,16 +23,22 @@ than the marker counts further down this document would suggest.
 
 | tier | yield | verdict |
 |---|---|---|
-| **identifier bridge** | **745 organisations named** — the largest single snowball channel, ahead of person-anchoring at 594 | works as intended |
-| snowballing overall | 497 new person links (`link_status = snowball`), converged at pass 3: +1,184, +649, +3, then 0 | works; cap of 12 never bound |
+| **national register** | `org_by_hard_identifier` 4,639 → **7,546 (+63%)**; **2,455** gazette misattributions corrected; **+29** named persons | **quality, not coverage** |
+| **identifier bridge** | **672 organisations named** — the largest single snowball channel, ahead of person-anchoring at 537 | works as intended |
+| snowballing overall | 460 new person links (`link_status = snowball`), converged at pass 3: +1,104, +565, then 0 | works; cap of 12 never bound |
 | subsidiaries | `org_tie` events 30,161 → 30,333 | small and correct |
-| address corroboration | 884 entities merged from 20,704 candidate pairs; name-keyed share 62.0% → 61.2% | **high precision, negligible coverage** |
-| **kinship ties** | **14 dyads** from 8,769 markers in print; 8,749 queued | **not usable as built** |
+| address corroboration | 890 entities merged from 20,704 candidate pairs; name-keyed share 62.0% → 61.2% | **high precision, negligible coverage** |
+| **kinship ties** | **13 dyads** from 8,769 markers in print; 8,750 queued | **not usable as built** |
 
-Resolution overall: `resolved` 11,036 → 11,032 (flat), `inferred` 11,420 →
-13,039, `snowball` 497 new. Named 22,456 → 24,568. The gain is entirely in
-the labelled tiers; the dyad-anchored count did not move, and saying so is
+Resolution overall: `resolved` 11,036 → **11,286**, `inferred` 11,420 →
+12,851, `snowball` 460 new. Named 22,456 → **24,597**. Almost all of that gain
+is in the labelled tiers rather than the dyad-anchored count, and saying so is
 more useful than a headline that averages them together.
+
+The snowball's per-channel yields are **lower** than in the pre-register run
+(745/594/256/241) for a reason worth reading forwards: work moved earlier in
+the pipeline. What pass 0 now names by registration number, later passes no
+longer have to reach by resemblance. Section 5 has the full accounting.
 
 Nothing here changes pass 0. `resolution.csv` filtered to `resolve_pass == 0`
 reproduces the previous build exactly, and `evidence_tier = 'gazette_dated'`
@@ -345,6 +352,89 @@ whole tier, or any single round of it, and see what changes. `spells.py` gives
 these links `evidence_tier = gazette_snowball`, kept separate from
 `gazette_inferred` because the two fail differently — an inference rests on a
 name being unique corpus-wide and cannot propagate; a snowball can.
+
+---
+
+## 5 · The national register as an identity spine
+
+The Registre National des Entreprises publishes what the gazette does not: the
+matricule fiscal and the RC number as **primary keys**, each with the firm's
+registered name beside it. 393,788 entity rows, 82.7% carrying a French name.
+
+The gazette already prints these numbers; what it does not give is an
+authority on which firm a number belongs to. Until now that authority was
+name similarity, applied to whatever spelling the filing happened to use.
+
+### The register joins; the name only labels
+
+`rne.link_identifiers` matches on the **identifier**, and uses the register's
+name for one purpose only — to decide which seed organisation, if any, that
+identifier denotes. The name never joins. Of 118,584 distinct identifiers the
+gazette prints, **87,288 are in the register (73.6%)**; those name **5,251
+seed organisations**, and `resolve` reads **10,611** of them as identity-grade.
+
+A contradiction *inside* the register is not resolved by picking a side:
+**2,952** identifiers appear on two register rows with different names and are
+dropped from the map entirely. The register is the authority, so a
+disagreement inside it means the question has no answer from here.
+
+The 31,296 identifiers the register does not carry are **listed, not judged**
+(`rne_unmatched_identifiers.csv`). A matricule the register does not know is
+either OCR damage or a firm that predates the register, and nothing available
+here tells those apart.
+
+### What it changed, on both sides
+
+| | before | after | |
+|---|---|---|---|
+| `org_by_hard_identifier` | 4,639 | **7,546** | **+63%** |
+| `org_resolved` | 86,197 | 89,062 | +2,865 |
+| identifiers seeded into the snowball | 14,290 | 18,306 | +28% |
+| **`register_overrode_gazette_match`** | — | **2,455** | misattributions corrected |
+| identifier values refused as conflicting | 472 | **1,166** | conflicts *exposed*, not created |
+| `resolved` (dyad-anchored persons) | 11,032 | **11,286** | +254 |
+| `inferred` | 13,039 | 12,851 | −188 |
+| `snowball` | 497 | 460 | −37 |
+| **total named persons** | 24,568 | **24,597** | **+29 (+0.1%)** |
+
+Read those last four rows together, because the headline is the small number.
+254 people gained a **dyad anchor**, but about 225 of them were already named
+by a weaker tier: the register mostly **promoted** existing people onto better
+evidence rather than finding new ones. Net new named individuals: **29**.
+
+That the snowball's own yield *fell* (672/537/225/235 against
+745/594/256/241) is the same effect seen from the other end. Work moved
+earlier in the pipeline: what pass 0 now names by registration number, later
+passes no longer have to reach by resemblance. The snowball also converged one
+pass sooner, because the register supplied up front the identifiers the
+snowball previously had to harvest.
+
+The 1,166 refused conflicts are worth stating plainly as a **gain**. Feeding
+18,306 register-backed mappings in made more identifier values demonstrably
+name two different organisations — conflicts that name similarity had
+previously papered over. A refusal here is a merge hub not built.
+
+### The person table is deliberately not matched
+
+The register's natural-person table has **615,659 rows and 7 French names
+(0.0%)**. It is Arabic-only. Transliterating 615,659 Arabic names against a
+French seed roster, with no identifier on the person side to check the result
+against, is precisely the merge-hub failure mode with its one safeguard
+removed. `rne.person_register_summary` therefore **counts and reports**; it
+returns no links of any kind, and a test pins that it never will.
+
+### What this tier is, and what it is not
+
+**The register is a data-quality instrument, not a coverage instrument.** It
+made organisational identity substantially better — 2,455 corrections and a
+63% rise in hard-identifier matches — and moved the person count by 0.1%.
+
+That is not a disappointment; it locates the bottleneck. The person side is
+limited by the **13,630-name seed roster**, not by organisational
+identification: **306,324 gazette-only persons** remain outside it. No
+improvement in firm identity can name a person the roster does not contain.
+Widening the person universe is a separate decision about who counts as an
+elite, not a resolution problem.
 
 ---
 
