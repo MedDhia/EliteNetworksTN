@@ -196,3 +196,41 @@ jobs:
       - name: Coverage summary
         if: always()
         run: head -n 25 docs/VALIDATION-aalam-tunisiyun.md >> "$GITHUB_STEP_SUMMARY"
+
+  # The rodovid build. Cheaper to check than any of the others: the two source
+  # sheets are committed as gzipped CSV, the three table stages use the standard
+  # library alone, and the whole chain runs in about fifteen seconds, so CI can
+  # rebuild from the real inputs rather than from fixtures. pytest is the only
+  # thing installed.
+  rodovid-dataset:
+    name: rodovid genealogies rebuild reproducibly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pytest
+        run: pip install pytest
+      - name: Tests
+        run: make rodovid-test
+      - name: Rebuild the dataset
+        run: make rodovid-build rodovid-families
+
+      # Not a validation report but a standing check on what the network
+      # figures may be read to say: the 5-core is still 236 families and still
+      # the deepest core the network has, 955 families still married into the
+      # field exactly once, the beylical house is still the widest-married at
+      # 160 allies, and closure and modularity are still inside the ceilings
+      # that make "a web, not a set of blocs" the right description. Exits
+      # non-zero on any of them.
+      - name: Audit what the figures claim
+        run: make rodovid-audit
+
+      - name: Committed tables match the rebuild
+        run: |
+          if ! git diff --exit-code -- data/processed/rodovid/; then
+            echo "::error::Rebuilding produced different tables than those committed."
+            echo "Run 'make rodovid' and commit the result."
+            exit 1
+          fi

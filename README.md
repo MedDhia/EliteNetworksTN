@@ -508,3 +508,70 @@ variable definitions. As with the other builds the output trees are kept apart;
 whether the gazette's person registry and this one should share identifiers is
 the same open question, with the same answer — not yet. The `name_translit`
 column exists so the two can be joined by eye in the meantime.
+
+## A fifth build: elite genealogies, and who married whom
+
+The four builds above read what institutions wrote down — appointments,
+filings, a biographical dictionary. This one reads kinship, from a crawl of
+[rodovid.org](https://rodovid.org) seeded on Tunisian elite families and
+exported to a workbook (`RodovidData234862.xls`). It was migrated here from
+[ElectionsTN](https://github.com/MedDhia/ElectionsTN), where it sat beside
+election returns it had nothing to do with.
+
+Crawls follow marriages, so the export overran its subject: alongside the
+Tunisian families it carries French aristocratic and industrial lineages,
+German, Russian, Danish and Swedish royalty, the Ottoman house and its Abkhaz
+and Circassian beys, the London Rothschild–Montefiore connection, and Egyptian
+and Persian court families. **Slightly more than four rows in ten had nothing
+to do with Tunisia**, and separating them is most of what this build does.
+
+Nothing is hand-listed. Each of the 65,535 people is scored on four signals —
+the places and beylical offices named in their own record, a character n-gram
+model over the name, the place evidence of everyone else sharing the surname,
+and the evidence of relatives one and two steps away in the kinship graph — and
+kept when the weighted sum is positive. Every component is written out per
+person, so the call can be audited or re-thresholded without rerunning
+anything, and the two flags (`married_in`, `tunisia_link`) mark the rows where
+the signals disagree.
+
+Current build: **37,819 Tunisians and 23,565 kinship ties kept, 27,716 people
+excluded**, collapsed to **3,642 marriage alliances carrying 3,912 marriages
+between 1,853 families**.
+
+| figure | what |
+|---|---|
+| `fig01_rodovid_alliances` | all 1,853 families; the thirty widest-married named, and a corona of the 955 that married into the field exactly once |
+| `fig02_rodovid_alliance_core` | the 5-core, 236 families. The 6-core is empty, so this is the deepest core the network has |
+| `fig03_rodovid_alliance_null` | that core beside a degree-preserving rewiring of itself |
+
+**What the network is not.** A force-directed picture always looks like it has
+neighbourhoods, because putting connected things near each other is the
+algorithm's whole job. These do not: the elite here marries *widely*, not into
+circles. Against 50 rewirings that give every family the same number of allies
+and deal the marriages at random, the observed network closes 1.00x as many
+triangles as chance on the whole graph and 1.19x inside the core, and core
+modularity sits at z=+1.9, inside the noise of the null itself. The third
+figure is that comparison drawn — two panels a reader cannot tell apart. The
+beylical house is the reason the picture has a centre at all: `Bey` marries
+into 160 different families, 218 marriages, where the next widest, `Mrad`,
+reaches 95. `make rodovid-audit` recomputes all of it and exits non-zero if any
+of it stops being true, which is why it runs in CI.
+
+```bash
+make rodovid          # build -> families -> audit; ~15 s, standard library only
+make rodovid-figures  # the three plates (~6 min; needs matplotlib)
+make rodovid-test
+```
+
+Code is `src/rodovid/`, outputs are `data/processed/rodovid/`, and both source
+sheets are committed gzipped under `source/` so the build needs no Excel
+reader and CI can rebuild from the real inputs and diff the result.
+
+**Read [`docs/LIMITATIONS-rodovid.md`](docs/LIMITATIONS-rodovid.md) before
+using any of it.** Two things above all. **The export is truncated**: both
+sheets came out of Excel at exactly 65,535 rows, the BIFF8 limit, so 22,857 of
+the people kept here have no surviving tie and every count on the kinship graph
+is a floor. And **there is no human-coded gold sample** — the 0.966 printed on
+every run is the name model's agreement with the place signal that trained it,
+not a precision. Variable definitions are in
+[`docs/CODEBOOK-rodovid.md`](docs/CODEBOOK-rodovid.md).

@@ -10,3 +10,11 @@ pdfplumber>=0.11
 beautifulsoup4>=4.12
 lxml>=5.0
 PyYAML>=6.0
+
+# --- figures ---------------------------------------------------------------
+# Every figure stage in the repository draws with these: scripts/figures*.py
+# for the gazette and A'lam builds, src/rodovid/figures.py for the marriage
+# network. No table stage needs them, and none of the CI jobs that rebuild and
+# diff the data installs them for that reason.
+matplotlib>=3.7
+numpy>=1.24
