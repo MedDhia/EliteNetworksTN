@@ -1,0 +1,49 @@
+person_id,name_ar,name_translit,is_subject,entry_uid,cohort,birth_year,death_year,role_descriptor_ar,rank,n_assertions,n_ties,first_seen_entry
+PERSON_ABYHAJB_LY,علي بو حاجب,LY ABYHAJB,yes,aalam:3.06,المعاصرون,1888,1965,الصحافى والباحث والمناضل,,0,0,aalam:3.06
+PERSON_ABYHAJB_SALM,سالم بو حاجب,SALM ABYHAJB,yes,aalam:2.06,التابعون,1827,1924,ْ للغوي والفيلسوف والمربي,,0,0,aalam:2.06
+PERSON_ASRM_MHMD,محمد الأصرم,MHMD ASRM,yes,aalam:2.07,التابعون,1858,1925,لقد كان المرحوم محمك الأصرم قوي البنية معتدل القامق ذا عيئين,,0,0,aalam:2.07
+PERSON_BKWSH_BDSLAM,عبد السلام البكوش,BDSLAM BKWSH,yes,aalam:2.12,التابعون,1871,1946,العالم اللغوي والشاعر,,0,0,aalam:2.12
+PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,MHMD FADL BNASHWR,yes,aalam:3.10,المعاصرون,1909,1970,رجل من رجال عصر النهضة,,1,1,aalam:3.10
+PERSON_BNASHWR_MHMD_TAHR,محمد الطاهر بن عاشور,MHMD TAHR BNASHWR,yes,aalam:3.12,المعاصرون,1879,1973,الرجل والقاضى والعلامة,,7,7,aalam:3.12
+PERSON_BNHSYN_AHMD,أحمد بن حسين,AHMD BNHSYN,yes,aalam:1.04,السابقون,1800,1868,العالم والفقيه والمربي,,2,2,aalam:1.04
+PERSON_BNKHWJH_MHMD,محمد بن الخوجة,MHMD BNKHWJH,yes,aalam:2.10,التابعون,1869,1942,لقد حجرت العادة فى الامبراطورية العثمانية كما فى غيرها من الدول,,0,0,aalam:2.10
+PERSON_BNMSTFY_KHYRALLH,خير الله بن مصطفى,KHYRALLH BNMSTFY,yes,aalam:3.05,المعاصرون,1867,1965,مما لا شك فيه أن خير الله بن مصطفى أجنبيٌ الأصل. فقد ولد جدّه,,0,0,aalam:3.05
+PERSON_BNMSTFY_RSHYD,رشيد بن مصطفى,RSHYD BNMSTFY,yes,aalam:2.14,التابعون,1876,1947,المهندس والمربي والباحث الموسيقي,,0,0,aalam:2.14
+PERSON_BWRQYBH_MHMD,محمد بورقيبة,MHMD BWRQYBH,yes,aalam:3.02,المعاصرون,1882,1956,الصحافي ورجل السياسة,,0,0,aalam:3.02
+PERSON_BWSHWSHH_LY,علي بوشوشة,LY BWSHWSHH,yes,aalam:2.03,التابعون,1859,1917,الصحافي والمزارع,,0,0,aalam:2.03
+PERSON_DYAF_AHMD_BNABY,أحمد بن أبي الضياف,AHMD BNABY DYAF,yes,aalam:1.06,السابقون,1804,1874,الحقوقي والمؤرخ ورجل الدولة,,0,0,aalam:1.06
+PERSON_GHTAS_AHMD,أحمد الغطاس,AHMD GHTAS,yes,aalam:2.08,التابعون,1875,1926,المحامي والأديب والمفكم,,0,0,aalam:2.08
+PERSON_HANBH_LY_BASH,علي باش حانبة,LY BASH HANBH,yes,aalam:2.04,التابعون,1876,1918,أنه لمن المؤسف حمّاً أن نلاحظ ما اكتنف روّادنا السابقين من نسيان»,,0,0,aalam:2.04
+PERSON_HSYN,الجنرال حسين,HSYN,yes,aalam:1.07,السابقون,,1887,الرجل والمواطن والدبلوماسي,general,0,0,aalam:1.07
+PERSON_KHAMS_MHMD_BYRM,محمد بيرم الخامس,MHMD BYRM KHAMS,yes,aalam:1.08,السابقون,1840,1889,المفكر والأديب والموُرّخ,,0,0,aalam:1.08
+PERSON_KHLSY_MHMD_SYD,محمد السعيد الخلصي,MHMD SYD KHLSY,yes,aalam:3.04,المعاصرون,1898,1964,الشاعر والفناتن,,0,0,aalam:3.04
+PERSON_KHMYRY_TAHR,الطاهر الخميري,TAHR KHMYRY,yes,aalam:3.13,المعاصرون,1904,1973,الأديب والباحث والناقد الاجتماعى,,0,0,aalam:3.13
+PERSON_KHYRALDYN,الجنرال خير الدين,KHYRALDYN,yes,aalam:1.09,السابقون,1822,1890,الجندي والمصلح ورجلل الدولة,general,15,17,aalam:1.09
+PERSON_KHYRALDYN_MHMD,محمد باي خير الدين,MHMD KHYRALDYN,yes,aalam:2.05,التابعون,1872,1922,المفكر والمتصوّف,bey,0,0,aalam:2.05
+PERSON_KHYRALDYN_TAHR,طاهر باشا خير الدين,TAHR KHYRALDYN,yes,aalam:2.09,التابعون,1872,1937,القائد والمنظم ورجل الدولة,pasha,1,1,aalam:2.09
+PERSON_KHYRALLH_SHADHLY,الشاذلي خير الله,SHADHLY KHYRALLH,yes,aalam:3.09,المعاصرون,1898,1972,الرجل والكائتب والوطني,,0,0,aalam:3.09
+PERSON_LATY_HSN,حسن ڤلاتي,HSN LATY,yes,aalam:3.07,المعاصرون,1880,1966,المحامسي والمفكسر والسياسي,,1,1,aalam:3.07
+PERSON_MATRY_MHMWD,محمود الماطري,MHMWD MATRY,yes,aalam:3.11,المعاصرون,1897,1972,الطبيب والمناضل,,0,0,aalam:3.11
+PERSON_MSTFY,مصطفى آغة,MSTFY,yes,aalam:2.11,التابعون,1871,1946,الشاعر الفيلسوف,agha,0,1,aalam:2.11
+PERSON_QABADW_MHMWD,محمود قابادو,MHMWD QABADW,yes,aalam:1.05,السابقون,1812,1871,الشاعر والمتصوف والمربى,,0,0,aalam:1.05
+PERSON_RDWAN_TYB,الطيب رضوان,TYB RDWAN,yes,aalam:3.01,المعاصرون,1869,1955,المدرس والمزارع ورجل العمل,,1,1,aalam:3.01
+PERSON_RYAHY_ABRAHYM,إبراهيم الرياحي,ABRAHYM RYAHY,yes,aalam:1.03,السابقون,1768,1850,الفقيه والرّحالة والدبلوماسى,,0,0,aalam:1.03
+PERSON_SFR_BSHYR,البشير صفر,BSHYR SFR,yes,aalam:2.02,التابعون,1865,1917,المربي والموة ظف ا لكبيم,,4,4,aalam:2.02
+PERSON_SHABY_MHMD_AMYN,محمد الأمين الشابي,MHMD AMYN SHABY,yes,aalam:3.14,المعاصرون,1917,1974,الأديبب والمفكر والمربى,,0,0,aalam:3.14
+PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,ZYNALABDYN SNWSY,yes,aalam:3.08,المعاصرون,1898,1966,الرجل والكاتب والمناضل,,1,1,aalam:3.08
+PERSON_TAB_YWSF_SAHB,يوسف صاحب الطابع,YWSF SAHB TAB,yes,aalam:1.02,السابقون,1763,1815,لقد ولد يوسف صاحب الطابع بملدافيا (أو البغدان باللغة التركية) في,,0,0,aalam:1.02
+PERSON_THMANH_ZYZH,عزيزة عثمانة,ZYZH THMANH,yes,aalam:1.01,السابقون,1606,1669,المحسئة والمنقفة,,0,0,aalam:1.01
+PERSON_TLATLY_SADQ,الصادق التلاتلي,SADQ TLATLY,yes,aalam:2.15,التابعون,1871,1950,المربي ورجل السياسة,,0,0,aalam:2.15
+PERSON_WRDANY_LY,علي الورداني,LY WRDANY,yes,aalam:2.01,التابعون,1861,1905,الفنان والعالم والشاعر,,0,0,aalam:2.01
+PERSON_YASHY_HSWNH,حسونة العياشي,HSWNH YASHY,yes,aalam:3.03,المعاصرون,1873,1958,المحامي والصحافي ورجل السياسة,,0,0,aalam:3.03
+PERSON_ZAWSH_BDJLYL,عبد الجليل الزاوش,BDJLYL ZAWSH,yes,aalam:2.13,التابعون,1873,1947,صاحب الإنجازات والصحافي,,0,0,aalam:2.13
+PERSON_ABY_AHMD,احمد الابي,AHMD ABY,no,,,,,,,0,1,aalam:1.04
+PERSON_AWL_AHMD,أحمد باي الأول,AHMD AWL,no,,,,,,bey,0,1,aalam:1.09
+PERSON_BNAHMD_LY,علي بن احمد,LY BNAHMD,no,,,,,,,0,1,aalam:3.07
+PERSON_BNASHWR_TAHR,الطاهر بن عاشور,TAHR BNASHWR,no,,,,,,,0,1,aalam:3.10
+PERSON_BNMSWD_TAHR,الطاهر بن مسعود,TAHR BNMSWD,no,,,,,,,0,1,aalam:1.04
+PERSON_DAR_MSTFY_KHZNH,مصطفى خزنه دار,MSTFY KHZNH DAR,no,,,,,,,0,2,aalam:1.09
+PERSON_MHMD,محمد باي,MHMD,no,,,,,,bey,0,1,aalam:1.09
+PERSON_SADQ,الصادق باي,SADQ,no,,,,,,bey,0,1,aalam:1.09
+PERSON_SFR_MSTFY,مصطفى صفر,MSTFY SFR,no,,,,,,,0,1,aalam:2.02
+PERSON_SWSY_MHMD,محمد السئوسي,MHMD SWSY,no,,,,,,,0,1,aalam:3.08

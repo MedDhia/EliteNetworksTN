@@ -315,3 +315,76 @@ file, so `make bourse-resolve bourse-fetch` reconstructs it from the CMF's own
 servers. As with the second build, the output trees are kept apart; whether the
 gazette's person registry and this one should eventually share identifiers is
 the same open question, with the same answer — not yet.
+
+---
+
+## A fourth build: a printed biographical dictionary, 1606–1973
+
+The three builds above read institutional records, all of them French-language,
+and none reaches back before independence. This one reads a book:
+**الصادق الزمالي، أعلام تونسيون** (Sadok Zmerli, *A'lām Tūnisiyyūn*, Dar
+al-Gharb al-Islami, Beirut, 2000) — 38 biographical essays on the Tunisian
+reform and nationalist elite, from Aziza Othmana (b. 1606) to Muhammad al-Tahir
+ibn Ashur (d. 1973).
+
+It adds three things the other builds do not have:
+
+- **the pre-1957 period**, which the gazette cannot reach;
+- **Arabic source text**, which required a separate name normaliser — the
+  French build's `names.py` uppercases into `[A-Z0-9' ]` and reduces every
+  Arabic string to `PERSON_UNKNOWN`;
+- **pedagogical lineage** — who studied under whom, and in what. In this
+  stratum a man's teachers place him more reliably than his appointments do,
+  and the book states those ties explicitly
+  («قرأ عليه الفقه والنحو والمنطق والبلاغة»).
+
+The volume has **no text layer**: all 384 pages are bilevel scans, so the build
+begins with OCR rather than a download. The scan is not redistributed;
+`data/raw/aalam/manifest.csv` carries a sha256 and the exact engine, version
+and flags per page, and the OCR'd text is committed so the tables rebuild — and
+the provenance guard runs — without an OCR engine installed.
+
+Current build: **384 pages → 455,131 characters → 38 entries → 48 persons,
+17 organisations and 33 ties across four layers** (tutelage, office, kinship,
+membership).
+
+**Read [`docs/LIMITATIONS-aalam-tunisiyun.md`](docs/LIMITATIONS-aalam-tunisiyun.md)
+before using any of it.** In particular: the model pass has so far been run on
+**3 of the 38 entries (9.5% of the text)**, so this is a working pipeline rather
+than a census of the book's content, and there is **no gold-standard score yet**
+— the counts are lower bounds of unknown tightness.
+
+### How it reads narrative prose
+
+Two passes write the same schema.
+
+The **rule pass** matches an Arabic cue table, and is confined to constructions
+whose grammar binds the counterparty: after a preposition, or after a
+possessive pronoun with no other person named first. The reason is that Arabic
+is verb-subject-object — in «ارتقى الأمير مصطفى باي إلى العرش» the name
+following the verb is the man ascending, not a counterparty — so a pattern
+matched on a bare verb cannot tell a clause's subject from its object. An
+earlier version that ignored this made Yusuf Sahib al-Tabi the son of Hammuda
+Pasha. Cues marked `vso` are recorded but never emitted.
+
+The **model pass** covers the remainder, and is not trusted. Every assertion
+must quote its entry verbatim; `aalam.validate` checks each quote against the
+entry text on **every row rather than a sample**, and drops any that is not
+literally present. A tie the book does not state has no sentence to quote. The
+pass output is committed as a record and everything downstream is
+deterministic, so the tables rebuild byte-identically and re-running the model
+is a reviewable diff — the arrangement the bourse build already uses.
+
+```bash
+make aalam-fetch     # download the scan, verified against a pinned sha256
+make aalam-ingest    # OCR 384 pages at native resolution (~6 min)
+make aalam           # segment -> extract -> model -> relations -> codebook -> validate
+make aalam-test
+```
+
+Code is `src/aalam/`, outputs are `data/processed/aalam-tunisiyun/`. See
+[`docs/CODEBOOK-aalam-tunisiyun.md`](docs/CODEBOOK-aalam-tunisiyun.md) for
+variable definitions. As with the other builds the output trees are kept apart;
+whether the gazette's person registry and this one should share identifiers is
+the same open question, with the same answer — not yet. The `name_translit`
+column exists so the two can be joined by eye in the meantime.

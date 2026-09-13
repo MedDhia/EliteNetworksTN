@@ -1,0 +1,7 @@
+edge_id,layer,relation,from_id,from_name,to_id,to_name,to_kind,subjects_studied,year,year_lo,year_hi,date_precision,evidence_tier,extractor,pattern_id,confidence,entry_uid,evidence_quote
+ED_e6422c0fd5999d788ce7,kinship,child_of,PERSON_BNASHWR_MHMD_FADL,محمد الفاضل بن عاشور,PERSON_BNASHWR_TAHR,الطاهر بن عاشور,person,,,,,none,book_stated,rule,KIN01,0.75,aalam:3.10,الذي وجد في شخص والده العلامة الشيخ الطاهر بن عاشور
+ED_b8eb2ed9992aa9faebd9,kinship,child_of,PERSON_KHYRALDYN_TAHR,طاهر باشا خير الدين,PERSON_KHYRALDYN,خير الدين,person,,,,,none,book_stated,rule,KIN01,0.75,aalam:2.09,التحق مع بقيّة إخوته وعائلته بوالده الجنرال خير الدين العظيم الذي كان
+ED_9b0a18fe623d45b8132d,kinship,child_of,PERSON_LATY_HSN,حسن ڤلاتي,PERSON_BNAHMD_LY,علي بن احمد,person,,,,,none,book_stated,rule,KIN01,0.75,aalam:3.07,عندما نقل والده المرحوم علي بن أحمد
+ED_cb50377344cf4bc34c3b,kinship,child_of,PERSON_RDWAN_TYB,الطيب رضوان,PERSON_MSTFY,مصطفى آغة,person,,,,,none,book_stated,rule,KIN01,0.75,aalam:3.01,وقد أز نلجب أبوه مصطفى » رئيس قسم الإنشا
+ED_a82159debf861e95aab5,kinship,child_of,PERSON_SFR_BSHYR,البشير صفر,PERSON_SFR_MSTFY,مصطفى صفر,person,,,,,none,book_stated,llm,aalam-model-v1,0.80,aalam:2.02,وكان هو ثالث الأبنا، الذكور الذين أنجبهم أمير اللوا، مصطفى صفر
+ED_269997ec370fe1ad7b77,kinship,child_of,PERSON_SNWSY_ZYNALABDYN,زين العابدين السنوسي,PERSON_SWSY_MHMD,محمد السئوسي,person,,,,,none,book_stated,rule,KIN01,0.75,aalam:3.08,ذلك أن والده هو الشيخ محمد السئوسي الذي شغل
