@@ -14,8 +14,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from surnames import (  # noqa: E402
-    fold, namesake_hits, rarity_band, same_surname_probability, split_name,
-    surname, usable,
+    fold, namesake_hits, rarity_band, same_surname_probability,
+    shared_outcome_fast, shared_outcome_probability, split_name, surname,
+    usable,
 )
 
 
@@ -92,6 +93,18 @@ class TestUsable:
         assert not usable(None)
         assert not usable("")
 
+    def test_rejects_nan(self):
+        # Regression. split_name returns None for an unrecoverable name, but
+        # putting that list into a DataFrame column stores it as NaN, and
+        # `not float("nan")` is False — so a bare falsiness check let 246
+        # people through carrying the same non-value, which a frequency count
+        # reads as one 246-member family.
+        assert not usable(float("nan"))
+
+    def test_rejects_a_non_string(self):
+        assert not usable(0)
+        assert not usable(["gharbi"])
+
     def test_keeps_an_ordinary_surname(self):
         assert usable("baccouche")
 
@@ -114,6 +127,37 @@ class TestSameSurnameProbability:
     def test_does_not_pair_a_person_with_themselves(self):
         # Sampling without replacement: one person alone can never be a pair.
         assert same_surname_probability(["a", "b"]) == 0.0
+
+
+class TestSharedOutcomeProbability:
+    def test_both_reached_it(self):
+        # one surname, two people, both high: the only pair is a hit
+        assert shared_outcome_probability(["a", "a"], [True, True]) == 1.0
+
+    def test_neither_reached_it(self):
+        assert shared_outcome_probability(["a", "a"], [False, False]) == 0.0
+
+    def test_only_one_of_the_pair(self):
+        assert shared_outcome_probability(["a", "a"], [True, False]) == 0.0
+
+    def test_known_value(self):
+        # surname a: 3 people, 2 high -> 2 ordered hit pairs of 6 ordered pairs
+        # surname b: 2 people, 0 high -> 0 of 2
+        names = ["a", "a", "a", "b", "b"]
+        out = [True, True, False, False, False]
+        assert shared_outcome_probability(names, out) == 2 / 8
+
+    def test_unique_names_are_undefined_not_zero(self):
+        # No two people share a surname, so the quantity does not exist. A
+        # zero here would read as evidence of no association.
+        assert math.isnan(shared_outcome_probability(["a", "b"], [True, True]))
+
+    def test_singletons_contribute_nothing(self):
+        # A person with a unique surname is in no pair either way.
+        paired = shared_outcome_probability(["a", "a"], [True, True])
+        plus_singleton = shared_outcome_probability(
+            ["a", "a", "c"], [True, True, True])
+        assert paired == plus_singleton
 
 
 class TestNamesakeHits:
@@ -151,6 +195,38 @@ class TestNamesakeHits:
                 ("org1", "P2", "gharbi"),
                 ("org1", "P1", "gharbi")]
         assert namesake_hits(rows) == [False, True, True]
+
+
+class TestFastPathMatchesTheReference:
+    """The permutation loops run the statistic on integer codes for speed.
+
+    The string implementation above is the definition; this pins the two
+    together so the fast path cannot drift from it unnoticed.
+    """
+
+    def _fast(self, names, outcome):
+        import numpy as np
+        import pandas as pd
+        codes, uniq = pd.factorize(np.array(names))
+        return shared_outcome_fast(codes, np.array(outcome), len(uniq))
+
+    def test_agrees_on_a_worked_case(self):
+        names = ["a", "a", "a", "b", "b"]
+        out = [True, True, False, False, False]
+        assert self._fast(names, out) == shared_outcome_probability(names, out)
+
+    def test_agrees_on_random_inputs(self):
+        import random
+        rnd = random.Random(11)
+        for _ in range(25):
+            n = rnd.randint(2, 60)
+            names = [rnd.choice("abcdefg") for _ in range(n)]
+            out = [rnd.random() < 0.4 for _ in range(n)]
+            a, b = self._fast(names, out), shared_outcome_probability(names, out)
+            assert (math.isnan(a) and math.isnan(b)) or abs(a - b) < 1e-12
+
+    def test_agrees_that_unique_names_are_undefined(self):
+        assert math.isnan(self._fast(["a", "b", "c"], [True, True, True]))
 
 
 class TestRarityBand:
