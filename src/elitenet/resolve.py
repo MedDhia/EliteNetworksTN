@@ -25,8 +25,7 @@ from pathlib import Path
 
 from rapidfuzz import fuzz
 
-from .names import (org_id, parse_org, parse_person, person_id,
-                    strip_accents)
+from .names import parse_org, parse_person, person_id, strip_accents
 from .paths import (CONFIG, INTERIM, PROCESSED, ensure_dirs,
                     load_config)
 
@@ -1039,13 +1038,14 @@ def run(events_path: Path | None = None) -> dict:
     rne_map = _rne_identifier_map()
     for col, vals in rne_map.items():
         id_to_org[col].update(vals)
-    stats["identifiers_from_register"] = sum(len(v) for v in rne_map.values())
+    n_from_register = sum(len(v) for v in rne_map.values())
+    n_register_override = 0
     for (person, org_men), d in dyads.items():
         if org_men and any(d[col] for col in HARD_IDS):
             if org_men not in org_cache:
                 org_cache[org_men] = org_match(org_men, idx)
             om = org_cache[org_men]
-            oid, osc = (om.org_id if om.is_identity else ""), om.score
+            oid = om.org_id if om.is_identity else ""
             # Any IDENTITY-GRADE match may seed the map, not only an exact one.
             # The 0.99 floor here predates the specificity gate and is now
             # redundantly strict: `is_identity` already requires an exact hit,
@@ -1068,8 +1068,7 @@ def run(events_path: Path | None = None) -> dict:
                             # register wins -- it holds the identifier as a
                             # primary key rather than parsed out of OCR -- and
                             # the disagreement is counted rather than hidden.
-                            stats["register_overrode_gazette_match"] = stats.get(
-                                "register_overrode_gazette_match", 0) + 1
+                            n_register_override += 1
 
     def learned_org(d: dict) -> str:
         """The organisation a dyad's hard identifiers point to, if any.
@@ -1086,7 +1085,9 @@ def run(events_path: Path | None = None) -> dict:
         return next(iter(hits)) if len(hits) == 1 else ""
 
     out_rows: list[dict] = []
-    stats = {"dyads": 0, "resolved": 0, "ambiguous": 0, "unresolved": 0,
+    stats = {"identifiers_from_register": n_from_register,
+             "register_overrode_gazette_match": n_register_override,
+             "dyads": 0, "resolved": 0, "ambiguous": 0, "unresolved": 0,
              "org_resolved": 0, "forced_review_by_margin": 0}
 
     for (person, org_men), d in sorted(dyads.items()):

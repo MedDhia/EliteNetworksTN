@@ -58,6 +58,28 @@ jobs:
       - name: Run test suite
         run: pytest tests/ -q
 
+  # A crash-class lint gate. `resolve.run()` shipped with a `stats[...]`
+  # write one line above `stats = {...}` -- an UnboundLocalError that killed
+  # the stage on its first real run, while all 345 unit tests passed, because
+  # no test executes a stage's `run()` over the real corpus. A linter catches
+  # that class for free and in under a second; unit tests for it would mean
+  # fixture-building an entire pipeline stage.
+  #
+  # Deliberately a narrow selection rather than a style sweep: these four are
+  # the rules that catch code which cannot run, not code that could be tidier.
+  lint:
+    name: no undefined names or dead locals
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install ruff
+        run: pip install ruff
+      - name: Undefined names, redefinitions, unused locals
+        run: ruff check --select F821,F823,F811,F841 src/ tests/ scripts/
+
   multiplex-consistency:
     name: multiplex dataset is self-consistent
     runs-on: ubuntu-latest

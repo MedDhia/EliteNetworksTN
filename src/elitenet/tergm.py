@@ -164,7 +164,6 @@ def build(panel: list[dict], spells: list[dict], seed_nodes: list[dict],
     """Re-index the yearly panel. Returns the five tables plus a diagnostics dict."""
     pers = periods("yearly")
     period_ids = [p for p, _s, _e in pers]
-    bounds = {p: (s, e) for p, s, e in pers}
 
     # --- vertex universe, mode-blocked -----------------------------------
     # Fixed across periods: the union over the whole window. A node with no tie

@@ -72,7 +72,6 @@ def test_strict_validation_survives_a_missing_interim_tree(tmp_path):
 
 def _ci_shaped_tree(tmp_path: Path) -> Path:
     """A checkout carrying only what git tracks: no uncompressed twins."""
-    src = ROOT / "data" / "processed"
     (tmp_path / "config").symlink_to(ROOT / "config")
     tracked = subprocess.run(["git", "ls-files", "data/processed"],
                              capture_output=True, text=True, cwd=ROOT, check=True)
