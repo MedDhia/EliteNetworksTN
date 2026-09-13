@@ -47,7 +47,7 @@ A biography states a relation far more often than it dates one. Where the senten
 
 ### `persons.csv`
 
-48 rows. Person register. `is_subject` separates the 38 men and women who have an essay of their own from the alters merely named inside one.
+98 rows. Person register. `is_subject` separates the 38 men and women who have an essay of their own from the alters merely named inside one.
 
 | column | note |
 |---|---|
@@ -67,7 +67,7 @@ A biography states a relation far more often than it dates one. Where the senten
 
 ### `organisations.csv`
 
-17 rows. Schools, mosques, courts, ministries, newspapers and societies named as the other end of a tie.
+127 rows. Schools, mosques, courts, ministries, newspapers and societies named as the other end of a tie.
 
 | column | note |
 |---|---|
@@ -80,7 +80,7 @@ A biography states a relation far more often than it dates one. Where the senten
 
 ### `edges/all.csv`
 
-33 rows. Every relational assertion, one row per tie, with the sentence that states it.
+255 rows. Every relational assertion, one row per tie, with the sentence that states it.
 
 | column | note |
 |---|---|
@@ -106,7 +106,7 @@ A biography states a relation far more often than it dates one. Where the senten
 
 ### `edges/tutelage.csv`
 
-6 rows. Who studied under whom, and where. The layer no other build in this repository has.
+41 rows. Who studied under whom, and where. The layer no other build in this repository has.
 
 | column | note |
 |---|---|
@@ -132,7 +132,7 @@ A biography states a relation far more often than it dates one. Where the senten
 
 ### `edges/office.csv`
 
-14 rows. Posts taken up and left.
+106 rows. Posts taken up and left.
 
 | column | note |
 |---|---|
@@ -158,7 +158,7 @@ A biography states a relation far more often than it dates one. Where the senten
 
 ### `edges/kinship.csv`
 
-6 rows. Descent, marriage and affinity.
+23 rows. Descent, marriage and affinity.
 
 | column | note |
 |---|---|
@@ -184,7 +184,7 @@ A biography states a relation far more often than it dates one. Where the senten
 
 ### `edges/membership.csv`
 
-7 rows. Belonging to, founding or heading a body.
+85 rows. Belonging to, founding or heading a body.
 
 | column | note |
 |---|---|
@@ -239,6 +239,14 @@ A biography states a relation far more often than it dates one. Where the senten
 | `wrote_for` | Subject edited or wrote for a named publication |
 | `studied_at` | Subject was educated at a named institution |
 | `authored` | Subject wrote a named work |
+| `taught_at` | Subject held a teaching post at a named institution |
+| `commissioned_by` | Subject was charged with a named mission by the counterparty |
+| `patronised_by` | Counterparty advanced, protected or favoured the subject |
+| `patronised` | Subject advanced, protected or favoured the counterparty |
+| `opposed_by` | Counterparty worked against the subject; rivalry the text states |
+| `recommended` | Subject proposed the counterparty for a post |
+| `colleague_of` | Named as a friend, associate or fellow of the counterparty |
+| `eulogised_by` | Counterparty publicly praised or mourned the subject |
 
 ### Cue bindings
 
@@ -250,25 +258,35 @@ The rule pass emits only cues bound by a preposition or a possessive pronoun. Ar
 
 | relation | n |
 |---|---|
-| `child_of` | 6 |
-| `appointed_to` | 6 |
-| `member_of` | 4 |
-| `studied_at` | 4 |
-| `founded` | 2 |
-| `commissioned_by` | 2 |
-| `patronised_by` | 2 |
-| `studied_under` | 2 |
-| `authored` | 1 |
-| `headed` | 1 |
-| `left_post` | 1 |
-| `opposed_by` | 1 |
-| `succeeded` | 1 |
+| `appointed_to` | 58 |
+| `member_of` | 24 |
+| `authored` | 19 |
+| `headed` | 17 |
+| `child_of` | 15 |
+| `studied_at` | 15 |
+| `colleague_of` | 14 |
+| `studied_under` | 13 |
+| `wrote_for` | 11 |
+| `founded` | 10 |
+| `commissioned_by` | 10 |
+| `succeeded` | 10 |
+| `taught_at` | 8 |
+| `patronised_by` | 6 |
+| `kin_of` | 5 |
+| `opposed_by` | 5 |
+| `taught` | 5 |
+| `left_post` | 4 |
+| `sibling_of` | 2 |
+| `married_to` | 1 |
+| `eulogised_by` | 1 |
+| `recommended` | 1 |
+| `patronised` | 1 |
 
 ### Edges by layer
 
 | layer | n |
 |---|---|
-| `office` | 14 |
-| `membership` | 7 |
-| `kinship` | 6 |
-| `tutelage` | 6 |
+| `office` | 106 |
+| `membership` | 85 |
+| `tutelage` | 41 |
+| `kinship` | 23 |

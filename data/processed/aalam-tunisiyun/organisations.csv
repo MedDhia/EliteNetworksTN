@@ -1,18 +1,128 @@
 org_id,name_ar,name_translit,org_kind,n_ties,first_seen_entry
+ASSOC_JMYH_AWQAF_HRMYN_SHRYFYN,جمعية أوقاف الحرمين الشريفين,JMY WQAF ALHRMYN ALSHRYFYN,association,1,aalam:2.10
+ASSOC_JMYH_KHYRYH_ASLAMYH,الجمعية الخيرية الإسلامية,ALJMY ALKHYRY ALSLAMY,association,2,aalam:3.03
+ASSOC_NADY_TWNSY,النادي التونسي,ALNADY ALTWNSY,association,1,aalam:3.03
 COURT_MHKMH_QARYH_MKHTLTH,المحكمة العقارية المختلطة,ALMHKM ALQARY ALMKHTLT,court,1,aalam:3.12
-ORG_AQWM_MSALK,أقوم المسالك,QWM ALMSALK,work,1,aalam:1.09
+MSQ_JAM_HLFAWYN,جامع الحلفاوين,JAM ALHLFAWYN,mosque,1,aalam:1.03
+MSQ_JAM_SAHB_TAB,جامع صاحب الطابع,JAM SAHB ALTAB,mosque,2,aalam:1.02
+MSQ_JAM_ZYTWNH,جامع الزيتونة,JAM ALZYTWN,mosque,5,aalam:1.03
+NEWS_DBYSH,الدبيش,ALDBYSH,newspaper,1,aalam:3.03
+NEWS_HADRH,الحاضرة,ALHADR,newspaper,1,aalam:3.03
+NEWS_JRYDH_ALAM,جريدة الإعلام,JRYD ALLAM,newspaper,1,aalam:1.08
+NEWS_JRYDH_HADRH,جريدة الحاضرة,JRYD ALHADR,newspaper,6,aalam:2.10
+NEWS_RAD_TWNSY,الرائد التونسي,ALRAD ALTWNSY,newspaper,2,aalam:1.07
+NEWS_TWNSY,التونسي,ALTWNSY,newspaper,1,aalam:3.03
+NEWS_ZHRH,الزهرة,ALZHR,newspaper,1,aalam:3.03
+OFFICE_ADARH_JHAT,إدارة الجهات,DAR ALJHAT,office,1,aalam:1.02
+OFFICE_AMAMH_WKHTABH_JAM_SBHAN_LH,إمامة وخطابة جامع سبحان الله,MAM WKHTAB JAM SBHAN ALLH,office,1,aalam:2.06
+OFFICE_AML_BNZRT,عامل بنزرت,AML BNZRT,office,1,aalam:2.10
+OFFICE_AML_QABS,عامل قابس,AML QABS,office,1,aalam:2.10
+OFFICE_AMYN_AM_LLJNH_TNFYDHYH_LLHZB,الأمين العام للجنة التنفيذية للحزب,ALMYN ALAM LLJN ALTNFYDHY LLHZB,office,1,aalam:3.03
+OFFICE_AMYR_AMRA,أمير أمراء,MYR MRA,office,2,aalam:1.06
+OFFICE_AMYR_AY,أمير آلاي,MYR LAY,office,1,aalam:1.07
+OFFICE_AMYR_LWA,أمير لواء,MYR LWA,office,1,aalam:1.06
+OFFICE_BASH_MFTY,باش مفتي,BASH MFTY,office,1,aalam:1.03
+OFFICE_BASH_MFTY_KAF,باش مفتي الكاف,BASH MFTY ALKAF,office,1,aalam:1.04
+OFFICE_DAY_TWNS,داي تونس,DAY TWNS,office,1,aalam:1.01
+OFFICE_KBYR_AHL_SHWRY,كبير أهل الشورى,KBYR HL ALSHWR,office,2,aalam:1.04
+OFFICE_KHTH_FTYA_MALKYH,خطة الفتيا المالكية,KHT ALFTYA ALMALKY,office,1,aalam:2.06
+OFFICE_KTABH,الكتابة,ALKTAB,office,1,aalam:1.06
+OFFICE_MDRS,مدرس,MDRS,office,1,aalam:3.12
+OFFICE_MDRS_MN_TBQH_AWLY,مدرس من الطبقة الأولى,MDRS MN ALTBQ ALWL,office,1,aalam:1.08
+OFFICE_MDRS_MN_TBQH_AWLY_BJAM_ZYTWNH,مدرس من الطبقة الأولى بجامع الزيتونة,MDRS MN ALTBQ ALWL BJAM ALZYTWN,office,1,aalam:1.05
+OFFICE_MDRS_MN_TBQH_THANYH,مدرس من الطبقة الثانية,MDRS MN ALTBQ ALTHANY,office,1,aalam:1.08
+OFFICE_MDYR_MTBH_RSMYH,مدير المطبعة الرسمية,MDYR ALMTB ALRSMY,office,1,aalam:2.10
+OFFICE_MDYR_TSHRYFAT,مدير التشريفات,MDYR ALTSHRYFAT,office,1,aalam:2.10
+OFFICE_MDYR_TSHRYFAT_SNYH_WALMTRJM_AWL_BALQSR_MLKY,مدير التشريفات السنية والمترجم الأول بالقصر الملكي,MDYR ALTSHRYFAT ALSNY WALMTRJM ALWL BALQSR ALMLKY,office,1,aalam:2.10
+OFFICE_MFTY_BALMJLS_SHRY,مفتي بالمجلس الشرعي,MFTY BALMJLS ALSHRY,office,1,aalam:1.05
+OFFICE_MLM_BALMSTYR,معلم بالمستير,MLM BALMSTYR,office,1,aalam:3.03
+OFFICE_MSHYKHH_ASLAM_MALKYH,مشيخة الإسلام المالكية,MSHYKH ALSLAM ALMALKY,office,1,aalam:2.06
+OFFICE_MSTSHAR_BAY,مستشار الباي,MSTSHAR ALBAY,office,1,aalam:1.02
+OFFICE_MSTSHAR_HKWMH,مستشار الحكومة,MSTSHAR ALHKWM,office,1,aalam:2.10
+OFFICE_MTRJM_BADARH_FLAHH,مترجم بإدارة الفلاحة,MTRJM BDAR ALFLAH,office,1,aalam:3.03
+OFFICE_NAB_RYS_MJLS_AKBR,نائب رئيس المجلس الأكبر,NAB RYS ALMJLS ALKBR,office,1,aalam:1.06
+OFFICE_QADY_BARDW,قاضي باردو,QADY BARDW,office,1,aalam:1.05
+OFFICE_QADY_JMAH,قاضي الجماعة,QADY ALJMA,office,1,aalam:1.04
+OFFICE_QAD_MALKY,قاض مالكي,QAD MALKY,office,1,aalam:3.12
+OFFICE_QAYD,قايد,QAYD,office,1,aalam:1.07
+OFFICE_QDA_SHRY_BALKAF,القضاء الشرعي بالكاف,ALQDA ALSHRY BALKAF,office,1,aalam:1.04
+OFFICE_QYADH_JYSH,قيادة الجيش,QYAD ALJYSH,office,1,aalam:1.02
+OFFICE_RASH_JMYH_AWQAF,رئاسة جمعية الأوقاف,RAS JMY ALWQAF,office,1,aalam:2.10
+OFFICE_RSH_HSYNY,العرش الحسيني,ALRSH ALHSYNY,office,2,aalam:1.02
+OFFICE_RYS_MJLS_AKBR,رئيس المجلس الأكبر,RYS ALMJLS ALKBR,office,1,aalam:1.09
+OFFICE_SAHB_TAB,صاحب الطابع,SAHB ALTAB,office,1,aalam:1.02
+OFFICE_SHAHD_DL,شاهد عدل,SHAHD DL,office,1,aalam:1.06
+OFFICE_SHYKH_JAM_AZM,شيخ الجامع الأعظم,SHYKH ALJAM ALZM,office,1,aalam:3.12
+OFFICE_WALY_SFAQS,والي صفاقس,WALY SFAQS,office,1,aalam:1.02
+OFFICE_WALY_SWSH,والي سوسة,WALY SWS,office,2,aalam:3.03
+OFFICE_WZARH_KBRY,الوزارة الكبرى,ALWZAR ALKBR,office,1,aalam:2.10
+OFFICE_WZYR,وزير,WZYR,office,1,aalam:1.06
+OFFICE_WZYR_AKBR,الوزير الأكبر,ALWZYR ALKBR,office,8,aalam:1.02
+OFFICE_WZYR_ASTSHARH,وزير الاستشارة,WZYR ALASTSHAR,office,1,aalam:1.07
+OFFICE_WZYR_BHRYH,وزير البحرية,WZYR ALBHRY,office,1,aalam:1.09
+OFFICE_WZYR_HRB,وزير الحرب,WZYR ALHRB,office,1,aalam:1.08
+OFFICE_WZYR_MARF_WALNAFH,وزير المعارف والنافعة,WZYR ALMARF WALNAF,office,1,aalam:1.07
+OFFICE_WZYR_MBASHR,وزير مباشر,WZYR MBASHR,office,1,aalam:2.06
+OFFICE_WZYR_WRYS_MJLS,الوزير ورئيس المجلس,ALWZYR WRYS ALMJLS,office,1,aalam:1.09
+ORG_ADARH_AWQAF,إدارة الأوقاف,DAR ALWQAF,org,1,aalam:1.08
+ORG_AJTMAAT_HZB_DSTWRY_JDYD_AWLY_BSWSH,اجتماعات الحزب الدستوري الجديد الأولى بسوسة,AJTMAAT ALHZB ALDSTWRY ALJDYD ALWL BSWS,org,1,aalam:3.03
+ORG_ALH_BYRM,عائلة بيرم,AL BYRM,org,1,aalam:2.06
+ORG_HKWMH_TWNSYH,الحكومة التونسية,ALHKWM ALTWNSY,org,4,aalam:1.07
+ORG_JMYH_WQTYH_LFD_NZAAT,الجمعية الوقتية لفض النزاعات,ALJMY ALWQTY LFD ALNZAAT,org,1,aalam:1.06
+ORG_KHLDWNYH,الخلدونية,ALKHLDWNY,org,1,aalam:2.10
+ORG_LJAN_MHDTHH_LDBT_ASLAHAT_ASASYH,اللجان المحدثة لضبط الاصلاحات الأساسية,ALLJAN ALMHDTH LDBT ALASLAHAT ALSASY,org,1,aalam:2.06
+ORG_LJNH_BRAMJ_MDRSH_SADQYH,لجنة برامج المدرسة الصادقية,LJN BRAMJ ALMDRS ALSADQY,org,1,aalam:1.08
 ORG_LJNH_MALYH_DWLYH,اللجنة المالية الدولية,ALLJN ALMALY ALDWLY,org,1,aalam:1.09
-ORG_MDRS,مدرس,MDRS,office,1,aalam:3.12
+ORG_MJLS_AKBR,المجلس الأكبر,ALMJLS ALKBR,org,1,aalam:1.07
+ORG_MJLS_BLDY_BALHADRH,المجلس البلدي بالحاضرة,ALMJLS ALBLDY BALHADR,org,1,aalam:1.07
 ORG_MJLS_MDRSY_JAM_AZM,مجلس مدرسي الجامع الأعظم,MJLS MDRSY ALJAM ALZM,org,1,aalam:3.12
-ORG_QAD_MALKY,قاض مالكي,QAD MALKY,office,1,aalam:3.12
-ORG_RYS_MJLS_AKBR,رئيس المجلس الأكبر,RYS ALMJLS ALKBR,office,1,aalam:1.09
-ORG_SHYKH_JAM_AZM,شيخ الجامع الأعظم,SHYKH ALJAM ALZM,office,1,aalam:3.12
-ORG_WZYR_AKBR,الوزير الأكبر,ALWZYR ALKBR,office,1,aalam:1.09
-ORG_WZYR_BHRYH,وزير البحرية,WZYR ALBHRY,office,1,aalam:1.09
-ORG_WZYR_WRYS_MJLS,الوزير ورئيس المجلس,ALWZYR WRYS ALMJLS,office,1,aalam:1.09
+ORG_MJLS_SHRY,المجلس الشرعي,ALMJLS ALSHRY,org,2,aalam:1.03
+ORG_MJLS_SHWRY_MLK,مجلس شورى الملك,MJLS SHWR ALMLK,org,1,aalam:1.07
+ORG_MKTBH_JAM_ZYTWNH,مكتبة جامع الزيتونة,MKTB JAM ALZYTWN,org,1,aalam:1.08
+ORG_MSTSHFY_SADQY,المستشفى الصادقي,ALMSTSHF ALSADQY,org,1,aalam:1.08
+ORG_MSTSHFY_ZAFYN,مستشفى العزافين,MSTSHF ALZAFYN,org,1,aalam:1.01
+ORG_MTBH_RSMYH,المطبعة الرسمية,ALMTB ALRSMY,org,2,aalam:1.07
+ORG_MTMR_SHMAL_AFRYQY_BBARYS,مؤتمر الشمال الإفريقي بباريس,MTMR ALSHMAL ALFRYQY BBARYS,org,1,aalam:2.10
+ORG_QSM_MHASBH,قسم المحاسبة,QSM ALMHASB,org,1,aalam:2.10
+ORG_QSR_BARDW,قصر باردو,QSR BARDW,org,1,aalam:1.02
+ORG_TRYQH_MDNYH,الطريقة المدنية,ALTRYQ ALMDNY,org,1,aalam:1.05
+ORG_TRYQH_TYJANYH,الطريقة التيجانية,ALTRYQ ALTYJANY,org,1,aalam:1.03
+ORG_WFD_DSTWRY_AWL_ALY_BARYS,الوفد الدستوري الأول إلى باريس,ALWFD ALDSTWRY ALWL L BARYS,org,2,aalam:3.03
+ORG_WFD_DSTWRY_THANY_ALY_BARYS,الوفد الدستوري الثاني إلى باريس,ALWFD ALDSTWRY ALTHANY L BARYS,org,4,aalam:3.03
+ORG_ZAWYH_SYDY_AHMD_BN_RWS,زاوية سيدي أحمد بن عروس,ZAWY SYDY HMD BN RWS,org,1,aalam:1.01
+PARTY_HZB_HR_DSTWRY_JDYD,الحزب الحر الدستوري الجديد,ALHZB ALHR ALDSTWRY ALJDYD,party,1,aalam:3.03
+PARTY_JNAH_MTHRR_LLHZB_DSTWRY,الجناح المتحرر للحزب الدستوري,ALJNAH ALMTHRR LLHZB ALDSTWRY,party,2,aalam:3.03
+SCH_DAR_MLMYN,دار المعلمين,DAR ALMLMYN,school,1,aalam:3.03
+SCH_JAMH_AZHR,جامعة الأزهر,JAM ALZHR,school,1,aalam:1.03
 SCH_JAMH_ZYTWNYH,الجامعة الزيتونية,ALJAM ALZYTWNY,school,1,aalam:3.12
+SCH_KLYH_HQWQ_BBARYS,كلية الحقوق بباريس,KLY ALHQWQ BBARYS,school,1,aalam:3.03
+SCH_MDRSH_BYR_AHJAR,مدرسة بير الأحجار,MDRS BYR ALHJAR,school,1,aalam:1.03
 SCH_MDRSH_DBAT,مدرسة الضباط,MDRS ALDBAT,school,1,aalam:1.09
-SCH_MDRSH_SADQYH,المدرسة الصادقية,ALMDRS ALSADQY,school,3,aalam:1.09
-SCH_MDRSH_SGHAR_MMALYK,مدرسة صغار المماليك,MDRS SGHAR ALMMALYK,school,1,aalam:1.09
-SCH_MHD_SADQY,المعهد الصادقي,ALMHD ALSADQY,school,1,aalam:3.12
+SCH_MDRSH_HRBYH_BBARDW,المدرسة الحربية بباردو,ALMDRS ALHRBY BBARDW,school,5,aalam:1.05
+SCH_MDRSH_HWANYT_ASHWR,مدرسة حوانيت عاشور,MDRS HWANYT ASHWR,school,1,aalam:1.03
+SCH_MDRSH_LYA_LLGHH_WALADAB_RBYH,المدرسة العليا للغة والآداب العربية,ALMDRS ALLYA LLGH WALDAB ALRBY,school,1,aalam:2.10
+SCH_MDRSH_SADQYH,المدرسة الصادقية,ALMDRS ALSADQY,school,4,aalam:1.09
+SCH_MDRSH_SGHAR_MMALYK,مدرسة صغار المماليك,MDRS SGHAR ALMMALYK,school,2,aalam:1.07
+SCH_MDRSH_SLYMANYH,المدرسة السليمانية,ALMDRS ALSLYMANY,school,1,aalam:1.04
+SCH_MDRSH_YWSF_SAHB_TAB,مدرسة يوسف صاحب الطابع,MDRS YWSF SAHB ALTAB,school,1,aalam:1.04
+SCH_MHD_KARNW,معهد كارنو,MHD KARNW,school,1,aalam:3.03
+SCH_MHD_SADQY,المعهد الصادقي,ALMHD ALSADQY,school,2,aalam:3.03
 SCH_MHD_SAN_LWYS_BBARYS,معهد سان لويس بباريس,MHD SAN LWYS BBARYS,school,1,aalam:2.02
+WORK_AQWM_MSALK,أقوم المسالك,QWM ALMSALK,work,1,aalam:1.09
+WORK_AQWM_MSALK_FY_MRFH_AHWAL_MMALK,أقوم المسالك في معرفة أحوال الممالك,QWM ALMSALK FY MRF HWAL ALMMALK,work,1,aalam:2.06
+WORK_ATHAF_AHL_ZMAN,إتحاف أهل الزمان,THAF HL ALZMAN,work,2,aalam:1.01
+WORK_DYWAN_QABADW,ديوان قابادو,DYWAN QABADW,work,1,aalam:1.05
+WORK_DYWAN_SHR,ديوان شعر,DYWAN SHR,work,1,aalam:2.06
+WORK_FHRS_LMY_LMKTBH_JAM_ZYTWNH_AZM,الفهرس العلمي لمكتبة جامع الزيتونة الأعظم,ALFHRS ALLMY LMKTB JAM ALZYTWN ALZM,work,1,aalam:2.10
+WORK_MALM_TWHYD,معالم التوحيد,MALM ALTWHYD,work,1,aalam:2.10
+WORK_MKHTARAT_MN_KHTB_JMYH,مختارات من الخطب الجمعية,MKHTARAT MN ALKHTB ALJMY,work,1,aalam:2.06
+WORK_MNS_FY_AKHBAR_AFRYQYA_WTWNS,المؤنس في أخبار إفريقيا وتونس,ALMNS FY KHBAR FRYQYA WTWNS,work,1,aalam:1.01
+WORK_RHLH_FLYARYH,الرحلة الفليارية,ALRHL ALFLYARY,work,1,aalam:2.10
+WORK_RHLH_NASRYH,الرحلة الناصرية,ALRHL ALNASRY,work,1,aalam:2.10
+WORK_RZNAMH_TWNSYH,الرزنامة التونسية,ALRZNAM ALTWNSY,work,1,aalam:2.10
+WORK_SFWH_ATBAR_BMSTWD_AMSAR_WALAQTAR,صفوة الاعتبار بمستودع الأمصار والأقطار,SFW ALATBAR BMSTWD ALMSAR WALQTAR,work,1,aalam:1.08
+WORK_SHHYRAT_TWNSYAT,شهيرات التونسيات,SHHYRAT ALTWNSYAT,work,1,aalam:1.01
+WORK_TARYKH_BASHY,التاريخ الباشي,ALTARYKH ALBASHY,work,1,aalam:1.02
+WORK_TARYKH_MALM_TWHYD,تاريخ معالم التوحيد,TARYKH MALM ALTWHYD,work,1,aalam:1.02
+WORK_TRJMH_ABN_ABY_DYAF,ترجمة ابن أبي الضياف,TRJM ABN BY ALDYAF,work,1,aalam:1.06
+WORK_WFWD_DSTWRYH,الوفود الدستورية 1920-1919,ALWFWD ALDSTWRY,work,1,aalam:3.03

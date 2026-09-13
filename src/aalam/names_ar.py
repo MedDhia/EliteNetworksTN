@@ -210,10 +210,16 @@ def person_id(name: str) -> str:
     return f"PERSON_{slug}" if slug else "PERSON_UNKNOWN"
 
 
+# A counterparty that is not a person still needs a namespaced identifier.
+# OFFICE and WORK are kept apart from ORG because a post and a book are not
+# institutions: "الوزير الأكبر" is an office many men held in turn, and
+# "إتحاف أهل الزمان" is a text. Collapsing all three would put a book, a
+# ministry and a job title in one node space.
 _ORG_PREFIX = {
     "SCHOOL": "SCH", "MOSQUE": "MSQ", "MINISTRY": "MIN", "NEWSPAPER": "NEWS",
     "ASSOCIATION": "ASSOC", "PARTY": "PARTY", "COURT": "COURT",
-    "GOVERNMENT": "GOV", "ORGANIZATION": "ORG",
+    "GOVERNMENT": "GOV", "ORGANIZATION": "ORG", "ORG": "ORG",
+    "OFFICE": "OFFICE", "WORK": "WORK",
 }
 
 
