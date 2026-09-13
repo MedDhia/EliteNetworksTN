@@ -111,6 +111,14 @@ jobs:
       - name: Rebuild the dataset
         run: make bourse-build
 
+      # The political-connection coding is committed output like any other
+      # table, and its rules live in a config file that is easy to edit
+      # without rebuilding. Re-running it here puts it under the same
+      # byte-for-byte diff check as the edge list, so a changed rule cannot
+      # reach main without the coded firm-years that follow from it.
+      - name: Recode political connections
+        run: make bourse-political
+
       # Fails the build on any ERROR-level finding (referential integrity,
       # self-loops, ownership weights outside (0, 100]).
       - name: Validate
