@@ -11,7 +11,27 @@ silently deleted 372 resolved dyads, 854 spells and 7,171 panel rows.
 | kinship ties | an `épouse` / `ép.` / `EP` / `veuve` marker in print | `person_ties.csv`, `relation` | its own layer |
 | subsidiaries | a `filiale de <firm>` clause | `org_ties.csv`, `relation = subsidiary_of` | `relation` |
 | address corroboration | two spellings at one seat | `org_entities.csv`, `entity_basis = address_corroborated` | `entity_basis` |
+| identifier bridge | a matricule or RC number on two filings | `resolution.csv`, `org_match_basis = identifier_bridge` | `resolve_pass == 0` |
 | snowballing | an anchor a later pass supplied | `resolution.csv`, `resolve_pass` > 0 and `link_status = snowball` | `resolve_pass == 0` |
+
+## What each tier actually produced
+
+Measured on the 781,233-event rebuild, against the 689,169-event baseline.
+These are the outcomes, not the potentials, and two of them are much smaller
+than the marker counts further down this document would suggest.
+
+| tier | yield | verdict |
+|---|---|---|
+| **identifier bridge** | **745 organisations named** — the largest single snowball channel, ahead of person-anchoring at 594 | works as intended |
+| snowballing overall | 497 new person links (`link_status = snowball`), converged at pass 3: +1,184, +649, +3, then 0 | works; cap of 12 never bound |
+| subsidiaries | `org_tie` events 30,161 → 30,333 | small and correct |
+| address corroboration | 884 entities merged from 20,704 candidate pairs; name-keyed share 62.0% → 61.2% | **high precision, negligible coverage** |
+| **kinship ties** | **14 dyads** from 8,769 markers in print; 8,749 queued | **not usable as built** |
+
+Resolution overall: `resolved` 11,036 → 11,032 (flat), `inferred` 11,420 →
+13,039, `snowball` 497 new. Named 22,456 → 24,568. The gain is entirely in
+the labelled tiers; the dyad-anchored count did not move, and saying so is
+more useful than a headline that averages them together.
 
 Nothing here changes pass 0. `resolution.csv` filtered to `resolve_pass == 0`
 reproduces the previous build exactly, and `evidence_tier = 'gazette_dated'`
@@ -56,6 +76,26 @@ these markers sit in prose that never titles the woman:
 captures it discards 35,123 — "Son épouse Khadija" among them, where *son* is
 the French possessive — and leaves 5,965 where **both** ends are full
 multi-token names.
+
+**Those 5,965 are grammar captures, not ties, and the gap between the two is
+the whole story of this tier.** Extraction emitted 8,769 kinship events across
+the corpus. Of those, **18 had both ends named and 14 became dyads**, over 28
+people. The other 8,749 are in `person_ties_review_queue.csv`: 8,344 with
+neither end named, 405 with one.
+
+The cause is the membership rule below — both spouses must resolve to *seed*
+persons — and the arithmetic is unforgiving. The seed sheet holds 13,630
+people; the chance that both members of a couple named in an arbitrary company
+filing are among them is very small. Worse, the rule discards exactly the
+interesting case: a marriage linking a seed elite to someone outside the sheet
+is how an elite family extends, and that is precisely the tie this rule
+refuses.
+
+So the layer as built cannot support analysis, and the 8,749-row queue is its
+real product. Admitting gazette-only persons as kinship endpoints would fix
+it, at the cost of widening the node universe and breaking the validator's
+closed-world endpoint check. That is a design decision and it has not been
+taken.
 
 Bare `EP` is included, as asked. It is rare (122 blocks) and ambiguous in
 isolation — "Raison sociale : EP Technology" is a firm — but harmless in this
@@ -171,6 +211,19 @@ two firms at one seat are commonly a parent and a subsidiary sharing a stem
 ("Poulina" inside "Poulina Group Holding Industries"). Merging those would be
 the same error in a new place.
 
+**Measured, the tier is high precision and negligible coverage, and that is
+worth stating plainly rather than implying otherwise.** It considered 20,704
+candidate pairs sharing a discriminating seat and **refused 19,473 of them
+(94%)** on the label test, discarded a further 1,404 address groups as
+domiciliation, and merged **884 entities** — 0.36% of 235,052. Name-keyed
+share moved 62.0% → 61.2%, no more.
+
+That 94% refusal rate carries information of its own: most firms sharing a
+seat genuinely have unrelated names, which means they *are* different firms
+and the hole between them is real. Those refused pairs are the population
+`holes.py` re-examines, because a refusal that is right for *identity* still
+leaves a pair worth listing when the question is whether a *hole* is real.
+
 A merged entity's `entity_basis` becomes `address_corroborated`, so the tier is
 visible and droppable. Where one side had adopted a seed organisation's id, the
 other side joins it: a merge may add spellings to a seed node, never rename
@@ -208,11 +261,55 @@ identified in one filing and the person in another.
 Snowballing runs the anchor in **both** directions and repeats until nothing
 new is named.
 
-| pass rule | `snowball_basis` | what it uses |
-|---|---|---|
-| a named person names their firm | `person_names_org` | the person's own seed organisations as the candidate set |
-| a newly named firm names its people | `org_names_person` | the anchor the previous rule created |
-| named colleagues name a person | `colleagues_name_person` | two or more co-mentions tied to one seed organisation |
+| pass rule | `snowball_basis` | what it uses | yield |
+|---|---|---|---|
+| **a known identifier names the firm** | `identifier_names_org` | a matricule or RC number seen on another filing | **745** |
+| a named person names their firm | `person_names_org` | the person's own seed organisations as the candidate set | 594 |
+| named colleagues name a person | `colleagues_name_person` | two or more co-mentions tied to one seed organisation | 256 |
+| a newly named firm names its people | `org_names_person` | the anchor a previous rule created | 241 |
+| *refused by the ambiguity guard* | — | — | *765* |
+
+### The identifier is an edge, not a lookup
+
+This is the largest channel and for a long time it was not a channel at all.
+The matricule-fiscal map was built **once, before the loop**, and seeded
+**only** from organisations named by an identity-grade *name* match. So the
+strongest anchor in the corpus fired once and then sat idle: a firm named in
+pass 1 by its own officer contributed its matricule to nothing, and no other
+filing printing that number benefited.
+
+That is backwards. **A name propagates a resemblance; a registration number
+propagates an identity.** It is the one channel where compounding carries
+almost no error risk, and it was the one channel the snowball was not using.
+
+The map is now live — seeded from what pass 0 learned, re-harvested after
+every pass from every organisation named by any route — and one flat map
+rather than one per column, which is what lets a firm known by its matricule
+be reached by its RC number through any filing carrying both.
+
+The scale it works on, measured over the rebuild: of **118,782** distinct
+identifiers, **29,731 span more than one spelling** of the same firm, bridging
+**80,805 spellings**. Those were previously connectable only by name
+similarity — the mechanism that built the merge hubs.
+
+**Conflict discipline matters more here than anywhere else**, because an
+identifier error propagates exactly as confidently as an identifier truth:
+
+* a value naming two organisations is **deleted and blacklisted**, never
+  resolved by majority. 472 were refused this build, and `validate` reports
+  4,464 identifier values sitting on more than one organisation node. Taking
+  the modal side would bury the signal that says a resolution merged two
+  firms.
+* two identifiers on one filing pointing at two organisations name neither.
+  16 filings this build.
+
+One caveat on the 80,805: some bridged "spellings" are extraction noise rather
+than spellings. `909923K` links 21 mentions, one of which is
+`"1. Société anonyme ne faisant pas appel public à l'é"` — a clause `org_name`
+misread as a company in a block that printed a real matricule. The bridge will
+not invent a false firm from it, but it pulls junk mentions into a real firm's
+mention set. The fix belongs in `org_name`, not here, so 80,805 is gross
+potential rather than clean coverage.
 
 The first rule is what makes the second possible, and the second is what makes
 this a snowball rather than one extra rule.

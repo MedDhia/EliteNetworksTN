@@ -128,6 +128,13 @@ one filter, which is the point of labelling them.
   at five settings. Where it fires wrongly it *overstates* a firm's degree,
   the same direction as the merge hubs it was built to help correct — so the
   tier is worth dropping in any analysis that turns on organisation degree.
+- **The kinship layer is not usable as built, and the number is 14.** 8,769
+  kinship markers were extracted; 18 had both ends named; 14 became dyads over
+  28 people. The rule that both spouses must resolve to *seed* persons is
+  correct for identification and wrong for this layer's purpose: a marriage
+  linking a seed elite to someone outside the sheet is how an elite family
+  extends, and that is exactly the tie it refuses. The 8,749-row review queue
+  is the layer's real product. Do not compute anything on 14 dyads.
 - **Kinship ties are as good as the person resolution under them.** A tie whose
   endpoints are two merged homonyms is a marriage between two composites. The
   tier that is weakest here is flagged: `evidence_tier = kinship_inferred`
@@ -153,6 +160,44 @@ one filter, which is the point of labelling them.
   *refuse* a name-rarity inference where one name key appears at two different
   addresses. Absence of an address is not treated as agreement — most mentions
   state none.
+
+**Structural holes may be artefacts, and the exposure is measured rather than
+assumed.** A hole this pipeline manufactured by failing to resolve an identity
+is indistinguishable from brokerage, which is what a network analysis is
+looking for — so it is a false finding, not a blemish. `make holes` reports
+the network twice, as asserted and with every declined link admitted, because
+neither is the truth and the width of the interval is the honest statement:
+
+| layer | exposure |
+|---|---|
+| person-organisation, all years | 16.6% |
+| person-organisation 1957–2010 | **19.7%** |
+| person-organisation 2011–2026 | 11.9% |
+| **organisation ownership** | **50.8%** |
+| kinship | 0.0% (true zero: the queue bridges nothing among 28 nodes) |
+
+Two things to carry from that table. **Pre-2011 exposure exceeds post-2011**,
+so the era most substantive claims concern is the era with the most
+false-hole risk. And **ownership at 50.8% is the largest in the dataset** —
+that layer admits a dyad only where both ends resolve to seed organisations,
+so 10,622 one-end-resolved observations sit out by design; admitting them
+would connect half again as many firm pairs as the layer asserts. Any
+structural-hole claim about ownership has to carry that interval.
+
+27,656 suspect co-references are enumerated in `suspect_holes.csv` — 23,424
+organisation pairs plausibly one firm, 4,232 person pairs plausibly one
+person — each with its basis, so none needs taking on trust.
+
+**The low-degree periphery is 74% confirmed sparse, and 26% is not.** Of 5,878
+persons with 1 or 2 ties, 4,374 have no additional tie anywhere in the
+evidence; 1,504 do, including **845 pendants whose position would change in
+kind** rather than degree — a degree-1 node has no closure and no brokerage,
+and a second organisation makes it a broker. `low_degree_audit.csv` is the
+worklist, ordered by how much each node's position would move. A further 87
+persons are reported as **unanswerable** rather than counted, because two or
+more resolved nodes share their name key and "the same name elsewhere" is not
+evidence about either of them. Any claim about who is peripheral to this
+network should be read against that file.
 
 ## Extraction
 
