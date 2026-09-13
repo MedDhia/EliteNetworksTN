@@ -334,7 +334,18 @@ _MINISTRY_BY_NAME = [
     ("equipement", re.compile(
         r"minist[eè]re de l'[ée]quipement|ponts et chauss[ée]es|"
         r"agence fonci[eè]re", re.I)),
-    ("transport", re.compile(r"minist[eè]re du transport", re.I)),
+    # The register writes the plural far more often than the singular, and for
+    # most of the record "ministère des transports" was the actual title.
+    ("transport", re.compile(
+        r"minist[eè]re du transport|minist[eè]re des transports", re.I)),
+    # Interior and defence had no name rule at all. Their posts are usually
+    # placed from the portfolio field, so the omission was invisible until a
+    # body had to be placed from its name alone. Interior comes before
+    # development so that "ministère de l'intérieur et du développement local"
+    # files under interior, which is the ministry it is.
+    ("interieur", re.compile(r"minist[eè]re de l'int[ée]rieur", re.I)),
+    ("defense", re.compile(
+        r"minist[eè]re de la d[ée]fense", re.I)),
     ("industrie", re.compile(r"minist[eè]re de l'industrie", re.I)),
     ("energie", re.compile(r"minist[eè]re de l'[ée]nergie", re.I)),
     ("commerce", re.compile(r"minist[eè]re du commerce", re.I)),
@@ -363,6 +374,22 @@ _MINISTRY_BY_NAME = [
         r"minist[eè]re des communications|"
         r"minist[eè]re des technologies de la communication", re.I)),
     ("cooperation", re.compile(r"coop[ée]ration internationale", re.I)),
+    # The remaining ministries in MINISTRY_ENGLISH that carried no name rule.
+    # Each is reachable from a portfolio, so these only bite where a body has
+    # to be placed from its own name — which is every edge in the organisation
+    # chart.
+    ("femme_famille", re.compile(
+        r"minist[eè]re de la femme|minist[eè]re de la famille|"
+        r"affaires de la femme", re.I)),
+    ("technologies", re.compile(r"technologies de l'information", re.I)),
+    ("developpement", re.compile(r"minist[eè]re du d[ée]veloppement", re.I)),
+    ("information", re.compile(r"minist[eè]re de l'information", re.I)),
+    ("fonction_publique", re.compile(r"fonction publique", re.I)),
+    ("droits_homme", re.compile(r"droits de l'homme", re.I)),
+    ("investissement", re.compile(r"minist[eè]re de l'investissement", re.I)),
+    ("relations_assemblee", re.compile(
+        r"relations avec (?:l'assembl[ée]e|les assembl[ée]es|la chambre)",
+        re.I)),
 ]
 
 # Bodies that are not ministries and are not identified by their form either.
