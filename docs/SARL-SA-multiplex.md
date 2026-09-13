@@ -57,7 +57,7 @@ structured classification of the notice — not a phrase matched in OCR'd prose
 register has **no officer table**. Its second table, `personnes physiques`,
 is 315,659 sole proprietors and merchants registered in their own name —
 people who *are* businesses, not people who run companies. No row in the
-register connects a natural person to a SARL. So every one of the 113,400
+register connects a natural person to a SARL. So every one of the 96,930
 person links comes from JORT, and the register's role is confined to saying
 which companies are registered ones.
 
@@ -73,6 +73,10 @@ one event therefore always describe the same company.
 
 **129,248 of 203,785 register companies (63.4%) have an undetermined legal
 form.**
+
+(203,785 rather than the 203,788 above: three companies carry no usable
+identifier once the register's own internal conflicts are dropped, so they
+cannot be keyed at all.)
 
 That is not the same as "not a SARL or SA", and the table is built so the two
 cannot be confused: an undetermined company is **absent** from

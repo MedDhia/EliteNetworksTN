@@ -4,9 +4,9 @@
 
 PY := PYTHONPATH=src python3
 
-.PHONY: all seed mirror calendar segment extract rne resolve orgentity spells orgties personties orgattrs legalform holes export tergm codebook validate test clean-derived
+.PHONY: all seed mirror calendar segment extract rne resolve orgentity spells orgties personties orgattrs legalform holes project export tergm codebook validate test clean-derived
 
-all: seed mirror calendar segment extract rne resolve orgentity spells orgties personties orgattrs legalform holes export tergm codebook validate
+all: seed mirror calendar segment extract rne resolve orgentity spells orgties personties orgattrs legalform holes project export tergm codebook validate
 
 seed:      ## ingest and clean the curated seed edge list
 	$(PY) -m elitenet.seed
@@ -49,6 +49,9 @@ orgattrs:  ## organisation identifiers (tax ID, RC number) and addresses
 
 legalform: ## SARL/SA status per registered company, and who is connected to them
 	$(PY) -m elitenet.legalform
+
+project:   ## collapse every layer into one graph, at three nested tiers
+	$(PY) -m elitenet.project
 
 holes:     ## how much observed sparsity is resolution error, not structure
 	$(PY) -m elitenet.holes

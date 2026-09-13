@@ -80,6 +80,16 @@ Generated 2026-09-13.
 - **company officers from the seed roster** — 7337 of 96930 links reach a seed elite (7.6%); the rest are named in print but outside the 13,630-name roster
 - **every officer link is to a company in the form table** — 0 links whose company is not in scope
 - **a gazette-only officer is not flagged as a seed elite** — 0 links whose grade and seed flag disagree
+- **projection: seed_anchored** — 13,630 individuals + 26,755 organisations = 40,385 nodes, 46,579 edges; giant component 27,002 (66.9%) = 8,808 people and 18,194 firms; 1 isolates. validated affiliations, ownership ties and kinship only
+- **projection: officer_layer** — 80,868 individuals + 68,650 organisations = 149,518 nodes, 135,358 edges; giant component 63,307 (42.3%) = 33,683 people and 29,624 firms; 1 isolates. plus the SARL/SA officer roster (admits gazette-only people)
+- **projection: all_sources** — 631,754 individuals + 324,687 organisations = 956,441 nodes, 394,113 edges; giant component 200,991 (21.0%) = 130,333 people and 70,658 firms; 535,386 isolates. plus gazette CO-MENTION and the whole register (outer bound)
+- **every projected node is a person or an organisation** — 0 tiers where individuals + organisations != nodes
+- **connected nodes and isolates partition the projection** — 0 tiers where connected + isolates != nodes
+- **the giant component's composition adds up** — 0 tiers whose giant component does not decompose
+- **the projection tiers are nested** — 0 counts that fall as the tier widens
+- **no projected node is both a person and an organisation** — 0 nodes whose type is unresolved or contradictory
+- **the node table covers the widest tier** — 956441 rows, matching all_sources
+- **isolates in the node table match the summary** — 535386 degree-0 rows against 535386 reported
 - **tergm vertex key is mode-blocked** — 5809 persons then 7442 organisations; bipartite = 5809; mode-blocked=True, ids contiguous from 1=True
 - **tergm edges respect the mode split** — 0 of 128096 ties do not run from mode 1 to mode 2
 - **tergm risk set is contiguous** — 0 vertices go inactive and then active again

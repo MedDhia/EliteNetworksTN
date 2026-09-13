@@ -73,6 +73,10 @@ data/processed/multiplex/exports/tergm/*.csv
 data/processed/multiplex/org_entities.csv
 data/processed/multiplex/org_entity_keys.csv
 data/processed/multiplex/org_entity_members.csv
+data/processed/multiplex/rne_company_forms.csv
+data/processed/multiplex/rne_company_persons.csv
+data/processed/multiplex/person_ties_review_queue.csv
+data/processed/multiplex/projection_nodes.csv
 
 # --- aalam-tunisiyun --------------------------------------------------------
 # The scanned volume (~12 MB) and the per-page OCR images are not

@@ -50,12 +50,12 @@ companies whose form is *known*, with the remainder reported as a bound.
 
 **It does not fold SUARL into SARL.** A SUARL is a single-member company: one
 associate, so no internal coalition and no shareholder network to speak of.
-It also behaves differently in the result: a SUARL link reaches a seed elite
-4.1% of the time against a SA's 15.9%, so folding the two together would
-dilute the signal an elite study is looking for.
 Counting it as a SARL would inflate the SARL population by 22% with firms
-whose ownership structure is categorically different. It is labelled and
-reported beside them, and the caller decides.
+whose ownership structure is categorically different. It also behaves
+differently in the result: a SUARL link reaches a seed elite 4.1% of the time
+against an SA's 15.9%, so folding the two together would dilute exactly the
+signal an elite study is looking for. It is labelled and reported beside
+them, and the caller decides.
 
 **It does not collapse a company's forms to the modal one.** A company filing
 first under one form and later under another has *transformed* -- a SARL
@@ -126,7 +126,7 @@ FIELDS_PERSONS = [
 
 # A person mention that is only a role title, or a clause fragment. These are
 # `clean_name` escapes rather than people, and they are few -- 186 links of
-# 113,400 -- but they sort straight to the top of any "connected to the most
+# 96,930 -- but they sort straight to the top of any "connected to the most
 # companies" ranking, which is precisely where a non-person does damage. They
 # are excluded and counted, not silently dropped.
 NOT_A_PERSON = {

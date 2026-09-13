@@ -25,6 +25,7 @@ from pathlib import Path
 
 from .paths import (DOCS, INTERIM, PROCESSED, ROOT, ensure_dirs,
                     load_config, window)
+from .project import TIERS as PROJECTION_TIERS
 from .resolve import MAX_SNOWBALL_PASSES
 
 WINDOW = window()
@@ -105,6 +106,8 @@ _STAGE_FOR = {"node_key.csv": "tergm", "org_tie_spells.csv": "orgties",
               "org_entities.csv": "orgentity",
               "org_entity_members.csv": "orgentity",
               "person_tie_spells.csv": "personties",
+              "projection_summary.csv": "project",
+              "projection_nodes.csv": "project",
               "rne_company_forms.csv": "legalform",
               "rne_company_persons.csv": "legalform",
               "resolution.csv": "resolve"}
@@ -887,6 +890,102 @@ def check_company_forms(rep: Report) -> None:
             f"{len(mismatch)} links whose grade and seed flag disagree")
 
 
+def check_projection(rep: Report) -> None:
+    """The whole dataset as one graph, at three nested tiers.
+
+    The checks here are arithmetic and structural rather than substantive,
+    because the substantive question -- which tier to believe -- is the
+    reader's. What must hold is that each tier's parts add up, that the tiers
+    really are nested, and that no node is typed as a person in one layer and
+    an organisation in another. That last one is not hypothetical: typing a
+    node by the column it sat in made 307 people into organisations, because
+    the seed sheet's kinship edges ride in `spells.csv` with the kin in the
+    `org_id` column.
+    """
+    summary = _read(PROCESSED / "projection_summary.csv")
+    if not summary:
+        _skip_stage(rep, "one-graph projection",
+                    PROCESSED / "projection_summary.csv")
+        return
+
+    for r in summary:
+        rep.add("INFO", f"projection: {r['tier']}",
+                f"{int(r['individuals']):,} individuals + "
+                f"{int(r['organisations']):,} organisations = "
+                f"{int(r['nodes']):,} nodes, {int(r['edges']):,} edges; "
+                f"giant component {int(r['giant_component']):,} "
+                f"({r['giant_pct']}%) = {int(r['giant_individuals']):,} people "
+                f"and {int(r['giant_organisations']):,} firms; "
+                f"{int(r['isolates']):,} isolates. {r['edge_definition']}")
+
+    def _bad(pred):
+        return [r["tier"] for r in summary if pred(r)]
+
+    parts = _bad(lambda r: int(r["individuals"]) + int(r["organisations"])
+                 != int(r["nodes"]))
+    rep.add("ERROR" if parts else "INFO",
+            "every projected node is a person or an organisation",
+            f"{len(parts)} tiers where individuals + organisations != nodes"
+            + (f": {', '.join(parts)}" if parts else ""))
+
+    split = _bad(lambda r: int(r["connected_nodes"]) + int(r["isolates"])
+                 != int(r["nodes"]))
+    rep.add("ERROR" if split else "INFO",
+            "connected nodes and isolates partition the projection",
+            f"{len(split)} tiers where connected + isolates != nodes"
+            + (f": {', '.join(split)}" if split else ""))
+
+    giant = _bad(lambda r: int(r["giant_individuals"])
+                 + int(r["giant_organisations"]) != int(r["giant_component"])
+                 or int(r["giant_component"]) > int(r["nodes"]))
+    rep.add("ERROR" if giant else "INFO",
+            "the giant component's composition adds up",
+            f"{len(giant)} tiers whose giant component does not decompose"
+            + (f": {', '.join(giant)}" if giant else ""))
+
+    # The tiers are defined as nested unions, so a count that falls between
+    # them means a tier dropped something a narrower tier had -- which would
+    # make the whole comparison meaningless.
+    order = {t: i for i, t in enumerate(PROJECTION_TIERS)}
+    ranked = sorted(summary, key=lambda r: order.get(r["tier"], 99))
+    regress = []
+    for prev, cur in zip(ranked, ranked[1:]):
+        for k in ("nodes", "edges", "individuals", "organisations"):
+            if int(cur[k]) < int(prev[k]):
+                regress.append(f"{k} {prev['tier']}->{cur['tier']}")
+    rep.add("ERROR" if regress else "INFO",
+            "the projection tiers are nested",
+            f"{len(regress)} counts that fall as the tier widens"
+            + (f": {', '.join(regress)}" if regress else ""))
+
+    nodes = _read(PROCESSED / "projection_nodes.csv")
+    if not nodes:
+        _skip_stage(rep, "projected node table",
+                    PROCESSED / "projection_nodes.csv")
+        return
+    conflict = [r for r in nodes if r.get("node_type") not in
+                ("PERSON", "ORGANISATION")]
+    rep.add("ERROR" if conflict else "INFO",
+            "no projected node is both a person and an organisation",
+            f"{len(conflict)} nodes whose type is unresolved or contradictory")
+
+    widest = ranked[-1]
+    if len(nodes) != int(widest["nodes"]):
+        rep.add("ERROR", "the node table covers the widest tier",
+                f"{len(nodes)} rows against {int(widest['nodes'])} nodes "
+                f"reported for {widest['tier']}")
+    else:
+        rep.add("INFO", "the node table covers the widest tier",
+                f"{len(nodes)} rows, matching {widest['tier']}")
+
+    # An isolate is a node with no tie. Recomputing it from the node table
+    # and comparing to the summary catches the two drifting apart.
+    deg0 = sum(1 for r in nodes if r.get("degree") == "0")
+    rep.add("ERROR" if deg0 != int(widest["isolates"]) else "INFO",
+            "isolates in the node table match the summary",
+            f"{deg0} degree-0 rows against {int(widest['isolates'])} reported")
+
+
 def check_tergm_panel(rep: Report) -> None:
     """The invariants R/build_tergm_panel.R relies on, at ERROR level.
 
@@ -1001,6 +1100,7 @@ def run(fail_on_error: bool = False) -> int:
     check_person_ties(rep)
     check_snowball(rep)
     check_company_forms(rep)
+    check_projection(rep)
     check_tergm_panel(rep)
 
     DOCS.mkdir(parents=True, exist_ok=True)

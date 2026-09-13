@@ -1,0 +1,8 @@
+tier,source,node_type,n
+seed_anchored,seed,ORGANISATION,1
+officer_layer,seed,ORGANISATION,1
+all_sources,rne_sole_trader,PERSON,314848
+all_sources,rne_company,ORGANISATION,138956
+all_sources,gazette,PERSON,67600
+all_sources,gazette,ORGANISATION,13981
+all_sources,seed,ORGANISATION,1

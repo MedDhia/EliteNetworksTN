@@ -71,6 +71,9 @@ TABLES = {
     "org_entity_members": PROCESSED / "org_entity_members.csv",
     "org_identifiers": PROCESSED / "org_identifiers.csv",
     "org_addresses": PROCESSED / "org_addresses.csv",
+    "projection_summary": PROCESSED / "projection_summary.csv",
+    "projection_isolates": PROCESSED / "projection_isolates.csv",
+    "projection_nodes": PROCESSED / "projection_nodes.csv",
     "rne_company_forms": PROCESSED / "rne_company_forms.csv",
     "rne_company_persons": PROCESSED / "rne_company_persons.csv",
 }
@@ -410,7 +413,10 @@ GZIP_TABLES = ["events.csv", "blocks_index.csv", "resolution.csv",
                "org_entity_members.csv",
                # 96,002 companies and 113,400 officer links, the latter
                # carrying an evidence quote per row.
-               "rne_company_forms.csv", "rne_company_persons.csv"]
+               "rne_company_forms.csv", "rne_company_persons.csv",
+               # 956,441 rows: every node of the widest projection tier,
+               # more than half of them register entries with no tie.
+               "projection_nodes.csv"]
 
 
 def gzip_large_tables() -> dict:
