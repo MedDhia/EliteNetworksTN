@@ -50,6 +50,7 @@ from collections import defaultdict
 from datetime import date, datetime
 
 from .paths import INTERIM, PROCESSED, ensure_dirs
+from .names import person_id
 from .resolve import KINSHIP
 from .spells import periods
 
@@ -76,7 +77,16 @@ FIELDS_TIES = [
     "marker", "undirected_key", "evidence_quote", "event_id", "block_uid",
     "issue_uid", "folio_page", "org_mention", "extract_confidence",
 ]
-FIELDS_QUEUE = FIELDS_TIES + ["queue_reason", "failed_end", "failed_mention"]
+FIELDS_QUEUE = FIELDS_TIES + [
+    "queue_reason", "failed_end", "failed_mention",
+    # A stable id for each end even where neither resolved to a seed person.
+    # A marriage between two people nobody in the seed sheet has heard of is
+    # still a marriage, and `names.person_id` already mints the cluster id the
+    # gazette-only roster uses. Without these the queue carried no row with
+    # ids for both ends, which left this layer's false-hole exposure
+    # unmeasurable -- reported as 0%, which reads as "there is nothing here".
+    "person_cluster_id", "kin_cluster_id",
+]
 FIELDS_SPELLS = [
     "kin_spell_id", "person_id", "person_label", "kin_id", "kin_label",
     "relation", "is_marriage", "layer", "undirected_key",
@@ -238,6 +248,8 @@ def observations(events: list[dict],
             "folio_page": e.get("folio_page", ""),
             "org_mention": org_men,
             "extract_confidence": e.get("extract_confidence", ""),
+            "person_cluster_id": person_id(p_men),
+            "kin_cluster_id": person_id(k_men),
         }
         if pid and kid:
             stats["both_ends_named"] += 1

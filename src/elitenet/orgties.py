@@ -81,6 +81,15 @@ FIELDS_TIES = [
 FIELDS_QUEUE = FIELDS_TIES + [
     "queue_reason", "failed_end", "failed_mention",
     "near_org_id", "near_org_label", "near_score",
+    # The ENTITY id of each end, including an end with no seed identity.
+    # A mention that matched no seed organisation is still a firm, and
+    # `orgentity` gives it a stable id; discarding that left the queue with no
+    # row carrying ids for both ends, which made this layer's false-hole
+    # exposure unmeasurable -- reported as 0%, which reads as "the sparsity is
+    # real" and is the opposite of what was known. Distinct from
+    # `near_org_id`, which is what a FAILED match came closest to and must
+    # never be used as an identity.
+    "holder_entity_id", "target_entity_id",
 ]
 FIELDS_SPELLS = [
     "org_spell_id", "holder_id", "holder_label", "target_id", "target_label",
@@ -240,7 +249,8 @@ def observations(events: list[dict],
             cache[mention] = best_org_match(mention, idx)
         return cache[mention]
 
-    def endpoint(mention: str, event: dict | None) -> tuple[str, float, str, str]:
+    def endpoint(mention: str, event: dict | None
+                 ) -> tuple[str, float, str, str, str]:
         """(id, score, basis, seed_id) for one end of a tie.
 
         Membership and identity use the candidate differently, and conflating
@@ -254,7 +264,7 @@ def observations(events: list[dict],
         """
         cand, score = rv(mention)
         if not cand or score < THRESHOLD_MEMBERSHIP:
-            return "", score, "unresolved", ""
+            return "", score, "unresolved", "", org_entity.for_mention(mention)
         m = org_match(mention, idx)
         seed_id = m.org_id if m.is_identity else ""
         # The target's identifiers are on the event; a holder is named inside
@@ -275,8 +285,8 @@ def observations(events: list[dict],
             # assert. Counted, and sent to the review queue rather than
             # attached to the node the gate just rejected.
             diag["endpoint_no_identity"] += 1
-            return "", score, m.basis, ""
-        return (ent or seed_id), score, m.basis, seed_id
+            return "", score, m.basis, "", ""
+        return (ent or seed_id), score, m.basis, seed_id, ent
 
     # The extractor emits both candidate targets for a clause that states one,
     # sharing an `alt_group`, and the choice belongs here: this is the first
@@ -331,8 +341,8 @@ def observations(events: list[dict],
         diag["events"] += 1
         holder_m = (e.get("counterparty_mention") or "").strip()
         target_m = (e.get("org_mention") or "").strip()
-        hid, hs, hbasis, hseed = endpoint(holder_m, None)
-        tid, ts, tbasis, tseed = endpoint(target_m, e)
+        hid, hs, hbasis, hseed, hent = endpoint(holder_m, None)
+        tid, ts, tbasis, tseed, tent = endpoint(target_m, e)
         diag[f"holder_{hbasis}"] += 1
         diag[f"target_{tbasis}"] += 1
         if not hid and not tid:
@@ -361,6 +371,7 @@ def observations(events: list[dict],
                 "near_org_label": (idx.orgs[near_id]["label"]
                                    if near_id in idx.orgs else ""),
                 "near_score": round(near_s, 4),
+                "holder_entity_id": hent, "target_entity_id": tent,
             })
             continue
         # A self-tie has to be caught on the NAMES as well as the ids. The two

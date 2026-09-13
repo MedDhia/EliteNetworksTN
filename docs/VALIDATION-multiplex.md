@@ -41,13 +41,13 @@ Generated 2026-09-13.
 - **ministerial appointments by year** — 1958=6, 1959=1, 1960=2, 1961=3, 1962=3, 1964=1, 1965=3, 1966=10, 1967=4, 1968=3, 1969=10, 1970=4, 1971=12, 1972=20, 1973=12, 1974=18, 1975=4, 1976=7, 1977=13, 1978=17, 1979=6, 1980=43, 1981=63, 1982=21, 1983=53, 1984=44, 1985=37, 1986=45, 1987=81, 1988=45, 1989=27, 1990=36, 1991=45, 1992=47, 1993=36, 1994=42, 1995=41, 1996=39, 1997=50, 1998=27, 1999=45, 2000=44, 2001=56, 2002=33, 2003=25, 2004=29, 2005=67, 2006=42, 2007=55, 2008=57, 2009=30, 2010=57, 2011=102, 2012=178, 2013=118, 2014=138, 2015=195, 2016=190, 2017=164, 2018=131, 2019=73, 2020=243, 2021=88, 2022=69, 2023=20, 2024=52, 2025=15, 2026=3
 - **seed cabinets** — 7 government nodes in the seed sheet: CHAHED GOVERNMENT, ESSID GOVERNMENT, FAKHFAKH GOVERNMENT, JEBALI GOVERNMENT, JOMAA GOVERNMENT, LAARAYEDH GOVERNMENT, MECHICHI GOVERNMENT
 - **act citation graph** — 420593 citations, 408017 with a resolvable cited date
-- **org ties** — 3530 dated, 4634 undated seed ties; 3485 dated dyads
-- **org tie relations** — shareholder_confirmed=5720, auditor=1554, shares_ceded=285, shares_acquired=230, funder=201, member=79, branch=45, corporate_officer=33
+- **org ties** — 3524 dated, 4634 undated seed ties; 3479 dated dyads
+- **org tie relations** — shareholder_confirmed=5718, auditor=1546, shares_ceded=288, shares_acquired=231, funder=201, member=79, branch=45, corporate_officer=33
 - **org ties are not self-loops** — 0 ties whose holder and target are the same organisation
 - **org tie durations are not negative** — 0 org tie spells end before they begin
 - **org tie censoring is consistent** — 0 spells assert an onset while flagged left-censored
 - **org tie endpoints are known nodes** — 0 ties with an endpoint in neither seed_nodes.csv nor org_entities.csv
-- **org tie censoring** — left_censored=3014 (85%), right_censored=3245 (92%)
+- **org tie censoring** — left_censored=3004 (85%), right_censored=3236 (92%)
 - **organisation entities** — 235052 entities over 302716 distinct mentions: name=143883, matricule_fiscal=73703, registre_commerce=13618, ambiguous_mention=3003, address_corroborated=845
 - **every org mention has an entity** — 0 of 277960 organisation mentions in events.csv reach no entity
 - **mentions spanning several entities** — 9571 mentions carry more than one hard identifier, so the mention-level map is modal for them; the per-event key in orgentity.entity_key is the authoritative assignment

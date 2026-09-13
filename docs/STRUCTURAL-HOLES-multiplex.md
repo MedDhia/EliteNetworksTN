@@ -33,10 +33,10 @@ finding.
 
 | layer | nodes | components | if admitted | connected pairs | if admitted | exposure |
 |---|---|---|---|---|---|---|
-| person-organisation (all years) | 7,815 | 4,343 | 4,236 | 3,158,073 | 3,745,875 | 18.6% |
-| person-organisation 1957-2010 | 3,865 | 2,597 | 2,572 | 284,924 | 348,634 | 22.4% |
-| person-organisation 2011-2026 | 7,610 | 4,405 | 4,334 | 2,403,413 | 2,720,016 | 13.2% |
-| organisation ownership | 8,335 | 1,600 | 1,600 | 9,240,971 | 9,240,971 | 0.0% |
+| person-organisation (all years) | 7,815 | 4,343 | 4,209 | 3,158,073 | 3,683,135 | 16.6% |
+| person-organisation 1957-2010 | 3,865 | 2,597 | 2,547 | 284,924 | 340,988 | 19.7% |
+| person-organisation 2011-2026 | 7,610 | 4,405 | 4,314 | 2,403,413 | 2,689,744 | 11.9% |
+| organisation ownership | 8,330 | 1,600 | 1,312 | 9,240,960 | 13,933,876 | 50.8% |
 | kinship | 28 | 14 | 14 | 14 | 14 | 0.0% |
 
 The layers are reported separately on purpose. The

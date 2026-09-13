@@ -415,7 +415,7 @@ As above at monthly resolution, because the January 2011 rupture is invisible at
 
 ### `org_ties.csv`
 
-4,083 rows.
+4,074 rows.
 
 Organisation-to-organisation observations, one row per resolved (holder, target, relation) assertion. Both endpoints must resolve to **distinct** seed organisations; a mention resolving to the subject firm is a self-tie and is dropped rather than counted.
 
@@ -450,7 +450,7 @@ Organisation-to-organisation observations, one row per resolved (holder, target,
 
 ### `org_tie_spells.csv`
 
-8,164 rows.
+8,158 rows.
 
 The org-org layer as intervals, in the same vocabulary as `spells.csv`. It is a **separate, one-mode, directed** layer: adding these rows to `spells.csv` would silently break every two-mode term in the TERGM panel. `evidence_tier` separates gazette-dated spells from the undated seed ties carried alongside them. Read `docs/ORG-TIES-multiplex.md` before modelling: the dominant clause confirms a standing holding rather than dating its start, so onsets here are overwhelmingly left-censored.
 
@@ -485,7 +485,7 @@ The org-org layer as intervals, in the same vocabulary as `spells.csv`. It is a 
 
 ### `panel_org_ties_yearly.csv`
 
-65,333 rows.
+65,376 rows.
 
 The org-org layer by calendar year, the input to `R/build_org_ownership.R`.
 
@@ -624,10 +624,12 @@ Kinship observations retained but not tied, because one or both ends could not b
 | `queue_reason` |  |
 | `failed_end` |  |
 | `failed_mention` |  |
+| `person_cluster_id` |  |
+| `kin_cluster_id` |  |
 
 ### `org_ties_review_queue.csv`
 
-10,622 rows.
+10,606 rows.
 
 Org-org observations a human has to settle. `queue_reason` separates a dyad whose link score landed in the ambiguous band from the far larger set with **one end resolved**: there the resolved end anchors the dyad and only a single name is in question, so `failed_mention`, `near_org_label` and `near_score` carry what the coder needs.
 
@@ -665,6 +667,8 @@ Org-org observations a human has to settle. `queue_reason` separates a dyad whos
 | `near_org_id` |  |
 | `near_org_label` |  |
 | `near_score` |  |
+| `holder_entity_id` |  |
+| `target_entity_id` |  |
 
 ### `org_entities.csv`
 

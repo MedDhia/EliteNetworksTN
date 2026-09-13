@@ -170,14 +170,18 @@ def layer_exposure(name: str, adj_obs: dict[str, set[str]],
     all three would average a measurement artefact together with a design
     decision.
     """
-    comp_obs, comp_pot = components(adj_obs), components(adj_pot)
+    # Both sides counted over the observed node set, so "connected pairs"
+    # means the same thing in each column.
+    census = set(adj_obs)
+    comp_obs = components(adj_obs, census)
+    comp_pot = components(adj_pot, census)
     pairs_obs = sum(n * (n - 1) // 2 for n in comp_obs)
     pairs_pot = sum(n * (n - 1) // 2 for n in comp_pot)
     # The two sides must describe the same node set. If the potential graph
     # has nodes the observed one does not, the difference is not a closed
     # hole -- it is a node that was never in the network being measured, and
     # counting its pairs reports the node-set gap as an exposure.
-    extra = set(adj_pot) - set(adj_obs)
+    extra = set(adj_pot) - census
     return {
         "layer": name,
         "nodes": len(adj_obs),
@@ -190,8 +194,10 @@ def layer_exposure(name: str, adj_obs: dict[str, set[str]],
         "pairs_on_the_boundary": pairs_pot - pairs_obs,
         "exposure_pct": (round(100 * (pairs_pot - pairs_obs) / pairs_obs, 1)
                          if pairs_obs else ""),
-        "nodes_only_in_potential": len(extra),
-        "comparable": "yes" if not extra else "no: node sets differ",
+        # Nodes that exist only on the potential side. They are allowed to
+        # carry a path but never to contribute a pair, so this is a count of
+        # possible bridges rather than a warning.
+        "bridging_nodes_not_in_network": len(extra),
         "queue_rows": queue_rows,
         "usable_declined_edges": usable_declined,
         # 0% exposure means two opposite things and they must not share a
@@ -255,8 +261,13 @@ def org_ownership_edges() -> tuple[set[tuple[str, str]], set[tuple[str, str]]]:
         # came CLOSEST to, recorded so a coder can adjudicate, and treating it
         # as a claimed endpoint manufactures ties out of near-misses -- which
         # is the merge-hub error in a new place.
-        h = r.get("holder_id") or r.get("holder_seed_id") or ""
-        t = r.get("target_id") or r.get("target_seed_id") or ""
+        # The ENTITY id is the fallback, not `near_org_id`. An end that
+        # matched no seed organisation is still a firm with a stable identity;
+        # what a failed match came CLOSEST to is not an identity at all.
+        h = (r.get("holder_id") or r.get("holder_seed_id")
+             or r.get("holder_entity_id") or "")
+        t = (r.get("target_id") or r.get("target_seed_id")
+             or r.get("target_entity_id") or "")
         if h and t:
             dec.add((h, t))
     return obs, dec
@@ -273,7 +284,8 @@ def kinship_edges() -> tuple[set[tuple[str, str]], set[tuple[str, str]]]:
         # the potential side then gains thousands of nodes the observed side
         # does not have, and the "exposure" it reports is the size of that
         # node-set difference rather than any hole. It printed 279,300%.
-        a, b = r.get("person_id") or "", r.get("kin_id") or ""
+        a = r.get("person_id") or r.get("person_cluster_id") or ""
+        b = r.get("kin_id") or r.get("kin_cluster_id") or ""
         if a and b:
             dec.add((a, b))
     return obs, dec
@@ -300,8 +312,23 @@ def project_persons(edges: set[tuple[str, str]]) -> dict[str, set[str]]:
     return adj
 
 
-def components(adj: dict[str, set[str]]) -> list[int]:
-    """Component sizes, largest first."""
+def components(adj: dict[str, set[str]],
+               count_only: set[str] | None = None) -> list[int]:
+    """Component sizes, largest first, counting only `count_only` if given.
+
+    The two arguments do different jobs and the distinction is the whole
+    measurement. Traversal runs over the FULL graph, because a declined edge
+    to a node the observed network lacks can still bridge two nodes it has --
+    two officers of an unresolved firm become colleagues through it, and that
+    is a real hole closed. But the SIZE counted is only ever nodes the
+    observed network has, because a pair involving a node that exists on one
+    side and not the other is not a hole: it is a node that was never in the
+    network being measured.
+
+    Conflating them reported the ownership layer at 357.9% and kinship at
+    341,757%, which is the size of the node-set difference wearing the name
+    of an exposure.
+    """
     seen: set[str] = set()
     sizes = []
     for start in adj:
@@ -311,12 +338,14 @@ def components(adj: dict[str, set[str]]) -> list[int]:
         seen.add(start)
         while q:
             n = q.popleft()
-            size += 1
+            if count_only is None or n in count_only:
+                size += 1
             for m in adj[n]:
                 if m not in seen:
                     seen.add(m)
                     q.append(m)
-        sizes.append(size)
+        if size:
+            sizes.append(size)
     return sorted(sizes, reverse=True)
 
 
