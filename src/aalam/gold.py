@@ -370,13 +370,29 @@ def score() -> dict:
                   "No passage has been coded, so there is no recall estimate. "
                   "Precision alone says nothing about what the pass missed.", ""]
 
+    coders = sorted({(e.get("coder") or "").strip() for e in judged} - {""})
     lines += [
         "## Caveat on provenance of these figures", "",
-        "This sample was drawn, and may have been coded, by the same agent that "
-        "wrote the extractors. That makes it a self-audit, not an independent "
-        "estimate, and it must not be published as one. An independent coder "
-        "working from `gold/AALAM_CODING_INSTRUCTIONS.md` and the printed "
-        "volume would produce the figure that can be.", "",
+        "**This is a self-audit and must not be published as an independent "
+        "estimate.** The sample was drawn by the same system that wrote the "
+        "extractors, and coded by it as well"
+        + (f" (coders: {', '.join(f'`{c}`' for c in coders)})." if coders else "."),
+        "",
+        "Separate coder identities do not make this independent. They are "
+        "separate instances of the same model that produced the assertions, so "
+        "the errors a coder is disposed to overlook are the errors the "
+        "extractor is disposed to make. That correlation inflates precision by "
+        "an unknown amount, and it inflates recall further, because the recall "
+        "sheet asks a coder to enumerate the ties a passage states -- which is "
+        "the extraction task over again, done by the same kind of reader.", "",
+        "What the figures are good for is comparison within the sample: which "
+        "layer is weaker, whether the rule pass or the model pass fails more "
+        "often, which relation types go wrong. Those comparisons hold even "
+        "under a shared bias, because the bias applies to both sides.", "",
+        "What they are not good for is a headline number in a paper. For that, "
+        "a coder who did not build this, working from "
+        "`gold/AALAM_CODING_INSTRUCTIONS.md` and the printed volume, has to "
+        "recode the same seeded sample -- which is why the sample is seeded.", "",
     ]
     _emit(lines)
     return {"coded": len(judged), "sampled": len(edges),
