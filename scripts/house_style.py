@@ -104,7 +104,12 @@ def save(fig, name: str, note: str | None = None) -> None:
         fig.text(0.012, 0.012, note, ha="left", va="bottom",
                  fontsize=6.8, color=MUTED, wrap=True)
     FIGS.mkdir(parents=True, exist_ok=True)
-    for ext, kw in (("png", {"dpi": 300}), ("pdf", {})):
+    # A PDF otherwise carries the moment it was written in its metadata, so
+    # redrawing unchanged data produces different bytes and shows up as a
+    # spurious diff on every run -- the same trap the gzipped tables avoid by
+    # pinning their header mtime. Setting CreationDate to None omits it.
+    for ext, kw in (("png", {"dpi": 300}),
+                    ("pdf", {"metadata": {"CreationDate": None}})):
         path = FIGS / f"{name}.{ext}"
         fig.savefig(path, bbox_inches="tight", pad_inches=0.24, **kw)
     plt.close(fig)
