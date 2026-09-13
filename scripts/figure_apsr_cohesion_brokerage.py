@@ -6,9 +6,15 @@ snippet as ``figures/fig14_cohesion_brokerage.tex``.
 
 Sized for a journal column, NOT for screen. The exploratory map in
 ``figure_core_periphery.py`` is 18.4 inches wide and carries 6.8pt
-annotations; reduced to a 5.2-inch text block it is an unreadable speckle.
-This is the same finding rebuilt as one claim at final size, so nothing is
-scaled down after rendering and every character stays at or above 8pt.
+annotations; reduced to a journal text block it is an unreadable speckle.
+This is the same finding rebuilt as one claim at final size.
+
+Built to the APSR / Cambridge artwork requirements: readable in greyscale
+(it is value-encoded, with no hue carrying meaning), no font below 9pt at
+final size, no line weight below 0.3pt, Liberation Sans as the metric
+clone of the recommended Arial, and 4.5 x 4.7in (114mm) so it sits in a
+single-column text block at scale 1.0 rather than being scaled down,
+which would breach the 9pt floor.
 
 The claim
 ---------
@@ -85,9 +91,14 @@ MIN_CELL = 20
 
 plt.rcParams.update({
     "figure.facecolor": "white", "axes.facecolor": "white",
-    "savefig.facecolor": "white", "font.family": "DejaVu Sans",
+    "savefig.facecolor": "white", "font.family": "Liberation Sans",   # metric clone of Arial
     "font.size": 9.0, "pdf.fonttype": 42, "ps.fonttype": 42,
-    "legend.frameon": False, "axes.linewidth": 0.7,
+    "legend.frameon": False, "axes.linewidth": 0.6,
+    # Matplotlib renders $...$ in DejaVu by default, which would mix a
+    # second typeface into a figure set in the Arial-metric face.
+    "mathtext.fontset": "custom", "mathtext.rm": "Liberation Sans",
+    "mathtext.it": "Liberation Sans:italic",
+    "mathtext.bf": "Liberation Sans:bold",
 })
 
 PERSON_CLASS = "individual"
@@ -144,7 +155,7 @@ def _spines(ax) -> None:
         ax.spines[side].set_visible(False)
     for side in ("left", "bottom"):
         ax.spines[side].set_color(DARK)
-    ax.tick_params(colors=DARK, labelsize=8.5, length=3, width=.7)
+    ax.tick_params(colors=DARK, labelsize=9.0, length=3, width=.7)
     for lbl in ax.get_yticklabels() + ax.get_xticklabels():
         lbl.set_color(BLACK)
 
@@ -186,7 +197,7 @@ def panel_a(ax, sh) -> None:
     ax.set_yticklabels(["$10^4$", "$10^5$", "$10^6$"])
     ax.set_ylabel("Betweenness centrality", fontsize=9, color=BLACK)
     _spines(ax)
-    ax.grid(axis="y", color=PALE, lw=.7, zorder=0)
+    ax.grid(axis="y", color=PALE, lw=.5, zorder=0)
     ax.set_axisbelow(True)
 
     peak = max(sh, key=lambda s: s["median_matched"]
@@ -206,17 +217,17 @@ def panel_a(ax, sh) -> None:
         ax.plot([bx - .075, bx], [yy, yy], color=ACCENT, lw=.9, zorder=5)
     ax.annotate(f"{ratio:.1f}×", (bx, (lo * hi) ** .5), xytext=(4, 0),
                 textcoords="offset points", ha="left", va="center",
-                fontsize=8.5, color=ACCENT, fontweight="semibold")
+                fontsize=9.5, color=ACCENT, fontweight="semibold")
 
     ax.annotate("median is 0", (1, floor), xytext=(7, 1),
                 textcoords="offset points", ha="left", va="center",
-                fontsize=8, color=MID)
+                fontsize=9, color=MID)
     handles, _ = ax.get_legend_handles_labels()
     handles.append(Patch(fc=PALE, ec="none",
                          label="interquartile range, all nodes"))
     # Two columns, not four rows: stacked, the last entry reached down into
     # the degree-matched series it was meant to describe.
-    ax.legend(handles=handles, loc="upper left", fontsize=8, ncol=2,
+    ax.legend(handles=handles, loc="upper left", fontsize=9, ncol=2,
               labelcolor=BLACK, handlelength=1.9, handletextpad=.5,
               labelspacing=.32, columnspacing=1.1, borderpad=.15,
               borderaxespad=.2)
@@ -246,7 +257,7 @@ def panel_b(ax, sh) -> None:
             fontweight="semibold", va="center", zorder=6)
     ax.annotate("persons' share of nodes", (1, nodeshare[0]),
                 xytext=(9, -11), textcoords="offset points", ha="left",
-                va="center", fontsize=8, color=BLACK, zorder=6)
+                va="center", fontsize=9, color=BLACK, zorder=6)
 
     # Direct value labels on the boundary rather than a leader and a
     # sentence: the sentence belongs in the caption, and a leader into a
@@ -264,7 +275,7 @@ def panel_b(ax, sh) -> None:
                     xytext=(-26 if last else 0, -26 if last else -11),
                     textcoords="offset points",
                     ha="center", va="center",
-                    fontsize=8.6 if emph else 8.0, zorder=5,
+                    fontsize=9.5 if emph else 9.0, zorder=5,
                     color=BLACK if emph else MID,
                     fontweight="semibold" if emph else "normal")
     boundary(ax, trough["k"] + .5)
@@ -281,8 +292,8 @@ def panel_b(ax, sh) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--width", type=float, default=5.2,
-                    help="final width in inches; APSR text block is ~5.2")
+    ap.add_argument("--width", type=float, default=4.5,
+                    help="final width in inches (4.5in = 114mm)")
     args = ap.parse_args(argv)
 
     sh = shells(load())
@@ -303,10 +314,10 @@ def main(argv: list[str] | None = None) -> int:
         ax_a.annotate(f"{s['n']:,}", (s["k"], 1.0),
                       xycoords=("data", "axes fraction"), xytext=(0, 4),
                       textcoords="offset points", ha="center", va="bottom",
-                      fontsize=8.0, color=MID)
+                      fontsize=9.0, color=MID)
     ax_a.annotate("nodes:", (0, 1.0), xycoords="axes fraction",
                   xytext=(-4, 4), textcoords="offset points", ha="right",
-                  va="bottom", fontsize=8.0, color=MID)
+                  va="bottom", fontsize=9.0, color=MID)
 
     # (a) sits a line above the shell-size row, which shares its corner
     ax_a.annotate("(a)", (0, 1.0), xycoords="axes fraction",
@@ -316,16 +327,26 @@ def main(argv: list[str] | None = None) -> int:
                   xytext=(-34, 5), textcoords="offset points", ha="left",
                   va="bottom", fontsize=10, color=BLACK, fontweight="bold")
 
-    fig.subplots_adjust(left=0.158, right=0.985, top=0.905, bottom=0.093)
+    fig.subplots_adjust(left=0.212, right=0.986, top=0.902, bottom=0.098)
 
-    for ext, kw in (("pdf", {}), ("png", {"dpi": 600})):
+    for ext, kw in (("pdf", {}), ("png", {"dpi": 1000})):
         p = FIGS / f"{STEM}.{ext}"
         fig.savefig(p, **kw)
         print(f"  {p.relative_to(ROOT)}  {p.stat().st_size / 1024:.0f} KB")
     plt.close(fig)
 
+    # Cambridge names TIFF with LZW as the preferred raster format, and asks
+    # 1000 dpi for line art. Greyscale mode, since no hue carries meaning.
+    from PIL import Image
+
+    tif = FIGS / f"{STEM}.tif"
+    with Image.open(FIGS / f"{STEM}.png") as im:
+        im.convert("L").save(tif, format="TIFF", compression="tiff_lzw",
+                             dpi=(1000, 1000))
+    print(f"  {tif.relative_to(ROOT)}  {tif.stat().st_size / 1024:.0f} KB")
+
     _write_csv(sh)
-    _write_tex(sh)
+    _write_tex(sh, args.width)
     for s in sh:
         print(f"  k={s['k']}  n={s['n']:>6}  median {s['median']:>10,.0f}  "
               f"matched(n={s['n_matched']:>3}) "
@@ -346,7 +367,7 @@ def _write_csv(sh) -> None:
     print(f"  wrote {path.relative_to(ROOT)}")
 
 
-def _write_tex(sh) -> None:
+def _write_tex(sh, WIDTH: float = 4.5) -> None:
     """The caption, with every number pulled from the data it describes."""
     peak = max(sh, key=lambda s: s["median_matched"]
                if s["n_matched"] >= MIN_CELL else -1)
@@ -356,9 +377,11 @@ def _write_tex(sh) -> None:
     gap = next(s for s in sh if s["k"] == inner["k"] + 1)
     total_n = sum(s["n"] for s in sh)
 
-    tex = rf"""\begin{{figure}}[t]
+    tex = rf"""% Include at a fixed width: scaling DOWN would push the
+% in-figure type below the 9pt floor the artwork guide sets.
+\begin{{figure}}[t]
   \centering
-  \includegraphics[width=\textwidth]{{{STEM}.pdf}}
+  \includegraphics[width={WIDTH}in]{{{STEM}.pdf}}
   \caption{{\textbf{{Brokerage is non-monotonic in cohesion.}}
   Panel (a): betweenness centrality by $k$-core shell, median with
   interquartile range shaded. Brokerage rises to a peak at $k$={peak['k']}
