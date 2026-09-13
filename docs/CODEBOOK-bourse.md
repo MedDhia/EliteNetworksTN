@@ -231,6 +231,42 @@ personal ties are a handful of former ministers, former central-bank deputy
 governors and chiefs of cabinet. `pc_narrow` is consequently thin, and rests
 mostly on the 10% state-stake arm rather than on officeholding.
 
+## 4f. `analysis_connection_centrality.md` — connection and position
+
+Asks whether politically connected firms sit more centrally in the firm-firm
+network. The question is close to circular as usually posed, and the report is
+mostly about handling that, so two things in it are worth carrying into any
+write-up.
+
+**The naive answer is wrong in a specific, reversible way.** `pc_broad` shows a
+small positive association with centrality on the whole network and a large
+*negative* one once state-owned banks are deleted from the graph. Almost all
+of its firms are coded connected through `public_bank`, and most of those are
+small participations hanging off a bank: delete the bank and they are more
+peripheral than comparable firms. **Do not use `pc_broad` as a treatment in a
+centrality regression** — it measures that artefact.
+
+**The state channels survive the correction.** A firm the state holds equity
+in, or a board seat on, ranks about 0.18 higher on degree and 0.24 higher on
+betweenness than a firm named in as many filings, and the estimate barely
+moves when every state node is deleted. Only 3 of those 22 firms are public
+banks — the rest are Tunisair, Tunisie Telecom, Carthage Cement, STAR, SIMPAR
+— so this is not a bank effect. `pc_officeholder` also holds but 8 of its 10
+firms are banks, so it cannot be separated from banking here.
+
+The measures disagree in a consistent order — betweenness > degree > strength
+> core, with core null — which is a **brokerage** signature rather than a
+cohesion one: connected firms bridge otherwise-unconnected parts of the
+network rather than sitting inside a dense cluster.
+
+Method: stratified permutation. Firms are binned by the number of documents
+naming them, labels are permuted within bins, and the effect is the rank gap
+averaged within bins. Both are necessary — filing intensity drives observed
+ties and observed connections alike, and an unstratified control mean is
+dominated by once-filed peripheral firms no treated firm could be compared
+with. Inference is by permutation because network observations are not
+independent, so parametric standard errors would be far too small.
+
 ## 5. `multiplex_edges_panel.csv.gz` — the balanced panel
 
 Same columns as the observed edge list, plus:

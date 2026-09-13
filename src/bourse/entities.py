@@ -164,6 +164,22 @@ _ETAT_ACCOUNTING = re.compile(
 
 # A single token that is a French function word or a bare table word is a
 # fragment of a cell, never the name of anything.
+# The subject of a filing rather than a party to it: an offer, a bond, or the
+# relative clause that introduces the operation. Anchored at the start, so a
+# company whose name merely contains one of these words is untouched.
+_DOCUMENT_FRAGMENT = re.compile(
+    r"^d\s*(offre|admission)\b"
+    r"|^offre\s+(a\s+prix|au\s+public|publique)\b"
+    # "Emprunt" opens a loan, never a company. "Obligation" can open one -
+    # "Obligations Foncieres SA" is a plausible issuer - so it is dropped only
+    # when it stands alone or is followed by an instrument's qualifier.
+    r"|^emprunt\b"
+    r"|^obligations?$"
+    r"|^obligations?\s+(subordonnee?s?|convertibles?|remboursables?|ordinaires?)\b"
+    r"|^augmentation\s+du?\s+capital\b"
+    r"|^relati[fv]e?s?\b"
+    r"|^note\s+d\s*operation\b")
+
 _FRAGMENT_TOKEN = frozenset({
     "du", "de", "des", "le", "la", "les", "ou", "et", "en", "au", "aux", "par",
     "pour", "sur", "sous", "dans", "avec", "son", "ses", "leur", "cette", "ce",
@@ -197,6 +213,14 @@ def is_not_an_entity(name: str) -> bool:
         return True
     n = base_normalise(name)
     if not n:
+        return True
+    # A filing's own subject, caught by the issuer parser only when it sits in
+    # the title: the offer being made, the bond being issued, the clause the
+    # operation is "relative to". These carry corporate words - "EMPRUNT
+    # OBLIGATAIRE MEUBLATEX INDUSTRIES" names a real company - so the test has
+    # to run before the corporate-word escape below rescues them. The company
+    # itself is a separate node; this is the instrument.
+    if _DOCUMENT_FRAGMENT.match(n):
         return True
     if _ORGAN_PHRASE.match(n) or _ORGAN_PHRASE.match(_LEADING_ITEM_NUMBER.sub("", n)):
         return True

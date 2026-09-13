@@ -122,8 +122,6 @@ F23211662e7,Consignations - DG de la CDC Gestion,2017,0,0,0,1,0,0,0,,0,1,1,0,pub
 F23211662e7,Consignations - DG de la CDC Gestion,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
 F1317a5fc0c,Contribution aux travaux du Conseil,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
 F6fa987c429,Créé par le Conseil,2016,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
-F78ed3467a0,D'ADMISSION,1990,0,1,1,0,0,0,0,,1,1,3,0,ministry_organ|state_organ_seat
-F78ed3467a0,D'ADMISSION,1991,0,0,1,0,0,0,0,,1,1,1,0,ministry_organ
 F4ff651ad76,DGA de la Caisse des Dépôts,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
 F4ff651ad76,DGA de la Caisse des Dépôts,2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
 F4ff651ad76,DGA de la Caisse des Dépôts,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
@@ -484,9 +482,6 @@ F9a5d4ac642,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du N
 F9a5d4ac642,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du Nord",2017,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
 F9a5d4ac642,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du Nord",2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
 F9a5d4ac642,"d'Exploitation Agricole ""SODEXA"" - la Sté Huilerie d'Olives du Nord",2021,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
-F7d169b2846,d'Offre à Prix Ferme,2009,1,0,0,1,0,0,1,,0,1,4,0,public_bank_equity|state_shareholder
-F7d169b2846,d'Offre à Prix Ferme,2010,1,0,0,1,0,0,1,,0,1,6,0,public_bank_equity|state_shareholder
-Fdd99ea4bce,d'Offre à Prix Ferme OPF et d'admission au marché principal de la cote de la Bourse de la société,2010,0,0,0,1,0,0,1,,0,1,3,0,public_bank_equity
 Fff3ba127fa,"d'essence, Téléphone etc…)",2008,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
 F3f2c9a02e9,de départ volontaire à la retraite et La concrétisation,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
 Fdd1dbbcd58,de la Banque articulée autour de sept pôles par,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
@@ -507,9 +502,6 @@ Ff0de14aa54,du cabinet de formation AMEF Training,2017,0,0,0,1,0,0,0,,0,1,1,0,pu
 Ff0de14aa54,du cabinet de formation AMEF Training,2018,0,0,0,1,0,0,0,,0,1,1,0,public_bank_interlock
 F78f0b918c7,d’Assurance et de Réassurance,2023,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
 F763df5b9b1,e Mme Fawzia Moussa Saayid,2008,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
-Fdd6d554290,emprunt obligataire,2016,0,0,0,1,0,0,1,,0,1,2,0,public_bank_equity
-Fdd6d554290,emprunt obligataire,2018,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
-F09bc5049a3,emprunt obligataire subordonné,2019,0,1,0,0,0,0,0,,0,1,1,0,state_organ_seat
 Fec97a5df8c,en place de la stratégie et du Business Plan de la,2016,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
 F08f37337c9,entre les Services du Ministre auprès du,2012,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
 Feac8eac82b,et de l’environnement par la FONDATION BNA,2018,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
@@ -552,8 +544,6 @@ F574d5f8708,p Casd’interdiction/Conflitsd’intérêts,2015,0,0,0,1,0,0,0,,0,1
 F8384e53b2e,pour permettre La mise en œuvre d'une politique,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
 F45ae34c9a1,questionnant de manière constructive le Directeur,2015,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
 F1e40ce7805,radiation et de cession à la STRC des créances,2022,0,0,0,1,0,0,0,,0,1,1,0,public_bank_seat
-F86ab84f678,relatif à l'augmentation du capital,2007,0,0,0,1,0,0,1,,0,1,1,0,public_bank_equity
-F86ab84f678,relatif à l'augmentation du capital,2008,1,0,0,1,0,0,1,,0,1,3,0,public_bank_equity|state_shareholder
 F5c04e91f9b,rendements d'actif (ROA] et de capital,2017,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
 Fef1e7ee3e3,représenté par M. Saïdi Fethi,2013,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat
 Fca4edcde5f,représenté par son P.D.G,2006,0,0,0,1,0,0,0,,0,1,1,1,public_bank_seat

@@ -4,17 +4,17 @@ Firms are coded connected through four observable channels, each
 flagged separately so a narrow or a broad definition can be applied
 without recoding. Rules live in `config/bourse_political_connections.csv`.
 
-**349 firms** carry at least one connection in at least one year, over 28 years (1990–2026), on **800 pieces of evidence** (115 of them from OCR'd pages).
+**343 firms** carry at least one connection in at least one year, over 27 years (1990–2026), on **775 pieces of evidence** (115 of them from OCR'd pages).
 
 | Channel | Firms | Definition followed |
 |---|---:|---|
-| `state_ownership` | 15 | A state body holds equity (Boubakri et al. 2008) |
-| `state_board` | 19 | A state body holds a board seat |
-| `officeholder` | 11 | A director's title names a political or senior bureaucratic office (Faccio 2006) |
-| `public_bank` | 333 | Board or equity tie to a majority state-owned bank (Khwaja and Mian 2005) |
+| `state_ownership` | 13 | A state body holds equity (Boubakri et al. 2008) |
+| `state_board` | 17 | A state body holds a board seat |
+| `officeholder` | 10 | A director's title names a political or senior bureaucratic office (Faccio 2006) |
+| `public_bank` | 329 | Board or equity tie to a majority state-owned bank (Khwaja and Mian 2005) |
 | `political_figure` | 0 | Director matches a named roster (Rijkers et al. 2017) — **roster ships empty** |
 
-`pc_narrow` — a sitting officeholder, a roster match, or a state stake at or above Faccio's 10% — holds for **9 firms**. `pc_broad` (any channel) holds for 349.
+`pc_narrow` — a sitting officeholder, a roster match, or a state stake at or above Faccio's 10% — holds for **8 firms**. `pc_broad` (any channel) holds for 343.
 
 ## What the zeros mean
 
@@ -74,11 +74,11 @@ needs the person layer joined on `counterpart`. Either way the order
 of magnitude is the point: Faccio's own definition, applied strictly,
 is close to empty in this corpus.
 
-## Entity-resolution debris: 7 evidence rows (0.9%)
+## Entity-resolution debris: 3 evidence rows (0.4%)
 
-4 of the coded 'firms' are not companies at all but
+3 of the coded 'firms' are not companies at all but
 extraction debris — a prospectus title fragment, a parenthetical
-date, a committee name — carrying 7 evidence rows between them: '(Créé lors du CA du 02 octobre 2018)', '(créé lors du CA du 12 décembre 2006)', '/e Comité de Nomination', "D'ADMISSION".
+date, a committee name — carrying 3 evidence rows between them: '(Créé lors du CA du 02 octobre 2018)', '(créé lors du CA du 12 décembre 2006)', '/e Comité de Nomination'.
 
 The *evidence* on them is usually real: `D'ADMISSION` carries a
 ministry representative on a 1990 board, correctly read from the
