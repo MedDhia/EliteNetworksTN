@@ -154,20 +154,61 @@ def test_snowballed_links_with_no_pass_column_stay_an_error(tmp_path, monkeypatc
 
 
 def test_snowball_reports_its_passes_when_the_column_is_there(tmp_path, monkeypatch):
+    """The fixture has to be internally coherent, which the first version of
+    it was not: it paired `person_names_org` -- a rule that names an
+    ORGANISATION -- with link_status=snowball and no resolved_org_id, and the
+    three-part invariant rightly rejected it. The rules split two ways and a
+    row must satisfy whichever it claims."""
     from elitenet import validate as V
     monkeypatch.setattr(V, "PROCESSED", tmp_path)
     # _skip_stage renders the path relative to ROOT, so both must move.
     monkeypatch.setattr(V, "ROOT", tmp_path)
     (tmp_path / "resolution.csv").write_text(
-        "mention_key,link_status,resolve_pass,snowball_basis\n"
-        "a||b,resolved,0,\n"
-        "c||d,snowball,1,person_names_org\n"
-        "e||f,snowball,2,org_names_person\n", encoding="utf-8")
+        "mention_key,link_status,resolve_pass,snowball_basis,resolved_org_id\n"
+        "a||b,resolved,0,,CO_1\n"
+        # A person-naming rule: link_status must be snowball.
+        "c||d,snowball,1,org_names_person,CO_1\n"
+        "e||f,snowball,2,colleagues_name_person,\n"
+        # An organisation-naming rule: the organisation must be named, and the
+        # person may legitimately stay unresolved.
+        "g||h,unresolved,1,identifier_names_org,CO_2\n"
+        "i||j,ambiguous,2,person_names_org,CO_3\n", encoding="utf-8")
     rep = V.Report()
     V.check_snowball(rep)
     assert rep.errors == 0
     detail = next(d for _lv, c, d in rep.rows if c == "snowball links")
-    assert "2 of 3" in detail and "pass 1=1" in detail and "pass 2=1" in detail
+    assert "2 of 5" in detail and "pass 1=1" in detail and "pass 2=1" in detail
+
+
+def test_an_organisation_rule_must_leave_an_organisation_named(tmp_path, monkeypatch):
+    """The branch that caught the stale fixture. A row claiming its pass was
+    earned by naming a firm, with no firm named, is mislabelled."""
+    from elitenet import validate as V
+    monkeypatch.setattr(V, "PROCESSED", tmp_path)
+    monkeypatch.setattr(V, "ROOT", tmp_path)
+    (tmp_path / "resolution.csv").write_text(
+        "mention_key,link_status,resolve_pass,snowball_basis,resolved_org_id\n"
+        "a||b,unresolved,1,identifier_names_org,\n", encoding="utf-8")
+    rep = V.Report()
+    V.check_snowball(rep)
+    assert rep.errors == 1
+    assert any("leaves an organisation named" in c for _lv, c, _d in rep.rows)
+
+
+def test_an_organisation_naming_pass_need_not_name_a_person(tmp_path, monkeypatch):
+    """The 878 rows the first version of the check wrongly failed on. Rules 0
+    and 1 name a FIRM on a row whose person is still unresolved, and that is
+    the intended behaviour, not a labelling error."""
+    from elitenet import validate as V
+    monkeypatch.setattr(V, "PROCESSED", tmp_path)
+    monkeypatch.setattr(V, "ROOT", tmp_path)
+    (tmp_path / "resolution.csv").write_text(
+        "mention_key,link_status,resolve_pass,snowball_basis,resolved_org_id\n"
+        "a||b,unresolved,1,identifier_names_org,CO_1\n"
+        "c||d,ambiguous,2,person_names_org,CO_2\n", encoding="utf-8")
+    rep = V.Report()
+    V.check_snowball(rep)
+    assert rep.errors == 0
 
 
 def test_an_unlabelled_snowball_row_is_an_error(tmp_path, monkeypatch):
