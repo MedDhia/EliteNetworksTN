@@ -4,30 +4,50 @@ What this dataset cannot support, stated plainly. Every figure here is
 measured; the counts come from `docs/VALIDATION-aalam-tunisiyun.md` and the
 tables themselves.
 
-## 1. Precision and recall are not measured
+## 1. Precision and recall, and why the numbers are not publishable
 
-There is **no gold-standard score for this build**. All 38 entries have been
-read and the tables carry 873 ties, but nobody has coded a sample against the
-printed pages, so there is no precision figure and no recall figure.
+The sample is coded. **206 ties and 60 passages**, seeded at `20260913`:
 
-The sample is drawn and waiting: **206 ties and 60 passages** in `gold/`,
-seeded at `20260913` so redrawing reproduces them exactly. Ties are stratified
-by layer x extractor, with all seven rule-pass ties taken whole, so the rule
-and model passes can be scored apart. Passages are stratified by cohort and
-scored separately because recall cannot be judged from the ties we found — a
-tie never extracted is not in the table to sample. `python -m aalam.gold score`
-turns coded sheets into precision and recall with Wilson intervals; run against
-the blank sheets it reports the absence rather than a number.
+| | estimate | 95% CI | basis |
+|---|---|---|---|
+| Precision | **0.907** | 0.860–0.940 | 205 decidable ties, 1 unclear excluded |
+| Recall | **0.672** | 0.550–0.774 | 64 ties stated across 25 relational passages |
 
-What exists instead is weaker and should not be mistaken for it: every row
-quotes its entry verbatim (§4), the seven rule-pass ties were checked by hand
-and are correct, and a spot-check of twelve model-pass rows found one error
-class, described in §5. Seven correct ties and one audited class are not an
-estimate.
+Ties asserted where the text states none: **2 of 206 (1.0%)**. The commonest
+error is not invention but misreading — 13 rows carry the wrong relation, and
+the dominant single class is a list of authors a man *read* recorded as men he
+studied under.
 
-**Treat every count here as a lower bound of unknown tightness, and do not
-publish a precision figure for this build, because there is not one.** Drawing
-that sample is the single change that would most improve what can be claimed.
+By layer, which is the comparison worth having:
+
+| layer | n | precision | 95% CI |
+|---|---|---|---|
+| `office` | 67 | 0.970 | 0.898–0.992 |
+| `kinship` | 21 | 0.952 | 0.773–0.992 |
+| `membership` | 78 | 0.885 | 0.795–0.938 |
+| `tutelage` | 39 | **0.821** | 0.673–0.910 |
+
+**Tutelage is the weakest layer and it is the one this build exists for.**
+The gap is not noise: office ties rest on explicit appointment verbs
+(عُيّن، كُلِّف، أولاه) while tutelage has to separate reading an author from
+studying under him, and a certificate that admits from one that licenses.
+
+**These figures must not be published as an independent estimate.** The sample
+was drawn by the same system that wrote the extractors and coded by it too.
+Separate coder identities do not fix that: they are separate instances of the
+same model, so the errors a coder overlooks are the errors the extractor
+makes. The correlation inflates precision by an unknown amount and inflates
+recall further, because the recall sheet asks a coder to enumerate a
+passage's ties — the extraction task again, by the same kind of reader.
+
+The comparisons above survive the shared bias, because it applies to both
+sides. The headline numbers do not. The sample is seeded and committed so that
+a coder who did not build this can recode the identical 206 ties and produce a
+figure that is comparable to this one and, unlike it, citable.
+
+`docs/GOLD-FINDINGS-aalam-tunisiyun.md` lists the fourteen defect classes the
+coding exposed. **None is fixed yet**: the verdicts point at the committed
+rows, so fixing before scoring would have invalidated them.
 
 ## 2. Subjects and alters are not the same kind of node
 

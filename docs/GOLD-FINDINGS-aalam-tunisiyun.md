@@ -130,7 +130,74 @@ A minimum-span rule, or a requirement that the quote contain both the relation
 cue and the counterparty, would restore the guarantee the gate is supposed to
 give.
 
-## 10. Recall: ties between two other people are dropped
+Measured, not impressionistic: one coder reported that **four of their
+thirty-five rows would score `spurious` if judged strictly from
+`evidence_quote` alone**, because the quote clips at a comma and the
+load-bearing predicate sits in the next breath («…بمناسبة إحالته على
+التقاعد»). Those four ties are real. The guard passed spans that cannot audit
+themselves, which is how §1 got through.
+
+A related blind spot: subject resolution is doing real work that the quote
+does not show. Four rows resolve a subject correctly across paragraphs — a
+father rather than the entry's subject, «الصدر الأعظم» resolved to Khayr
+al-Din several paragraphs later — and every one checks out, but none is
+verifiable from the stored quote. That is silent risk in any entry holding two
+men of one surname, which this book has several of.
+
+## 10. Departures manufactured from the end of a tenure
+
+`E0149` records Muhammad al-Amin al-Shabbi as having **left** the education
+ministry. The sentence states tenure and nothing else: «بتكليفه غداة الاستقلال
+بمهمة وزير التربية القومية التي اضطلع بها مدة سنتين (1956-1958)». No departure
+predicate appears anywhere in the entry — no ترك, غادر, أحيل, استقال, خلفه.
+The `left_post` was inferred from the closing year of a bounded span.
+
+`E0142` is the control: there the text really does say «بمناسبة إحالته على
+التقاعد». The sweep this implies is mechanical — any `left_post` whose quote
+contains a date range but no departure verb is suspect.
+
+## 11. `appointed_to` is carrying three different relations
+
+Coded `correct` throughout, because the person-office tie is stated and the
+vocabulary offers nothing better, but the label spans:
+
+- a genuine appointment — «تعيينه والياً بسوسة»;
+- an appositive title with no appointment event — «أبوه مصطفى، رئيس قسم
+  الإنشاء بإدارة المالية», which merely identifies the father;
+- a self-chosen career — «فاختار مهنة المحاماة», «الالتحاق بسلك التعليم».
+
+Anyone reading `appointed_to` as evidence of state patronage will over-count.
+It needs splitting, probably into `appointed_to`, `held_office` and
+`entered_profession`.
+
+## 12. Office nodes minted from things that are not posts
+
+`appointed_to` is defined as taking up a named post. It has produced office
+nodes for a profession (`E0134`, «أول محام تونسي» — an epithet, nobody
+appointed him), a teaching duty (`E0113`, «تدريس التاريخ») and a military rank
+(`E0132`, «رتبة أمير لواء»). The underlying facts are all stated; the nodes
+pollute the office vocabulary and inflate office degree.
+
+Related, and the reason §11 matters: four rows harvest a **titular
+apposition** — «اغتيال الصدر الأعظم ووزير الحرب محمد شوكت باشا», «وزيره الأكبر
+مصطفى خوجة», «والده الوزير الأكبر خير الدين باشا». Each states a true
+office-holding fact about someone mentioned in passing, each has an empty
+`year`, and none states an appointment event. If the office layer is to be
+read as a sequence of tenures these are a different kind of object.
+
+## 13. One antagonism recorded twice, and a direction the vocabulary cannot hold
+
+`E0114` and `E0116` are the same tie: the same body under two designations in
+one paragraph («لجنة الاتحاد والترقي» and «الحزب الحاكم»), double-counted in
+any degree measure.
+
+Worse, `E0114`'s sentence states the arrow the other way — his press campaigns
+provoking the CUP — and the vocabulary has no `opposed` to record that. So
+`opposed_by` is being used as an undirected antagonism label while being
+documented as directed. Either add the converse or document the relation as
+symmetric; it cannot stay both.
+
+## 14. Recall: ties between two other people are dropped
 
 The passage sheet makes this the dominant miss. The pipeline anchors an edge
 on the entry's subject, so a relation stated between two *other* people in the
