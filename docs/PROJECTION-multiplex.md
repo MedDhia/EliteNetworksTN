@@ -426,6 +426,59 @@ rate, which would have made a homonym artefact the headline.
 * **Brokers are numbered on the map and named in the margin.** In-situ labels
   all landed in the same few rings as one unreadable knot.
 
+## Publication figures, and why a date filter is a source filter
+
+`scripts/figure_apsr_network.py` draws the brokerage core at journal scale:
+the giant component of the subgraph induced on the 200 highest-betweenness
+entities, node **area** strictly proportional to betweenness.
+
+| | `fig15` (pooled) | `fig16` (`--before 2011-01-14`) |
+|---|---|---|
+| drawn | 191 nodes, 397 ties | 198 nodes, 264 ties |
+| share of all betweenness | 39.3% | 79.0% |
+| natural persons | 73 | **112** |
+| state bodies and parties | 23 | 27 |
+| firms, associations, unions | **95** | 59 |
+| largest brokers | État Tunisien, Présidence, RCD, BIAT, ATD SICAR | Min. Économie, Présidence, Min. Affaires Étrangères, Mohamed Mahjoub, Mohamed Trabelsi |
+
+**The date cut is exactly a filter on source, and that governs how `fig16`
+can be read.** Datability splits the dataset perfectly by evidence tier:
+
+| tier | spells | dated |
+|---|---|---|
+| `gazette_dated` / `gazette_inferred` / `gazette_snowball` | 22,903 | **100%** |
+| `seed_undated` | 27,585 | **0%** |
+
+There is no partially-dated tier and no dating failure to repair. Ownership
+(4,184), membership (1,879), kinship (733), leadership (100) and pedagogic
+(96) spells are *entirely* seed-derived, carrying
+`onset_rule='seed_current_tie'` and `evidence_n=0`.
+
+Dropping them from a pre-2011 figure is therefore **correct, not a
+shortfall**: the seed roster asserts a *present* affiliation and was
+compiled long after 2011, so carrying those ties into a pre-revolution
+graph would be an anachronism. Three consequences must travel with the
+figure, and are written into its caption:
+
+* **Betweenness is recomputed** on the pre-2011 graph. The pooled values
+  are computed over a different graph and the two are not comparable.
+* **The gazette documents state appointments more completely than company
+  officers** — every `state_office` spell is gazette-evidenced against half
+  of `corporate_officer` — so `fig16` overstates the state's share relative
+  to the private layer. The person-heavy, firm-light composition above is
+  partly this, and must not be read as a pure finding about 2011.
+* The pre-2011 graph is **sparse and fragmented**: 9,734 entities with a
+  tie, 2,505 components, and a giant component holding only 31% of them.
+
+Two data defects the date cut exposed, both already handled: an
+**unlabelled organisation held 590 pre-2011 offices**, more than any
+ministry and the largest node in the graph — OCR damage, dropped under the
+same rule as the exploratory figure (only genuinely blank labels, never
+merely short ones, since GAT, MAC and PAF are real firms). And organisations
+are classified from the tie class the pipeline already coded, never from a
+regex on the label, because `SOCIETE REGIONALE DE COMMERCE GOUVERNORAT DE
+BEJA` is a firm and a label regex calls it a state body.
+
 ## Known limitations
 
 * **Coreness ≠ importance, and neither does betweenness alone.** The two

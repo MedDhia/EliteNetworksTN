@@ -53,8 +53,10 @@ from __future__ import annotations
 import argparse
 import collections
 import csv
+import math
 import pickle
 import random
+import re
 import sys
 from pathlib import Path
 
@@ -75,7 +77,9 @@ from matplotlib.lines import Line2D
 FIGS = ROOT / "figures"
 FIGS.mkdir(exist_ok=True)
 CACHE = ROOT / "data" / "interim" / "core_periphery.pkl"
+PROC = ROOT / "data" / "processed" / "multiplex"
 STEM = "fig15_brokerage_network"
+STEM_DATED = "fig16_brokerage_network_pre2011"
 
 TOP_N = 200
 N_LABELS = 12
@@ -149,29 +153,90 @@ SHORT = {
     "SICAR INVEST": ("SICAR Invest", None),
     "AMEN BANK": ("Amen Bank", None),
     "STB SICAR": ("STB SICAR", None),
+    "MINISTERE DE L'EDUCATION ET DES SCIENCES":
+        ("Min. Éducation", "Ministère de l'Éducation et des Sciences"),
+    "MINISTERE DE LA COOPERATION INTERNATIONALE ET DE L'INVESTISSEMENT "
+    "EXTERIEUR":
+        ("Min. Coopération", "Ministère de la Coopération Internationale "
+                             "et de l'Investissement Extérieur"),
+    "MINISTERE DE L'AGRICULTURE, DE L'ENVIRONNEMENT ET DES RESSOURCES "
+    "HYDRAULIQUES":
+        ("Min. Agriculture", "Ministère de l'Agriculture, de "
+                             "l'Environnement et des Ressources Hydrauliques"),
+    "COMPAGNIE DASSURANCES ET DE REASSURANCES ASTREE":
+        ("ASTREE", "Compagnie d'Assurances et de Réassurances ASTREE"),
+    "SOCIETE TUNISIENNE DES FILTRES MISFAT":
+        ("MISFAT", "Société Tunisienne des Filtres MISFAT"),
+    "MINISTERE DES AFFAIRES ETRANGERES":
+        ("Min. Aff. étrangères", "Ministère des Affaires Étrangères"),
+    "MINISTERE DE LA CULTURE": ("Min. Culture", None),
     "INTERNATIONAL SICAR": ("International SICAR", None),
 }
 
 _KEEP_UPPER = {"RCD", "BIAT", "BNA", "STB", "UBCI", "SICAR", "ATD", "SIM",
-               "GAT", "MAC", "PAF", "SA"}
+               "GAT", "MAC", "PAF", "SA", "BT", "MISFAT", "ASTREE"}
+
+# The gazette layer stores labels unaccented ("PRESIDENCE DE LA REPUBLIQUE"),
+# the seed layer accented. Keys are matched accent-folded so one map serves
+# both; without this the pre-2011 figure fell through to the truncating
+# fallback and drew three separate ministries as "Ministere De…".
+_FOLD = str.maketrans("ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöùúûüý",
+                      "AAAAAACEEEEIIIINOOOOOUUUUYaaaaaaceeeeiiiinooooouuuuy")
+
+# Accents the abbreviator restores on the ministry stem it keeps.
+_ACCENTED = {"Economie": "Économie", "Education": "Éducation",
+             "Etrangeres": "Étrangères", "Cooperation": "Coopération",
+             "Interieur": "Intérieur", "Sante": "Santé",
+             "Defense": "Défense", "Developpement": "Développement",
+             "Equipement": "Équipement", "Energie": "Énergie"}
+
+_MINISTRY = re.compile(
+    r"^MINISTERE\s+(?:DE\s+L['’]|DE\s+LA\s+|DES\s+|DU\s+|DE\s+)?(.*)$")
+
+
+def _norm(raw: str) -> str:
+    return " ".join(raw.split()).translate(_FOLD).upper()
+
+
+_SHORT_FOLDED = {_norm(k): v for k, v in SHORT.items()}
 
 
 def short_label(raw: str) -> str:
     """The form drawn on the figure."""
-    key = " ".join(raw.split())
-    if key in SHORT:
-        return SHORT[key][0]
+    key = _norm(raw)
+    if key in _SHORT_FOLDED:
+        return _SHORT_FOLDED[key][0]
+
+    m = _MINISTRY.match(key)
+    if m:
+        # Keep the distinguishing head of the portfolio: cut at the first
+        # comma or conjunction, then at most two words. Truncating from the
+        # left instead yields "Ministere De…", which names nothing.
+        stem = re.split(r",| ET ", m.group(1))[0].split()
+        head = " ".join(w.capitalize() for w in stem[:2])
+        head = " ".join(_ACCENTED.get(w, w) for w in head.split())
+        return f"Min. {head}" if head else "Ministère"
+
     words = [w if w.upper() in _KEEP_UPPER else w.capitalize()
-             for w in key.split()]
+             for w in " ".join(raw.split()).split()]
     out = " ".join(words)
-    return out if len(out) <= 20 else out[:19].rsplit(" ", 1)[0] + "…"
+    if len(out) <= 20:
+        return out
+    # A trailing all-caps brand is the name people use (…FILTRES MISFAT).
+    tail = words[-1]
+    if len(tail) >= 4 and tail.upper() in _KEEP_UPPER:
+        return tail
+    return out[:19].rsplit(" ", 1)[0] + "…"
 
 
 def expansion(raw: str) -> str | None:
     """The gloss the caption must carry, if the drawn form is abbreviated."""
-    key = " ".join(raw.split())
-    if key in SHORT and SHORT[key][1]:
-        return f"{SHORT[key][0]}, {SHORT[key][1]}"
+    key = _norm(raw)
+    if key in _SHORT_FOLDED and _SHORT_FOLDED[key][1]:
+        return f"{_SHORT_FOLDED[key][0]}, {_SHORT_FOLDED[key][1]}"
+    # Only curated expansions are emitted. Deriving one mechanically
+    # title-cased French badly ("Compagnie Dassurances Et De Reassurances"),
+    # which reads worse in a caption than leaving the short form to stand.
     return None
 
 
@@ -182,6 +247,107 @@ def load() -> dict:
             f"scripts/figure_core_periphery.py first")
     with CACHE.open("rb") as fh:
         return pickle.load(fh)
+
+
+def pooled_universe() -> dict:
+    """The undated, all-sources graph behind fig15."""
+    d = load()
+    return {"nodes": d["nodes"], "bc": d["bc"], "edges": d["edges"],
+            "cls": [klass(d["cls"][n]) for n in d["nodes"]],
+            "labels": [d["labels"][n] for n in d["nodes"]],
+            "dropped_blank": d["n_blank"]}
+
+
+def dated_universe(before: str) -> dict:
+    """Gazette-evidenced ties whose earliest evidence predates ``before``.
+
+    The date filter is not a filter on time alone; it is exactly a filter on
+    **source**, and that has to be understood before the figure is read.
+    Every gazette-evidenced spell in this dataset carries a date and every
+    seed-derived spell carries none -- the split is total, 22,903 against
+    27,585, with no partially-dated tier. So restricting to ties evidenced
+    before a date drops the entire seed layer.
+
+    That is the correct treatment rather than a shortfall. Seed ties are
+    recorded as ``evidence_tier='seed_undated'`` with
+    ``onset_rule='seed_current_tie'`` and ``evidence_n=0``: they assert a
+    *present* affiliation from a roster compiled long after 2011. Carrying
+    them into a pre-revolution figure would be an anachronism, not extra
+    coverage. What it does mean is that this graph and the pooled one are
+    different objects and their betweenness is not comparable, which is why
+    it is recomputed here rather than carried across.
+    """
+    first: dict[str, str] = {}
+    with (PROC / "spell_observations.csv").open(encoding="utf-8") as fh:
+        for r in csv.DictReader(fh):
+            dt = (r["obs_date"] or "").strip()
+            sid = r["spell_id"]
+            if dt and (sid not in first or dt < first[sid]):
+                first[sid] = dt
+
+    labels: dict[str, str] = {}
+    is_state: set[str] = set()
+    persons: set[str] = set()
+    pairs: set[tuple[str, str]] = set()
+    kept = collections.Counter()
+
+    with (PROC / "spells.csv").open(encoding="utf-8") as fh:
+        for r in csv.DictReader(fh):
+            cand = [x for x in ((r["onset"] or "").strip(),
+                                first.get(r["spell_id"], "")) if x]
+            if not cand or min(cand) >= before:
+                continue
+            p, o = r["person_id"], r["org_id"]
+            persons.add(p)
+            labels.setdefault(p, r["person_label"])
+            labels[o] = r["org_label"]
+            # Classify from the tie the pipeline already coded, not from a
+            # regex on the label: "SOCIETE REGIONALE ... GOUVERNORAT DE
+            # BEJA" is a firm, and a label regex calls it a state body.
+            if r["tie_class"] == "state_office":
+                is_state.add(o)
+            pairs.add((p, o))
+            kept[r["tie_class"]] += 1
+
+    n_oo = 0
+    with (PROC / "org_tie_spells.csv").open(encoding="utf-8") as fh:
+        for r in csv.DictReader(fh):
+            on = (r["onset"] or "").strip()
+            if not on or on >= before:
+                continue
+            labels.setdefault(r["holder_id"], r["holder_label"])
+            labels.setdefault(r["target_id"], r["target_label"])
+            pairs.add((r["holder_id"], r["target_id"]))
+            n_oo += 1
+
+    for nid in labels:
+        if nid.split("_")[0] in ("GOV", "PARTYSTR"):
+            is_state.add(nid)
+
+    # An unlabelled organisation held 590 pre-2011 offices here -- more than
+    # any ministry, and the largest node in the graph. It is OCR damage, and
+    # a node that is not an entity cannot broker anything. Same rule as the
+    # exploratory figure: drop only the genuinely blank, never the merely
+    # short, since GAT, MAC and PAF are real firms.
+    blank = {n for n in labels
+             if n not in persons and not (labels[n] or "").strip()}
+    pairs = {(a, b) for a, b in pairs if a not in blank and b not in blank}
+
+    nodes = sorted({n for pr in pairs for n in pr})
+    idx = {n: i for i, n in enumerate(nodes)}
+    edges = sorted({(idx[a], idx[b]) for a, b in pairs})
+
+    g = ig.Graph(n=len(nodes), edges=edges)
+    bc = g.betweenness()
+
+    return {
+        "nodes": nodes, "bc": bc, "edges": edges,
+        "cls": ["person" if n in persons else
+                "state" if n in is_state else "private" for n in nodes],
+        "labels": [labels[n] for n in nodes],
+        "dropped_blank": len(blank),
+        "kept_by_class": dict(kept), "n_org_ties": n_oo,
+    }
 
 
 def brokerage_core(d: dict, top_n: int) -> dict:
@@ -324,11 +490,15 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--labels", type=int, default=N_LABELS)
     ap.add_argument("--dpi", type=int, default=1000,
                     help="raster dpi; Cambridge asks 1000 for line art")
+    ap.add_argument("--before", metavar="YYYY-MM-DD", default=None,
+                    help="restrict to ties evidenced before this date; "
+                         "this selects the gazette layer, since every "
+                         "seed-derived tie is undated")
     args = ap.parse_args(argv)
 
-    d = load()
-    nodes, bc, cls, labels, core_k = (d["nodes"], d["bc"], d["cls"],
-                                      d["labels"], d["core"])
+    stem = STEM if args.before is None else STEM_DATED
+    d = pooled_universe() if args.before is None else dated_universe(args.before)
+    nodes, bc, cls, labels = d["nodes"], d["bc"], d["cls"], d["labels"]
     core = brokerage_core(d, args.top)
     mem = core["members"]
     pos = layout(core)
@@ -364,7 +534,7 @@ def main(argv: list[str] | None = None) -> int:
 
     for name in ORDER:
         tone, marker, _ = CLASSES[name]
-        pool = [j for j, i in enumerate(mem) if klass(cls[nodes[i]]) == name]
+        pool = [j for j, i in enumerate(mem) if cls[i] == name]
         if not pool:
             continue
         ax.scatter(pos[pool, 0], pos[pool, 1], s=[size[j] for j in pool],
@@ -385,16 +555,16 @@ def main(argv: list[str] | None = None) -> int:
     top = list(range(min(args.labels, len(mem))))
     drawn, shown = place_labels(
         ax,
-        [(short_label(labels[nodes[mem[j]]]), pos[j],
-          np.sqrt(size[j] / np.pi), labels[nodes[mem[j]]]) for j in top],
+        [(short_label(labels[mem[j]]), pos[j],
+          np.sqrt(size[j] / np.pi), labels[mem[j]]) for j in top],
         obstacles=node_boxes(ax, pos, size))
 
-    _write_csv(mem, nodes, bc, cls, labels, core_k, pos, core)
-    _write_tex(mem, core, labels, nodes, bc, cls, drawn, shown, args)
+    _write_csv(stem, mem, nodes, bc, cls, labels, pos)
+    _write_tex(stem, mem, core, labels, cls, drawn, shown, args, d)
 
-    pdf = FIGS / f"{STEM}.pdf"
+    pdf = FIGS / f"{stem}.pdf"
     fig.savefig(pdf)
-    png = FIGS / f"{STEM}.png"
+    png = FIGS / f"{stem}.png"
     fig.savefig(png, dpi=args.dpi)
     plt.close(fig)
 
@@ -410,6 +580,33 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
+def _nice(v: float) -> float:
+    """Round to a 1/2/2.5/5 x 10^n step, so key values read as round numbers."""
+    if v <= 0:
+        return 1.0
+    e = 10 ** math.floor(math.log10(v))
+    for mult in (1, 2, 2.5, 5):
+        if v <= mult * e:
+            return mult * e
+    return 10 * e
+
+
+def _nice_down(v: float) -> float:
+    """Largest 1/2/2.5/5 x 10^n step not exceeding v."""
+    if v <= 0:
+        return 1.0
+    e = 10 ** math.floor(math.log10(v))
+    best = e
+    for mult in (1, 2, 2.5, 5):
+        if mult * e <= v:
+            best = mult * e
+    return best
+
+
+def _fmt(v: float) -> str:
+    return f"{v / 1e6:g}M" if v >= 1e6 else f"{v / 1e3:g}k"
+
+
 def _size_key(ax, k: float, bmax: float) -> None:
     """A size key, without which an area encoding cannot be decoded.
 
@@ -418,7 +615,12 @@ def _size_key(ax, k: float, bmax: float) -> None:
     """
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
-    steps = [m for m in (5e6, 15e6, 35e6) if m <= bmax * 1.02]
+    # Steps derived from the graph actually drawn. Hardcoding 5/15/35M
+    # suited the pooled figure and silently emptied the key on the
+    # pre-2011 graph, whose maximum is an order of magnitude smaller.
+    # The top step rounds DOWN: rounding up drew a reference circle larger
+    # than any node in the figure, which reads as a node that is not there.
+    steps = sorted({_nice(bmax / 8), _nice(bmax / 3), _nice_down(bmax)})
 
     ax.text(0, 0.93, "Node area proportional to betweenness centrality",
             ha="left", va="top", fontsize=MIN_PT, color=INK,
@@ -435,7 +637,7 @@ def _size_key(ax, k: float, bmax: float) -> None:
                    facecolors="none", edgecolors=OUTLINE, linewidths=0.5,
                    transform=ax.transAxes, clip_on=False, zorder=4)
         x += dia / band_pt + 3.0 / band_pt
-        ax.text(x, 0.34, f"{m / 1e6:.0f}M", ha="left", va="center",
+        ax.text(x, 0.34, _fmt(m), ha="left", va="center",
                 fontsize=MIN_PT, color=INK, transform=ax.transAxes)
         x += 26.0 / band_pt
 
@@ -451,51 +653,80 @@ def _write_tiff(png: Path, dpi: int) -> Path:
     return tif
 
 
-def _write_csv(mem, nodes, bc, cls, labels, core_k, pos, core) -> None:
-    path = FIGS / f"{STEM}.csv"
+def _write_csv(stem, mem, nodes, bc, cls, labels, pos) -> None:
+    path = FIGS / f"{stem}.csv"
     with path.open("w", encoding="utf-8", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["rank", "node_id", "label", "node_class", "draw_class",
-                    "betweenness", "coreness", "x", "y"])
+        w.writerow(["rank", "node_id", "label", "draw_class", "betweenness",
+                    "x", "y"])
         for j, i in enumerate(mem):
-            w.writerow([j + 1, nodes[i], labels[nodes[i]], cls[nodes[i]],
-                        klass(cls[nodes[i]]), f"{bc[i]:.1f}", core_k[i],
+            w.writerow([j + 1, nodes[i], labels[i], cls[i], f"{bc[i]:.1f}",
                         f"{pos[j][0]:.4f}", f"{pos[j][1]:.4f}"])
     print(f"  wrote {path.relative_to(ROOT)}")
 
 
-def _write_tex(mem, core, labels, nodes, bc, cls, drawn, shown, args) -> None:
-    n_person = sum(1 for i in mem if klass(cls[nodes[i]]) == "person")
-    n_state = sum(1 for i in mem if klass(cls[nodes[i]]) == "state")
+def _write_tex(stem, mem, core, labels, cls, drawn, shown, args, uni) -> None:
+    n_person = sum(1 for i in mem if cls[i] == "person")
+    n_state = sum(1 for i in mem if cls[i] == "state")
     n_priv = len(mem) - n_person - n_state
 
     # Gloss every abbreviation that actually reached the figure, so the
     # caption can never promise an expansion the drawing does not use or
     # omit one it does.
-    gloss = [g for g in (expansion(r) for r in shown) if g]
-    gloss_tex = (" Abbreviations: " + "; ".join(gloss) + "."
-                 if gloss else "")
+    gloss = [g for g in (expansion(labels[i]) for i in
+                         [mem[k] for k in range(len(mem))
+                          if labels[mem[k]] in shown]) if g]
+    seen, uniq = set(), []
+    for g in gloss:
+        if g not in seen:
+            seen.add(g)
+            uniq.append(g)
+    gloss_tex = (" Abbreviations: " + "; ".join(uniq) + "." if uniq else "")
+
+    if args.before is None:
+        head = "The brokerage core of the Tunisian elite network."
+        scope = (rf"""Selection is therefore on
+  the quantity the node areas encode; the full network of 23,274 entities
+  and 31,457 ties cannot be rendered legibly at page width. Ties are
+  undirected and undated, pooling shareholding, board and governing-body
+  membership, kinship, party and parliamentary structures, and the seed
+  roster, over 1957--2026.""")
+    else:
+        head = (f"The brokerage core of the Tunisian elite network before "
+                f"{args.before}.")
+        k = uni["kept_by_class"]
+        scope = (rf"""Ties are those evidenced in the
+  \emph{{Journal Officiel}} before {args.before}, the day Ben Ali left office:
+  {k.get('corporate_officer', 0):,} company board and officer ties and
+  {k.get('state_office', 0):,} state offices, plus {uni['n_org_ties']}
+  dated inter-organisational ties, over {len(uni['nodes']):,} entities in
+  all. \textbf{{This is a filter on source as well as on time.}} Every
+  gazette-evidenced tie in the dataset carries a date and every
+  seed-derived tie carries none, so restricting to ties evidenced before a
+  date necessarily drops the whole seed layer: shareholding, kinship,
+  association and party membership are absent here, not because they did
+  not exist before 2011, but because the roster that records them asserts
+  present affiliations and is undated. Betweenness is recomputed on this
+  graph and is not comparable with the pooled figure. The gazette also
+  documents state appointments more completely than company officers,
+  which will overstate the state's share relative to the private
+  layer.""")
 
     tex = rf"""% Include at a fixed width: scaling DOWN would push the
 % in-figure type below the 9pt floor the artwork guide sets.
 \begin{{figure}}[t]
   \centering
-  \includegraphics[width={args.width}in]{{{STEM}.pdf}}
-  \caption{{\textbf{{The brokerage core of the Tunisian elite network.}}
+  \includegraphics[width={args.width}in]{{{stem}.pdf}}
+  \caption{{\textbf{{{head}}}
   Node area is proportional to betweenness centrality. The {len(mem)}
   entities shown, joined by {len(core['edges'])} ties, are the giant
   component of the subgraph induced on the {core['n_selected']} highest
-  betweenness entities in the network, which together hold
-  {100 * core['share']:.1f}\% of all betweenness. Selection is therefore on
-  the quantity the node areas encode; the full network of 23,274 entities
-  and 31,457 ties cannot be rendered legibly at page width. The composition
-  is {n_person} natural persons, {n_state} state bodies and parties, and
-  {n_priv} firms, associations and unions. The {drawn} highest-brokerage
-  entities are labelled.{gloss_tex} Ties are undirected
-  and undated, pooling shareholding, board and governing-body membership,
-  kinship, party and parliamentary structures, and the seed roster over
-  1957--2026.}}
-  \label{{fig:brokerage-network}}
+  betweenness entities, which together hold {100 * core['share']:.1f}\% of
+  all betweenness in the graph. {scope}
+  The composition is {n_person} natural persons, {n_state} state bodies and
+  parties, and {n_priv} firms, associations and unions. The {drawn}
+  highest-brokerage entities are labelled.{gloss_tex}}}
+  \label{{fig:{stem}}}
 \end{{figure}}
 
 % ---------------------------------------------------------------------
@@ -507,12 +738,12 @@ def _write_tex(mem, core, labels, nodes, bc, cls, drawn, shown, args) -> None:
 % parties, lighter fills are firms, associations and unions. The area of
 % each shape is proportional to its betweenness centrality, so the
 % entities that lie on the most shortest paths appear largest. A small
-% number of very large nodes, led by {short_label(labels[nodes[mem[0]]])},
+% number of very large nodes, led by {short_label(labels[mem[0]])},
 % sit at the centre of the diagram and connect several otherwise separate
 % dense clusters of smaller nodes. A size key at the lower left gives
 % reference areas in millions.
 """
-    path = FIGS / f"{STEM}.tex"
+    path = FIGS / f"{stem}.tex"
     path.write_text(tex, encoding="utf-8")
     print(f"  wrote {path.relative_to(ROOT)}")
 
