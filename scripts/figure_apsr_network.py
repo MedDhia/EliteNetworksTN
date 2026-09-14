@@ -88,7 +88,11 @@ TOP_N = 400
 N_LABELS = 16
 HULL_MIN = 6         # smallest community given a hull
 HULL_MAX_INTRUDER_FRAC = 0.25  # non-members a hull may enclose
-CURVE = 0.13      # edge arc, as a fraction of chord length
+CURVE = 0.13         # edge arc, as a fraction of chord length
+FLOOR_PT = 0.9       # smallest node diameter drawn, in points
+HULL_MAX_N = 14      # most community grounds drawn
+BIG_GRAPH = 3000     # above this, a different layout and thinner ties
+SAT_RAD_MAX = 0.030  # cap on a packed fragment's radius
 
 # Greyscale only, inside the 15-85% band the artwork guide specifies, in
 # steps far larger than the 15-20% minimum increment.
@@ -376,6 +380,25 @@ def dated_universe(before: str) -> dict:
     }
 
 
+def whole_graph(d: dict) -> dict:
+    """Every node and every tie, all components kept.
+
+    The top-N reduction exists only so that names can be read. With no
+    names there is no reason to select, and selecting on betweenness while
+    showing the whole structure would be the worst of both.
+    """
+    nodes = d["nodes"]
+    idx = {i: i for i in range(len(nodes))}
+    return {
+        "members": list(range(len(nodes))),
+        "idx": idx,
+        "edges": list(d["edges"]),
+        "share": 1.0,
+        "n_selected": len(nodes),
+        "n_components": None,
+    }
+
+
 def brokerage_core(d: dict, top_n: int) -> dict:
     """The top-N by betweenness, reduced to the giant component they induce."""
     nodes, bc = d["nodes"], d["bc"]
@@ -430,7 +453,11 @@ def layout(core: dict, comm: list[int] | None = None,
     # igraph wants the stdlib Random interface (it calls .gauss/.random),
     # not a numpy Generator.
     ig.set_random_number_generator(random.Random(seed))
-    if comm is None:
+    if len(core["members"]) > BIG_GRAPH:
+        # Kamada-Kawai is O(n^2) per iteration and FR's useful range stops
+        # well short of this; DRL is the one built for graphs this size.
+        pos = np.asarray(g.layout_drl().coords)
+    elif comm is None:
         pos = np.asarray(g.layout_kamada_kawai(maxiter=6000).coords)
     else:
         wts = [w_in if comm[a] == comm[b] else 1.0
@@ -520,7 +547,8 @@ def _area(ring: np.ndarray) -> float:
     return 0.5 * abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1)))
 
 
-def draw_hulls(ax, pos: np.ndarray, comm: list[int], pad: float = 0.035) -> int:
+def draw_hulls(ax, pos: np.ndarray, comm: list[int], pad: float = 0.035,
+               eligible: set[int] | None = None) -> int:
     """Light grounds behind the COMPACT communities only.
 
     Hulling every community was tried first and is wrong for this graph.
@@ -533,7 +561,8 @@ def draw_hulls(ax, pos: np.ndarray, comm: list[int], pad: float = 0.035) -> int:
     """
     groups = collections.defaultdict(list)
     for i, c in enumerate(comm):
-        groups[c].append(i)
+        if eligible is None or i in eligible:
+            groups[c].append(i)
     drawn = 0
     for c, mem in sorted(groups.items(), key=lambda kv: -len(kv[1])):
         if len(mem) < HULL_MIN:
@@ -554,6 +583,8 @@ def draw_hulls(ax, pos: np.ndarray, comm: list[int], pad: float = 0.035) -> int:
                              edgecolor=HULL_LINE, linewidth=0.4,
                              joinstyle="round", zorder=0))
         drawn += 1
+        if drawn >= HULL_MAX_N:
+            break          # at full scale there are hundreds; they'd be noise
     return drawn
 
 
@@ -574,6 +605,92 @@ def curved_segments(pos: np.ndarray, edges, bend: float = CURVE, n: int = 14):
         ctrl = mid + normal * bend
         out.append((1 - t) ** 2 * p0 + 2 * (1 - t) * t * ctrl + t ** 2 * p2)
     return out
+
+
+def _components(n: int, edges) -> list[list[int]]:
+    adj = collections.defaultdict(set)
+    for a, b in edges:
+        adj[a].add(b)
+        adj[b].add(a)
+    seen, out = set(), []
+    for start in range(n):
+        if start in seen:
+            continue
+        stack, comp = [start], [start]
+        seen.add(start)
+        while stack:
+            for v in adj[stack.pop()]:
+                if v not in seen:
+                    seen.add(v)
+                    stack.append(v)
+                    comp.append(v)
+        out.append(comp)
+    out.sort(key=len, reverse=True)
+    return out
+
+
+def packed_layout(core: dict, comm: list[int], seed: int = 7) -> np.ndarray:
+    """Lay out the largest component, then pack the rest tightly around it.
+
+    Laying every node out with one force algorithm is wrong when the graph
+    is mostly fragments. The pre-2011 graph has 2,505 components: DRL
+    scattered 6,658 nodes of two- and three-node fragments evenly over
+    three quarters of the canvas and compressed the connected structure
+    into the middle quarter. The positions of disconnected nodes are
+    arbitrary, so that hands arbitrary structure the visual weight.
+
+    Packed at a spacing near the marker size the same fragments need about
+    a fifth of the frame, which leaves the connected core its presence
+    while still showing every node.
+    """
+    comps = _components(len(core["members"]), core["edges"])
+    pos = np.zeros((len(core["members"]), 2))
+
+    giant = comps[0]
+    gset = {v: i for i, v in enumerate(giant)}
+    sub = [(gset[a], gset[b]) for a, b in core["edges"]
+           if a in gset and b in gset]
+    gcore = {"members": giant, "edges": sub}
+    gcomm = [comm[v] for v in giant]
+    gpos = layout(gcore, gcomm, seed=seed)
+    pos[giant] = gpos / max(np.abs(gpos).max(), 1e-9)
+
+    # Satellites, ring-packed outward. Radius is capped: without a cap a
+    # single 37-node fragment set the ring spacing for its whole ring and
+    # opened an empty annulus across the figure.
+    rng = np.random.default_rng(seed)
+    ring_r, ang, ring_step = 1.06, 0.0, 0.0
+    for comp in comps[1:]:
+        k = len(comp)
+        rad = min(SAT_RAD_MAX, max(0.013, 0.0095 * np.sqrt(k)))
+        step = 2.25 * rad / ring_r
+        if ang + step > 2 * np.pi:
+            ring_r += max(ring_step, 2.3 * rad)
+            ang, ring_step = 0.0, 0.0
+            step = 2.25 * rad / ring_r
+        cx, cy = ring_r * np.cos(ang), ring_r * np.sin(ang)
+        if k == 1:
+            pos[comp[0]] = (cx, cy)
+        elif k < 6:
+            t = np.linspace(0, 2 * np.pi, k, endpoint=False)
+            t += rng.random() * 2 * np.pi
+            pos[comp] = np.column_stack(
+                [cx + rad * np.cos(t), cy + rad * np.sin(t)])
+        else:
+            # A ring of dots is not what a 30-node fragment looks like;
+            # give it its own small force layout.
+            cset = {v: i for i, v in enumerate(comp)}
+            sub = [(cset[a], cset[b]) for a, b in core["edges"]
+                   if a in cset and b in cset]
+            g = ig.Graph(n=k, edges=sub)
+            ig.set_random_number_generator(random.Random(seed))
+            q = np.asarray(g.layout_fruchterman_reingold(niter=400).coords)
+            q = q - q.mean(axis=0)
+            q = q / max(np.abs(q).max(), 1e-9) * rad
+            pos[comp] = q + (cx, cy)
+        ang += step
+        ring_step = max(ring_step, 2.3 * rad)
+    return pos, set(giant)
 
 
 def place_labels(ax, items, *, fontsize=MIN_PT, obstacles=None):
@@ -640,6 +757,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--labels", type=int, default=N_LABELS)
     ap.add_argument("--dpi", type=int, default=1000,
                     help="raster dpi; Cambridge asks 1000 for line art")
+    ap.add_argument("--all", action="store_true", dest="all_nodes",
+                    help="draw every node and tie instead of the top --top "
+                         "by betweenness; implies no entity names")
     ap.add_argument("--before", metavar="YYYY-MM-DD", default=None,
                     help="restrict to ties evidenced before this date; "
                          "this selects the gazette layer, since every "
@@ -647,12 +767,24 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     stem = STEM if args.before is None else STEM_DATED
+    if args.all_nodes:
+        stem += "_all"
+        args.labels = 0
     d = pooled_universe() if args.before is None else dated_universe(args.before)
     nodes, bc, cls, labels = d["nodes"], d["bc"], d["cls"], d["labels"]
-    core = brokerage_core(d, args.top)
+    core = whole_graph(d) if args.all_nodes else brokerage_core(d, args.top)
     mem = core["members"]
     comm = communities(core)
-    pos = layout(core, comm)
+    eligible = None
+    if args.all_nodes:
+        # Hulls are only meaningful inside the connected core; the packed
+        # fragments are placed by the packer, not by the structure, and
+        # outlining a ring of them asserts a grouping the ring invented.
+        pos, eligible = packed_layout(core, comm)
+        n_comp = len(_components(len(mem), core["edges"]))
+    else:
+        pos = layout(core, comm)
+        n_comp = 1
 
     # Three stacked bands -- legend, network, size key -- each in its own
     # axes. Sharing one axes put the key and legend inside the drawing area
@@ -695,7 +827,7 @@ def main(argv: list[str] | None = None) -> int:
     ax.set_xlim(-half[0], half[0])
     ax.set_ylim(-half[1], half[1])
 
-    n_hulls = draw_hulls(ax, pos, comm)
+    n_hulls = draw_hulls(ax, pos, comm, eligible=eligible)
 
     # Ties grouped by kind so each gets its own tone, dash and weight. One
     # flat grey collection made a 400-node graph read as a single texture.
@@ -706,6 +838,9 @@ def main(argv: list[str] | None = None) -> int:
         if not sel:
             continue
         colour, dash, lw, _ = EDGE_STYLE[kind]
+        if len(core["edges"]) > BIG_GRAPH:
+            lw = 0.3       # the artwork guide's floor; no thinner
+
         ax.add_collection(LineCollection(
             curved_segments(pos, sel), colors=colour, linewidths=lw,
             linestyles=dash, zorder=1,
@@ -716,7 +851,12 @@ def main(argv: list[str] | None = None) -> int:
     bmax = max(bc[i] for i in mem)
     d_max_pt = 17.0
     k = (np.pi * (d_max_pt / 2) ** 2) / bmax
-    size = {j: k * bc[i] for j, i in enumerate(mem)}
+    # Strict proportionality, but above a visible floor. Betweenness is
+    # exactly zero for most nodes once the whole graph is drawn, and a
+    # strictly proportional zero is an absent node, not a small one.
+    floor_area = np.pi * (FLOOR_PT / 2) ** 2
+    size = {j: max(k * bc[i], floor_area) for j, i in enumerate(mem)}
+    n_floor = sum(1 for j, i in enumerate(mem) if k * bc[i] < floor_area)
 
     for name in ORDER:
         tone, marker, _ = CLASSES[name]
@@ -742,19 +882,23 @@ def main(argv: list[str] | None = None) -> int:
     _size_key(ax_key, k, bmax)
 
     top = list(range(min(args.labels, len(mem))))
-    # A white ring behind each labelled node, so a name can be tied to its
-    # marker even where the community ground runs behind it.
-    ax.scatter(pos[top, 0], pos[top, 1],
-               s=[size[j] * 1.6 + 15 for j in top], facecolors="none",
-               edgecolors="white", linewidths=1.1, zorder=2.5)
-    drawn, shown = place_labels(
-        ax,
-        [(short_label(labels[mem[j]]), pos[j],
-          np.sqrt(size[j] / np.pi), labels[mem[j]]) for j in top],
-        obstacles=node_boxes(ax, pos, size))
+    if not top:
+        drawn, shown = 0, []
+    else:
+        # A white ring behind each labelled node, so a name can be tied to
+        # its marker even where the community ground runs behind it.
+        ax.scatter(pos[top, 0], pos[top, 1],
+                   s=[size[j] * 1.6 + 15 for j in top], facecolors="none",
+                   edgecolors="white", linewidths=1.1, zorder=2.5)
+        drawn, shown = place_labels(
+            ax,
+            [(short_label(labels[mem[j]]), pos[j],
+              np.sqrt(size[j] / np.pi), labels[mem[j]]) for j in top],
+            obstacles=node_boxes(ax, pos, size))
 
     _write_csv(stem, mem, nodes, bc, cls, labels, pos)
-    _write_tex(stem, mem, core, labels, cls, drawn, shown, args, d)
+    _write_tex(stem, mem, core, labels, cls, drawn, shown, args, d,
+               n_comp=n_comp, n_floor=n_floor)
 
     pdf = FIGS / f"{stem}.pdf"
     fig.savefig(pdf)
@@ -865,7 +1009,8 @@ def _write_csv(stem, mem, nodes, bc, cls, labels, pos) -> None:
     print(f"  wrote {path.relative_to(ROOT)}")
 
 
-def _write_tex(stem, mem, core, labels, cls, drawn, shown, args, uni) -> None:
+def _write_tex(stem, mem, core, labels, cls, drawn, shown, args, uni,
+               n_comp: int = 1, n_floor: int = 0) -> None:
     n_person = sum(1 for i in mem if cls[i] == "person")
     n_state = sum(1 for i in mem if cls[i] == "state")
     n_priv = len(mem) - n_person - n_state
@@ -884,16 +1029,18 @@ def _write_tex(stem, mem, core, labels, cls, drawn, shown, args, uni) -> None:
     gloss_tex = (" Abbreviations: " + "; ".join(uniq) + "." if uniq else "")
 
     if args.before is None:
-        head = "The brokerage core of the Tunisian elite network."
+        head = ("The Tunisian elite network." if args.all_nodes else
+                "The brokerage core of the Tunisian elite network.")
         scope = (rf"""Selection is therefore on
-  the quantity the node areas encode; the full network of 23,274 entities
-  and 31,457 ties cannot be rendered legibly at page width. Ties are
+  the quantity the node areas encode. Ties are
   undirected and undated, pooling shareholding, board and governing-body
   membership, kinship, party and parliamentary structures, and the seed
   roster, over 1957--2026.""")
     else:
-        head = (f"The brokerage core of the Tunisian elite network before "
-                f"{args.before}.")
+        head = ((f"The Tunisian elite network before {args.before}.")
+                if args.all_nodes else
+                (f"The brokerage core of the Tunisian elite network before "
+                 f"{args.before}."))
         k = uni["kept_by_class"]
         scope = (rf"""Ties are those evidenced in the
   \emph{{Journal Officiel}} before {args.before}, the day Ben Ali left office:
@@ -912,20 +1059,37 @@ def _write_tex(stem, mem, core, labels, cls, drawn, shown, args, uni) -> None:
   which will overstate the state's share relative to the private
   layer.""")
 
+    if args.all_nodes:
+        selection = (rf"""Every entity and every tie is drawn
+  and none is named: {len(mem):,} entities joined by
+  {len(core['edges']):,} ties. The graph falls into {n_comp:,} components,
+  so the largest is laid out by force and the remaining {n_comp - 1:,}
+  fragments are packed into rings around it -- the positions of
+  disconnected nodes are arbitrary, and a force layout spread these
+  fragments over three quarters of the canvas, giving arbitrary structure
+  the visual weight. Betweenness is exactly zero for {n_floor:,} of them
+  ({100 * n_floor / len(mem):.0f}\%), which a strictly proportional area
+  would render invisible, so area is proportional above a floor of
+  {FLOOR_PT}pt.""")
+    else:
+        selection = (rf"""The {len(mem)} entities shown, joined by
+  {len(core['edges'])} ties, are the giant component of the subgraph
+  induced on the {core['n_selected']} highest betweenness entities, which
+  together hold {100 * core['share']:.1f}\% of all betweenness in the
+  graph.""")
+    labelled = ("" if args.all_nodes else
+                rf" The {drawn} highest-brokerage entities are "
+                rf"labelled.{gloss_tex}")
+
     tex = rf"""% Include at a fixed width: scaling DOWN would push the
 % in-figure type below the 9pt floor the artwork guide sets.
 \begin{{figure}}[t]
   \centering
   \includegraphics[width={args.width}in]{{{stem}.pdf}}
   \caption{{\textbf{{{head}}}
-  Node area is proportional to betweenness centrality. The {len(mem)}
-  entities shown, joined by {len(core['edges'])} ties, are the giant
-  component of the subgraph induced on the {core['n_selected']} highest
-  betweenness entities, which together hold {100 * core['share']:.1f}\% of
-  all betweenness in the graph. {scope}
-  The composition is {n_person} natural persons, {n_state} state bodies and
-  parties, and {n_priv} firms, associations and unions. The {drawn}
-  highest-brokerage entities are labelled.{gloss_tex}}}
+  Node area is proportional to betweenness centrality. {selection} {scope}
+  The composition is {n_person:,} natural persons, {n_state:,} state bodies
+  and parties, and {n_priv:,} firms, associations and unions.{labelled}}}
   \label{{fig:{stem}}}
 \end{{figure}}
 
@@ -938,9 +1102,9 @@ def _write_tex(stem, mem, core, labels, cls, drawn, shown, args, uni) -> None:
 % parties, lighter fills are firms, associations and unions. The area of
 % each shape is proportional to its betweenness centrality, so the
 % entities that lie on the most shortest paths appear largest. A small
-% number of very large nodes, led by {short_label(labels[mem[0]])},
-% sit at the centre of the diagram and connect several otherwise separate
-% dense clusters of smaller nodes. A size key at the lower left gives
+% number of very large nodes sit at the centre of the diagram and connect
+% several otherwise separate dense clusters of smaller nodes. No entity is
+% named on the figure. A size key at the lower left gives
 % reference areas in millions.
 """
     path = FIGS / f"{stem}.tex"
