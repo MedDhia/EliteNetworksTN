@@ -434,12 +434,39 @@ entities, node **area** strictly proportional to betweenness.
 
 | | `fig15` (pooled) | `fig16` (`--before 2011-01-14`) |
 |---|---|---|
-| drawn | 191 nodes, 397 ties | 198 nodes, 264 ties |
-| share of all betweenness | 39.3% | 79.0% |
-| natural persons | 73 | **112** |
-| state bodies and parties | 23 | 27 |
-| firms, associations, unions | **95** | 59 |
+| drawn | 377 nodes, 801 ties | 397 nodes, 546 ties |
+| share of all betweenness | 50.3% | 91.7% |
+| natural persons | 156 | **242** |
+| state bodies and parties | 31 | 33 |
+| firms, associations, unions | **190** | 122 |
+| communities / hulls drawn | 13 / **0** | 23 / 13 |
 | largest brokers | État Tunisien, Présidence, RCD, BIAT, ATD SICAR | Min. Économie, Présidence, Min. Affaires Étrangères, Mohamed Mahjoub, Mohamed Trabelsi |
+
+Both draw the top 400 by betweenness, four tie kinds distinguished by tone
+and dash, arcs rather than chords, and a light ground behind the compact
+Louvain communities. Three things about that ground are worth recording,
+because two obvious versions of it are wrong:
+
+* **Hulling every community is wrong here.** Most communities in the
+  pre-2011 graph are a hub with chains hanging off it, and the convex hull
+  of a star is a spiky wedge from the centre to the rim; 22 of them tiled
+  the whole frame. A hull is drawn only when it encloses few non-members
+  (≤ 25% of its own size) — a direct test of whether the grouping it
+  asserts is real. Bounding-box area and aspect were both tried first and
+  neither catches a diagonal wedge.
+* **`fig15` therefore gets no hulls at all**, because the pooled graph's
+  communities genuinely interpenetrate: their median intruder fraction is
+  0.68 against 0.23 before 2011. That is a result, not a rendering failure.
+* **Community detection is seeded.** `community_multilevel` is randomised;
+  unseeded it returned a different partition per run, which changed the
+  layout weights and the hull count, so the figure would not regenerate
+  identically.
+
+The layout weights intra-community ties above inter-community ones, and the
+figure's *height* is derived from the layout's own aspect ratio: with a
+fixed near-square frame and a layout half as tall as it is wide, preserving
+aspect — which a force layout requires, since scaling the axes
+independently makes graph distances lie — left a third of the canvas empty.
 
 **The date cut is exactly a filter on source, and that governs how `fig16`
 can be read.** Datability splits the dataset perfectly by evidence tier:

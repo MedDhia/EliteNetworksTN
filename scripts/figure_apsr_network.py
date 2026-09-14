@@ -73,6 +73,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.collections import LineCollection
 from matplotlib.lines import Line2D
+from matplotlib.patches import Polygon
+from matplotlib.path import Path as MplPath
+from scipy.spatial import ConvexHull
 
 FIGS = ROOT / "figures"
 FIGS.mkdir(exist_ok=True)
@@ -81,8 +84,11 @@ PROC = ROOT / "data" / "processed" / "multiplex"
 STEM = "fig15_brokerage_network"
 STEM_DATED = "fig16_brokerage_network_pre2011"
 
-TOP_N = 200
-N_LABELS = 12
+TOP_N = 400
+N_LABELS = 16
+HULL_MIN = 6         # smallest community given a hull
+HULL_MAX_INTRUDER_FRAC = 0.25  # non-members a hull may enclose
+CURVE = 0.13      # edge arc, as a fraction of chord length
 
 # Greyscale only, inside the 15-85% band the artwork guide specifies, in
 # steps far larger than the 15-20% minimum increment.
@@ -92,6 +98,26 @@ T_PERSON = "#262626"     # 85%
 T_STATE = "#737373"      # 55%
 T_PRIVATE = "#CCCCCC"    # 20%
 OUTLINE = "#1A1A1A"
+
+# Edge tones. Kind is derived from the endpoint classes, so it needs no
+# extra data and means the same thing in both universes.
+E_STATE = "#8C8C8C"      # a tie into a state body or party
+E_CORP = "#C2C2C2"       # person to firm, association or union
+E_ORGORG = "#A8A8A8"     # organisation to organisation, drawn dashed
+E_KIN = "#6E6E6E"        # person to person
+EDGE_STYLE = {
+    "state":  (E_STATE, "solid", 0.55, "tie into a state body or party"),
+    "person": (E_CORP, "solid", 0.40, "person to firm, association, union"),
+    "orgorg": (E_ORGORG, (0, (2.2, 1.4)), 0.50, "organisation to organisation"),
+    "kin":    (E_KIN, (0, (0.9, 1.1)), 0.55, "person to person"),
+}
+EDGE_ORDER = ["person", "state", "orgorg", "kin"]
+
+# Community hull wash. Below the artwork guide's 15% floor on purpose: this
+# is a ground, not a category to be told apart, and the 0.4pt outline is
+# what guarantees the grouping survives print if the tint does not.
+HULL_FILL = "#F0F0F0"
+HULL_LINE = "#C8C8C8"
 
 # label -> (tone, marker, legend caption); shape carries identity as well as
 # tone, so the classes never rest on lightness alone
@@ -389,12 +415,28 @@ def brokerage_core(d: dict, top_n: int) -> dict:
     }
 
 
-def layout(core: dict, seed: int = 7) -> np.ndarray:
+def layout(core: dict, comm: list[int] | None = None,
+           seed: int = 7, w_in: float = 8.0) -> np.ndarray:
+    """Force layout, optionally pulled together within communities.
+
+    Laying out the raw graph and then hulling the communities does not work
+    here: every community holds both central hubs and peripheral chains, so
+    each hull is a wedge running from the middle to the rim and 22 of them
+    tile the whole frame. Weighting intra-community ties above inter-
+    community ones separates the clusters spatially first, which is what
+    makes a hull mean anything.
+    """
     g = ig.Graph(n=len(core["members"]), edges=core["edges"])
     # igraph wants the stdlib Random interface (it calls .gauss/.random),
     # not a numpy Generator.
     ig.set_random_number_generator(random.Random(seed))
-    pos = np.asarray(g.layout_kamada_kawai(maxiter=6000).coords)
+    if comm is None:
+        pos = np.asarray(g.layout_kamada_kawai(maxiter=6000).coords)
+    else:
+        wts = [w_in if comm[a] == comm[b] else 1.0
+               for a, b in core["edges"]]
+        pos = np.asarray(g.layout_fruchterman_reingold(
+            niter=2000, weights=wts).coords)
     # Fit the bounding box to [-1,1] ISOTROPICALLY -- scaling the axes
     # independently would stretch the drawing and make graph distances lie.
     lo, hi = pos.min(axis=0), pos.max(axis=0)
@@ -423,6 +465,114 @@ def node_boxes(ax, pos, size, min_pt: float = OBSTACLE_MIN_PT) -> list[tuple]:
             continue
         half = (dia / 2) * dpi / 72.0
         out.append((px - half, py - half, px + half, py + half))
+    return out
+
+
+def edge_kind(ca: str, cb: str) -> str:
+    """Classify a tie from the classes of its ends.
+
+    Derived rather than looked up, so it carries the same meaning in the
+    pooled and the date-restricted graph without either having to store an
+    extra column.
+    """
+    if "state" in (ca, cb):
+        return "state"
+    if ca == "person" and cb == "person":
+        return "kin"
+    if ca != "person" and cb != "person":
+        return "orgorg"
+    return "person"
+
+
+def communities(core: dict, seed: int = 7) -> list[int]:
+    """Louvain membership, seeded.
+
+    community_multilevel is randomised. Left unseeded it returned a
+    different partition on each run, which changed the layout weights and
+    the number of hulls drawn -- a figure that will not regenerate
+    identically is not publishable.
+    """
+    ig.set_random_number_generator(random.Random(seed))
+    g = ig.Graph(n=len(core["members"]), edges=core["edges"])
+    return g.community_multilevel().membership
+
+
+def _hull_ring(pts: np.ndarray, pad: float) -> np.ndarray | None:
+    """Convex hull of a community, pushed out from its centroid by ``pad``."""
+    if len(pts) < 3:
+        return None
+    uniq = np.unique(pts, axis=0)
+    if len(uniq) < 3:
+        return None
+    try:
+        ring = uniq[ConvexHull(uniq).vertices]
+    except Exception:
+        return None                      # degenerate (collinear) community
+    c = ring.mean(axis=0)
+    v = ring - c
+    n = np.linalg.norm(v, axis=1, keepdims=True)
+    n[n == 0] = 1.0
+    return c + v + (v / n) * pad
+
+
+def _area(ring: np.ndarray) -> float:
+    x, y = ring[:, 0], ring[:, 1]
+    return 0.5 * abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1)))
+
+
+def draw_hulls(ax, pos: np.ndarray, comm: list[int], pad: float = 0.035) -> int:
+    """Light grounds behind the COMPACT communities only.
+
+    Hulling every community was tried first and is wrong for this graph.
+    Most communities here are a hub with long chains hanging off it, and the
+    convex hull of a star is a huge spiky sliver: 22 of them overlapped
+    across the whole frame, which looked busier while asserting a spatial
+    grouping that does not exist. A hull is only drawn where the members
+    really do occupy a compact patch, so it marks the cohesive clusters and
+    stays off the spokes.
+    """
+    groups = collections.defaultdict(list)
+    for i, c in enumerate(comm):
+        groups[c].append(i)
+    drawn = 0
+    for c, mem in sorted(groups.items(), key=lambda kv: -len(kv[1])):
+        if len(mem) < HULL_MIN:
+            continue
+        ring = _hull_ring(pos[mem], pad)
+        if ring is None:
+            continue
+        # The decisive test: does the hull enclose nodes that are not in
+        # the community? A wedge running from the hub out to the rim sweeps
+        # up other groups on the way, and outlining it asserts a grouping
+        # that is not there. Bounding-box area and aspect both failed to
+        # catch this -- a diagonal wedge has an unremarkable bbox.
+        inside = MplPath(ring).contains_points(pos)
+        intruders = int(inside.sum()) - len(mem)
+        if intruders > HULL_MAX_INTRUDER_FRAC * len(mem):
+            continue
+        ax.add_patch(Polygon(ring, closed=True, facecolor=HULL_FILL,
+                             edgecolor=HULL_LINE, linewidth=0.4,
+                             joinstyle="round", zorder=0))
+        drawn += 1
+    return drawn
+
+
+def curved_segments(pos: np.ndarray, edges, bend: float = CURVE, n: int = 14):
+    """Quadratic arcs instead of straight chords.
+
+    A star-shaped graph drawn with straight lines collapses many ties onto
+    the same pixels; arcing them apart lets a reader follow one tie out of a
+    hub, and gives the drawing some texture.
+    """
+    out = []
+    t = np.linspace(0, 1, n)[:, None]
+    for a, b in edges:
+        p0, p2 = pos[a], pos[b]
+        mid = (p0 + p2) / 2
+        d = p2 - p0
+        normal = np.array([-d[1], d[0]])
+        ctrl = mid + normal * bend
+        out.append((1 - t) ** 2 * p0 + 2 * (1 - t) * t * ctrl + t ** 2 * p2)
     return out
 
 
@@ -501,15 +651,30 @@ def main(argv: list[str] | None = None) -> int:
     nodes, bc, cls, labels = d["nodes"], d["bc"], d["cls"], d["labels"]
     core = brokerage_core(d, args.top)
     mem = core["members"]
-    pos = layout(core)
+    comm = communities(core)
+    pos = layout(core, comm)
 
     # Three stacked bands -- legend, network, size key -- each in its own
     # axes. Sharing one axes put the key and legend inside the drawing area
     # and cost the network most of its usable height.
-    fig = plt.figure(figsize=(args.width, args.width * 1.22))
-    ax_leg = fig.add_axes([0.012, 0.930, 0.976, 0.064])
-    ax = fig.add_axes([0.006, 0.116, 0.988, 0.812])
-    ax_key = fig.add_axes([0.012, 0.006, 0.976, 0.104])
+    #
+    # The figure's HEIGHT is derived from the layout's own aspect rather
+    # than fixed. With a fixed near-square frame and a layout half as tall
+    # as it is wide, preserving aspect (which a force layout requires --
+    # scaling the axes independently makes graph distances lie) left a
+    # third of the canvas empty.
+    span = pos.max(axis=0) - pos.min(axis=0)
+    data_ar = float(span[1] / span[0]) if span[0] > 0 else 1.0
+    data_ar = min(max(data_ar, 0.55), 1.45)
+    net_w_in = args.width * 0.988
+    net_h_in = net_w_in * data_ar
+    leg_h_in, key_h_in = 0.62, 0.58
+    fig_h = net_h_in + leg_h_in + key_h_in
+    fig = plt.figure(figsize=(args.width, fig_h))
+    ax_leg = fig.add_axes([0.012, 1 - (leg_h_in - 0.04) / fig_h,
+                           0.976, (leg_h_in - 0.05) / fig_h])
+    ax = fig.add_axes([0.006, key_h_in / fig_h, 0.988, net_h_in / fig_h])
+    ax_key = fig.add_axes([0.012, 0.006, 0.976, (key_h_in - 0.06) / fig_h])
     for a in (ax_leg, ax, ax_key):
         a.set_axis_off()
 
@@ -517,13 +682,34 @@ def main(argv: list[str] | None = None) -> int:
     # works in display coordinates, so changing the data limits afterwards
     # silently invalidates every box it checked.
     ax.set_aspect("equal")
-    ax.set_xlim(-1.045, 1.045)
-    h = 1.045 * (0.812 * 1.22) / 0.988
-    ax.set_ylim(-h, h)
+    frame_ar = net_h_in / net_w_in
+    half = np.abs(pos).max(axis=0) * 1.02 + 0.015
+    # Grow the short side to the frame's aspect rather than scaling the
+    # axes independently, which would stretch the layout and make graph
+    # distances lie. With the frame now cut to the data's own aspect there
+    # is very little left to grow.
+    if half[1] / half[0] < frame_ar:
+        half[1] = half[0] * frame_ar
+    else:
+        half[0] = half[1] / frame_ar
+    ax.set_xlim(-half[0], half[0])
+    ax.set_ylim(-half[1], half[1])
 
-    segs = [(pos[a_], pos[b_]) for a_, b_ in core["edges"]]
-    ax.add_collection(LineCollection(segs, colors=EDGE, linewidths=0.4,
-                                     zorder=1))
+    n_hulls = draw_hulls(ax, pos, comm)
+
+    # Ties grouped by kind so each gets its own tone, dash and weight. One
+    # flat grey collection made a 400-node graph read as a single texture.
+    ekind = [edge_kind(cls[mem[a_]], cls[mem[b_]]) for a_, b_ in core["edges"]]
+    n_by_kind = collections.Counter(ekind)
+    for kind in EDGE_ORDER:
+        sel = [e for e, k in zip(core["edges"], ekind) if k == kind]
+        if not sel:
+            continue
+        colour, dash, lw, _ = EDGE_STYLE[kind]
+        ax.add_collection(LineCollection(
+            curved_segments(pos, sel), colors=colour, linewidths=lw,
+            linestyles=dash, zorder=1,
+            capstyle="round"))
 
     # Node AREA strictly proportional to betweenness: matplotlib's `s` is
     # area in points squared, so s = k * betweenness with no exponent.
@@ -541,18 +727,26 @@ def main(argv: list[str] | None = None) -> int:
                    facecolors=tone, marker=marker, linewidths=0.5,
                    edgecolors=OUTLINE, zorder=3 if name == "person" else 2)
 
-    ax_leg.legend(
-        handles=[Line2D([], [], marker=CLASSES[n][1], ls="none",
-                        markerfacecolor=CLASSES[n][0], markeredgecolor=OUTLINE,
-                        markeredgewidth=.5, markersize=7,
-                        label=CLASSES[n][2]) for n in ORDER],
-        loc="upper left", bbox_to_anchor=(0, 1.25), ncol=2, fontsize=MIN_PT,
-        labelcolor=INK, handletextpad=.5, labelspacing=.35,
-        columnspacing=1.2, borderpad=0)
+    handles = [Line2D([], [], marker=CLASSES[n][1], ls="none",
+                      markerfacecolor=CLASSES[n][0], markeredgecolor=OUTLINE,
+                      markeredgewidth=.5, markersize=7, label=CLASSES[n][2])
+               for n in ORDER]
+    handles += [Line2D([], [], color=EDGE_STYLE[k][0], lw=EDGE_STYLE[k][2] * 2.4,
+                       ls=EDGE_STYLE[k][1], label=EDGE_STYLE[k][3])
+                for k in EDGE_ORDER if n_by_kind.get(k)]
+    ax_leg.legend(handles=handles, loc="upper left", bbox_to_anchor=(0, 1.02),
+                  ncol=2, fontsize=MIN_PT, labelcolor=INK, handletextpad=.5,
+                  labelspacing=.34, columnspacing=1.1, handlelength=1.9,
+                  borderpad=0)
 
     _size_key(ax_key, k, bmax)
 
     top = list(range(min(args.labels, len(mem))))
+    # A white ring behind each labelled node, so a name can be tied to its
+    # marker even where the community ground runs behind it.
+    ax.scatter(pos[top, 0], pos[top, 1],
+               s=[size[j] * 1.6 + 15 for j in top], facecolors="none",
+               edgecolors="white", linewidths=1.1, zorder=2.5)
     drawn, shown = place_labels(
         ax,
         [(short_label(labels[mem[j]]), pos[j],
@@ -575,6 +769,8 @@ def main(argv: list[str] | None = None) -> int:
           f"{core['n_selected']} hold {100 * core['share']:.1f}% of all "
           f"betweenness")
     print(f"  labels drawn: {drawn} of {len(top)} requested")
+    print(f"  communities {len(set(comm))}, hulls drawn {n_hulls}; "
+          f"ties by kind {dict(n_by_kind)}")
     print(f"  node diameters {2 * np.sqrt(min(size.values()) / np.pi):.1f}"
           f"–{2 * np.sqrt(max(size.values()) / np.pi):.1f} pt")
     return 0
@@ -620,7 +816,11 @@ def _size_key(ax, k: float, bmax: float) -> None:
     # pre-2011 graph, whose maximum is an order of magnitude smaller.
     # The top step rounds DOWN: rounding up drew a reference circle larger
     # than any node in the figure, which reads as a node that is not there.
-    steps = sorted({_nice(bmax / 8), _nice(bmax / 3), _nice_down(bmax)})
+    # Each step a quarter of the one above it, so the three circles are
+    # plainly different sizes. Deriving them from bmax/8 and bmax/3 put 20M
+    # and 25M side by side, which reads as one circle drawn twice.
+    top = _nice_down(bmax)
+    steps = sorted({_nice_down(top / 16), _nice_down(top / 4), top})
 
     ax.text(0, 0.93, "Node area proportional to betweenness centrality",
             ha="left", va="top", fontsize=MIN_PT, color=INK,
