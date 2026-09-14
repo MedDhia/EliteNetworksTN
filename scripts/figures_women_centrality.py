@@ -65,7 +65,7 @@ def read_series() -> list[dict]:
     return rows
 
 
-def panel_participation(ax, rows) -> None:
+def panel_participation(ax, rows, *, marker_note: bool = True) -> None:
     yr = [r["year"] for r in rows]
     pct = [r["pct_women_of_gendered"] for r in rows]
     ax.grid(axis="y", linewidth=0.6, alpha=0.7)
@@ -90,13 +90,17 @@ def panel_participation(ax, rows) -> None:
                     textcoords="offset points", xytext=(0, 11),
                     ha="center", fontsize=8.5, fontweight="bold", color=WOMEN)
 
-    ax.annotate("marker area = directors whose gender is recorded that year "
-                f"({int(n.min())}–{int(n.max())})",
-                (0.995, 0.06), xycoords="axes fraction", ha="right",
-                fontsize=6.8, color=MUTED)
+    # Dropped in the one-column cut: at that width the line runs through
+    # wherever this sits, and the same sentence is already in the caption.
+    if marker_note:
+        ax.annotate("marker area = directors whose gender is recorded that year "
+                    f"({int(n.min())}–{int(n.max())})",
+                    (0.995, 0.06), xycoords="axes fraction", ha="right",
+                    fontsize=6.8, color=MUTED)
 
 
-def panel_pool(ax, rows) -> None:
+def panel_pool(ax, rows, *, legend_size: float = 7.6,
+               headroom: float = 1.09) -> None:
     yr = np.array([r["year"] for r in rows])
     w = np.array([r["women_multi_board"] for r in rows])
     m = np.array([r["men_multi_board"] for r in rows])
@@ -111,7 +115,11 @@ def panel_pool(ax, rows) -> None:
     ax.bar(yr + width, w, width * 0.92, color=WOMEN, label="Women", zorder=3)
     ax.set_ylabel("directors on >1 board")
     ax.set_title("B.  But almost no women hold the second seat that brokerage requires")
-    ax.legend(loc="upper left", ncol=3, fontsize=7.6)
+    # The legend sits over the tallest bar unless the axis is given room for
+    # it; ncol=3 keeps it to one line so that room is a strip, not a block.
+    ax.set_ylim(0, max(m.max(), u.max(), w.max()) * headroom)
+    ax.legend(loc="upper left", ncol=3, fontsize=legend_size,
+              columnspacing=1.1, handlelength=1.3, handletextpad=0.5)
 
     # Label the women's bar every year: these are the numbers the claim rests
     # on, and they are small enough that every one of them matters.
@@ -137,6 +145,84 @@ def panel_pooled(ax, pool, key, title, fmt, ylabel) -> None:
     ax.set_xticks([0, 1])
     ax.set_xticklabels([f"Women\nn={pool['women']['n']}",
                         f"Men\nn={pool['men']['n']}"], color=INK, fontsize=8.5)
+
+
+SUBTITLE = ("Directors of BVMT-listed companies, 2005–2026. Gender is read from "
+            "the honorific the filer printed (M./Mme), never guessed from the "
+            "given name; the 27–70% of directors carrying no honorific are "
+            "counted as unknown, never as men.")
+NOTE = ("Betweenness is computed on the bipartite director–firm graph, where it "
+        "is non-zero only for a director sitting on more than one board. The "
+        "brokerage panel is why no yearly centrality series is drawn: the "
+        "women's bar is 0–6 people and zero in 8 of 22 years. Source: CMF "
+        "filings, 1,887 documents. Code: scripts/figures_women_centrality.py")
+
+
+def _year_axis(*axes) -> None:
+    for ax in axes:
+        ax.set_xlim(FIRST_YEAR - 0.8, LAST_YEAR + 0.8)
+        ax.set_xticks(range(FIRST_YEAR, LAST_YEAR + 1, 2))
+
+
+def fig_participation(rows) -> None:
+    """Panel A alone, for a slide or a paper that only needs the trend."""
+    fig = plt.figure(figsize=(7.4, 4.3))
+    ax = fig.add_subplot(111)
+    fig.subplots_adjust(top=0.80, bottom=0.155, left=0.098, right=0.975)
+    panel_participation(ax, rows)
+    ax.set_title("")           # the headline carries it in this cut
+    _year_axis(ax)
+    headline(fig, "Women's share of Tunisian listed-company directors, 2005–2026",
+             SUBTITLE, top=0.985)
+    save(fig, "fig02_bourse_women_participation",
+         "Share of directors whose gender the filing records. Marker area is the "
+         "number of such directors that year (28–134). Source: CMF filings. "
+         "Code: scripts/figures_women_centrality.py")
+
+
+def fig_slide(rows) -> None:
+    """16:9, two panels, larger type — the argument in one screen."""
+    with plt.rc_context({"font.size": 10.5, "axes.titlesize": 12,
+                         "legend.fontsize": 9.5}):
+        fig = plt.figure(figsize=(13.33, 7.5))
+        gs = fig.add_gridspec(1, 2, wspace=0.20, top=0.775, bottom=0.115,
+                              left=0.062, right=0.978)
+        ax_a = fig.add_subplot(gs[0, 0])
+        ax_b = fig.add_subplot(gs[0, 1])
+        panel_participation(ax_a, rows)
+        panel_pool(ax_b, rows, legend_size=9.5, headroom=1.16)
+        ax_a.set_title("Women's share of directors rose", fontsize=13)
+        ax_b.set_title("The brokerage pool did not", fontsize=13)
+        _year_axis(ax_a, ax_b)
+        headline(fig,
+                 "Women entered Tunisian boards. They did not enter the brokerage.",
+                 SUBTITLE, top=0.985)
+        save(fig, "fig03_bourse_women_slide", NOTE)
+
+
+def fig_compact(rows) -> None:
+    """One journal column wide: the two yearly panels, stacked and stripped."""
+    with plt.rc_context({"font.size": 7, "axes.titlesize": 8,
+                         "legend.fontsize": 6.4, "xtick.labelsize": 6.5,
+                         "ytick.labelsize": 6.5}):
+        fig = plt.figure(figsize=(3.5, 5.0))
+        gs = fig.add_gridspec(2, 1, hspace=0.40, top=0.805, bottom=0.105,
+                              left=0.168, right=0.985)
+        ax_a = fig.add_subplot(gs[0, 0])
+        ax_b = fig.add_subplot(gs[1, 0])
+        panel_participation(ax_a, rows, marker_note=False)
+        panel_pool(ax_b, rows, legend_size=5.8, headroom=1.30)
+        ax_a.set_title("A.  Women's share of directors", fontsize=8)
+        ax_b.set_title("B.  Directors on more than one board", fontsize=8)
+        for ax in (ax_a, ax_b):
+            ax.set_xlim(FIRST_YEAR - 0.8, LAST_YEAR + 0.8)
+            ax.set_xticks(range(FIRST_YEAR, LAST_YEAR + 1, 5))
+        headline(fig, "Women on Tunisian boards, 2005–2026",
+                 "Gender from printed honorifics; 27–70% unrecorded and counted "
+                 "as unknown, never as men.", top=0.985)
+        save(fig, "fig04_bourse_women_compact",
+             "Betweenness is non-zero only above one board seat; panel B is why "
+             "no centrality series is drawn. Source: CMF filings.")
 
 
 def main() -> None:
@@ -180,6 +266,12 @@ def main() -> None:
          "is why no yearly centrality series is drawn: the women's bar is 0–6 "
          "people and zero in 8 of 22 years. Source: CMF filings, 1,887 documents. "
          "Code: scripts/figures_women_centrality.py")
+
+    # Three cuts of the same argument, for the places it has to go: the trend
+    # alone, a 16:9 screen, and one journal column.
+    fig_participation(rows)
+    fig_slide(rows)
+    fig_compact(rows)
 
 
 if __name__ == "__main__":
