@@ -332,7 +332,8 @@ def main(argv: list[str] | None = None) -> int:
             "org_to_org_ties": d["n_org_ties"],
             "dropped_blank_orgs": d["dropped_blank"],
             "recalc_every": args.recalc_every,
-            "random_replicates": args.replicates, **struct}
+            "random_replicates": args.replicates,
+            "null_replicates": args.null_replicates, **struct}
 
     if not args.no_curves:
         target = lcc if args.scope == "lcc" else g
@@ -576,15 +577,17 @@ nodes ({100 * meta['lcc_nodes'] / meta['nodes']:.1f}%) and
 | `component` | connected-component id |
 | `in_lcc` | 1 if in the largest component |
 
-## `pre2011_percolation.csv`
+## `pre2011_percolation_lcc.csv` / `pre2011_percolation_full.csv`
 
 `graph` is `observed` or `configuration` (the degree-preserving null).
+One file per `--scope`, so the two runs cannot overwrite each other.
 `f` is the fraction of nodes removed, `S` the largest remaining component
 as a fraction of the starting node count, `mean_other` the mean size of
 the other components, `components` how many there are. `replicate` is 0
 except for `random`, which is averaged over
-{meta['random_replicates']} seeded draws. Adaptive strategies recompute
-every {meta['recalc_every']} removals.
+{meta['random_replicates']} seeded draws. The `configuration` rows are
+{meta['null_replicates']} degree-preserving rewirings. Adaptive strategies
+recompute every {meta['recalc_every']} removals.
 
 **`S` starts at 1.0 only under `--scope lcc`.** On the full graph it
 starts at {meta['lcc_nodes'] / meta['nodes']:.2f}, because the network is

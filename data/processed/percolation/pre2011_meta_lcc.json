@@ -14,6 +14,7 @@
   "dropped_blank_orgs": 2,
   "recalc_every": 10,
   "random_replicates": 20,
+  "null_replicates": 12,
   "lcc_mean_degree": 2.328,
   "lcc_independent_cycles": 413,
   "lcc_articulation_points": 687,
