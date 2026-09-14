@@ -1,0 +1,24 @@
+{
+  "before": "2011-01-14",
+  "scope": "full",
+  "nodes": 9734,
+  "edges": 7619,
+  "components": 2610,
+  "lcc_nodes": 2509,
+  "lcc_edges": 2921,
+  "kept_by_tie_class": {
+    "corporate_officer": 7268,
+    "state_office": 1482
+  },
+  "org_to_org_ties": 119,
+  "dropped_blank_orgs": 2,
+  "recalc_every": 10,
+  "random_replicates": 20,
+  "lcc_mean_degree": 2.328,
+  "lcc_independent_cycles": 413,
+  "lcc_articulation_points": 687,
+  "lcc_share_degree_1": 0.6086,
+  "lcc_max_degree": 110,
+  "lcc_transitivity": 0.000216,
+  "ties_not_person_to_org": 899
+}

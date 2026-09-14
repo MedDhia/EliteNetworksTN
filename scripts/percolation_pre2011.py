@@ -11,7 +11,7 @@ Writes, under ``data/processed/percolation/``:
 ``pre2011_lcc.graphml``          the largest connected component only
 ``pre2011_attack_orders.csv``    removal rank per node for every *static*
                                  strategy
-``pre2011_percolation.csv``      the percolation curves this script runs
+``pre2011_percolation_SCOPE.csv``  the curves, per --scope
 ``README.md``                    column dictionary and the caveats
 ===============================  ====================================
 
@@ -267,6 +267,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--recalc-every", type=int, default=10,
                     help="removals between recomputations for the adaptive "
                          "strategies")
+    ap.add_argument("--null-replicates", type=int, default=5,
+                    help="degree-preserving rewirings to run the same "
+                         "strategies against; 0 disables the null")
     ap.add_argument("--no-curves", action="store_true",
                     help="write the dataset files only")
     args = ap.parse_args(argv)
@@ -335,11 +338,11 @@ def main(argv: list[str] | None = None) -> int:
         target = lcc if args.scope == "lcc" else g
         tattr = attributes(target) if args.scope == "lcc" else attr
         rows = _curves(target, tattr, args)
-        path = OUT / "pre2011_percolation.csv"
+        path = OUT / f"pre2011_percolation_{args.scope}.csv"
         with path.open("w", encoding="utf-8", newline="") as fh:
             w = csv.DictWriter(fh, fieldnames=[
-                "strategy", "scope", "replicate", "removed", "f", "S",
-                "mean_other", "components"])
+                "strategy", "graph", "scope", "replicate", "removed", "f",
+                "S", "mean_other", "components"])
             w.writeheader()
             w.writerows(rows)
         print(f"  wrote {path.relative_to(ROOT)} ({len(rows):,} rows)")
@@ -347,10 +350,42 @@ def main(argv: list[str] | None = None) -> int:
         _report(rows, target.vcount())
 
     _write_readme(meta)
-    (OUT / "pre2011_meta.json").write_text(
-        json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"  wrote {(OUT / 'pre2011_meta.json').relative_to(ROOT)}")
+    mpath = OUT / f"pre2011_meta_{args.scope}.json"
+    mpath.write_text(json.dumps(meta, indent=2, ensure_ascii=False),
+                     encoding="utf-8")
+    print(f"  wrote {mpath.relative_to(ROOT)}")
     return 0
+
+
+def configuration_null(g: ig.Graph, seed: int) -> ig.Graph:
+    """Degree-preserving rewiring: the configuration-model null.
+
+    The observed largest component is nearly a tree, so every attack
+    strategy destroys it quickly and the absolute collapse point says
+    little on its own. The question that can be answered is whether it
+    collapses faster than its own degree sequence implies. This rewires by
+    double-edge swaps, which holds every node's degree exactly and
+    destroys everything else.
+
+    The rewired graph is reduced to its own largest component before
+    use, for the reason given below.
+
+    It does NOT preserve the two-mode structure: rewiring can create
+    person-to-person and organisation-to-organisation ties that the
+    observed graph does not have. It is a null for the degree sequence
+    alone, and should be read as one.
+    """
+    h = g.copy()
+    ig.set_random_number_generator(random.Random(seed))
+    h.rewire(n=20 * h.ecount())
+    h.vs["node_class"] = g.vs["node_class"]
+    # Rewiring a near-tree usually disconnects it, so the rewired graph's
+    # largest component holds only about 78% of the nodes. Comparing a
+    # connected observed component against a fragmented null would confound
+    # decay under attack with initial connectedness, so the null is reduced
+    # to its own largest component and both start at S = 1.
+    comps = h.connected_components()
+    return h.subgraph(comps[int(np.argmax(comps.sizes()))])
 
 
 def _curves(target: ig.Graph, tattr: dict, args) -> list[dict]:
@@ -360,38 +395,91 @@ def _curves(target: ig.Graph, tattr: dict, args) -> list[dict]:
             for rep in range(args.replicates):
                 order = static_order("random", tattr, target, seed=1000 + rep)
                 for r in run_static(target, order, args.steps):
-                    rows.append({"strategy": strat, "scope": args.scope,
-                                 "replicate": rep, **r})
+                    rows.append({"strategy": strat, "graph": "observed",
+                                 "scope": args.scope, "replicate": rep, **r})
         else:
             order = static_order(strat, tattr, target)
             for r in run_static(target, order, args.steps):
-                rows.append({"strategy": strat, "scope": args.scope,
-                             "replicate": 0, **r})
+                rows.append({"strategy": strat, "graph": "observed",
+                             "scope": args.scope, "replicate": 0, **r})
         print(f"    {strat} done")
     for strat in ADAPTIVE:
         for r in run_adaptive(target, strat, args.steps, args.recalc_every):
-            rows.append({"strategy": strat, "scope": args.scope,
-                         "replicate": 0, **r})
+            rows.append({"strategy": strat, "graph": "observed",
+                         "scope": args.scope, "replicate": 0, **r})
         print(f"    {strat} done")
+
+    null_sizes = []
+    for rep in range(args.null_replicates):
+        null = configuration_null(target, seed=500 + rep)
+        null_sizes.append(null.vcount())
+        nattr = attributes(null, seed=500 + rep)
+        for strat in ("random", "degree", "betweenness"):
+            order = static_order(strat, nattr, null, seed=500 + rep)
+            for r in run_static(null, order, args.steps):
+                rows.append({"strategy": strat, "graph": "configuration",
+                             "scope": args.scope, "replicate": rep, **r})
+        for strat in ADAPTIVE:
+            for r in run_adaptive(null, strat, args.steps,
+                                  args.recalc_every):
+                rows.append({"strategy": strat, "graph": "configuration",
+                             "scope": args.scope, "replicate": rep, **r})
+        print(f"    configuration null {rep + 1}/{args.null_replicates}"
+              f" done ({null.vcount():,} nodes)")
+    if null_sizes:
+        print(f"    null largest components: mean "
+              f"{np.mean(null_sizes):,.0f} of {target.vcount():,} nodes "
+              f"({100 * np.mean(null_sizes) / target.vcount():.0f}%) -- "
+              f"rewiring a near-tree disconnects it, so the null's degree "
+              f"sequence is that of the rewired giant component, not the "
+              f"observed one exactly")
     return rows
 
 
 def _report(rows: list[dict], n0: int) -> None:
-    """Robustness R = mean S over the removal sequence (Schneider 2011)."""
-    by: dict[str, list[list[float]]] = {}
+    """Robustness R = mean S over the removal sequence (Schneider 2011).
+
+    Reported against the degree-preserving null, because the absolute
+    value cannot be read on a near-tree: what is interpretable is whether
+    the observed graph is more fragile than its degree sequence implies.
+    """
+    acc: dict[tuple[str, str], list[float]] = {}
     for r in rows:
-        by.setdefault(r["strategy"], []).append([r["f"], r["S"]])
-    print("\n  robustness R (mean S over the sequence; lower = more fragile)")
-    print(f"  {'strategy':<22} {'R':>7}  {'f at S<0.5':>11}  {'f at S<0.1':>11}")
-    for strat, pts in sorted(by.items(), key=lambda kv: np.mean(
-            [p[1] for p in kv[1]])):
-        arr = np.array(sorted(pts))
-        R = float(arr[:, 1].mean())
-        def crosses(th):
-            hit = arr[arr[:, 1] < th]
-            return f"{hit[0, 0]:.3f}" if len(hit) else "—"
-        print(f"  {strat:<22} {R:>7.4f}  {crosses(0.5):>11}  "
-              f"{crosses(0.1):>11}")
+        acc.setdefault((r["strategy"], r["graph"]), []).append(r["S"])
+    cross: dict[tuple[str, str], list[list[float]]] = {}
+    for r in rows:
+        cross.setdefault((r["strategy"], r["graph"]), []).append(
+            [r["f"], r["S"]])
+
+    def crossing(key, th):
+        arr = np.array(sorted(cross[key]))
+        # On the full graph S starts at 0.26, so "f at S<0.5" is 0 for
+        # every strategy and says nothing. Report that rather than a 0.
+        if arr[0, 1] < th:
+            return f"n/a S0={arr[0, 1]:.2f}"
+        hit = arr[arr[:, 1] < th]
+        return f"{hit[0, 0]:.3f}" if len(hit) else "—"
+
+    obs = {k: float(np.mean(v)) for k, v in acc.items() if k[1] == "observed"}
+    nul = {k[0]: float(np.mean(v)) for k, v in acc.items()
+           if k[1] == "configuration"}
+
+    print("\n  robustness R = mean S over the sequence (lower = more fragile)")
+    print(f"  {'strategy':<22} {'R obs':>7} {'R null':>7} {'obs/null':>9}"
+          f"  {'f at S<0.5':>14}")
+    for (strat, _), R in sorted(obs.items(), key=lambda kv: kv[1]):
+        rn = nul.get(strat)
+        ratio = f"{R / rn:>8.2f}x" if rn else "        —"
+        print(f"  {strat:<22} {R:>7.4f} "
+              f"{(f'{rn:.4f}' if rn else '—'):>7} {ratio}"
+              f"  {crossing((strat, 'observed'), 0.5):>14}")
+    if nul:
+        print("\n  the null holds each node's degree exactly and destroys "
+              "everything else,")
+        print("  so obs/null below 1 means the observed graph is more "
+              "fragile than its")
+        print("  degree sequence alone requires, and above 1 that it is "
+              "less so.")
 
 
 def _write_nodes(g: ig.Graph, attr: dict) -> None:
@@ -468,8 +556,8 @@ nodes ({100 * meta['lcc_nodes'] / meta['nodes']:.1f}%) and
 | `pre2011.graphml` | whole graph, attributes attached — `igraph`, `networkx`, Gephi |
 | `pre2011_lcc.graphml` | largest connected component only |
 | `pre2011_attack_orders.csv` | removal rank per node per static strategy; 0 is removed first |
-| `pre2011_percolation.csv` | the curves, one row per strategy × replicate × step |
-| `pre2011_meta.json` | run parameters and counts |
+| `pre2011_percolation_lcc.csv`, `pre2011_percolation_full.csv` | the curves, one row per strategy × graph × replicate × step |
+| `pre2011_meta_lcc.json`, `pre2011_meta_full.json` | run parameters and counts |
 
 ## `pre2011_nodes.csv`
 
@@ -490,6 +578,7 @@ nodes ({100 * meta['lcc_nodes'] / meta['nodes']:.1f}%) and
 
 ## `pre2011_percolation.csv`
 
+`graph` is `observed` or `configuration` (the degree-preserving null).
 `f` is the fraction of nodes removed, `S` the largest remaining component
 as a fraction of the starting node count, `mean_other` the mean size of
 the other components, `components` how many there are. `replicate` is 0

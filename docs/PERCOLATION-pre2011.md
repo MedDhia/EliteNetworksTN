@@ -5,7 +5,9 @@
 Builds the gazette-evidenced network as of 14 January 2011 from
 `elitenet.dated_graph` — the same builder the publication figures use, so
 the graph analysed and the graph drawn cannot drift apart — and ships it in
-the formats a percolation study needs, plus a harness that runs the curves.
+the formats a percolation study needs, plus a harness that runs the curves against a degree-preserving null.
+`scripts/figure_apsr_percolation.py` turns the result into
+`figures/fig17_percolation.pdf` at APSR artwork spec.
 
 | file | contents |
 |---|---|
@@ -14,8 +16,8 @@ the formats a percolation study needs, plus a harness that runs the curves.
 | `pre2011.graphml` | whole graph, **all attributes attached** — loads in igraph, networkx, Gephi with no join needed |
 | `pre2011_lcc.graphml` | largest connected component, centralities **recomputed inside it** |
 | `pre2011_attack_orders.csv` | removal rank per node for each static strategy; 0 is removed first |
-| `pre2011_percolation.csv` | the curves: strategy × replicate × step |
-| `pre2011_meta.json`, `README.md` | run parameters, counts, column dictionary |
+| `pre2011_percolation_lcc.csv`, `..._full.csv` | the curves: strategy × graph (observed / configuration null) × replicate × step |
+| `pre2011_meta_lcc.json`, `..._full.json`, `README.md` | run parameters, counts, column dictionary |
 
 ## The graph
 
@@ -56,31 +58,58 @@ is the optimal attack".
 ## Results of the shipped run (`--scope lcc`)
 
 Robustness *R* is mean *S* over the removal sequence (Schneider et al.
-2011, *PNAS* 108:3838); lower is more fragile.
+2011, *PNAS* 108:3838); lower is more fragile. `R null` is the
+degree-preserving configuration model over 12 rewirings.
 
-| strategy | R | f at S<0.5 | f at S<0.1 |
-|---|---|---|---|
-| `betweenness_recalc` | 0.0146 | 0.010 | 0.020 |
-| `degree_recalc` | 0.0162 | 0.010 | 0.020 |
-| `state_first` | 0.0168 | 0.010 | 0.040 |
-| `degree` | 0.0168 | 0.010 | 0.020 |
-| `betweenness` | 0.0217 | 0.010 | 0.040 |
-| `orgs_first` | 0.0251 | 0.010 | 0.050 |
-| `coreness` | 0.0273 | 0.020 | 0.050 |
-| `participation` | 0.0452 | 0.050 | 0.060 |
-| `persons_first` | 0.0694 | 0.040 | 0.190 |
-| `closeness` | 0.1100 | 0.050 | 0.140 |
-| `eigenvector` | 0.1321 | 0.080 | 0.180 |
-| `random` | 0.2571 | 0.130 | 0.440 |
+| strategy | R obs | R null | obs/null | f at S<0.5 |
+|---|---|---|---|---|
+| `betweenness_recalc` | 0.0146 | 0.0382 | **0.38×** | 0.010 |
+| `degree_recalc` | 0.0162 | 0.0385 | **0.42×** | 0.010 |
+| `state_first` | 0.0168 | — | — | 0.010 |
+| `degree` | 0.0168 | 0.0398 | **0.42×** | 0.010 |
+| `betweenness` | 0.0217 | 0.0452 | **0.48×** | 0.010 |
+| `orgs_first` | 0.0251 | — | — | 0.010 |
+| `coreness` | 0.0273 | — | — | 0.020 |
+| `participation` | 0.0452 | — | — | 0.050 |
+| `persons_first` | 0.0694 | — | — | 0.040 |
+| `closeness` | 0.1100 | — | — | 0.050 |
+| `eigenvector` | 0.1321 | — | — | 0.080 |
+| `random` | 0.2571 | 0.3244 | **0.79×** | 0.130 |
 
-The familiar targeted-versus-random gap is there and is large: random
-failure needs 13% of nodes to halve the component where degree or
-betweenness needs 1%. Two orderings are worth noting substantively —
-**`state_first` is as destructive as an optimal degree attack**, and
-`persons_first` is four times less so, which says the connectivity is
-carried by the state bodies rather than by the officeholders.
+Three things to take from this.
 
-## Four caveats, in order of how much they matter
+**The targeted/random gap is large.** Random failure needs 13% of nodes to
+halve the giant component; degree or betweenness needs 1%.
+
+**Against its own degree sequence the network is more fragile than it has
+to be, and about twice as much so under attack.** Random failure runs at
+0.79× the null, targeted strategies at 0.38–0.48×. Since the null holds
+every node's degree exactly and destroys everything else, the excess
+vulnerability is structural — it is not a consequence of the degree
+distribution alone. This is the comparison that survives the near-tree
+problem below, and the one worth reporting.
+
+**`state_first` is as destructive as an optimal degree attack** (R =
+0.0168 for both) while `persons_first` is four times less so (0.0694).
+Connectivity is carried by the state bodies, not by the officeholders.
+
+`figures/fig17_percolation.pdf` plots panel (a) the curves against the
+null and panel (b) *R* for every strategy.
+
+### One caveat on the null itself
+
+Rewiring a near-tree disconnects it: the rewired giant component holds
+about **78%** of the nodes (mean 1,965 of 2,509). Comparing a connected
+observed component against a fragmented null would confound decay under
+attack with initial connectedness, so the null is reduced to its own
+largest component and both start at *S* = 1. The cost is that the null's
+degree sequence is then the *rewired giant component's*, not the observed
+one's exactly. Under `--scope full` no such reduction is needed and the
+degree sequence is preserved exactly; that run gives obs/null of
+0.63–0.67 for targeted strategies and 0.67 for random, so the direction
+and rough magnitude of the finding do not depend on this choice.
+
+## Four caveats on the graph, in order of how much they matter
 
 **1. The largest component is very nearly a tree, so there is almost no
 redundancy to destroy.** 2,509 nodes carry 2,921 ties: **413 independent

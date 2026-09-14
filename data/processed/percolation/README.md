@@ -18,8 +18,8 @@ nodes (25.8%) and
 | `pre2011.graphml` | whole graph, attributes attached — `igraph`, `networkx`, Gephi |
 | `pre2011_lcc.graphml` | largest connected component only |
 | `pre2011_attack_orders.csv` | removal rank per node per static strategy; 0 is removed first |
-| `pre2011_percolation.csv` | the curves, one row per strategy × replicate × step |
-| `pre2011_meta.json` | run parameters and counts |
+| `pre2011_percolation_lcc.csv`, `pre2011_percolation_full.csv` | the curves, one row per strategy × graph × replicate × step |
+| `pre2011_meta_lcc.json`, `pre2011_meta_full.json` | run parameters and counts |
 
 ## `pre2011_nodes.csv`
 
@@ -40,6 +40,7 @@ nodes (25.8%) and
 
 ## `pre2011_percolation.csv`
 
+`graph` is `observed` or `configuration` (the degree-preserving null).
 `f` is the fraction of nodes removed, `S` the largest remaining component
 as a fraction of the starting node count, `mean_other` the mean size of
 the other components, `components` how many there are. `replicate` is 0
