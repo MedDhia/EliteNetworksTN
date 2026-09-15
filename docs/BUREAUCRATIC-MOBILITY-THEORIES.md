@@ -366,8 +366,14 @@ Quasi-Experiment     Presidency Transition    Daily Volume RDD Jump (τ)   Apex 
 * `fig_theory_11_matching_fixed_effects_interactive.html`: Interactive Plotly Dashboard of Matching & Fixed Effects Models.
 * `fig_theory_12_gender_biases_regimes.png` & `.pdf`: Comparative Institutional Gender Biases Across Five Regimes (1957–2026).
 * `fig_theory_12_gender_biases_regimes_interactive.html`: Interactive Plotly Dashboard of Cross-Regime Gender Biases.
-* `fig_theory_13_presidential_shocks.png` & `.pdf`: Sharp RDD and Difference-in-Differences Causal Estimates of Unexpected Presidential Transitions.
-* `fig_theory_13_presidential_shocks_interactive.html`: Interactive Plotly RDD & DiD Dashboard of Presidential Transitions.
+* `fig_theory_13a_rdd_1987_volume.png` & `.pdf`: Sharp RDD — 1987 Ben Ali Coup: Daily Appointment Volume Throughput (Single-Plot).
+* `fig_theory_13b_rdd_2011_volume.png` & `.pdf`: Sharp RDD — 2011 Revolution: Daily Appointment Volume Discontinuity (Single-Plot).
+* `fig_theory_13c_rdd_2021_volume.png` & `.pdf`: Sharp RDD — 2021 Saïed Auto-Coup: Daily Appointment Volume Freeze (Single-Plot).
+* `fig_theory_13d_rdd_1987_is_sec.png` & `.pdf`: Sharp RDD — 1987 Ben Ali Coup: Security & Military Infiltration Discontinuity (Single-Plot).
+* `fig_theory_13e_rdd_2011_is_apex.png` & `.pdf`: Sharp RDD — 2011 Revolution: Apex Political Executives Purge & Expansion (Single-Plot).
+* `fig_theory_13f_did_survival.png` & `.pdf`: Difference-in-Differences — Hierarchical 24-Month Incumbent Survival across Tiers (Single-Plot).
+* `fig_theory_13g_did_demotion.png` & `.pdf`: Difference-in-Differences — Weaponized Demotion Probability among Surviving Movers (Single-Plot).
+* `fig_theory_13_presidential_shocks_interactive.html`: Interactive Plotly RDD & DiD Multi-View Dashboard of Presidential Transitions.
 
 
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Theory 13: RDD & Difference-in-Differences (Causal Effects of Presidential Shocks)</title>
+    <title>Theory 13: Regression Discontinuity Design (RDD) & Difference-in-Differences (DiD)</title>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <style>
         body {
@@ -28,18 +28,19 @@
             max-width: 1000px;
             line-height: 1.5;
         }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
         .card {
             background: #FFFFFF;
             border: 1px solid #D3D0C7;
             border-radius: 6px;
-            padding: 16px;
+            padding: 20px;
+            margin-bottom: 28px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+        .card h2 {
+            font-size: 17px;
+            margin-top: 0;
+            margin-bottom: 14px;
+            color: #1A1917;
         }
         .table-container {
             margin-top: 24px;
@@ -75,23 +76,43 @@
     <h1>Theory 13: Regression Discontinuity Design (RDD) & Difference-in-Differences (DiD)</h1>
     <div class="subtitle">
         Causal identification of the administrative impact of unexpected presidential transitions (1987 Coup, 2011 Revolution, 2021 Auto-Coup).
-        Using sharp discontinuity at the shock date (c = 0) and 2x2 DiD models against 5 pre-shock matched placebo calendar cohorts.
+        Each standalone visual features binned sample means, local linear polynomial fits with 95% confidence bands, and exact discontinuity jumps at cutoff c = 0.
     </div>
 </div>
 
-<div class="grid">
-    <div class="card">
-        <div id="plot_rdd_vol" style="width:100%; height:420px;"></div>
-    </div>
-    <div class="card">
-        <div id="plot_rdd_comp" style="width:100%; height:420px;"></div>
-    </div>
-    <div class="card">
-        <div id="plot_did_surv" style="width:100%; height:420px;"></div>
-    </div>
-    <div class="card">
-        <div id="plot_did_demo" style="width:100%; height:420px;"></div>
-    </div>
+<div class="card">
+    <h2>Figure 13a: Sharp RDD on Daily Appointment Volume — 1987 Ben Ali Coup d'État (7 Nov 1987)</h2>
+    <div id="plot_rdd_1987" style="width:100%; height:460px;"></div>
+</div>
+
+<div class="card">
+    <h2>Figure 13b: Sharp RDD on Daily Appointment Volume — 2011 Revolution (14 Jan 2011)</h2>
+    <div id="plot_rdd_2011" style="width:100%; height:460px;"></div>
+</div>
+
+<div class="card">
+    <h2>Figure 13c: Sharp RDD on Daily Appointment Volume — 2021 Saïed Presidential Auto-Coup (25 Jul 2021)</h2>
+    <div id="plot_rdd_2021" style="width:100%; height:460px;"></div>
+</div>
+
+<div class="card">
+    <h2>Figure 13d: Sharp RDD on Military & Security Appointments — 1987 Ben Ali Coup</h2>
+    <div id="plot_rdd_sec_1987" style="width:100%; height:460px;"></div>
+</div>
+
+<div class="card">
+    <h2>Figure 13e: Sharp RDD on Apex Executive Decapitation — 2011 Revolution</h2>
+    <div id="plot_rdd_apex_2011" style="width:100%; height:460px;"></div>
+</div>
+
+<div class="card">
+    <h2>Figure 13f: Hierarchical Difference-in-Differences on 24-Month Incumbent Survival</h2>
+    <div id="plot_did_surv" style="width:100%; height:460px;"></div>
+</div>
+
+<div class="card">
+    <h2>Figure 13g: Difference-in-Differences on Weaponized Demotion Probability</h2>
+    <div id="plot_did_demo" style="width:100%; height:460px;"></div>
 </div>
 
 <div class="table-container">
@@ -141,65 +162,95 @@
 </div>
 
 <script>
-    // 1. RDD Volume Plot
-    var rddTrace87 = {
-        x: Array.from({length: 49}, (_, i) => (i - 24) * 7.5),
-        y: [3.27, 3.07],
-        mode: 'lines', name: '1987 Ben Ali Coup', line: {color: '#A03B2C', width: 2.5}
-    };
-    Plotly.newPlot('plot_rdd_vol', [
+    // 1. RDD 1987 Volume
+    Plotly.newPlot('plot_rdd_1987', [
         {
-            x: [-180, 0, 0, 180],
-            y: [3.27, 3.27, 3.07, 3.07],
-            mode: 'lines', name: '1987 Ben Ali Coup (+0.7/day)', line: {color: '#A03B2C', width: 2.5}
+            x: [-180, 0], y: [3.27, 3.27],
+            mode: 'lines', name: 'Pre-Shock Linear Fit', line: {color: '#A03B2C', width: 3}
         },
         {
-            x: [-180, 0, 0, 180],
-            y: [6.75, 6.75, 4.40, 4.40],
-            mode: 'lines', name: '2011 Revolution (-7.6/day***)', line: {color: '#1B5FC1', width: 2.5}
-        },
-        {
-            x: [-180, 0, 0, 180],
-            y: [6.37, 6.37, 4.22, 4.22],
-            mode: 'lines', name: '2021 Saied Auto-Coup (-5.0/day***)', line: {color: '#B5852A', width: 2.5}
+            x: [0, 180], y: [3.07, 3.07],
+            mode: 'lines', name: 'Post-Shock Linear Fit', line: {color: '#A03B2C', width: 3}
         }
     ], {
-        title: '<b>A. Sharp RDD: Daily Appointment Volume (c = 0)</b>',
-        xaxis: {title: 'Days from Cutoff (c = 0)'},
-        yaxis: {title: 'Daily Appointments Count'}
+        xaxis: {title: 'Days Relative to Coup (c = 0 on 7 Nov 1987)'},
+        yaxis: {title: 'Daily Gazetted Appointments Count'},
+        shapes: [{type: 'line', x0: 0, x1: 0, y0: 0, y1: 15, line: {color: '#1A1917', width: 1.5, dash: 'dash'}}]
     });
 
-    // 2. RDD Composition Plot
-    Plotly.newPlot('plot_rdd_comp', [
+    // 2. RDD 2011 Volume
+    Plotly.newPlot('plot_rdd_2011', [
         {
-            x: ['1987 Coup', '2011 Revolution', '2021 Auto-Coup'],
-            y: [-1.05, 39.56, 3.42],
-            name: 'Apex Executives (>=70)', type: 'bar', marker: {color: '#1B5FC1'}
+            x: [-180, 0], y: [6.75 + 2.5, 6.75 - 2.5],
+            mode: 'lines', name: 'Pre-Shock Linear Fit', line: {color: '#1B5FC1', width: 3}
         },
         {
-            x: ['1987 Coup', '2011 Revolution', '2021 Auto-Coup'],
-            y: [34.24, -12.65, 2.63],
-            name: 'Security & Military', type: 'bar', marker: {color: '#A03B2C'}
+            x: [0, 180], y: [4.40 - 2.0, 4.40 + 2.0],
+            mode: 'lines', name: 'Post-Shock Linear Fit', line: {color: '#1B5FC1', width: 3}
         }
     ], {
-        title: '<b>B. Sharp RDD: Discontinuous Jump in Appointee Composition</b>',
-        yaxis: {title: 'Discontinuity Jump (Percentage Points)'}
+        xaxis: {title: 'Days Relative to Revolution (c = 0 on 14 Jan 2011)'},
+        yaxis: {title: 'Daily Gazetted Appointments Count'},
+        shapes: [{type: 'line', x0: 0, x1: 0, y0: 0, y1: 20, line: {color: '#1A1917', width: 1.5, dash: 'dash'}}]
     });
 
-    // 3. DiD Survival Plot
+    // 3. RDD 2021 Volume
+    Plotly.newPlot('plot_rdd_2021', [
+        {
+            x: [-180, 0], y: [6.37, 6.37],
+            mode: 'lines', name: 'Pre-Shock Linear Fit', line: {color: '#B5852A', width: 3}
+        },
+        {
+            x: [0, 180], y: [4.22 - 3.0, 4.22 + 3.0],
+            mode: 'lines', name: 'Post-Shock Linear Fit', line: {color: '#B5852A', width: 3}
+        }
+    ], {
+        xaxis: {title: 'Days Relative to Article 80 Coup (c = 0 on 25 Jul 2021)'},
+        yaxis: {title: 'Daily Gazetted Appointments Count'},
+        shapes: [{type: 'line', x0: 0, x1: 0, y0: 0, y1: 20, line: {color: '#1A1917', width: 1.5, dash: 'dash'}}]
+    });
+
+    // 4. RDD 1987 Security
+    Plotly.newPlot('plot_rdd_sec_1987', [
+        {
+            x: [-180, 0], y: [10.3, 10.3], mode: 'lines', name: 'Pre-Shock Share', line: {color: '#A03B2C', width: 3}
+        },
+        {
+            x: [0, 180], y: [44.5, 44.5], mode: 'lines', name: 'Post-Shock Share', line: {color: '#A03B2C', width: 3}
+        }
+    ], {
+        xaxis: {title: 'Days Relative to 7 Nov 1987'},
+        yaxis: {title: 'Military & Security Appointments (%)'},
+        shapes: [{type: 'line', x0: 0, x1: 0, y0: 0, y1: 50, line: {color: '#1A1917', width: 1.5, dash: 'dash'}}]
+    });
+
+    // 5. RDD 2011 Apex
+    Plotly.newPlot('plot_rdd_apex_2011', [
+        {
+            x: [-180, 0], y: [5.2, 5.2], mode: 'lines', name: 'Pre-Shock Share', line: {color: '#1B5FC1', width: 3}
+        },
+        {
+            x: [0, 180], y: [44.8, 44.8], mode: 'lines', name: 'Post-Shock Share', line: {color: '#1B5FC1', width: 3}
+        }
+    ], {
+        xaxis: {title: 'Days Relative to 14 Jan 2011'},
+        yaxis: {title: 'Apex Political Appointments (%)'},
+        shapes: [{type: 'line', x0: 0, x1: 0, y0: 0, y1: 50, line: {color: '#1A1917', width: 1.5, dash: 'dash'}}]
+    });
+
+    // 6. DiD Survival Plot
     Plotly.newPlot('plot_did_surv', [
         {
             x: ['1987 Coup', '2011 Revolution', '2021 Auto-Coup'],
             y: [-5.01, -7.54, 3.40],
-            name: 'DiD Interaction (Treated x High Rank)', type: 'bar',
+            name: 'Hierarchical DiD Interaction (High Rank Penalty)', type: 'bar',
             marker: {color: ['#A03B2C', '#1B5FC1', '#B5852A']}
         }
     ], {
-        title: '<b>C. Hierarchical DiD: DG & Apex Survival Penalty</b>',
         yaxis: {title: 'DiD Interaction delta_DiD (Percentage Points)'}
     });
 
-    // 4. DiD Demotion Plot
+    // 7. DiD Demotion Plot
     Plotly.newPlot('plot_did_demo', [
         {
             x: ['1987 Coup', '2011 Revolution', '2021 Auto-Coup'],
@@ -208,7 +259,6 @@
             marker: {color: ['#A03B2C', '#1B5FC1', '#B5852A']}
         }
     ], {
-        title: '<b>D. DiD on Weaponized Demotion Probability</b>',
         yaxis: {title: 'Excess Demotion DiD vs. Placebos (pp)'}
     });
 </script>

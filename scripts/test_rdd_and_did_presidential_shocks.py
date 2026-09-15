@@ -330,189 +330,627 @@ def estimate_did_demotion(spells):
     return did_demo_results
 
 
-def plot_publication_visual(rdd_vol, rdd_comp, did_surv, did_demo):
-    """Plot 4-panel RDD & DiD publication figure."""
-    print("\nRendering 4-panel publication visual...")
+def compute_binned_means(df, x_col="x", y_col="count", bin_width=7):
+    """Partition support symmetrically around cutoff (x=0) and compute bin means and SEs."""
+    df_pre = df[df[x_col] < 0].copy()
+    df_post = df[df[x_col] >= 0].copy()
 
-    fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-    plt.subplots_adjust(hspace=0.35, wspace=0.25, top=0.92, bottom=0.08, left=0.07, right=0.96)
+    # Pre-cutoff bins: [-7, 0), [-14, -7), etc.
+    df_pre["bin"] = np.floor(df_pre[x_col] / bin_width)
+    df_post["bin"] = np.floor(df_post[x_col] / bin_width)
 
-    # ---------------------------------------------------------
-    # Panel A: Sharp RDD on Daily Appointment Volume (Cutoff c = 0)
-    # ---------------------------------------------------------
-    ax_a = axes[0, 0]
-    ax_a.set_title(
-        "A. Sharp Regression Discontinuity (RDD): Daily Appointment Volume (c = 0)\n"
-        "Discontinuous collapse at Revolution (-7.6/day, p<0.001) & Saïed Coup (-5.0/day, p<0.001)",
-        fontsize=9.5,
-        fontweight="bold",
-        pad=10,
+    pre_bins = (
+        df_pre.groupby("bin")
+        .agg(
+            x_mean=(x_col, "mean"),
+            y_mean=(y_col, "mean"),
+            y_se=(y_col, lambda s: s.std() / np.sqrt(len(s)) if len(s) > 1 else 0.0),
+            n=(y_col, "count"),
+        )
+        .sort_values("x_mean")
+        .reset_index()
     )
 
-    for key, t0, datestr, gloss in RUPTURES:
-        res = rdd_vol[key]
-        daily = res["daily_df"]
-        col = RUPTURE_COLOURS[key]
-
-        # Scatter dots (semi-transparent)
-        ax_a.scatter(daily.x, daily["count"], color=col, alpha=0.15, s=12)
-
-        # Plot fitted regression lines on both sides of cutoff
-        pre_d = daily[daily.x < 0]
-        post_d = daily[daily.x >= 0]
-        ax_a.plot(pre_d.x, pre_d.pred, color=col, lw=2.2, ls="--")
-        ax_a.plot(post_d.x, post_d.pred, color=col, lw=2.4, label=f"{key} {gloss} (Jump: {res['jump']:+.1f}*)")
-
-    ax_a.axvline(0, color=INK, lw=1.2, ls=":", zorder=3)
-    ax_a.set_xlim(-180, 180)
-    ax_a.set_ylim(0, 35)
-    ax_a.set_xlabel("Days from the Unexpected Regime Shock (c = 0)")
-    ax_a.set_ylabel("Daily Gazetted Appointments Count")
-    ax_a.grid(True, linestyle=":", alpha=0.6)
-    ax_a.legend(loc="upper right", frameon=True, facecolor=PAPER, edgecolor=RULE)
-
-    # ---------------------------------------------------------
-    # Panel B: Sharp RDD on Appointee Composition: Apex vs. Security
-    # ---------------------------------------------------------
-    ax_b = axes[0, 1]
-    ax_b.set_title(
-        "B. Sharp RDD on Appointee Composition: Apex vs. Security Realignment\n"
-        "1987 Coup surged military/security (+34.2 pp); 2011 surged Apex executives (+39.6 pp)",
-        fontsize=9.5,
-        fontweight="bold",
-        pad=10,
+    post_bins = (
+        df_post.groupby("bin")
+        .agg(
+            x_mean=(x_col, "mean"),
+            y_mean=(y_col, "mean"),
+            y_se=(y_col, lambda s: s.std() / np.sqrt(len(s)) if len(s) > 1 else 0.0),
+            n=(y_col, "count"),
+        )
+        .sort_values("x_mean")
+        .reset_index()
     )
 
-    x_bars = np.arange(len(RUPTURES))
-    width = 0.35
+    return pre_bins, post_bins
 
-    apex_jumps = [rdd_comp[k]["apex_jump"] for k, _, _, _ in RUPTURES]
-    apex_ses = [rdd_comp[k]["apex_se"] for k, _, _, _ in RUPTURES]
-    sec_jumps = [rdd_comp[k]["sec_jump"] for k, _, _, _ in RUPTURES]
-    sec_ses = [rdd_comp[k]["sec_se"] for k, _, _, _ in RUPTURES]
 
-    b1 = ax_b.bar(x_bars - width / 2, apex_jumps, width, yerr=apex_ses, capsize=4, color="#1B5FC1", label="Apex Political Appointees (Rank >= 70)", edgecolor=PAPER)
-    b2 = ax_b.bar(x_bars + width / 2, sec_jumps, width, yerr=sec_ses, capsize=4, color="#A03B2C", label="Security & Military-Linked Appointees", edgecolor=PAPER)
+def get_local_linear_prediction(mod, x_min=-180, x_max=180, n_points=200):
+    """Compute predicted regression lines and 95% confidence intervals on dense grids."""
+    grid_pre = pd.DataFrame({
+        "x": np.linspace(x_min, 0, n_points),
+        "d": 0,
+        "dx": 0,
+    })
+    pred_pre = mod.get_prediction(grid_pre).summary_frame(alpha=0.05)
+    pred_pre["x"] = grid_pre["x"]
 
-    for bar, val in zip(b1, apex_jumps):
-        ax_b.annotate(f"{val:+.1f} pp", xy=(bar.get_x() + bar.get_width() / 2, val + (1.5 if val >= 0 else -3.5)), ha="center", fontsize=8.0, fontweight="bold", color="#1B5FC1")
+    grid_post = pd.DataFrame({
+        "x": np.linspace(0, x_max, n_points),
+        "d": 1,
+        "dx": np.linspace(0, x_max, n_points) * 1,
+    })
+    pred_post = mod.get_prediction(grid_post).summary_frame(alpha=0.05)
+    pred_post["x"] = grid_post["x"]
 
-    for bar, val in zip(b2, sec_jumps):
-        ax_b.annotate(f"{val:+.1f} pp", xy=(bar.get_x() + bar.get_width() / 2, val + (1.5 if val >= 0 else -3.5)), ha="center", fontsize=8.0, fontweight="bold", color="#A03B2C")
+    return pred_pre, pred_post
 
-    ax_b.axhline(0, color=INK, lw=1.0, ls="-")
-    ax_b.set_xticks(x_bars)
-    ax_b.set_xticklabels(["1987 Ben Ali Coup", "2011 Revolution", "2021 Saïed Auto-Coup"])
-    ax_b.set_ylabel("Discontinuous RDD Jump at Cutoff (pp)")
-    ax_b.set_ylim(-20, 50)
-    ax_b.grid(True, axis="y", linestyle=":", alpha=0.6)
-    ax_b.legend(loc="upper right", frameon=True, facecolor=PAPER, edgecolor=RULE)
 
-    # ---------------------------------------------------------
-    # Panel C: Difference-in-Differences (DiD) on Hierarchical Survival (24M)
-    # ---------------------------------------------------------
-    ax_c = axes[1, 0]
-    ax_c.set_title(
-        "C. Hierarchical Difference-in-Differences (DiD): 24-Month Survival\n"
-        "High-rank DGs & Apex suffered extra DiD purge penalty in 1987 (-5.0 pp) & 2011 (-7.5 pp)",
-        fontsize=9.5,
-        fontweight="bold",
-        pad=10,
+def plot_rdd_volume_single(key, res, t0, datestr, gloss, color, fig_id):
+    """Render a canonical single-plot RDD visual for appointment volume."""
+    fig, ax = plt.subplots(figsize=(9.2, 6.0), dpi=300)
+    fig.patch.set_facecolor(PAPER)
+    ax.set_facecolor(PAPER)
+
+    daily = res["daily_df"]
+    mod = res["mod"]
+
+    # 1. Binned sample means
+    pre_bins, post_bins = compute_binned_means(daily, "x", "count", bin_width=7)
+
+    ax.errorbar(
+        pre_bins.x_mean,
+        pre_bins.y_mean,
+        yerr=pre_bins.y_se,
+        fmt="o",
+        color="#2D3142",
+        ecolor="#9C9D96",
+        elinewidth=1.0,
+        capsize=2.5,
+        markersize=5.5,
+        alpha=0.85,
+        label="Binned sample means (7-day bins)",
+        zorder=3,
     )
+    ax.errorbar(
+        post_bins.x_mean,
+        post_bins.y_mean,
+        yerr=post_bins.y_se,
+        fmt="o",
+        color="#2D3142",
+        ecolor="#9C9D96",
+        elinewidth=1.0,
+        capsize=2.5,
+        markersize=5.5,
+        alpha=0.85,
+        zorder=3,
+    )
+
+    # 2. Local Linear Regression lines and 95% CI bands
+    pred_pre, pred_post = get_local_linear_prediction(mod, x_min=-180, x_max=180)
+
+    ax.plot(pred_pre.x, pred_pre["mean"], color=color, lw=2.6, label="Local linear fit (pre-shock)", zorder=4)
+    ax.fill_between(
+        pred_pre.x,
+        pred_pre["mean_ci_lower"],
+        pred_pre["mean_ci_upper"],
+        color=color,
+        alpha=0.18,
+        label="95% Confidence interval",
+        zorder=2,
+    )
+
+    ax.plot(pred_post.x, pred_post["mean"], color=color, lw=2.6, ls="-", label="Local linear fit (post-shock)", zorder=4)
+    ax.fill_between(
+        pred_post.x,
+        pred_post["mean_ci_lower"],
+        pred_post["mean_ci_upper"],
+        color=color,
+        alpha=0.18,
+        zorder=2,
+    )
+
+    # 3. Cutoff line
+    ax.axvline(0, color=INK, ls="--", lw=1.3, zorder=2)
+    
+    # Scale y-axis appropriately based on binned means and regression bounds (avoiding raw daily outlier distortion)
+    max_bin_val = max(pre_bins.y_mean.max(), post_bins.y_mean.max())
+    max_fit_val = max(pred_pre["mean_ci_upper"].max(), pred_post["mean_ci_upper"].max())
+    y_max = max(max_bin_val * 1.25, max_fit_val * 1.3, 16.0)
+
+    # 4. Discontinuity jump at c = 0
+    y_left = pred_pre.iloc[-1]["mean"]
+    y_right = pred_post.iloc[0]["mean"]
+    jump = mod.params["d"]
+    se = mod.bse["d"]
+    pval = mod.pvalues["d"]
+    ci_low = mod.conf_int().loc["d", 0]
+    ci_high = mod.conf_int().loc["d", 1]
+
+    # Draw vertical discontinuity bracket at x = 0
+    bracket_x = 0
+    ax.plot([bracket_x - 3, bracket_x + 3], [y_left, y_left], color=INK, lw=1.5, zorder=5)
+    ax.plot([bracket_x - 3, bracket_x + 3], [y_right, y_right], color=INK, lw=1.5, zorder=5)
+    ax.plot([bracket_x, bracket_x], [y_left, y_right], color=INK, lw=1.5, ls=":", zorder=5)
+
+    # Annotate Discontinuity Jump without overlapping regression line
+    sig_stars = "^{***}" if pval < 0.001 else ("^{**}" if pval < 0.01 else ("^{*}" if pval < 0.05 else r"\text{ (n.s.)}"))
+    jump_annot_y = (y_left + y_right) / 2
+    
+    # Placement tuning per shock for crystal-clear legibility
+    if key == "1987":
+        box_x = 30
+        box_y = y_max * 0.52
+        arrow_rad = -0.1
+        target_pt = (bracket_x, jump_annot_y)
+    elif key == "2011":
+        box_x = 30
+        box_y = y_max * 0.54
+        arrow_rad = -0.1
+        target_pt = (bracket_x, jump_annot_y)
+    else:  # 2021
+        box_x = 45
+        box_y = y_max * 0.72
+        arrow_rad = 0.12
+        target_pt = (bracket_x, y_left)
+
+    annot_text = (
+        r"$\mathbf{Discontinuity\ Jump\ at\ Cutoff:}$" + "\n"
+        + rf"$\hat{{\tau}}_{{\mathrm{{RDD}}}} = {jump:+.2f}" + sig_stars + r"\ \mathrm{acts/day}$" + "\n"
+        + rf"$\mathrm{{Robust\ SE}} = {se:.2f}\ (t = {jump/se:+.2f},\ p = {pval:.4f})$" + "\n"
+        + rf"$95\%\ \mathrm{{CI}}:\ [{ci_low:+.2f},\ {ci_high:+.2f}]$"
+    )
+
+    ax.annotate(
+        annot_text,
+        xy=target_pt,
+        xytext=(box_x, box_y),
+        ha="left",
+        va="center",
+        fontsize=8.5,
+        color=INK,
+        bbox=dict(boxstyle="round,pad=0.45", facecolor=PAPER, edgecolor=color, lw=1.4, alpha=0.95),
+        arrowprops=dict(arrowstyle="->", color=color, lw=1.4, connectionstyle=f"arc3,rad={arrow_rad}"),
+        zorder=6,
+    )
+
+    # 5. Econometric Specification Box
+    ax.text(
+        0.03,
+        0.96,
+        f"Model: Sharp Regression Discontinuity in Time (RDiT)\n"
+        f"Bandwidth: h = ±180 days (Uniform kernel)\n"
+        f"Polynomial: Local Linear (p = 1) with separate slopes\n"
+        f"Inference: HC1 Heteroskedasticity-Robust Standard Errors\n"
+        f"Pre-Cutoff Mean: {res['pre_mean']:.2f} acts/day | Post-Cutoff Mean: {res['post_mean']:.2f} acts/day\n"
+        f"Total Daily Observations: N = {len(daily)} days",
+        transform=ax.transAxes,
+        fontsize=8.0,
+        va="top",
+        ha="left",
+        color=MUTED,
+        bbox=dict(boxstyle="round,pad=0.4", facecolor="#F5F4F0", edgecolor=RULE, lw=1.0),
+        zorder=5,
+    )
+
+    # Titles and formatting
+    ax.set_title(
+        f"Regression Discontinuity in Time (RDD): {key} {gloss}\n"
+        f"Sharp local linear discontinuity in daily state appointment throughput at cutoff c = 0 ({datestr})",
+        fontsize=11.5,
+        fontweight="bold",
+        pad=12,
+        color=INK,
+    )
+    ax.set_xlabel(f"Days Relative to the Unexpected Regime Shock (Cutoff c = 0 on {datestr})", fontsize=10, fontweight="bold", labelpad=8)
+    ax.set_ylabel("Daily Gazetted Appointments Count", fontsize=10, fontweight="bold", labelpad=8)
+    ax.set_xlim(-180, 180)
+    ax.set_ylim(0, y_max)
+    ax.grid(True, axis="y", linestyle=":", alpha=0.6, color=RULE)
+
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_color(RULE)
+    ax.spines["bottom"].set_color(RULE)
+
+    ax.legend(loc="upper right", frameon=True, facecolor=PAPER, edgecolor=RULE, fontsize=8.5)
+
+    png_path = FIGS / f"fig_theory_13{fig_id}_rdd_{key}_volume.png"
+    pdf_path = FIGS / f"fig_theory_13{fig_id}_rdd_{key}_volume.pdf"
+
+    plt.tight_layout()
+    plt.savefig(png_path, dpi=300, bbox_inches="tight")
+    plt.savefig(pdf_path, bbox_inches="tight")
+    plt.close()
+
+    print(f"Saved single-plot RDD visual: {png_path.name}")
+
+
+def plot_rdd_composition_single(key, res_dict, t0, datestr, gloss, outcome_col, outcome_name, fig_id, color):
+    """Render a canonical single-plot RDD visual for appointment composition."""
+    fig, ax = plt.subplots(figsize=(9.2, 6.0), dpi=300)
+    fig.patch.set_facecolor(PAPER)
+    ax.set_facecolor(PAPER)
+
+    sub = res_dict["sub_df"].copy()
+    sub[outcome_col] = sub[outcome_col] * 100.0  # Convert to percentage
+
+    # Re-estimate model in percentage points for exact predictions
+    mod = smf.ols(f"{outcome_col} ~ d + x + dx", data=sub).fit(cov_type="HC1")
+
+    # 1. Binned sample means
+    pre_bins, post_bins = compute_binned_means(sub, "x", outcome_col, bin_width=7)
+
+    ax.errorbar(
+        pre_bins.x_mean,
+        pre_bins.y_mean,
+        yerr=pre_bins.y_se,
+        fmt="o",
+        color="#2D3142",
+        ecolor="#9C9D96",
+        elinewidth=1.0,
+        capsize=2.5,
+        markersize=5.5,
+        alpha=0.85,
+        label="Binned sample share (7-day bins)",
+        zorder=3,
+    )
+    ax.errorbar(
+        post_bins.x_mean,
+        post_bins.y_mean,
+        yerr=post_bins.y_se,
+        fmt="o",
+        color="#2D3142",
+        ecolor="#9C9D96",
+        elinewidth=1.0,
+        capsize=2.5,
+        markersize=5.5,
+        alpha=0.85,
+        zorder=3,
+    )
+
+    # 2. Local Linear Regression lines and 95% CI bands
+    pred_pre, pred_post = get_local_linear_prediction(mod, x_min=-180, x_max=180)
+
+    ax.plot(pred_pre.x, pred_pre["mean"], color=color, lw=2.6, label="Local linear fit (pre-shock)", zorder=4)
+    ax.fill_between(
+        pred_pre.x,
+        pred_pre["mean_ci_lower"],
+        pred_pre["mean_ci_upper"],
+        color=color,
+        alpha=0.18,
+        label="95% Confidence interval",
+        zorder=2,
+    )
+
+    ax.plot(pred_post.x, pred_post["mean"], color=color, lw=2.6, ls="-", label="Local linear fit (post-shock)", zorder=4)
+    ax.fill_between(
+        pred_post.x,
+        pred_post["mean_ci_lower"],
+        pred_post["mean_ci_upper"],
+        color=color,
+        alpha=0.18,
+        zorder=2,
+    )
+
+    # 3. Cutoff line
+    ax.axvline(0, color=INK, ls="--", lw=1.3, zorder=2)
+
+    # 4. Discontinuity jump at c = 0
+    y_left = pred_pre.iloc[-1]["mean"]
+    y_right = pred_post.iloc[0]["mean"]
+    jump = mod.params["d"]
+    se = mod.bse["d"]
+    pval = mod.pvalues["d"]
+    ci_low = mod.conf_int().loc["d", 0]
+    ci_high = mod.conf_int().loc["d", 1]
+
+    # Draw vertical discontinuity bracket at x = 0
+    bracket_x = 0
+    ax.plot([bracket_x - 3, bracket_x + 3], [y_left, y_left], color=INK, lw=1.5, zorder=5)
+    ax.plot([bracket_x - 3, bracket_x + 3], [y_right, y_right], color=INK, lw=1.5, zorder=5)
+    ax.plot([bracket_x, bracket_x], [y_left, y_right], color=INK, lw=1.5, ls=":", zorder=5)
+
+    sig_stars = "^{***}" if pval < 0.001 else ("^{**}" if pval < 0.01 else ("^{*}" if pval < 0.05 else r"\text{ (n.s.)}"))
+    jump_annot_y = (y_left + y_right) / 2
+
+    # Placement tuning per composition figure so boxes and arrows never cross regression curves or overlap legend
+    if key == "1987":
+        box_x = 20
+        box_y = 80
+        target_pt = (bracket_x, y_right)  # Point directly to top of jump bracket
+    else:  # 2011
+        box_x = 20
+        box_y = 78
+        target_pt = (bracket_x, y_right)  # Point directly to top of jump bracket
+
+    annot_text = (
+        r"$\mathbf{Discontinuity\ Jump\ at\ Cutoff:}$" + "\n"
+        + rf"$\hat{{\tau}}_{{\mathrm{{RDD}}}} = {jump:+.2f}" + sig_stars + r"\ \mathrm{pp}$" + "\n"
+        + rf"$\mathrm{{Robust\ SE}} = {se:.2f}\ \mathrm{{pp}}\ (t = {jump/se:+.2f},\ p = {pval:.1e})$" + "\n"
+        + rf"$95\%\ \mathrm{{CI}}:\ [{ci_low:+.2f},\ {ci_high:+.2f}]\ \mathrm{{pp}}$"
+    )
+
+    ax.annotate(
+        annot_text,
+        xy=target_pt,
+        xytext=(box_x, box_y),
+        ha="center",
+        va="center",
+        fontsize=8.5,
+        color=INK,
+        bbox=dict(boxstyle="round,pad=0.45", facecolor=PAPER, edgecolor=color, lw=1.4, alpha=0.95),
+        arrowprops=dict(arrowstyle="->", color=color, lw=1.4, connectionstyle="arc3,rad=-0.08"),
+        zorder=6,
+    )
+
+    # 5. Econometric Specification Box
+    ax.text(
+        0.03,
+        0.96,
+        f"Model: Sharp RDD on Appointee Composition\n"
+        f"Target Metric: {outcome_name}\n"
+        f"Bandwidth: h = ±180 days (Uniform kernel)\n"
+        f"Polynomial: Local Linear (p = 1, separate slopes)\n"
+        f"Inference: HC1 Heteroskedasticity-Robust Standard Errors\n"
+        f"Total Gazetted Appointments Analyzed: N = {len(sub):,} acts",
+        transform=ax.transAxes,
+        fontsize=8.0,
+        va="top",
+        ha="left",
+        color=MUTED,
+        bbox=dict(boxstyle="round,pad=0.4", facecolor="#F5F4F0", edgecolor=RULE, lw=1.0),
+        zorder=5,
+    )
+
+    # Titles and formatting
+    ax.set_title(
+        f"Regression Discontinuity in Time (RDD): {key} {gloss}\n"
+        f"Sharp discontinuous realignment in {outcome_name} at cutoff c = 0 ({datestr})",
+        fontsize=11.5,
+        fontweight="bold",
+        pad=12,
+        color=INK,
+    )
+    ax.set_xlabel(f"Days Relative to the Unexpected Regime Shock (Cutoff c = 0 on {datestr})", fontsize=10, fontweight="bold", labelpad=8)
+    ax.set_ylabel(f"Share of Gazetted Appointments (%)", fontsize=10, fontweight="bold", labelpad=8)
+    ax.set_xlim(-180, 180)
+    ax.set_ylim(0, 92)
+    ax.grid(True, axis="y", linestyle=":", alpha=0.6, color=RULE)
+
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_color(RULE)
+    ax.spines["bottom"].set_color(RULE)
+
+    ax.legend(loc="upper right", frameon=True, facecolor=PAPER, edgecolor=RULE, fontsize=8.5)
+
+    png_path = FIGS / f"fig_theory_13{fig_id}_rdd_{key}_{outcome_col}.png"
+    pdf_path = FIGS / f"fig_theory_13{fig_id}_rdd_{key}_{outcome_col}.pdf"
+
+    plt.tight_layout()
+    plt.savefig(png_path, dpi=300, bbox_inches="tight")
+    plt.savefig(pdf_path, bbox_inches="tight")
+    plt.close()
+
+    print(f"Saved single-plot RDD visual: {png_path.name}")
+
+
+def plot_did_survival_single(did_surv):
+    """Render a canonical single-plot Difference-in-Differences visual for Hierarchical 24M Survival."""
+    fig, ax = plt.subplots(figsize=(9.5, 6.0), dpi=300)
+    fig.patch.set_facecolor(PAPER)
+    ax.set_facecolor(PAPER)
 
     x_c = np.arange(len(RUPTURES))
-    w_c = 0.28
+    w_c = 0.26
 
-    # Plot DiD components: Placebo High-Low vs. Treated High-Low
     for idx, (key, _, datestr, gloss) in enumerate(RUPTURES):
         res = did_surv[key]
         tbl = res["tbl"]
         col = RUPTURE_COLOURS[key]
 
-        # Draw 2x2 line: Operational -> High Rank
-        # Placebo
-        ax_c.plot([idx - w_c / 2, idx + w_c / 2], [tbl.loc[(0, 0)], tbl.loc[(0, 1)]], color=MUTED, lw=1.6, ls=":", marker="o", markersize=6)
-        # Treated
-        ax_c.plot([idx - w_c / 2, idx + w_c / 2], [tbl.loc[(1, 0)], tbl.loc[(1, 1)]], color=col, lw=2.4, ls="-", marker="s", markersize=7, label=f"{key} (DiD: {res['did_interaction']:+.1f} pp)")
-
-        # Annotate DiD interaction (avoid collision with Panel D y-axis for 2021)
-        x_text = idx + w_c / 2 - 0.28 if idx == 2 else idx + w_c / 2 + 0.05
-        ax_c.annotate(
-            f"δ_DiD = {res['did_interaction']:+.2f} pp\n(p = {res['did_p']:.1e})",
-            xy=(idx + w_c / 2, tbl.loc[(1, 1)]),
-            xytext=(x_text, tbl.loc[(1, 1)] - 2),
-            fontsize=8.0,
-            fontweight="bold",
-            color=col,
-            bbox=dict(boxstyle="round,pad=0.2", facecolor=PAPER, edgecolor=RULE, alpha=0.8),
+        # Placebo cohort line: Operational (0,0) -> High Rank (0,1)
+        y_plc_low = tbl.loc[(0, 0)]
+        y_plc_high = tbl.loc[(0, 1)]
+        ax.plot(
+            [idx - w_c, idx + w_c],
+            [y_plc_low, y_plc_high],
+            color=MUTED,
+            lw=1.8,
+            ls=":",
+            marker="o",
+            markersize=6.5,
+            label="Matched Placebo Cohorts (5-yr baselines)" if idx == 0 else None,
+            zorder=3,
         )
 
-    ax_c.set_xticks(x_c)
-    ax_c.set_xticklabels(["1987 Ben Ali Coup\n(N=52k)", "2011 Revolution\n(N=140k)", "2021 Saïed Auto-Coup\n(N=209k)"])
-    ax_c.set_ylabel("24-Month Incumbent Survival Rate (%)")
-    ax_c.set_ylim(60, 100)
-    ax_c.grid(True, linestyle=":", alpha=0.6)
-    ax_c.legend(loc="lower left", frameon=True, facecolor=PAPER, edgecolor=RULE)
+        # Treated cohort line: Operational (1,0) -> High Rank (1,1)
+        y_trt_low = tbl.loc[(1, 0)]
+        y_trt_high = tbl.loc[(1, 1)]
+        ax.plot(
+            [idx - w_c, idx + w_c],
+            [y_trt_low, y_trt_high],
+            color=col,
+            lw=2.8,
+            ls="-",
+            marker="s",
+            markersize=7.5,
+            label="Regime Shock Cohort (Treated)" if idx == 0 else None,
+            zorder=4,
+        )
 
-    # ---------------------------------------------------------
-    # Panel D: Difference-in-Differences (DiD) on Weaponized Demotion
-    # ---------------------------------------------------------
-    ax_d = axes[1, 1]
-    ax_d.set_title(
-        "D. Difference-in-Differences (DiD): Weaponized Demotion Probability\n"
-        "Saïed generated massive +9.95 pp excess demotion (p = 8.1e-28); 1987 & 2011 promoted survivors",
-        fontsize=9.5,
+        # Counterfactual parallel trend point for High Rank:
+        # y_cf = y_trt_low + (y_plc_high - y_plc_low)
+        y_cf = y_trt_low + (y_plc_high - y_plc_low)
+        ax.plot([idx + w_c], [y_cf], marker="D", markersize=6.5, color=MUTED, fillstyle="none", markeredgewidth=1.6, zorder=5)
+        ax.plot([idx - w_c, idx + w_c], [y_trt_low, y_cf], color=MUTED, lw=1.2, ls="--", zorder=2)
+
+        # Draw DiD vertical bracket between counterfactual and actual treated high rank
+        did_gap = res["did_interaction"]
+        pval = res["did_p"]
+        sig = "^{***}" if pval < 0.001 else ("^{**}" if pval < 0.01 else ("^{*}" if pval < 0.05 else r"\text{ (n.s.)}"))
+
+        ax.plot([idx + w_c + 0.04, idx + w_c + 0.04], [y_cf, y_trt_high], color=col, lw=1.6, ls="-", zorder=5)
+        ax.plot([idx + w_c + 0.02, idx + w_c + 0.06], [y_cf, y_cf], color=col, lw=1.6, zorder=5)
+        ax.plot([idx + w_c + 0.02, idx + w_c + 0.06], [y_trt_high, y_trt_high], color=col, lw=1.6, zorder=5)
+
+        # Annotate DiD estimate
+        annot_y = (y_cf + y_trt_high) / 2
+        ax.annotate(
+            rf"$\hat{{\delta}}_{{\mathrm{{DiD}}}} = {did_gap:+.2f}" + sig + r"\ \mathrm{pp}$" + "\n"
+            + rf"$(\mathrm{{SE}} = {res['did_se']:.2f},\ p = {pval:.1e})$",
+            xy=(idx + w_c + 0.05, annot_y),
+            xytext=(idx + w_c + 0.08, annot_y),
+            ha="left",
+            va="center",
+            fontsize=8.0,
+            color=col,
+            bbox=dict(boxstyle="round,pad=0.3", facecolor=PAPER, edgecolor=RULE, alpha=0.95),
+            zorder=6,
+        )
+
+        # Annotate sample retention percentages
+        y_offset_low = -1.8 if idx == 0 else 1.3
+        ax.text(idx - w_c - (0.04 if idx == 0 else 0.0), y_trt_low + y_offset_low, f"{y_trt_low:.1f}%", ha="center", fontsize=8.0, color=col, fontweight="bold")
+        ax.text(idx + w_c, y_trt_high - 2.2, f"{y_trt_high:.1f}%", ha="center", fontsize=8.0, color=col, fontweight="bold")
+
+    # Titles and formatting
+    ax.set_title(
+        "Hierarchical Difference-in-Differences (DiD): 24-Month Incumbent Survival\n"
+        "Senior Leadership (Rank >= 65, DGs & Apex) vs. Operational Civil Service (Rank <= 45) Across Regime Shocks",
+        fontsize=11.5,
         fontweight="bold",
-        pad=10,
+        pad=12,
+        color=INK,
     )
+    ax.set_xticks(x_c)
+    ax.set_xticklabels([
+        f"1987 Ben Ali Coup\n(N = {did_surv['1987']['n']:,})",
+        f"2011 Revolution\n(N = {did_surv['2011']['n']:,})",
+        f"2021 Saïed Auto-Coup\n(N = {did_surv['2021']['n']:,})",
+    ], fontsize=9.5)
+
+    ax.set_ylabel("24-Month Incumbent Retention / Survival Rate (%)", fontsize=10, fontweight="bold", labelpad=8)
+    ax.set_ylim(65, 100)
+    ax.grid(True, axis="y", linestyle=":", alpha=0.6, color=RULE)
+
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_color(RULE)
+    ax.spines["bottom"].set_color(RULE)
+
+    ax.legend(loc="lower left", frameon=True, facecolor=PAPER, edgecolor=RULE, fontsize=8.5)
+
+    png_path = FIGS / "fig_theory_13f_did_survival.png"
+    pdf_path = FIGS / "fig_theory_13f_did_survival.pdf"
+
+    plt.tight_layout()
+    plt.savefig(png_path, dpi=300, bbox_inches="tight")
+    plt.savefig(pdf_path, bbox_inches="tight")
+    plt.close()
+
+    print(f"Saved single-plot DiD visual: {png_path.name}")
+
+
+def plot_did_demotion_single(did_demo):
+    """Render a canonical single-plot Difference-in-Differences visual for Weaponized Demotion Probability."""
+    fig, ax = plt.subplots(figsize=(9.2, 5.8), dpi=300)
+    fig.patch.set_facecolor(PAPER)
+    ax.set_facecolor(PAPER)
 
     dem_jumps = [did_demo[k]["did_jump"] for k, _, _, _ in RUPTURES]
     dem_ses = [did_demo[k]["did_se"] for k, _, _, _ in RUPTURES]
     x_d = np.arange(len(RUPTURES))
 
-    b_dem = ax_d.bar(x_d, dem_jumps, 0.45, yerr=dem_ses, capsize=5, color=[RUPTURE_COLOURS[k] for k, _, _, _ in RUPTURES], edgecolor=PAPER)
+    bars = ax.bar(
+        x_d,
+        dem_jumps,
+        width=0.42,
+        yerr=dem_ses,
+        capsize=5,
+        color=[RUPTURE_COLOURS[k] for k, _, _, _ in RUPTURES],
+        edgecolor=PAPER,
+        linewidth=1.2,
+        zorder=3,
+    )
 
-    for bar, val, (k, _, _, _) in zip(b_dem, dem_jumps, RUPTURES):
-        y_pos = val + (0.7 if val >= 0 else -1.6)
+    for idx, (bar, val, (k, _, _, _)) in enumerate(zip(bars, dem_jumps, RUPTURES)):
         p_val = did_demo[k]["did_p"]
-        sig = " ***" if p_val < 0.001 else (" **" if p_val < 0.01 else (" *" if p_val < 0.05 else " n.s."))
-        ax_d.annotate(
-            f"{val:+.2f} pp{sig}\n(p = {p_val:.1e})",
+        sig = " ***" if p_val < 0.001 else (" **" if p_val < 0.01 else (" *" if p_val < 0.05 else " (n.s.)"))
+        
+        if val >= 0:
+            y_pos = val + dem_ses[idx] + 0.6
+            va_align = "bottom"
+        else:
+            y_pos = val - dem_ses[idx] - 0.6
+            va_align = "top"
+
+        label_txt = (
+            f"{val:+.2f} pp{sig}\n"
+            f"(p = {p_val:.1e})\n"
+            f"Treated: {did_demo[k]['p_rup']:.1f}%\n"
+            f"Placebo: {did_demo[k]['p_plc']:.1f}%"
+        )
+
+        ax.annotate(
+            label_txt,
             xy=(bar.get_x() + bar.get_width() / 2, y_pos),
             ha="center",
-            va="top" if val < 0 else "bottom",
+            va=va_align,
             fontsize=8.5,
             fontweight="bold",
             color=RUPTURE_COLOURS[k],
+            bbox=dict(boxstyle="round,pad=0.25", facecolor=PAPER, edgecolor=RULE, alpha=0.92),
+            zorder=6,
         )
 
-    ax_d.axhline(0, color=INK, lw=1.0, ls="-")
-    ax_d.set_xticks(x_d)
-    ax_d.set_xticklabels(["1987 Ben Ali Coup\n(N=4,690 movers)", "2011 Revolution\n(N=16,386 movers)", "2021 Saïed Auto-Coup\n(N=22,868 movers)"])
-    ax_d.set_ylabel("Excess Demotion DiD vs. Placebos (pp)")
-    ax_d.set_ylim(-6, 14)
-    ax_d.grid(True, axis="y", linestyle=":", alpha=0.6)
+    ax.axhline(0, color=INK, lw=1.2, ls="-", zorder=2)
+    ax.set_xticks(x_d)
+    ax.set_xticklabels([
+        f"1987 Ben Ali Coup\n(N = {did_demo['1987']['n']:,} movers)",
+        f"2011 Revolution\n(N = {did_demo['2011']['n']:,} movers)",
+        f"2021 Saïed Auto-Coup\n(N = {did_demo['2021']['n']:,} movers)",
+    ], fontsize=9.5)
 
-    # Save PNG and PDF
-    png_path = FIGS / "fig_theory_13_presidential_shocks.png"
-    pdf_path = FIGS / "fig_theory_13_presidential_shocks.pdf"
+    ax.set_title(
+        "Difference-in-Differences (DiD): Weaponized Demotion Probability\n"
+        "Excess Demotion Rate among Surviving Movers within 36 Months vs. 5-Year Pre-Shock Placebos",
+        fontsize=11.5,
+        fontweight="bold",
+        pad=12,
+        color=INK,
+    )
+    ax.set_ylabel("Excess Demotion DiD vs. Placebos (Percentage Points)", fontsize=10, fontweight="bold", labelpad=8)
+    ax.set_ylim(-7.5, 17.5)
+    ax.grid(True, axis="y", linestyle=":", alpha=0.6, color=RULE)
 
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_color(RULE)
+    ax.spines["bottom"].set_color(RULE)
+
+    png_path = FIGS / "fig_theory_13g_did_demotion.png"
+    pdf_path = FIGS / "fig_theory_13g_did_demotion.pdf"
+
+    plt.tight_layout()
     plt.savefig(png_path, dpi=300, bbox_inches="tight")
     plt.savefig(pdf_path, bbox_inches="tight")
     plt.close()
 
-    print(f"Saved publication figures to {png_path} and {pdf_path}")
+    print(f"Saved single-plot DiD visual: {png_path.name}")
 
 
 def generate_interactive_dashboard(rdd_vol, rdd_comp, did_surv, did_demo):
-    """Generate interactive Plotly dashboard featuring RDD & DiD econometric models."""
+    """Generate interactive Plotly dashboard featuring standalone single-plot RDD & DiD views."""
     print("Generating interactive Plotly dashboard...")
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Theory 13: RDD & Difference-in-Differences (Causal Effects of Presidential Shocks)</title>
+    <title>Theory 13: Regression Discontinuity Design (RDD) & Difference-in-Differences (DiD)</title>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <style>
         body {{
@@ -538,18 +976,19 @@ def generate_interactive_dashboard(rdd_vol, rdd_comp, did_surv, did_demo):
             max-width: 1000px;
             line-height: 1.5;
         }}
-        .grid {{
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }}
         .card {{
             background: #FFFFFF;
             border: 1px solid #D3D0C7;
             border-radius: 6px;
-            padding: 16px;
+            padding: 20px;
+            margin-bottom: 28px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }}
+        .card h2 {{
+            font-size: 17px;
+            margin-top: 0;
+            margin-bottom: 14px;
+            color: #1A1917;
         }}
         .table-container {{
             margin-top: 24px;
@@ -585,23 +1024,43 @@ def generate_interactive_dashboard(rdd_vol, rdd_comp, did_surv, did_demo):
     <h1>Theory 13: Regression Discontinuity Design (RDD) & Difference-in-Differences (DiD)</h1>
     <div class="subtitle">
         Causal identification of the administrative impact of unexpected presidential transitions (1987 Coup, 2011 Revolution, 2021 Auto-Coup).
-        Using sharp discontinuity at the shock date (c = 0) and 2x2 DiD models against 5 pre-shock matched placebo calendar cohorts.
+        Each standalone visual features binned sample means, local linear polynomial fits with 95% confidence bands, and exact discontinuity jumps at cutoff c = 0.
     </div>
 </div>
 
-<div class="grid">
-    <div class="card">
-        <div id="plot_rdd_vol" style="width:100%; height:420px;"></div>
-    </div>
-    <div class="card">
-        <div id="plot_rdd_comp" style="width:100%; height:420px;"></div>
-    </div>
-    <div class="card">
-        <div id="plot_did_surv" style="width:100%; height:420px;"></div>
-    </div>
-    <div class="card">
-        <div id="plot_did_demo" style="width:100%; height:420px;"></div>
-    </div>
+<div class="card">
+    <h2>Figure 13a: Sharp RDD on Daily Appointment Volume — 1987 Ben Ali Coup d'État (7 Nov 1987)</h2>
+    <div id="plot_rdd_1987" style="width:100%; height:460px;"></div>
+</div>
+
+<div class="card">
+    <h2>Figure 13b: Sharp RDD on Daily Appointment Volume — 2011 Revolution (14 Jan 2011)</h2>
+    <div id="plot_rdd_2011" style="width:100%; height:460px;"></div>
+</div>
+
+<div class="card">
+    <h2>Figure 13c: Sharp RDD on Daily Appointment Volume — 2021 Saïed Presidential Auto-Coup (25 Jul 2021)</h2>
+    <div id="plot_rdd_2021" style="width:100%; height:460px;"></div>
+</div>
+
+<div class="card">
+    <h2>Figure 13d: Sharp RDD on Military & Security Appointments — 1987 Ben Ali Coup</h2>
+    <div id="plot_rdd_sec_1987" style="width:100%; height:460px;"></div>
+</div>
+
+<div class="card">
+    <h2>Figure 13e: Sharp RDD on Apex Executive Decapitation — 2011 Revolution</h2>
+    <div id="plot_rdd_apex_2011" style="width:100%; height:460px;"></div>
+</div>
+
+<div class="card">
+    <h2>Figure 13f: Hierarchical Difference-in-Differences on 24-Month Incumbent Survival</h2>
+    <div id="plot_did_surv" style="width:100%; height:460px;"></div>
+</div>
+
+<div class="card">
+    <h2>Figure 13g: Difference-in-Differences on Weaponized Demotion Probability</h2>
+    <div id="plot_did_demo" style="width:100%; height:460px;"></div>
 </div>
 
 <div class="table-container">
@@ -651,65 +1110,95 @@ def generate_interactive_dashboard(rdd_vol, rdd_comp, did_surv, did_demo):
 </div>
 
 <script>
-    // 1. RDD Volume Plot
-    var rddTrace87 = {{
-        x: Array.from({{length: 49}}, (_, i) => (i - 24) * 7.5),
-        y: [{rdd_vol["1987"]["pre_mean"]:.2f}, {rdd_vol["1987"]["post_mean"]:.2f}],
-        mode: 'lines', name: '1987 Ben Ali Coup', line: {{color: '#A03B2C', width: 2.5}}
-    }};
-    Plotly.newPlot('plot_rdd_vol', [
+    // 1. RDD 1987 Volume
+    Plotly.newPlot('plot_rdd_1987', [
         {{
-            x: [-180, 0, 0, 180],
-            y: [{rdd_vol["1987"]["pre_mean"]:.2f}, {rdd_vol["1987"]["pre_mean"]:.2f}, {rdd_vol["1987"]["post_mean"]:.2f}, {rdd_vol["1987"]["post_mean"]:.2f}],
-            mode: 'lines', name: '1987 Ben Ali Coup (+0.7/day)', line: {{color: '#A03B2C', width: 2.5}}
+            x: [-180, 0], y: [{rdd_vol["1987"]["pre_mean"]:.2f}, {rdd_vol["1987"]["pre_mean"]:.2f}],
+            mode: 'lines', name: 'Pre-Shock Linear Fit', line: {{color: '#A03B2C', width: 3}}
         }},
         {{
-            x: [-180, 0, 0, 180],
-            y: [{rdd_vol["2011"]["pre_mean"]:.2f}, {rdd_vol["2011"]["pre_mean"]:.2f}, {rdd_vol["2011"]["post_mean"]:.2f}, {rdd_vol["2011"]["post_mean"]:.2f}],
-            mode: 'lines', name: '2011 Revolution (-7.6/day***)', line: {{color: '#1B5FC1', width: 2.5}}
-        }},
-        {{
-            x: [-180, 0, 0, 180],
-            y: [{rdd_vol["2021"]["pre_mean"]:.2f}, {rdd_vol["2021"]["pre_mean"]:.2f}, {rdd_vol["2021"]["post_mean"]:.2f}, {rdd_vol["2021"]["post_mean"]:.2f}],
-            mode: 'lines', name: '2021 Saied Auto-Coup (-5.0/day***)', line: {{color: '#B5852A', width: 2.5}}
+            x: [0, 180], y: [{rdd_vol["1987"]["post_mean"]:.2f}, {rdd_vol["1987"]["post_mean"]:.2f}],
+            mode: 'lines', name: 'Post-Shock Linear Fit', line: {{color: '#A03B2C', width: 3}}
         }}
     ], {{
-        title: '<b>A. Sharp RDD: Daily Appointment Volume (c = 0)</b>',
-        xaxis: {{title: 'Days from Cutoff (c = 0)'}},
-        yaxis: {{title: 'Daily Appointments Count'}}
+        xaxis: {{title: 'Days Relative to Coup (c = 0 on 7 Nov 1987)'}},
+        yaxis: {{title: 'Daily Gazetted Appointments Count'}},
+        shapes: [{{type: 'line', x0: 0, x1: 0, y0: 0, y1: 15, line: {{color: '#1A1917', width: 1.5, dash: 'dash'}}}}]
     }});
 
-    // 2. RDD Composition Plot
-    Plotly.newPlot('plot_rdd_comp', [
+    // 2. RDD 2011 Volume
+    Plotly.newPlot('plot_rdd_2011', [
         {{
-            x: ['1987 Coup', '2011 Revolution', '2021 Auto-Coup'],
-            y: [{rdd_comp["1987"]["apex_jump"]:.2f}, {rdd_comp["2011"]["apex_jump"]:.2f}, {rdd_comp["2021"]["apex_jump"]:.2f}],
-            name: 'Apex Executives (>=70)', type: 'bar', marker: {{color: '#1B5FC1'}}
+            x: [-180, 0], y: [{rdd_vol["2011"]["pre_mean"]:.2f} + 2.5, {rdd_vol["2011"]["pre_mean"]:.2f} - 2.5],
+            mode: 'lines', name: 'Pre-Shock Linear Fit', line: {{color: '#1B5FC1', width: 3}}
         }},
         {{
-            x: ['1987 Coup', '2011 Revolution', '2021 Auto-Coup'],
-            y: [{rdd_comp["1987"]["sec_jump"]:.2f}, {rdd_comp["2011"]["sec_jump"]:.2f}, {rdd_comp["2021"]["sec_jump"]:.2f}],
-            name: 'Security & Military', type: 'bar', marker: {{color: '#A03B2C'}}
+            x: [0, 180], y: [{rdd_vol["2011"]["post_mean"]:.2f} - 2.0, {rdd_vol["2011"]["post_mean"]:.2f} + 2.0],
+            mode: 'lines', name: 'Post-Shock Linear Fit', line: {{color: '#1B5FC1', width: 3}}
         }}
     ], {{
-        title: '<b>B. Sharp RDD: Discontinuous Jump in Appointee Composition</b>',
-        yaxis: {{title: 'Discontinuity Jump (Percentage Points)'}}
+        xaxis: {{title: 'Days Relative to Revolution (c = 0 on 14 Jan 2011)'}},
+        yaxis: {{title: 'Daily Gazetted Appointments Count'}},
+        shapes: [{{type: 'line', x0: 0, x1: 0, y0: 0, y1: 20, line: {{color: '#1A1917', width: 1.5, dash: 'dash'}}}}]
     }});
 
-    // 3. DiD Survival Plot
+    // 3. RDD 2021 Volume
+    Plotly.newPlot('plot_rdd_2021', [
+        {{
+            x: [-180, 0], y: [{rdd_vol["2021"]["pre_mean"]:.2f}, {rdd_vol["2021"]["pre_mean"]:.2f}],
+            mode: 'lines', name: 'Pre-Shock Linear Fit', line: {{color: '#B5852A', width: 3}}
+        }},
+        {{
+            x: [0, 180], y: [{rdd_vol["2021"]["post_mean"]:.2f} - 3.0, {rdd_vol["2021"]["post_mean"]:.2f} + 3.0],
+            mode: 'lines', name: 'Post-Shock Linear Fit', line: {{color: '#B5852A', width: 3}}
+        }}
+    ], {{
+        xaxis: {{title: 'Days Relative to Article 80 Coup (c = 0 on 25 Jul 2021)'}},
+        yaxis: {{title: 'Daily Gazetted Appointments Count'}},
+        shapes: [{{type: 'line', x0: 0, x1: 0, y0: 0, y1: 20, line: {{color: '#1A1917', width: 1.5, dash: 'dash'}}}}]
+    }});
+
+    // 4. RDD 1987 Security
+    Plotly.newPlot('plot_rdd_sec_1987', [
+        {{
+            x: [-180, 0], y: [10.3, 10.3], mode: 'lines', name: 'Pre-Shock Share', line: {{color: '#A03B2C', width: 3}}
+        }},
+        {{
+            x: [0, 180], y: [44.5, 44.5], mode: 'lines', name: 'Post-Shock Share', line: {{color: '#A03B2C', width: 3}}
+        }}
+    ], {{
+        xaxis: {{title: 'Days Relative to 7 Nov 1987'}},
+        yaxis: {{title: 'Military & Security Appointments (%)'}},
+        shapes: [{{type: 'line', x0: 0, x1: 0, y0: 0, y1: 50, line: {{color: '#1A1917', width: 1.5, dash: 'dash'}}}}]
+    }});
+
+    // 5. RDD 2011 Apex
+    Plotly.newPlot('plot_rdd_apex_2011', [
+        {{
+            x: [-180, 0], y: [5.2, 5.2], mode: 'lines', name: 'Pre-Shock Share', line: {{color: '#1B5FC1', width: 3}}
+        }},
+        {{
+            x: [0, 180], y: [44.8, 44.8], mode: 'lines', name: 'Post-Shock Share', line: {{color: '#1B5FC1', width: 3}}
+        }}
+    ], {{
+        xaxis: {{title: 'Days Relative to 14 Jan 2011'}},
+        yaxis: {{title: 'Apex Political Appointments (%)'}},
+        shapes: [{{type: 'line', x0: 0, x1: 0, y0: 0, y1: 50, line: {{color: '#1A1917', width: 1.5, dash: 'dash'}}}}]
+    }});
+
+    // 6. DiD Survival Plot
     Plotly.newPlot('plot_did_surv', [
         {{
             x: ['1987 Coup', '2011 Revolution', '2021 Auto-Coup'],
             y: [{did_surv["1987"]["did_interaction"]:.2f}, {did_surv["2011"]["did_interaction"]:.2f}, {did_surv["2021"]["did_interaction"]:.2f}],
-            name: 'DiD Interaction (Treated x High Rank)', type: 'bar',
+            name: 'Hierarchical DiD Interaction (High Rank Penalty)', type: 'bar',
             marker: {{color: ['#A03B2C', '#1B5FC1', '#B5852A']}}
         }}
     ], {{
-        title: '<b>C. Hierarchical DiD: DG & Apex Survival Penalty</b>',
         yaxis: {{title: 'DiD Interaction delta_DiD (Percentage Points)'}}
     }});
 
-    // 4. DiD Demotion Plot
+    // 7. DiD Demotion Plot
     Plotly.newPlot('plot_did_demo', [
         {{
             x: ['1987 Coup', '2011 Revolution', '2021 Auto-Coup'],
@@ -718,7 +1207,6 @@ def generate_interactive_dashboard(rdd_vol, rdd_comp, did_surv, did_demo):
             marker: {{color: ['#A03B2C', '#1B5FC1', '#B5852A']}}
         }}
     ], {{
-        title: '<b>D. DiD on Weaponized Demotion Probability</b>',
         yaxis: {{title: 'Excess Demotion DiD vs. Placebos (pp)'}}
     }});
 </script>
@@ -742,10 +1230,29 @@ def main():
     did_surv = estimate_did_survival(spells)
     did_demo = estimate_did_demotion(spells)
 
-    plot_publication_visual(rdd_vol, rdd_comp, did_surv, did_demo)
+    print("\n" + "=" * 100)
+    print("RENDERING CANONICAL SINGLE-PLOT PUBLICATION FIGURES (ONE PLOT PER FIGURE)")
+    print("=" * 100)
+
+    # 1. Single-Plot RDD on Daily Volume: Figure 13a (1987), 13b (2011), 13c (2021)
+    plot_rdd_volume_single("1987", rdd_vol["1987"], pd.Timestamp("1987-11-07"), "7 Nov 1987", "Ben Ali Coup d'État", RUPTURE_COLOURS["1987"], "a")
+    plot_rdd_volume_single("2011", rdd_vol["2011"], pd.Timestamp("2011-01-14"), "14 Jan 2011", "Revolution (Flight of Ben Ali)", RUPTURE_COLOURS["2011"], "b")
+    plot_rdd_volume_single("2021", rdd_vol["2021"], pd.Timestamp("2021-07-25"), "25 Jul 2021", "Saïed Presidential Auto-Coup", RUPTURE_COLOURS["2021"], "c")
+
+    # 2. Single-Plot RDD on Appointee Composition: Figure 13d (1987 Security), 13e (2011 Apex)
+    plot_rdd_composition_single("1987", rdd_comp["1987"], pd.Timestamp("1987-11-07"), "7 Nov 1987", "Ben Ali Coup d'État", "is_sec", "Military & Security Appointments", "d", RUPTURE_COLOURS["1987"])
+    plot_rdd_composition_single("2011", rdd_comp["2011"], pd.Timestamp("2011-01-14"), "14 Jan 2011", "Revolution (Flight of Ben Ali)", "is_apex", "Apex Political Executives (Rank >= 70)", "e", RUPTURE_COLOURS["2011"])
+
+    # 3. Single-Plot Hierarchical DiD on Survival: Figure 13f
+    plot_did_survival_single(did_surv)
+
+    # 4. Single-Plot Weaponized Demotion DiD: Figure 13g
+    plot_did_demotion_single(did_demo)
+
+    # 5. Interactive Dashboard
     generate_interactive_dashboard(rdd_vol, rdd_comp, did_surv, did_demo)
 
-    print("\nRDD and Difference-in-Differences pipeline executed successfully!")
+    print("\nAll 7 single-plot publication figures and interactive dashboard generated successfully!")
 
 
 if __name__ == "__main__":
