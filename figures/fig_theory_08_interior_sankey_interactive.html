@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Sankey: Interior Ministry Colonization of the Tunisian State (1957–2026)</title>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #FCFCFB;
+            color: #1A1917;
+            margin: 0;
+            padding: 24px;
+        }
+        .header {
+            max-width: 1400px;
+            margin: 0 auto 16px auto;
+            border-bottom: 2px solid #D3D0C7;
+            padding-bottom: 14px;
+        }
+        h1 {
+            font-size: 23px;
+            margin: 0 0 6px 0;
+            color: #1A1917;
+        }
+        p.subtitle {
+            font-size: 13.5px;
+            color: #6C6D64;
+            margin: 0;
+            line-height: 1.5;
+        }
+        .controls {
+            max-width: 1400px;
+            margin: 0 auto 16px auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .btn {
+            background: #FFFFFF;
+            border: 1px solid #D3D0C7;
+            padding: 8px 14px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: #1A1917;
+        }
+        .btn:hover {
+            background: #F4F3EF;
+            border-color: #6C6D64;
+        }
+        .btn.active {
+            background: #1B5FC1;
+            color: #FFFFFF;
+            border-color: #1B5FC1;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            max-width: 1400px;
+            margin: 0 auto 18px auto;
+        }
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #D3D0C7;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .card-num {
+            font-size: 20px;
+            font-weight: bold;
+            color: #A03B2C;
+            margin-bottom: 3px;
+        }
+        .card-label {
+            font-size: 11.5px;
+            color: #6C6D64;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        #sankey-container {
+            max-width: 1400px;
+            height: 720px;
+            margin: 0 auto;
+            background: #FFFFFF;
+            border: 1px solid #D3D0C7;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .footer {
+            max-width: 1400px;
+            margin: 16px auto;
+            font-size: 12px;
+            color: #6C6D64;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Colonization of the Civilian State Apparatus by Former Interior Employees (1957–2026)</h1>
+        <p class="subtitle">Interactive Sankey Flow: Tracing N = 11,255 outbound appointments held by 3,449 former Interior cadres from Origin Corps to Target Ministries and Power Levers</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="card">
+            <div class="card-num">11,255</div>
+            <div class="card-label">Outbound Civilian Spells</div>
+        </div>
+        <div class="card">
+            <div class="card-num">3,449</div>
+            <div class="card-label">Unique Former Interior Cadres</div>
+        </div>
+        <div class="card">
+            <div class="card-num">17.43%</div>
+            <div class="card-label">Peak Colonization Rate (Saied)</div>
+        </div>
+        <div class="card">
+            <div class="card-num">3,379 (30.0%)</div>
+            <div class="card-label">Governor-to-Center Spells</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <span style="font-size: 13px; font-weight: 600; color: #1A1917;">Select Sankey Flow:</span>
+        <button class="btn active" onclick="switchView('macro')">1. Macro Infiltration Pipeline</button>
+        <button class="btn" onclick="switchView('regime')">2. Regime Trajectory (Presidencies)</button>
+        <button class="btn" onclick="switchView('governors')">3. The Governor Trampoline</button>
+        <button class="btn" onclick="switchView('police')">4. Police & Paramilitary Security</button>
+    </div>
+
+    <div id="sankey-container"></div>
+
+    <div class="footer">
+        <strong>Methodological Grounding:</strong> Extracted from complete 70-year JORT gazette records (1957–2026). Outbound spells represent appointments held in civilian ministries, public establishments, and state enterprises by individuals who previously served in the Ministry of the Interior, national security directorates, or territorial administration.
+    </div>
+
+    <script>
+        const viewsData = {"macro": {"node_labels": ["Central Interior Cadres", "Agriculture & Water", "Education & Higher Ed", "Finance & Economy", "Foreign Affairs", "Health & Social Affairs", "Local Affairs & Envir.", "Other Line Ministries", "Prime Ministry / Kasbah", "Transport & Public Works", "Delegates & Field Admin", "Governors & Regional Execs", "Police & Paramilitary", "Central Directors Gen.", "Ministers & Cabinets", "Operational Directors", "SG & DAF Gatekeepers", "SOE Boards & PDGs", "Diplomatic Posts"], "node_colors": ["#A03B2C", "#65A30D", "#0D9488", "#2563EB", "#0284C7", "#D97706", "#16A34A", "#64748B", "#DC2626", "#9333EA", "#B5852A", "#1B5FC1", "#1E7E68", "#1B5FC1", "#DC2626", "#94A3B8", "#B5852A", "#1E7E68", "#6B46C1"], "sources": [0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9], "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 15, 16, 17, 13, 18, 14, 15, 16, 17, 13, 18, 14, 15, 16, 17, 13, 18, 14, 15, 16, 17, 13, 18, 14, 15, 16, 17, 13, 18, 14, 15, 16, 17, 13, 18, 14, 15, 16, 17, 13, 18, 14, 15, 16, 17, 13, 14, 15, 16, 17], "values": [291, 978, 1517, 299, 781, 922, 1441, 787, 386, 12, 53, 64, 6, 41, 52, 50, 36, 20, 160, 442, 696, 117, 381, 298, 701, 329, 255, 25, 13, 32, 5, 8, 9, 23, 6, 19, 33, 36, 387, 15, 17, 76, 1, 61, 1175, 164, 9, 135, 8, 113, 1881, 87, 85, 30, 147, 50, 171, 22, 7, 76, 3, 99, 979, 45, 9, 43, 1, 55, 850, 315, 17, 121, 41, 431, 1401, 87, 134, 80, 41, 191, 735, 92, 19, 62, 53, 510, 16, 39]}, "regime": {"node_labels": ["1. Bourguiba (1957\u201387)", "Agriculture & Water", "Education & Higher Ed", "Finance & Economy", "Foreign Affairs", "Health & Social Affairs", "Local Affairs & Envir.", "Other Line Ministries", "Prime Ministry / Kasbah", "Transport & Public Works", "2. Ben Ali (1987\u20132011)", "3. Transition (2011\u201314)", "4. Essebsi (2014\u201319)", "5. Kais Saied (2019\u201326)", "Central Directors Gen.", "Ministers & Cabinets", "Operational Directors", "SG & DAF Gatekeepers", "SOE Boards & PDGs", "Diplomatic Posts"], "node_colors": ["#A03B2C", "#65A30D", "#0D9488", "#2563EB", "#0284C7", "#D97706", "#16A34A", "#64748B", "#DC2626", "#9333EA", "#1B5FC1", "#B5852A", "#1E7E68", "#6B46C1", "#1B5FC1", "#DC2626", "#94A3B8", "#B5852A", "#1E7E68", "#6B46C1"], "sources": [0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9], "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 14, 19, 15, 16, 17, 18, 14, 19, 15, 16, 17, 18, 14, 19, 15, 16, 17, 18, 14, 19, 15, 16, 17, 18, 14, 19, 15, 16, 17, 18, 14, 19, 15, 16, 17, 18, 14, 19, 15, 16, 17, 18, 14, 15, 16, 17, 18], "values": [99, 56, 92, 47, 49, 41, 247, 63, 54, 199, 529, 928, 256, 443, 318, 808, 440, 299, 109, 192, 491, 53, 178, 121, 300, 244, 95, 39, 360, 449, 43, 259, 515, 435, 180, 86, 42, 349, 349, 28, 282, 286, 425, 231, 146, 33, 36, 387, 15, 17, 76, 1, 61, 1175, 164, 9, 135, 8, 113, 1881, 87, 85, 30, 147, 50, 171, 22, 7, 76, 3, 99, 979, 45, 9, 43, 1, 55, 850, 315, 17, 121, 41, 431, 1401, 87, 134, 80, 41, 191, 735, 92, 19, 62, 53, 510, 16, 39]}, "governors": {"node_labels": ["Governors & Regional Execs", "Agriculture & Water", "Education & Higher Ed", "Finance & Economy", "Foreign Affairs", "Health & Social Affairs", "Local Affairs & Envir.", "Other Line Ministries", "Prime Ministry / Kasbah", "Transport & Public Works", "Central Directors Gen.", "Ministers & Cabinets", "Operational Directors", "SG & DAF Gatekeepers", "SOE Boards & PDGs", "Diplomatic Posts"], "node_colors": ["#1B5FC1", "#65A30D", "#0D9488", "#2563EB", "#0284C7", "#D97706", "#16A34A", "#64748B", "#DC2626", "#9333EA", "#1B5FC1", "#DC2626", "#94A3B8", "#B5852A", "#1E7E68", "#6B46C1"], "sources": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9], "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 10, 11, 12, 13, 14, 10, 15, 11, 12, 13, 14, 10, 15, 11, 12, 13, 10, 15, 11, 12, 13, 14, 10, 11, 12, 13, 14, 10, 15, 11, 12, 13, 14, 10, 15, 11, 12, 13, 14, 10, 11, 12, 13, 14], "values": [160, 442, 696, 117, 381, 298, 701, 329, 255, 9, 15, 123, 5, 8, 24, 18, 367, 32, 1, 31, 1, 24, 610, 16, 14, 6, 60, 12, 36, 3, 17, 1, 40, 310, 10, 3, 7, 14, 213, 59, 5, 31, 8, 145, 448, 32, 37, 22, 5, 52, 223, 17, 10, 25, 20, 193, 9, 8]}, "police": {"node_labels": ["Police & Paramilitary", "Agriculture & Water", "Education & Higher Ed", "Finance & Economy", "Foreign Affairs", "Health & Social Affairs", "Local Affairs & Envir.", "Other Line Ministries", "Prime Ministry / Kasbah", "Transport & Public Works", "Central Directors Gen.", "Operational Directors", "SOE Boards & PDGs", "Diplomatic Posts", "Ministers & Cabinets", "SG & DAF Gatekeepers"], "node_colors": ["#1E7E68", "#65A30D", "#0D9488", "#2563EB", "#0284C7", "#D97706", "#16A34A", "#64748B", "#DC2626", "#9333EA", "#1B5FC1", "#94A3B8", "#1E7E68", "#6B46C1", "#DC2626", "#B5852A"], "sources": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 9, 9, 9, 9, 9], "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 11, 10, 11, 12, 13, 14, 11, 10, 14, 11, 12, 10, 14, 11, 15, 10, 14, 11, 12, 10, 14, 11, 10, 14, 11, 15, 12], "values": [25, 13, 32, 5, 8, 9, 23, 6, 19, 1, 22, 2, 13, 2, 28, 2, 2, 1, 2, 1, 1, 5, 1, 1, 2, 5, 1, 1, 6, 13, 3, 1, 1, 4, 6, 1, 9, 1, 2]}};
+
+        function renderSankey(viewKey) {
+            const d = viewsData[viewKey];
+            const fig = {
+                type: "sankey",
+                orientation: "h",
+                node: {
+                    pad: 20,
+                    thickness: 24,
+                    line: { color: "#1A1917", width: 0.8 },
+                    label: d.node_labels,
+                    color: d.node_colors
+                },
+                link: {
+                    source: d.sources,
+                    target: d.targets,
+                    value: d.values,
+                    color: d.sources.map(s => d.node_colors[s] + "55")
+                }
+            };
+
+            const layout = {
+                font: {
+                    family: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+                    size: 11.5,
+                    color: "#1A1917"
+                },
+                margin: { l: 30, r: 30, t: 25, b: 25 },
+                paper_bgcolor: "#FFFFFF",
+                plot_bgcolor: "#FFFFFF"
+            };
+
+            Plotly.newPlot("sankey-container", [fig], layout, { responsive: true });
+        }
+
+        function switchView(viewKey) {
+            document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderSankey(viewKey);
+        }
+
+        renderSankey('macro');
+    </script>
+</body>
+</html>
