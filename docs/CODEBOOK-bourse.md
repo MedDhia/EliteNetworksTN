@@ -267,6 +267,66 @@ dominated by once-filed peripheral firms no treated firm could be compared
 with. Inference is by permutation because network observations are not
 independent, so parametric standard errors would be far too small.
 
+## 4g. `director_gender.csv` — gender, where the filing records it
+
+One row per person ever seen on a board. `gender` is `F`, `M`, or `unknown`;
+`basis` says which, and the three count columns show the honorifics behind it.
+
+**Gender is read from the honorific the filer printed** (`M.`, `Mme`, `Mlle`),
+kept by the extractor in `member_title`. It is **never inferred from the given
+name.** Tunisian names reach these filings transliterated into French with no
+settled orthography — Mohamed, Mohammed, Muhammad — and the name-gender
+dictionaries that cover them well are built on European populations, so their
+errors fall hardest on the least European-looking names. That is the wrong bias
+for a study of a Tunisian elite, and it would be invisible in the output.
+
+Honorifics are pooled per *person*, not per row: a director styled "Mme" once
+and left untitled in ten other filings is recorded as a woman. That lifts
+coverage from a third of rows to **34.6% of the 2,376 directors** (822 people,
+114 of them women). The remaining 65.4% are `unknown`.
+
+**`unknown` must not be folded into `M`.** Doing so would understate women by
+construction and would never raise an error. Every share derived from this file
+is computed against the *gendered* denominator, with the unknown share carried
+beside it. Two people carry conflicting honorifics and are left unknown rather
+than decided by majority — both are cases of a title column offset by one row,
+a fault worth surfacing.
+
+## 4h. `women_centrality.csv` / `.md` — participation and brokerage over time
+
+A firm-year panel of directors by gender, 2005–2026, plus the size of the
+brokerage pool. Drawn as `figures/fig01_bourse_women_centrality.pdf`.
+
+Two findings, and the distinction between them is the substance:
+
+**Participation is estimable and it rose** — women went from 11% of gendered
+directors in 2005 to 25% in 2026 (7.9% mean across 2005–2015, 15.9% across
+2016–2026).
+
+**A yearly betweenness series is not estimable, and is deliberately not
+drawn.** Betweenness on the bipartite director–firm graph is non-zero only for
+a director sitting on more than one board — nobody else lies on a path between
+two firms. The number of women in that position runs from **0 to 6 per year and
+is zero in 8 of the 22 years**. A yearly mean over that is one or two people
+entering and leaving the sample. The column is written to the CSV for
+completeness; plotting it as a line would hand a reader a shape the data does
+not carry.
+
+Pooled across the window, where n is 104 women against 585 men, the comparison
+does hold: 24% of women have non-zero betweenness against 36% of men, and
+women's mean betweenness is 39% of men's. The gap is in *reach*, not only in
+numbers — women are disproportionately on one board each.
+
+Centrality uses the bipartite graph rather than the one-mode projection of
+shared directors, because projecting turns every board into a clique and hands
+everyone on a large board a centrality they did not earn by brokering.
+
+**The bias that would overturn this**: if a title is printed more often for
+women than for men — plausible, since a title marks the exception in a
+male-dominated list — the gendered subset over-represents women and the
+participation series is biased upward. Checking against an external roster is
+the first thing worth doing.
+
 ## 5. `multiplex_edges_panel.csv.gz` — the balanced panel
 
 Same columns as the observed edge list, plus:

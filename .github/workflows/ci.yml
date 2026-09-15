@@ -129,6 +129,12 @@ jobs:
       - name: Re-run the analyses
         run: make bourse-analysis bourse-centrality
 
+      # Director gender is read off honorifics and drives a committed panel
+      # and figure, so it goes under the diff too: a change to the honorific
+      # sets must not leave the coded genders or the women's series stale.
+      - name: Recode director gender and the women's series
+        run: make bourse-gender bourse-women
+
       # Fails the build on any ERROR-level finding (referential integrity,
       # self-loops, ownership weights outside (0, 100]).
       - name: Validate
