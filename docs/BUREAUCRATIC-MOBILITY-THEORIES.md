@@ -18,6 +18,8 @@ Across **53,475 observed bureaucratic transitions**, **40,642 career entrants**,
 8. **Security Apparatus Autonomy, Asymmetry & Hegemony** (Alfred Stepan 1988; Eva Bellin 2002)
 9. **Civil-Military Boundaries Across Five Regimes** (1957–2026)
 10. **Colonization of the Civilian State by Former Interior Employees** (1957–2026)
+11. **Causal Identification of Gender Biases via Matching and High-Dimensional Fixed Effects** (1957–2026)
+12. **Comparative Institutional Gender Biases Across Five Regimes** (1957–2026)
 
 ---
 
@@ -224,7 +226,34 @@ Patronage & Executive Tenure Robustness
 
 ---
 
-## 8. Figures & Scripts Index
+## 8. Comparative Institutional Gender Biases Across Five Regimes (1957–2026)
+
+Evaluating whether institutional gender biases are static features of the Tunisian state or vary across historical regimes: **Bourguiba (1957–87)**, **Ben Ali (1987–2011)**, **Transition / Troika (2011–14)**, **Béji Caïd Essebsi (2014–19)**, and **Kais Saied (2019–26)**:
+
+```
+======================================================================================================================================
+Political Regime         Promotion Delay (FE)    Glass Ceiling Ratio    Retinue Share (Diff)    Arrival Sweep Diff    Governor Share
+--------------------------------------------------------------------------------------------------------------------------------------
+Bourguiba (1957–87)      +22.8 mo (p = 0.0002)   0.25 (7.3% → 1.8%)     2.4% (-0.9 pp, n.s.)    2.0% (-1.4 pp)        0.0% (0 / 128)
+Ben Ali (1987–2011)      +13.5 mo (p < 10⁻¹⁰)    0.16 (21.5% → 3.4%)    6.3% (-9.9 pp, p < 10⁻⁷) 13.9% (-2.3 pp)      0.8% (1 / 129)
+Transition (2011–14)     +6.6 mo  (p = 0.008)    0.22 (33.7% → 7.4%)    20.8% (-5.8 pp, p=0.12) 23.5% (-3.0 pp)       0.0% (0 / 81)
+Essebsi (2014–19)        +6.5 mo  (p = 0.001)    0.37 (41.1% → 15.3%)   25.0% (-8.7 pp, p=0.01) 28.2% (-5.6 pp)       4.0% (2 / 50)
+Kais Saied (2019–26)     +0.74 mo (p = 0.656)    0.33 (44.2% → 14.5%)   38.9% (+1.9 pp, n.s.)   24.9% (-12.1 pp, p=0.002) 12.0% (3 / 25)
+======================================================================================================================================
+```
+
+### Core Empirical Findings Across Regimes:
+1. **Collapse of the "Sticky Floor" Under Kais Saied**: In within-ministry fixed effects regressions, the promotion wait-time penalty for women stood at **+22.8 months** under Bourguiba and **+13.5 months** under Ben Ali ($p < 10^{-10}$). It halved during the democratic transition (+6.6 mo) and Essebsi (+6.5 mo), before completely evaporating under Kais Saied to **+0.74 months ($p = 0.656$, statistically indistinguishable from zero)**. Promotion velocity within line ministries has reached gender parity in the current regime.
+2. **The Steepness of the Ben Ali Glass Ceiling**: Ben Ali exhibited the steepest hierarchical glass ceiling funnel in modern Tunisian history, with female representation collapsing by **84%** from entry (21.5%) to apex executive ranks (3.4%), yielding a ratio of **0.16**. The ratio recovered to 0.37 under Essebsi and 0.33 under Saied.
+3. **The Ben Ali Retinue Trap vs. Saied Arrival Sweep Deficit**:
+   - Under Ben Ali, women suffered a massive **65.2% discount** in mobile personal retinue recruitment ($OR = 0.348, p = 2.4 \times 10^{-8}$), with female presence in personal retinues restricted to 6.3% compared to 16.2% in the civil service at large.
+   - Under Saied, while regular retinue representation reached parity (38.9% vs. 37.0%), women faced a severe deficit in **rapid arrival sweeps (<120 days)**: female representation plummeted to 24.9% vs. 36.9% overall (a **-12.1 pp penalty**, $OR = 0.596, p = 0.0019$), indicating that emergency or crisis-driven reshuffles heavily revert to male informal networks.
+4. **Desegregation of Territorial Command (Regional Governors)**: Regional governorships (Rank 80) were exclusively male under Bourguiba (0/128) and Troika (0/81), with only a single female governor appointed under Ben Ali (0.78%, Faiza Kefi in Ariana, 1999) and two under Essebsi (4.0%, Saloua Khiari). Under Kais Saied, female representation among governors reached **12.0% (3/25)** (including Sabah Malek in Nabeul and Raja Trabelsi in Sousse).
+5. **Senior Executive Tenure Compression**: Average senior executive tenure (Rank $\ge 65$) compressed from ~5.0 years under Ben Ali to **2.9 years under Saied** for both men and women (tenure gap: -0.06 years, $p = 0.65$), reflecting regime-wide executive volatility.
+
+---
+
+## 9. Figures & Scripts Index
 
 ### Python Pipeline Scripts (`scripts/`)
 1. `mobility_model.py`: Multivariate logit model & machine learning feature attribution (Keller framework).
@@ -238,6 +267,7 @@ Patronage & Executive Tenure Robustness
 9. `gender_vertical_mobility.py`: Theory 9 (Vertical Mobility of Women, Tournament Penalties & Sectoral Ceilings).
 10. `test_gender_biases.py`: Theory 10 (Formal Tests of Gender Bias: Sticky Floors, Retinues, Silo Traps & Quarantines).
 11. `test_matching_and_fe_publication.py`: Theory 11 (Causal Verification: Coarsened Exact Matching, PSM, and High-Dimensional Fixed Effects).
+12. `compare_gender_biases_regimes.py`: Theory 12 (Cross-Regime Comparative Gender Biases: Promotion Clocks, Funnels, and Patronage Deficits across Five Regimes).
 
 ### Publication Figures (`figures/`)
 * `fig_mobility_01_odds_ratios.png` & `.pdf`: Multivariate Logit Model of Upward Mobility.
@@ -261,4 +291,7 @@ Patronage & Executive Tenure Robustness
 * `fig_theory_10_gender_biases_interactive.html`: Interactive Plotly Forest Plot and Sticky Floor Dashboard.
 * `fig_theory_11_matching_fixed_effects.png` & `.pdf`: Causal Identification of Gender Biases (Matching & High-Dimensional Fixed Effects).
 * `fig_theory_11_matching_fixed_effects_interactive.html`: Interactive Plotly Dashboard of Matching & Fixed Effects Models.
+* `fig_theory_12_gender_biases_regimes.png` & `.pdf`: Comparative Institutional Gender Biases Across Five Regimes (1957–2026).
+* `fig_theory_12_gender_biases_regimes_interactive.html`: Interactive Plotly Dashboard of Cross-Regime Gender Biases.
+
 

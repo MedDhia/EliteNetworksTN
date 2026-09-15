@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institutional Gender Biases Across Five Political Regimes (1957–2026)</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #FCFCFB;
+            color: #1A1917;
+            margin: 0;
+            padding: 24px;
+        }
+        .header {
+            max-width: 1400px;
+            margin: 0 auto 20px auto;
+        }
+        h1 {
+            font-size: 22px;
+            margin: 0 0 8px 0;
+            font-weight: 700;
+        }
+        p.subtitle {
+            font-size: 13px;
+            color: #6C6D64;
+            margin: 0 0 20px 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #D3D0C7;
+            border-radius: 6px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .chart-box {
+            width: 100%;
+            height: 400px;
+        }
+        .footer {
+            max-width: 1400px;
+            margin: 24px auto 0 auto;
+            font-size: 11px;
+            color: #6C6D64;
+            border-top: 1px solid #D3D0C7;
+            padding-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Comparative Analysis of Institutional Gender Bias Across Five Political Regimes (1957–2026)</h1>
+        <p class="subtitle">Comparing Bourguiba (1957–87), Ben Ali (1987–2011), Transition / Troika (2011–14), Essebsi (2014–19), and Kais Saied (2019–26) across 100,582 spells.</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <div id="chart-velocity" class="chart-box"></div>
+        </div>
+        <div class="card">
+            <div id="chart-funnel" class="chart-box"></div>
+        </div>
+        <div class="card">
+            <div id="chart-patronage" class="chart-box"></div>
+        </div>
+        <div class="card">
+            <div id="chart-governors" class="chart-box"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <b>Data Source:</b> Official Gazette of the Republic of Tunisia (JORT 1957–2026). Extracted from MedDhia/EliteNetworksTN.<br>
+        <b>Methodological Notes:</b> Promotion wait-time delays are estimated using both two-sample Welch's t-tests and within-ministry fixed effects regressions controlling for baseline rank. Hierarchical funnel charts track representation across civil service rank tiers.
+    </div>
+
+    <script>
+        // Chart 1: Promotion Delays
+        const velData = [
+            {
+                y: ['Bourguiba (1957–87)', 'Ben Ali (1987–2011)', 'Transition (2011–14)', 'Essebsi (2014–19)', 'Kais Saied (2019–26)'],
+                x: [15.649930851497263, 15.85002520915721, 10.829290133045959, 7.34897886241699, 3.0148818160752544],
+                name: 'Raw Unadjusted Delay',
+                type: 'bar',
+                orientation: 'h',
+                marker: { color: '#6C6D64', opacity: 0.6 }
+            },
+            {
+                y: ['Bourguiba (1957–87)', 'Ben Ali (1987–2011)', 'Transition (2011–14)', 'Essebsi (2014–19)', 'Kais Saied (2019–26)'],
+                x: [22.77293417291739, 13.509542469062374, 6.566268443597854, 6.5387561160448495, 0.7372565261517336],
+                name: 'Within-Ministry FE Delay',
+                type: 'bar',
+                orientation: 'h',
+                marker: { color: '#D9480F' }
+            }
+        ];
+        const layoutVel = {
+            title: { text: '<b>A. Promotion Wait-Time Delay by Regime (Months)</b>', font: { size: 13 } },
+            barmode: 'group',
+            xaxis: { title: 'Estimated Delay for Women (Months)' },
+            font: { family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 10 },
+            margin: { l: 160, r: 20, t: 35, b: 45 },
+            legend: { orientation: 'h', y: -0.2 }
+        };
+        Plotly.newPlot('chart-velocity', velData, layoutVel, { responsive: true });
+
+        // Chart 2: Hierarchical Funnel
+        const funnelData = [
+            {
+                x: ['Entry (35-45)', 'Directeur (55)', 'Dir. Général (65)', 'Apex (≥ 70)'],
+                y: [7.3090909090909095, 21.46407899216888, 33.71398453970485, 41.112660777932746, 44.23776789324707],
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Bourguiba (1957–87)',
+                line: { color: '#A03B2C' }
+            }
+        ];
+        // Build traces for all 5 regimes
+        const regHierarchy = [{'regime': 'Bourguiba (1957–87)', 'entry': 7.3090909090909095, 'dir': 3.537981269510926, 'dg': 0.0, 'apex': 1.829924650161464, 'ratio': 0.2503628252708471}, {'regime': 'Ben Ali (1987–2011)', 'entry': 21.46407899216888, 'dir': 13.374748766672756, 'dg': 9.118236472945892, 'apex': 3.3875788774493523, 'ratio': 0.15782549433801948}, {'regime': 'Transition (2011–14)', 'entry': 33.71398453970485, 'dir': 22.55754475703325, 'dg': 15.957446808510639, 'apex': 7.427677873338546, 'ratio': 0.22031444739470035}, {'regime': 'Essebsi (2014–19)', 'entry': 41.112660777932746, 'dir': 26.427560169891457, 'dg': 21.841155234657037, 'apex': 15.320910973084887, 'ratio': 0.37265676030650874}, {'regime': 'Kais Saied (2019–26)', 'entry': 44.23776789324707, 'dir': 29.91232594120681, 'dg': 28.37573385518591, 'apex': 14.537037037037038, 'ratio': 0.3286114496580676}];
+        const regColors = {'Bourguiba (1957–87)': '#A03B2C', 'Ben Ali (1987–2011)': '#1B5FC1', 'Transition (2011–14)': '#0D9488', 'Essebsi (2014–19)': '#B5852A', 'Kais Saied (2019–26)': '#5B4E9E'};
+        const funnelTraces = regHierarchy.map(d => ({
+            x: ['Entry (35-45)', 'Directeur (55)', 'Dir. Général (65)', 'Apex (≥ 70)'],
+            y: [d.entry, d.dir, d.dg, d.apex],
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: d.regime + ' (Ratio: ' + d.ratio.toFixed(2) + ')',
+            line: { color: regColors[d.regime], width: d.regime.includes('Saied') ? 3 : 2 }
+        }));
+
+        const layoutFunnel = {
+            title: { text: '<b>B. The Hierarchical Glass Ceiling Funnel Across Regimes</b>', font: { size: 13 } },
+            yaxis: { title: 'Female Representation (%)', range: [0, 50] },
+            font: { family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 10 },
+            margin: { l: 50, r: 20, t: 35, b: 45 },
+            legend: { orientation: 'h', y: -0.25 }
+        };
+        Plotly.newPlot('chart-funnel', funnelTraces, layoutFunnel, { responsive: true });
+
+        // Chart 3: Patronage Retinues
+        const patData = [
+            {
+                y: ['Bourguiba (1957–87)', 'Ben Ali (1987–2011)', 'Transition (2011–14)', 'Essebsi (2014–19)', 'Kais Saied (2019–26)'],
+                x: [3.4275127373784158, 16.234199979447126, 26.526119154046302, 33.693843594009984, 36.94759885073197],
+                name: 'Overall Female Civil Service %',
+                type: 'bar',
+                orientation: 'h',
+                marker: { color: '#6C6D64', opacity: 0.5 }
+            },
+            {
+                y: ['Bourguiba (1957–87)', 'Ben Ali (1987–2011)', 'Transition (2011–14)', 'Essebsi (2014–19)', 'Kais Saied (2019–26)'],
+                x: [2.564102564102564, 6.329113924050633, 20.759493670886076, 25.0, 38.88888888888889],
+                name: 'Retinue Followers %',
+                type: 'bar',
+                orientation: 'h',
+                marker: { color: '#DC2626' }
+            },
+            {
+                y: ['Bourguiba (1957–87)', 'Ben Ali (1987–2011)', 'Transition (2011–14)', 'Essebsi (2014–19)', 'Kais Saied (2019–26)'],
+                x: [2.025931928687196, 13.920881321982975, 23.525280898876407, 28.125, 24.873096446700508],
+                name: 'Arrival Sweeps % (<120d)',
+                type: 'bar',
+                orientation: 'h',
+                marker: { color: '#B5852A' }
+            }
+        ];
+        const layoutPat = {
+            title: { text: '<b>C. Informal Patronage Deficits by Regime</b>', font: { size: 13 } },
+            barmode: 'group',
+            xaxis: { title: 'Female Share (%)' },
+            font: { family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 10 },
+            margin: { l: 160, r: 20, t: 35, b: 45 },
+            legend: { orientation: 'h', y: -0.25 }
+        };
+        Plotly.newPlot('chart-patronage', patData, layoutPat, { responsive: true });
+
+        // Chart 4: Governors
+        const govData = [{
+            y: ['Bourguiba (1957–87)', 'Ben Ali (1987–2011)', 'Transition (2011–14)', 'Essebsi (2014–19)', 'Kais Saied (2019–26)'],
+            x: [0.0, 0.7751937984496124, 0.0, 4.0, 12.0],
+            type: 'bar',
+            orientation: 'h',
+            marker: { color: ['#1B5FC1', '#1B5FC1', '#1B5FC1', '#1B5FC1', '#D9480F'] }
+        }];
+        const layoutGov = {
+            title: { text: '<b>D. Female Governors (% of Regional Appointments)</b>', font: { size: 13 } },
+            xaxis: { title: 'Female Governors (%)', range: [0, 16] },
+            font: { family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 10 },
+            margin: { l: 160, r: 20, t: 35, b: 45 }
+        };
+        Plotly.newPlot('chart-governors', govData, layoutGov, { responsive: true });
+    </script>
+</body>
+</html>
