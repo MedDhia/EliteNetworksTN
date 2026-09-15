@@ -98,11 +98,12 @@ def seed_evidence(res: Resolver) -> None:
             v = rec.get(field)
             if v:
                 res.add_evidence(v, etype)
-    # Listed issuers are firms by definition.
+    # Listed issuers are firms by definition, and their tickers name them.
     if BVMT_CSV.exists():
         with BVMT_CSV.open(encoding="utf-8") as fh:
             for row in csv.DictReader(fh):
                 res.add_evidence(row["name_fr"], "firm")
+                res.add_ticker_alias(row["ticker"], row["name_fr"])
 
 
 # --------------------------------------------------------------------------
@@ -220,6 +221,13 @@ def build_edges(res: Resolver) -> tuple[list[dict], dict[str, dict]]:
             person, _ = res.resolve(rec.get("person_name_raw") or "", hint="person")
             firm, _ = res.resolve(rec.get("other_firm_name_raw") or "", hint="firm")
             if not person or not firm:
+                continue
+            # Nobody holds a mandate in themselves. Both sides of this row come
+            # from the same table, and a row that lost its column boundary puts
+            # the same text in both - "annees" from a mandate period, read as
+            # the holder and as the company alike. The ownership layer already
+            # drops its own version of this as treasury shares.
+            if person == firm:
                 continue
             add(layer, person, firm, 1.0, rec, directed=False, role=rec.get("role_raw"))
 

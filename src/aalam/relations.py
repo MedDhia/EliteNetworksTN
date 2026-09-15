@@ -17,17 +17,50 @@ import argparse
 import csv
 import json
 from collections import defaultdict
+from functools import lru_cache
 
 from .extract import ASSERTION_FIELDS
 from .llm import open_text
-from .names_ar import parse_person, person_id, transliterate
-from .paths import INTERIM, PROCESSED, ensure_dirs
+from .names_ar import org_id, parse_person, person_id, transliterate
+from .paths import INTERIM, PROCESSED, ensure_dirs, load_config
+from .textnorm_ar import fold
 
 PERSON_FIELDS = [
-    "person_id", "name_ar", "name_translit", "is_subject", "entry_uid",
-    "cohort", "birth_year", "death_year", "role_descriptor_ar", "rank",
-    "n_assertions", "n_ties", "first_seen_entry",
+    "person_id", "name_ar", "name_translit", "is_subject", "name_kind",
+    "entry_uid", "cohort", "birth_year", "death_year", "role_descriptor_ar",
+    "rank", "n_assertions", "n_ties", "first_seen_entry",
 ]
+
+# The book often places a person without naming them: «ابنة الأصرم»,
+# «شقيق محمد باي خير الدين», «زوجته الثانية القيروانية». The tie is real -- a
+# marriage happened, a brother existed -- but the node is a description, not
+# an identity, and two such descriptions in different entries may well be the
+# same person or different ones with no way to tell. They are kept, because
+# dropping them would delete ties the source states, and marked, because
+# treating them as identified individuals would overcount the population and
+# invite a merge that nothing supports.
+_DESCRIPTION_HEADS = (
+    "شقيق", "ابن عم", "ابنة عم", "والد", "والدة", "أخو", "أخت", "زوجة",
+    "زوجته", "ابنة", "ابن ", "حفيد", "عم ", "خال ", "صهر", "الأساتذة",
+    "أبناء", "بنت", "أساتذة", "تلاميذ", "التلاميذ", "مخاطبي", "زملاء",
+    "الزملاء", "رفقاء", "أصدقاء", "الأصدقاء",
+)
+
+# A relative clause is the other shape a description takes:
+# «الأساتذة الذين ساهموا في تكوينهما», «الأساتذة القلائل الذين اختارهم والده».
+# These are groups the text characterises, not people it names, and they
+# entered the graph as single high-degree nodes.
+_RELATIVE = (" الذين ", " الذي ", " التي ", " اللذين ")
+
+
+def name_kind(name: str) -> str:
+    """`described` for a node the book places only by its relation to another."""
+    stripped = (name or "").strip()
+    if stripped.startswith(_DESCRIPTION_HEADS):
+        return "described"
+    if any(r in f" {stripped} " for r in _RELATIVE):
+        return "described"
+    return "named"
 ORG_FIELDS = ["org_id", "name_ar", "name_translit", "org_kind", "n_ties", "first_seen_entry"]
 EDGE_FIELDS = [
     "edge_id", "layer", "relation", "from_id", "from_name", "to_id", "to_name",
@@ -35,6 +68,35 @@ EDGE_FIELDS = [
     "date_precision", "evidence_tier", "extractor", "pattern_id", "confidence",
     "entry_uid", "evidence_quote",
 ]
+
+
+@lru_cache(maxsize=1)
+def _org_aliases() -> dict[str, str]:
+    """Folded surface form -> canonical name, from config.
+
+    One body arrives under several names because the register is built from
+    whatever string a sentence used. Left split, the Khaldouniyya counts as two
+    smaller institutions than it is. The mapping is hand-picked rather than
+    inferred: a containment rule proposes 109 pairs over 366 organisations and
+    most are wrong, since التونسي is a substring of a party, a movement and a
+    government. See config/aalam_org_aliases.yaml.
+    """
+    out: dict[str, tuple[str, str]] = {}
+    for canon, spec in load_config("aalam_org_aliases")["aliases"].items():
+        out[fold(canon)] = (canon, spec["kind"])
+        for surface in spec["surfaces"]:
+            out[fold(surface)] = (canon, spec["kind"])
+    return out
+
+
+def canonical_org(name: str, kind: str) -> tuple[str, str]:
+    """Resolve a surface form to its canonical name *and* kind.
+
+    Both, because identifiers are namespaced by kind: a body arriving once as
+    an `association` and once as a `school` stays two nodes even after the
+    names agree.
+    """
+    return _org_aliases().get(fold(name), (name, kind))
 
 
 def _load_assertions() -> list[dict]:
@@ -68,7 +130,8 @@ def run() -> dict[str, int]:
         persons[pid] = {
             "person_id": pid, "name_ar": e["name_ar"],
             "name_translit": transliterate(p.normalised or e["name_ar"]),
-            "is_subject": "yes", "entry_uid": e["entry_uid"],
+            "is_subject": "yes", "name_kind": "named",
+            "entry_uid": e["entry_uid"],
             "cohort": e["cohort"], "birth_year": e["birth_year"],
             "death_year": e["death_year"],
             "role_descriptor_ar": e["role_descriptor_ar"], "rank": p.rank,
@@ -83,20 +146,29 @@ def run() -> dict[str, int]:
             persons[sid] = {
                 "person_id": sid, "name_ar": r["subject_name"],
                 "name_translit": transliterate(p.normalised or r["subject_name"]),
-                "is_subject": "no", "entry_uid": "", "cohort": "",
+                "is_subject": "no", "name_kind": name_kind(r["subject_name"]),
+                "entry_uid": "", "cohort": "",
                 "birth_year": "", "death_year": "", "role_descriptor_ar": "",
                 "rank": p.rank, "first_seen_entry": r["entry_uid"],
             }
         counts[sid] += 1
 
-        cid, kind = r["counterparty_id"], r["counterparty_kind"]
+        kind = r["counterparty_kind"]
+        if kind != "person":
+            canon, kind = canonical_org(r["counterparty_name"], kind)
+            if (canon, kind) != (r["counterparty_name"], r["counterparty_kind"]):
+                r = dict(r, counterparty_name=canon, counterparty_kind=kind,
+                         counterparty_id=org_id(canon, kind.upper()))
+        cid = r["counterparty_id"]
         if kind == "person":
             if cid not in persons:
                 p = parse_person(r["counterparty_name"])
                 persons[cid] = {
                     "person_id": cid, "name_ar": r["counterparty_name"],
                     "name_translit": transliterate(p.normalised or r["counterparty_name"]),
-                    "is_subject": "no", "entry_uid": "", "cohort": "",
+                    "is_subject": "no",
+                    "name_kind": name_kind(r["counterparty_name"]),
+                    "entry_uid": "", "cohort": "",
                     "birth_year": "", "death_year": "", "role_descriptor_ar": "",
                     "rank": p.rank, "first_seen_entry": r["entry_uid"],
                 }
@@ -160,6 +232,8 @@ def run() -> dict[str, int]:
         "subjects": sum(1 for p in persons.values() if p["is_subject"] == "yes"),
         "alters": sum(1 for p in persons.values() if p["is_subject"] == "no"),
         "organisations": len(orgs), "edges": len(edges),
+        "described_alters": sum(1 for p in persons.values()
+                                if p.get("name_kind") == "described"),
     }
     for layer, rows_ in sorted(by_layer.items()):
         stats[f"edges_{layer}"] = len(rows_)

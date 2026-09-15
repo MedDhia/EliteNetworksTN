@@ -133,6 +133,24 @@ jobs:
       - name: Rebuild the dataset
         run: make bourse-build
 
+      # The political-connection coding is committed output like any other
+      # table, and its rules live in a config file that is easy to edit
+      # without rebuilding. Re-running it here puts it under the same
+      # byte-for-byte diff check as the edge list, so a changed rule cannot
+      # reach main without the coded firm-years that follow from it.
+      - name: Recode political connections
+        run: make bourse-political
+
+      # Both analyses write committed markdown derived from the tables above,
+      # so they belong under the same diff check: a changed rule or a changed
+      # edge must not leave a stale conclusion in the repository. Both are
+      # deterministic - exact betweenness, seeded permutations - so they
+      # reproduce byte for byte. The centrality pass is the slow one at about
+      # 100s, which is the price of having its numbers verified rather than
+      # asserted.
+      - name: Re-run the analyses
+        run: make bourse-analysis bourse-centrality
+
       # Fails the build on any ERROR-level finding (referential integrity,
       # self-loops, ownership weights outside (0, 100]).
       - name: Validate
@@ -175,11 +193,21 @@ jobs:
       - name: Install dependencies
         run: pip install -e ".[dev]" -r requirements.txt
       - name: Tests
-        run: PYTHONPATH=src python -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py -q
+        run: PYTHONPATH=src python -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py tests/test_gold_aalam.py -q
       - name: Rebuild the dataset
         run: make aalam-segment aalam-extract aalam-model aalam-relations
       - name: Validate
         run: make aalam-validate
+      - name: The gold sample is still the one that was drawn
+        run: |
+          make aalam-gold-draw
+          if ! git diff --exit-code -- gold/aalam_sample_edges.csv gold/aalam_sample_passages.csv; then
+            echo "::error::Redrawing the gold sample produced a different sample."
+            echo "The draw is seeded so a reviewer can check it was not chosen"
+            echo "after seeing the results; if the corpus changed, redraw and"
+            echo "recode deliberately rather than letting it drift."
+            exit 1
+          fi
       - name: Committed tables match the rebuild
         run: |
           if ! git diff --exit-code -- data/processed/aalam-tunisiyun/; then
@@ -190,3 +218,48 @@ jobs:
       - name: Coverage summary
         if: always()
         run: head -n 25 docs/VALIDATION-aalam-tunisiyun.md >> "$GITHUB_STEP_SUMMARY"
+
+  # The rodovid build. Cheaper to check than any of the others: the two source
+  # sheets are committed as gzipped CSV, the three table stages use the standard
+  # library alone, and the whole chain runs in about fifteen seconds, so CI can
+  # rebuild from the real inputs rather than from fixtures. pytest is the only
+  # thing installed.
+  rodovid-dataset:
+    name: rodovid genealogies rebuild reproducibly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pytest
+        run: pip install pytest
+      - name: Tests
+        run: make rodovid-test
+      - name: Rebuild the dataset
+        run: make rodovid-build rodovid-families rodovid-dynamic
+
+      # The dating error is measured, not asserted, so it is recomputed here
+      # rather than trusted from the committed report. It writes into docs/,
+      # which nothing diffs, so a changed error table reaches main only with
+      # the change that caused it.
+      - name: Re-measure the dating error
+        run: make rodovid-validate
+
+      # Not a validation report but a standing check on what the network
+      # figures may be read to say: the 5-core is still 236 families and still
+      # the deepest core the network has, 955 families still married into the
+      # field exactly once, the beylical house is still the widest-married at
+      # 160 allies, and closure and modularity are still inside the ceilings
+      # that make "a web, not a set of blocs" the right description. Exits
+      # non-zero on any of them.
+      - name: Audit what the figures claim
+        run: make rodovid-audit
+
+      - name: Committed tables match the rebuild
+        run: |
+          if ! git diff --exit-code -- data/processed/rodovid/; then
+            echo "::error::Rebuilding produced different tables than those committed."
+            echo "Run 'make rodovid' and commit the result."
+            exit 1
+          fi

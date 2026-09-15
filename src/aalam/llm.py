@@ -27,10 +27,11 @@ import argparse
 import gzip
 import io
 import json
+from functools import lru_cache
 from pathlib import Path
 
 from .extract import ASSERTION_FIELDS
-from .paths import INTERIM, PROCESSED, ensure_dirs
+from .paths import INTERIM, PROCESSED, ensure_dirs, load_config
 from .textnorm_ar import fold
 
 RECORDS = PROCESSED / "records"
@@ -78,6 +79,60 @@ def quote_is_verbatim(quote: str, text: str) -> bool:
     return " ".join(fold(quote).split()) in " ".join(fold(text).split())
 
 
+@lru_cache(maxsize=1)
+def _classical() -> tuple[str, ...]:
+    """Folded names of the pre-modern authorities, for whole-name matching."""
+    from .textnorm_ar import fold
+    return tuple(fold(a) for a in
+                 load_config("aalam_authors_read")["authorities"])
+
+
+def is_classical(name: str) -> bool:
+    """Whole-name match, never a substring.
+
+    Substring matching reclassified خليل مطران, a contemporary who died in
+    1949, because a Maliki text named Khalil was on the list. The name has to
+    be the whole of the counterparty, allowing only a leading honorific.
+    """
+    from .textnorm_ar import fold
+    folded = fold(name)
+    if folded in _classical():
+        return True
+    # "الشيخ الغزالي" is the same man as "الغزالي".
+    parts = folded.split(" ", 1)
+    return len(parts) == 2 and parts[1] in _classical() and parts[0] in {
+        "الشيخ", "الامام", "العلامه", "الاستاذ",
+    }
+
+
+TUTELAGE_PERSON_RELATIONS = {"studied_under", "taught", "licensed_by"}
+
+
+def reclassify_anachronistic(rows: list[dict]) -> int:
+    """Turn "studied under Ibn Rushd" into "read the works of Ibn Rushd".
+
+    The book names what a man studied by naming its authors, in a list:
+    «الغزالي وابن رشد، قد استأثروا بعنايته», «والرصافي وخليل مطران وحافظ
+    إبراهيم». Read as teaching ties these put a man born in 1871 in the
+    classroom of a scholar dead in 1198, and a Tunisian judge in the classroom
+    of three poets he never met.
+
+    The verbatim-quote guard cannot catch any of it: the sentence is genuinely
+    there, and only the reading of it is wrong. The row is rewritten rather
+    than dropped -- that the man read al-Ghazali is worth keeping -- and
+    flagged, so the change is visible rather than silent.
+    """
+    n = 0
+    for r in rows:
+        if r.get("relation") not in TUTELAGE_PERSON_RELATIONS:
+            continue
+        if is_classical(r.get("counterparty_name", "")):
+            r["relation"] = "read_work_of"
+            r["needs_review"] = "yes"
+            n += 1
+    return n
+
+
 def verify(rows: list[dict], texts: dict[str, str]) -> tuple[list[dict], list[dict]]:
     """Split assertions into those the text supports and those it does not."""
     kept, rejected = [], []
@@ -103,6 +158,7 @@ def run(strict: bool = False) -> dict[str, int]:
         with open_text(MODEL_ASSERTIONS) as fh:
             rows = [json.loads(line) for line in fh if line.strip()]
 
+    reclassified = reclassify_anachronistic(rows)
     kept, rejected = verify(rows, texts)
     if rejected:
         out = INTERIM / "assertions_rejected.jsonl"
@@ -121,7 +177,8 @@ def run(strict: bool = False) -> dict[str, int]:
         for r in kept:
             fh.write(json.dumps({k: r.get(k, "") for k in ASSERTION_FIELDS},
                                 ensure_ascii=False) + "\n")
-    return {"submitted": len(rows), "verified": len(kept), "rejected": len(rejected)}
+    return {"submitted": len(rows), "verified": len(kept),
+            "rejected": len(rejected), "reclassified": reclassified}
 
 
 def main(argv=None) -> int:

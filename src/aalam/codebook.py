@@ -41,8 +41,42 @@ COLUMN_NOTES = {
                           "e.g. الجندي والمصلح ورجل الدولة. His characterisation, not a coding.",
     "is_subject": "`yes` for the 38 with an essay; `no` for someone named inside one. "
                   "Degrees are not comparable across this line.",
-    "name_translit": "Deterministic lossy ASCII, for joining by eye with the other builds. "
-                     "Not a scholarly transliteration.",
+    "name_kind": "`named` where the book gives a name; `described` where it places "
+                 "the person only by a relation (ابنة الأصرم, شقيق محمد باي). A "
+                 "described node is a real tie to an unidentified person, and two "
+                 "such nodes may or may not be the same person. Do not merge them, "
+                 "and exclude them before counting a population.",
+    "name_translit": "Deterministic lossy ASCII, the input to the identifier. Drops ayn "
+                     "and hamza, merges the emphatics, writes no vowels. NOT a "
+                     "transliteration and not readable as one: use `name_fr` or "
+                     "`name_ijmes`.",
+    "name_fr": "Tunisian French orthography (Mohamed Tahar Ben Achour, Bechir Sfar). "
+               "The form used in Tunisian archives and the one that joins this build "
+               "to the gazette build, whose persons and organisations are all French.",
+    "name_ijmes": "Middle East studies convention without diacritics (Muhammad al-Tahir "
+                  "Ibn Ashur, al-Bashir Safar).",
+    "gloss_tier": "`verified` where the Latin form was checked by hand: the 38 subjects, "
+                  "and the institutions and alters with three or more ties. `romanised` "
+                  "for the tail, where the consonants are gated but the vowels are a "
+                  "reading. `described` where the row is not a name.",
+    "gloss_mode": "`transliterated` renders the Arabic and is gated against it consonant "
+                  "by consonant. `conventional` marks a body whose own French name is not "
+                  "a rendering of its Arabic one (Collège Sadiki for المدرسة الصادقية). "
+                  "`translated` marks a common-noun post or a description, where no "
+                  "transliteration would mean anything -- do not read one as a proper "
+                  "name.",
+    "cohort_en": "The three cohorts in English. Zmerli's judgement, not an attribute of "
+                 "the people.",
+    "role_descriptor_en": "`role_descriptor_ar` in English. Five of the 38 are an OCR "
+                          "failure that captured a sentence instead of the subtitle; the "
+                          "English says what the fragment says rather than repairing it.",
+    "from_fr": "`from_name` in Tunisian French orthography.",
+    "from_ijmes": "`from_name` in the Middle East studies convention.",
+    "to_fr": "`to_name` in Tunisian French orthography.",
+    "to_ijmes": "`to_name` in the Middle East studies convention.",
+    "org_kind": "What the body is: school, mosque, newspaper, association, party, court, "
+                "office, work, or `org` where the volume does not say. `office` is a post "
+                "rather than a body people meet in, and `work` is a published title.",
     "person_id": "`PERSON_<SURNAME>_<GIVEN>`, from the identity key only. Titles are "
                  "stripped, so الجنرال خير الدين and خير الدين باشا are one person.",
     "rank": "A title carried in the name (pasha, bey, agha, general). Stripped from the "

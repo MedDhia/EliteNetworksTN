@@ -1,0 +1,86 @@
+# Authors whose works a subject read, listed because the book's grammar makes
+# reading look like tutelage.
+#
+# The volume names what a man studied by naming its authors, in a list:
+# «الأشعري وابن سينا والزمخشري والغزالي وابن رشد، قد استأثروا بعنايته»,
+# «والرصافي وخليل مطران وحافظ إبراهيم». Read as teaching ties these make
+# Ibn Rushd, dead in 1198, the teacher of a man born in 1871, and put a
+# Tunisian judge in the classroom of three poets he never met.
+#
+# Seven such ties reached the first model pass, and the verbatim-quote guard
+# cannot catch any of them: the sentence is genuinely there, and only the
+# reading of it is wrong. This is the error class that guard is blind to by
+# construction, which is why it gets a list and a check of its own.
+#
+# The pipeline rewrites a tutelage tie naming anyone here to `read_work_of`
+# and flags the row for review rather than discarding it. That the man read
+# al-Ghazali is worth keeping; that he sat with him is not.
+#
+# Matching is on the whole name, never a substring. A first version matched
+# substrings and caught خليل مطران because "خليل" was on the list as the
+# Maliki digest Mukhtasar Khalil. Bare given names are therefore kept off it:
+# a guard that silently reclassifies the wrong man is worse than the error it
+# was built to catch.
+
+authorities:
+  # Pre-modern: anachronistic by construction, since every subject in this
+  # volume lived between 1606 and 1973.
+  - ابن رشد
+  - ابن سينا
+  - الغزالي
+  - الزمخشري
+  - الأشعري
+  - البخاري
+  - ابن خلدون
+  - الشافعي
+  - أبو حنيفة
+  - ابن تيمية
+  - السيوطي
+  - الجاحظ
+  - المتنبي
+  - ابن الرومي
+  - ابن رومي
+  - سيبويه
+  - الفارابي
+  - ابن حزم
+  - الرازي
+  - ابن المقفع
+  - القسطلاني
+  - البيضاوي
+  - التفتزاني
+  - سعد الدين التفتزاني
+  - المحلي
+  - ابن عربي
+  - جلال الدين الرومي
+
+  # Classical poets. Drawing the tutelage layer surfaced these: the book names
+  # them among what a man read, and they entered the graph as his teachers.
+  # They were not on the first version of this list, which is the point
+  # LIMITATIONS s5 makes -- a named list catches the authors already seen and
+  # nothing else, and only a figure or a coded sample turns up the next batch.
+  - أبو تمام
+  - الفرزدق
+  - عمر الخيام
+  - الشريف الرضي
+  - أبو العلاء المعري
+  - سعدي الشيرازي
+  - امرؤ القيس
+  - البحتري
+  - أبو نواس
+  - جرير
+  - الخنساء
+  - حافظ الشيرازي
+
+  # Modern literary figures the book lists as read rather than attended. None
+  # is Tunisian and none taught in Tunis; they appear in the same enumerating
+  # construction as the names above, so they fail in the same way. Tunisian
+  # contemporaries are deliberately absent: محمود قابادو really did teach, and
+  # reclassifying him would destroy a tie the book states plainly.
+  - خليل مطران
+  - حافظ إبراهيم
+  - الرصافي
+  - معروف الرصافي
+  - أحمد شوقي
+  - المنفلوطي
+  - جبران خليل جبران
+  - طه حسين

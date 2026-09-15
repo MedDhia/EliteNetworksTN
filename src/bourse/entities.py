@@ -55,6 +55,24 @@ _LEGAL_SUFFIX = re.compile(
 _PUNCT = re.compile(r"[^\w\s]+", re.UNICODE)
 _WS = re.compile(r"\s+")
 
+# "Etat Tunisien (représenté par Monsieur Abdessatar BEN SAAD)" is the state,
+# not a separate holder. Board tables name the representative alongside the
+# institution; without stripping it the institution becomes a second node and
+# its stake is counted twice.
+_REPRESENTED_BY = re.compile(
+    r"\s*[\(\[][^)\]]*\b(represent\w*|agissant|pour\s+le\s+compte)\b[^)\]]*[\)\]]",
+    re.I,
+)
+
+# A dotted initialism and its undotted twin are one name: "Financière
+# Tunisienne S.A" and "Financière Tunisienne SA". Punctuation stripping alone
+# turns the first into the tokens "s" "a", which no legal-form rule removes.
+_DOTTED_INITIALISM = re.compile(r"\b((?:\w\.){1,4}\w)\b")
+
+# Footnote markers ride along on the last token: "Moncef CHAFFAR1", "CTAMA*".
+# Asterisks fall to _PUNCT; digits are word characters and survive.
+_FOOTNOTE_DIGITS = re.compile(r"(?<=[^\W\d_]{3})\d{1,2}\b")
+
 # Vehicle markers that must survive normalisation: they distinguish sibling
 # entities inside one group.
 _KEEP = {"sicar", "sicaf", "sicav", "holding", "bank", "banque", "leasing",
@@ -66,11 +84,189 @@ def strip_accents(s: str) -> str:
 
 
 def base_normalise(name: str) -> str:
-    s = strip_accents(name or "").lower()
+    s = strip_accents(name or "")
+    s = _REPRESENTED_BY.sub(" ", s).lower()
     s = s.replace("’", " ").replace("'", " ").replace("-", " ")
+    # Collapse dotted initialisms before punctuation is stripped, or "s.a"
+    # becomes two single letters instead of the legal form "sa".
+    s = _DOTTED_INITIALISM.sub(lambda m: m.group(1).replace(".", ""), s)
+    s = _FOOTNOTE_DIGITS.sub("", s)
     s = _HONORIFIC.sub(" ", s)
     s = _PUNCT.sub(" ", s)
     return _WS.sub(" ", s).strip()
+
+
+# Cells that are not entities at all. Table geometry occasionally hands the
+# name column an address line or a mandate period; left in, each becomes a node
+# with holdings or a board seat attached.
+_NOT_AN_ENTITY = (
+    re.compile(r"^\d{4}\s*[-–—/]\s*\d{2,4}$"),                  # "2024 – 2026"
+    re.compile(r"\b(etage|immeuble|appartement|bureau\s+n|boite\s+postale)\b"),
+    re.compile(r"^(rue|avenue|boulevard|impasse|route)\b"),
+    re.compile(r"^[\d\s]+$"),                                    # bare numbers
+    # The tail of a postal address: a four-digit Tunisian postcode and the
+    # town. Registered offices are printed under the company name, and the
+    # last line of one is all that survives a row break.
+    re.compile(r"^\d{4}\s+[a-z][a-z\s'-]{2,24}$"),
+)
+
+# A four-digit number leading a name is a postcode in "1053 Tunis" and a year
+# or a brand in "2024 Holding". Anything carrying one of these is read as a
+# company however it begins.
+_CORPORATE_WORD = re.compile(
+    r"\b(holding|group|groupe|sa|sarl|spa|sicav|sicaf|sicar|bank|banque|"
+    r"societe|ste|compagnie|assurance\w*|immobiliere|invest\w*|finance\w*|"
+    r"leasing|factoring|industrie\w*|international\w*)\b"
+)
+
+
+# An organ of a company, or the sentence describing one, is not a party to
+# anything. Governance chapters are written in prose around their tables, and
+# row recovery picks the prose up: "Le Conseil d'Administration", "Directeur
+# General", "3) Role de chaque organe d'administration". Left in, each becomes
+# a node holding board seats in real companies - 458 of the 3,222 corporate
+# seats, before this. The single-word forms are already caught at extraction;
+# these are the phrases, which are only recognisable from how they open.
+_ORGAN_PHRASE = re.compile(
+    r"^(?:(?:le|la|les|l|d|du|de|des|un|une|nos|notre|leur)\s+){0,2}"
+    r"(conseil|president|presidente|presidence|directeur|directrice|direction|"
+    r"administration|"
+    r"membre|membres|administrateur|administrateurs|comite|commission|"
+    r"organe|organes|role|assemblee|bureau\s+du|secretaire|gerance|"
+    r"representant|representants|representante|"
+    r"composition|nomination|revocation|mandat\s+d|directoire|censeur|"
+    r"lui\s*meme|elle\s*meme|eux\s*memes)\b"
+)
+# "3) Role de ...", "2. Composition du conseil" reach us as "3 role de ..."
+# once punctuation is normalised to spaces. The number is stripped before the
+# organ test rather than matched on its own: a leading digit is also how
+# "1 Holding SA" and "3M Tunisie" begin.
+_LEADING_ITEM_NUMBER = re.compile(r"^\d{1,2}\s+(?=[a-z])")
+
+# A status written where a name belongs: "en fonction", "en exercice".
+_STATUS_PHRASE = re.compile(r"^(en|hors)\s+(fonction|exercice|cours|activite)\b")
+
+# Footnote markers attached to a display spelling: "Saloua ARAB ***",
+# "La Societe HIKMA PARTICIPATIONS (*)".
+_MARKED = re.compile(r"[*]|\(\s*\*+\s*\)")
+
+
+# "Etat" is the State and also the opening of an accounting caption: "etat de
+# flux de tresorerie", "etat des engagements hors bilan", "etat de resultat".
+# Financial statements sit in the same filings as the ownership tables, so
+# without this guard the cash-flow statement is classified as the Tunisian
+# state and enters the network as a shareholder.
+_ETAT_ACCOUNTING = re.compile(
+    r"^\s*etats?\s+(de|des|du|d)\s+"
+    r"(flux|engagement|resultat|situation|rapprochement|variation|"
+    r"synthese|solde|compte|tresorerie|charge|produit)"
+)
+
+# A single token that is a French function word or a bare table word is a
+# fragment of a cell, never the name of anything.
+# The subject of a filing rather than a party to it: an offer, a bond, or the
+# relative clause that introduces the operation. Anchored at the start, so a
+# company whose name merely contains one of these words is untouched.
+_DOCUMENT_FRAGMENT = re.compile(
+    r"^d\s*(offre|admission)\b"
+    r"|^offre\s+(a\s+prix|au\s+public|publique)\b"
+    # "Emprunt" opens a loan, never a company. "Obligation" can open one -
+    # "Obligations Foncieres SA" is a plausible issuer - so it is dropped only
+    # when it stands alone or is followed by an instrument's qualifier.
+    r"|^emprunt\b"
+    r"|^obligations?$"
+    r"|^obligations?\s+(subordonnee?s?|convertibles?|remboursables?|ordinaires?)\b"
+    r"|^augmentation\s+du?\s+capital\b"
+    r"|^relati[fv]e?s?\b"
+    r"|^note\s+d\s*operation\b")
+
+_FRAGMENT_TOKEN = frozenset({
+    "du", "de", "des", "le", "la", "les", "ou", "et", "en", "au", "aux", "par",
+    "pour", "sur", "sous", "dans", "avec", "son", "ses", "leur", "cette", "ce",
+    "holding", "prets", "fonction", "immobiliere", "assistance", "societe",
+    "banque", "groupe", "capital", "finance", "invest", "sicar", "sicav",
+    # Words from the mandate and period columns, which a broken row leaves in
+    # the name column: "annees", "ans", "exercice", "mandat".
+    "annees", "annee", "ans", "exercice", "mandat", "mandats", "duree",
+    # Field labels from a contact block. Trimming a run-on cell can leave the
+    # label alone ("Fax 71.902.723" -> "Fax"), and a bare label is the worst
+    # kind of node: every filing has one, so they would all merge into it.
+    "fax", "tel", "telephone", "adresse", "email", "e mail", "site", "web",
+    # "Total" and "Autres" are deliberately absent: they are aggregate labels
+    # with their own handling, not fragments.
+    "rubrique", "nom", "prenom", "qualite",
+})
+
+
+def is_not_an_entity(name: str) -> bool:
+    """True for cells that name a place, a period or a company organ.
+
+    An organ phrase is rejected even when it carries a corporate word, because
+    "Le Conseil d'Administration de la Societe X" names the board of X, not a
+    company that could hold a seat or a stake.
+    """
+    # A Wingdings bullet reaches us as a private-use codepoint, and marks the
+    # cell as a line of the "faits marquants" prose that prospectuses set in
+    # bulleted lists next to their tables. It is a sentence, not a name, and it
+    # carries corporate words that would otherwise protect it below.
+    if _PRIVATE_USE.search(name or ""):
+        return True
+    n = base_normalise(name)
+    if not n:
+        return True
+    # A filing's own subject, caught by the issuer parser only when it sits in
+    # the title: the offer being made, the bond being issued, the clause the
+    # operation is "relative to". These carry corporate words - "EMPRUNT
+    # OBLIGATAIRE MEUBLATEX INDUSTRIES" names a real company - so the test has
+    # to run before the corporate-word escape below rescues them. The company
+    # itself is a separate node; this is the instrument.
+    if _DOCUMENT_FRAGMENT.match(n):
+        return True
+    if _ORGAN_PHRASE.match(n) or _ORGAN_PHRASE.match(_LEADING_ITEM_NUMBER.sub("", n)):
+        return True
+    if _STATUS_PHRASE.match(n):
+        return True
+    # "Etat de flux de tresorerie", "Etat des engagements hors bilan": the
+    # caption of a financial statement, not the State and not an actor.
+    if _ETAT_ACCOUNTING.match(n):
+        return True
+    if n in _FRAGMENT_TOKEN:
+        return True
+    if _CORPORATE_WORD.search(n):
+        return False
+    return any(p.search(n) for p in _NOT_AN_ENTITY)
+
+
+def has_representative(name: str) -> bool:
+    """True for "<institution> (représenté par <person>)".
+
+    Accents are stripped first: the pattern is written unaccented, and the
+    filings write "représenté".
+    """
+    return bool(_REPRESENTED_BY.search(strip_accents(name or "")))
+
+
+def demote_person_hint(name: str, hint: str | None) -> str | None:
+    """Drop a "person" hint from a cell that names a represented institution.
+
+    "Kuwait Investment Authority - KIA (représenté par M. Al Munaifi)" sits in
+    a board-holdings column, so the column hint says person. The subject is the
+    institution holding the seat, not the individual filling it, and the
+    parenthetical is the more specific evidence. Left alone, the institution
+    becomes a second node and its stake is counted twice.
+    """
+    if hint == "person" and has_representative(name):
+        return None
+    # A person needs at least two tokens. classify() already holds that line,
+    # but a column hint short-circuits it, and a board member column yields
+    # plenty of one-token fragments - "DES", "Les", "du", "Holding", "Tunis".
+    # Each became a person, and one of them turned up as a broker holding six
+    # boards together. A single token may still be a firm: corporate members
+    # are often acronyms, so the hint is dropped rather than replaced, and the
+    # name goes through the ordinary rules.
+    if hint == "person" and len(base_normalise(name).split()) < 2:
+        return None
+    return hint
 
 
 def _drop_redundant_acronym(toks: list[str]) -> list[str]:
@@ -91,6 +287,57 @@ def _drop_redundant_acronym(toks: list[str]) -> list[str]:
     if last == initials or initials.endswith(last):
         return toks[:-1]
     return toks
+
+
+_HAS_LOWER = re.compile(r"[a-zà-þ]")
+
+# A name column that was never split from the figure columns beside it, so the
+# cell reads "SIBTEL 46 200 100 4 620 000". A thousands group is required, so a
+# figure is never confused with a number that belongs to the name ("Usine 2").
+_RUN_ON_FIGURES = re.compile(r"\s\d{1,3}(?:[\s.]\d{3})+")
+# Guillemets introduce a company's short name: `Tunisie Leasing et Factoring
+# « TLF »`. When the closing mark falls outside the cell the acronym is left
+# dangling, and the dangling form is a different node from the plain one.
+_QUOTED_SHORT_NAME = re.compile(r"^\s*«\s*([^»]{2,})\s*»?")
+_DANGLING_SHORT_NAME = re.compile(r"\s*«.*$")
+# Group-structure tables number their rows, and the number travels into the
+# name: "1. STB BANK (societe Mere)", "2. STB INVEST". Left in, a firm listed
+# in one such table and named plainly elsewhere becomes two nodes. Both a
+# period (or bracket) and a following space are required, so a name that
+# genuinely opens with digits - "3M", "2 Mars Industries" - is untouched.
+_LIST_NUMBER_PREFIX = re.compile(r"^\s*\d{1,2}\s*[.)]\s+(?=\S)")
+# Wingdings bullets survive extraction as private-use codepoints. A cell that
+# carries one is a bullet of running prose, not a name.
+_PRIVATE_USE = re.compile(r"[-\U000f0000-\U000ffffd]")
+
+
+def trim_cell(name: str) -> str:
+    """Strip what a mis-split table cell carried in beside the name.
+
+    Applied at resolution rather than extraction so that records already read
+    out of 1,800 filings are cleaned without re-reading them. Only material
+    that is demonstrably not part of a name is removed; anything ambiguous is
+    left for the researcher overrides.
+    """
+    s = _LIST_NUMBER_PREFIX.sub("", (name or "").strip())
+    if not s:
+        return s
+    quoted = _QUOTED_SHORT_NAME.match(s)
+    # A cell that is *entirely* a quoted short name is that name.
+    s = quoted.group(1).strip() if quoted else _DANGLING_SHORT_NAME.sub("", s)
+    fig = _RUN_ON_FIGURES.search(s)
+    if fig and fig.start():
+        s = s[:fig.start()]
+    return s.strip(" .,;:-–—\t")
+
+
+def _ticker_key(name: str) -> str:
+    """The bare letters of a cell, so 'A T L' and 'ATL' are one ticker.
+
+    Deliberately not ``org_key``: no legal form is dropped, because a ticker is
+    short enough that dropping one can turn a different company's name into it.
+    """
+    return base_normalise(name).replace(" ", "")
 
 
 def org_key(name: str) -> str:
@@ -182,6 +429,7 @@ def classify(name: str, *, hint: str | None = None) -> str:
     ``hint`` allows the caller to pass through structural knowledge - e.g. a
     board table's "represented by" column always names a natural person.
     """
+    hint = demote_person_hint(name, hint)
     if hint in ENTITY_TYPES:
         return hint
     n = base_normalise(name)
@@ -189,7 +437,7 @@ def classify(name: str, *, hint: str | None = None) -> str:
         return "unknown"
     if _PUBLIC_LABEL.match(n) or _is_spaced_aggregate(n):
         return "aggregate"
-    if _RE_STATE.search(n):
+    if _RE_STATE.search(n) and not _ETAT_ACCOUNTING.match(n):
         return "state"
     if _RE_FUND.search(n):
         return "fund"
@@ -257,6 +505,27 @@ class Resolver:
         self._types: dict[str, str] = {}
         self._aliases: dict[str, set[str]] = defaultdict(set)
         self._evidence: dict[str, Counter] = defaultdict(Counter)
+        self._ticker: dict[str, str] = {}
+
+    def add_ticker_alias(self, ticker: str, name: str) -> None:
+        """Record a BVMT ticker as another spelling of the company's name.
+
+        The CMF titles a registration document by the issuer's ticker -
+        ``Document de référence " HL 2018 "`` - so the acronym and the company
+        name reach the resolver as two unrelated strings and become two nodes.
+        Nothing in either spelling says they are the same firm; the listing
+        roster is the outside authority that says so, and this is where it gets
+        consulted.
+
+        The match is on the letters actually printed in the cell, before legal
+        forms are dropped, because dropping them is what makes a ticker
+        dangerous: 'Ab-corporation' reduces to the same key as the ticker AB,
+        and is not Amen Bank. Requiring the whole cell to be the ticker, in
+        capitals, keeps the rewrite to cells that are unambiguously one.
+        """
+        t, n = _ticker_key(ticker), _ticker_key(name)
+        if t and n and t != n:
+            self._ticker[t] = name
 
     def add_evidence(self, raw: str, etype: str) -> None:
         """Record a type observed from table *structure* rather than spelling.
@@ -267,11 +536,13 @@ class Resolver:
         they appear in, which is what lets "Altea Packaging" be read as a firm in
         a shareholder table where the string alone looks like a personal name.
         """
+        etype = demote_person_hint(raw, etype)
         name = base_normalise(raw)
         if name and etype in ENTITY_TYPES:
             self._evidence[name][etype] += 1
 
     def _typed(self, name: str, hint: str | None) -> str:
+        hint = demote_person_hint(name, hint)
         if hint in ENTITY_TYPES:
             return hint
         ev = self._evidence.get(base_normalise(name))
@@ -289,6 +560,16 @@ class Resolver:
             return None, None
 
         ov = self.overrides.get(base_normalise(name))
+        # The override is looked up on the spelling the researcher wrote down,
+        # which is the spelling the filing used, so trimming comes after it.
+        if ov is None:
+            name = trim_cell(name)
+            if not name:
+                return None, None
+        # An override is a researcher's judgement and always wins, including
+        # over the not-an-entity test.
+        if ov is None and is_not_an_entity(name):
+            return None, None
         if ov and ov.get("entity_id"):
             eid = ov["entity_id"]
             etype = ov.get("entity_type") or self._typed(name, hint)
@@ -299,6 +580,14 @@ class Resolver:
             return eid, etype
 
         etype = (ov.get("entity_type") if ov else None) or self._typed(name, hint)
+        # A cell holding nothing but a listed company's ticker is that company.
+        # Resolve under the roster spelling, but keep the ticker in the alias
+        # table: which spelling a filing used is part of the provenance.
+        seen = name
+        if etype != "person" and not _HAS_LOWER.search(name):
+            expanded = self._ticker.get(_ticker_key(name))
+            if expanded:
+                name, etype = expanded, "firm"
         key = matching_key(name, etype)
         if not key:
             return None, None
@@ -308,7 +597,7 @@ class Resolver:
             self._by_key[(etype, key)] = eid
         self._types[eid] = etype
         self._display[eid][name] += 1
-        self._aliases[eid].add(name)
+        self._aliases[eid].add(seen)
         return eid, etype
 
     def canonical_name(self, eid: str) -> str:
@@ -325,7 +614,13 @@ class Resolver:
             for name, n in c.items():
                 merged[_HONORIFIC.sub("", name).strip(" .,;:-")] += n
             c = merged
-        best = max(c.items(), key=lambda kv: (kv[1], len(kv[0])))
+        # Footnote markers travel with a name through the matching key, which
+        # strips them, but not through the display vote: "Saloua ARAB ***"
+        # and "Saloua ARAB" are one entity, and the starred spelling should
+        # not be the one it is shown under. Marked spellings lose to unmarked
+        # ones of equal weight rather than being discarded, so an entity only
+        # ever seen marked still gets a name.
+        best = max(c.items(), key=lambda kv: (kv[1], not _MARKED.search(kv[0]), len(kv[0])))
         return best[0]
 
     def entity_rows(self) -> list[dict]:

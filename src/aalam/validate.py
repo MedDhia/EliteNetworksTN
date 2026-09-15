@@ -152,9 +152,16 @@ def check_persons(rep: Report) -> None:
         rep.add("ERROR", "person identifiers",
                 f"{len(unknown)} rows resolved to PERSON_UNKNOWN")
     subjects = sum(1 for r in rows if r["is_subject"] == "yes")
+    described = sum(1 for r in rows if r.get("name_kind") == "described")
     rep.add("INFO", "person register",
             f"{len(rows)} persons: {subjects} subjects with an entry of their own, "
             f"{len(rows) - subjects} alters named inside one")
+    if described:
+        rep.add("INFO", "unnamed alters",
+                f"{described} nodes are placed only by a relation "
+                "(ابنة الأصرم, شقيق محمد باي) rather than named. The tie is real "
+                "but the person is not identified; exclude them before counting "
+                "a population, and do not merge two of them on similarity")
 
 
 def check_edges(rep: Report) -> None:
@@ -209,6 +216,34 @@ def check_ocr(rep: Report) -> None:
                 f"pages were read by more than one engine build: {sorted(engines)}")
 
 
+def check_anachronistic_tutelage(rep: Report) -> None:
+    """No subject of this volume was taught by someone dead centuries before.
+
+    This is the one error class the verbatim-quote guard is blind to by
+    construction, so it gets a check of its own: the quote is real and only
+    its reading is wrong. Five such ties reached the first model pass, 12% of
+    the tutelage layer.
+    """
+    from .llm import TUTELAGE_PERSON_RELATIONS, is_classical
+    edges = _edges()
+    if not edges:
+        _skip(rep, "anachronistic tutelage", PROCESSED / "edges" / "all.csv")
+        return
+    bad = [e for e in edges
+           if e["relation"] in TUTELAGE_PERSON_RELATIONS
+           and is_classical(e["to_name"])]
+    if bad:
+        rep.add("ERROR", "anachronistic tutelage",
+                f"{len(bad)} tutelage ties name a pre-modern authority, "
+                f"e.g. {bad[0]['from_name']} -> {bad[0]['to_name']}")
+    else:
+        reclassified = [e for e in edges if e["relation"] == "read_work_of"]
+        rep.add("INFO", "anachronistic tutelage",
+                f"no tutelage tie names a pre-modern authority; "
+                f"{len(reclassified)} such claims were reclassified as "
+                "`read_work_of` and flagged for review")
+
+
 def check_negative_control(rep: Report) -> None:
     """Apparatus must yield nothing.
 
@@ -239,7 +274,8 @@ def run(fail_on_error: bool = False) -> int:
             f"{cfg['volume']['title_translit']} ({cfg['volume']['pub_year']}), "
             f"subjects born {cfg['window']['start_year']}-{cfg['window']['end_year']}")
     for check in (check_ocr, check_entries, check_persons, check_edges,
-                  check_quotes_are_verbatim, check_negative_control):
+                  check_quotes_are_verbatim, check_anachronistic_tutelage,
+                  check_negative_control):
         check(rep)
 
     DOCS.mkdir(parents=True, exist_ok=True)

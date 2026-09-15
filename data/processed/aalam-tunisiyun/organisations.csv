@@ -1,128 +1,359 @@
-org_id,name_ar,name_translit,org_kind,n_ties,first_seen_entry
-ASSOC_JMYH_AWQAF_HRMYN_SHRYFYN,جمعية أوقاف الحرمين الشريفين,JMY WQAF ALHRMYN ALSHRYFYN,association,1,aalam:2.10
-ASSOC_JMYH_KHYRYH_ASLAMYH,الجمعية الخيرية الإسلامية,ALJMY ALKHYRY ALSLAMY,association,2,aalam:3.03
-ASSOC_NADY_TWNSY,النادي التونسي,ALNADY ALTWNSY,association,1,aalam:3.03
-COURT_MHKMH_QARYH_MKHTLTH,المحكمة العقارية المختلطة,ALMHKM ALQARY ALMKHTLT,court,1,aalam:3.12
-MSQ_JAM_HLFAWYN,جامع الحلفاوين,JAM ALHLFAWYN,mosque,1,aalam:1.03
-MSQ_JAM_SAHB_TAB,جامع صاحب الطابع,JAM SAHB ALTAB,mosque,2,aalam:1.02
-MSQ_JAM_ZYTWNH,جامع الزيتونة,JAM ALZYTWN,mosque,5,aalam:1.03
-NEWS_DBYSH,الدبيش,ALDBYSH,newspaper,1,aalam:3.03
-NEWS_HADRH,الحاضرة,ALHADR,newspaper,1,aalam:3.03
-NEWS_JRYDH_ALAM,جريدة الإعلام,JRYD ALLAM,newspaper,1,aalam:1.08
-NEWS_JRYDH_HADRH,جريدة الحاضرة,JRYD ALHADR,newspaper,6,aalam:2.10
-NEWS_RAD_TWNSY,الرائد التونسي,ALRAD ALTWNSY,newspaper,2,aalam:1.07
-NEWS_TWNSY,التونسي,ALTWNSY,newspaper,1,aalam:3.03
-NEWS_ZHRH,الزهرة,ALZHR,newspaper,1,aalam:3.03
-OFFICE_ADARH_JHAT,إدارة الجهات,DAR ALJHAT,office,1,aalam:1.02
-OFFICE_AMAMH_WKHTABH_JAM_SBHAN_LH,إمامة وخطابة جامع سبحان الله,MAM WKHTAB JAM SBHAN ALLH,office,1,aalam:2.06
-OFFICE_AML_BNZRT,عامل بنزرت,AML BNZRT,office,1,aalam:2.10
-OFFICE_AML_QABS,عامل قابس,AML QABS,office,1,aalam:2.10
-OFFICE_AMYN_AM_LLJNH_TNFYDHYH_LLHZB,الأمين العام للجنة التنفيذية للحزب,ALMYN ALAM LLJN ALTNFYDHY LLHZB,office,1,aalam:3.03
-OFFICE_AMYR_AMRA,أمير أمراء,MYR MRA,office,2,aalam:1.06
-OFFICE_AMYR_AY,أمير آلاي,MYR LAY,office,1,aalam:1.07
-OFFICE_AMYR_LWA,أمير لواء,MYR LWA,office,1,aalam:1.06
-OFFICE_BASH_MFTY,باش مفتي,BASH MFTY,office,1,aalam:1.03
-OFFICE_BASH_MFTY_KAF,باش مفتي الكاف,BASH MFTY ALKAF,office,1,aalam:1.04
-OFFICE_DAY_TWNS,داي تونس,DAY TWNS,office,1,aalam:1.01
-OFFICE_KBYR_AHL_SHWRY,كبير أهل الشورى,KBYR HL ALSHWR,office,2,aalam:1.04
-OFFICE_KHTH_FTYA_MALKYH,خطة الفتيا المالكية,KHT ALFTYA ALMALKY,office,1,aalam:2.06
-OFFICE_KTABH,الكتابة,ALKTAB,office,1,aalam:1.06
-OFFICE_MDRS,مدرس,MDRS,office,1,aalam:3.12
-OFFICE_MDRS_MN_TBQH_AWLY,مدرس من الطبقة الأولى,MDRS MN ALTBQ ALWL,office,1,aalam:1.08
-OFFICE_MDRS_MN_TBQH_AWLY_BJAM_ZYTWNH,مدرس من الطبقة الأولى بجامع الزيتونة,MDRS MN ALTBQ ALWL BJAM ALZYTWN,office,1,aalam:1.05
-OFFICE_MDRS_MN_TBQH_THANYH,مدرس من الطبقة الثانية,MDRS MN ALTBQ ALTHANY,office,1,aalam:1.08
-OFFICE_MDYR_MTBH_RSMYH,مدير المطبعة الرسمية,MDYR ALMTB ALRSMY,office,1,aalam:2.10
-OFFICE_MDYR_TSHRYFAT,مدير التشريفات,MDYR ALTSHRYFAT,office,1,aalam:2.10
-OFFICE_MDYR_TSHRYFAT_SNYH_WALMTRJM_AWL_BALQSR_MLKY,مدير التشريفات السنية والمترجم الأول بالقصر الملكي,MDYR ALTSHRYFAT ALSNY WALMTRJM ALWL BALQSR ALMLKY,office,1,aalam:2.10
-OFFICE_MFTY_BALMJLS_SHRY,مفتي بالمجلس الشرعي,MFTY BALMJLS ALSHRY,office,1,aalam:1.05
-OFFICE_MLM_BALMSTYR,معلم بالمستير,MLM BALMSTYR,office,1,aalam:3.03
-OFFICE_MSHYKHH_ASLAM_MALKYH,مشيخة الإسلام المالكية,MSHYKH ALSLAM ALMALKY,office,1,aalam:2.06
-OFFICE_MSTSHAR_BAY,مستشار الباي,MSTSHAR ALBAY,office,1,aalam:1.02
-OFFICE_MSTSHAR_HKWMH,مستشار الحكومة,MSTSHAR ALHKWM,office,1,aalam:2.10
-OFFICE_MTRJM_BADARH_FLAHH,مترجم بإدارة الفلاحة,MTRJM BDAR ALFLAH,office,1,aalam:3.03
-OFFICE_NAB_RYS_MJLS_AKBR,نائب رئيس المجلس الأكبر,NAB RYS ALMJLS ALKBR,office,1,aalam:1.06
-OFFICE_QADY_BARDW,قاضي باردو,QADY BARDW,office,1,aalam:1.05
-OFFICE_QADY_JMAH,قاضي الجماعة,QADY ALJMA,office,1,aalam:1.04
-OFFICE_QAD_MALKY,قاض مالكي,QAD MALKY,office,1,aalam:3.12
-OFFICE_QAYD,قايد,QAYD,office,1,aalam:1.07
-OFFICE_QDA_SHRY_BALKAF,القضاء الشرعي بالكاف,ALQDA ALSHRY BALKAF,office,1,aalam:1.04
-OFFICE_QYADH_JYSH,قيادة الجيش,QYAD ALJYSH,office,1,aalam:1.02
-OFFICE_RASH_JMYH_AWQAF,رئاسة جمعية الأوقاف,RAS JMY ALWQAF,office,1,aalam:2.10
-OFFICE_RSH_HSYNY,العرش الحسيني,ALRSH ALHSYNY,office,2,aalam:1.02
-OFFICE_RYS_MJLS_AKBR,رئيس المجلس الأكبر,RYS ALMJLS ALKBR,office,1,aalam:1.09
-OFFICE_SAHB_TAB,صاحب الطابع,SAHB ALTAB,office,1,aalam:1.02
-OFFICE_SHAHD_DL,شاهد عدل,SHAHD DL,office,1,aalam:1.06
-OFFICE_SHYKH_JAM_AZM,شيخ الجامع الأعظم,SHYKH ALJAM ALZM,office,1,aalam:3.12
-OFFICE_WALY_SFAQS,والي صفاقس,WALY SFAQS,office,1,aalam:1.02
-OFFICE_WALY_SWSH,والي سوسة,WALY SWS,office,2,aalam:3.03
-OFFICE_WZARH_KBRY,الوزارة الكبرى,ALWZAR ALKBR,office,1,aalam:2.10
-OFFICE_WZYR,وزير,WZYR,office,1,aalam:1.06
-OFFICE_WZYR_AKBR,الوزير الأكبر,ALWZYR ALKBR,office,8,aalam:1.02
-OFFICE_WZYR_ASTSHARH,وزير الاستشارة,WZYR ALASTSHAR,office,1,aalam:1.07
-OFFICE_WZYR_BHRYH,وزير البحرية,WZYR ALBHRY,office,1,aalam:1.09
-OFFICE_WZYR_HRB,وزير الحرب,WZYR ALHRB,office,1,aalam:1.08
-OFFICE_WZYR_MARF_WALNAFH,وزير المعارف والنافعة,WZYR ALMARF WALNAF,office,1,aalam:1.07
-OFFICE_WZYR_MBASHR,وزير مباشر,WZYR MBASHR,office,1,aalam:2.06
-OFFICE_WZYR_WRYS_MJLS,الوزير ورئيس المجلس,ALWZYR WRYS ALMJLS,office,1,aalam:1.09
-ORG_ADARH_AWQAF,إدارة الأوقاف,DAR ALWQAF,org,1,aalam:1.08
-ORG_AJTMAAT_HZB_DSTWRY_JDYD_AWLY_BSWSH,اجتماعات الحزب الدستوري الجديد الأولى بسوسة,AJTMAAT ALHZB ALDSTWRY ALJDYD ALWL BSWS,org,1,aalam:3.03
-ORG_ALH_BYRM,عائلة بيرم,AL BYRM,org,1,aalam:2.06
-ORG_HKWMH_TWNSYH,الحكومة التونسية,ALHKWM ALTWNSY,org,4,aalam:1.07
-ORG_JMYH_WQTYH_LFD_NZAAT,الجمعية الوقتية لفض النزاعات,ALJMY ALWQTY LFD ALNZAAT,org,1,aalam:1.06
-ORG_KHLDWNYH,الخلدونية,ALKHLDWNY,org,1,aalam:2.10
-ORG_LJAN_MHDTHH_LDBT_ASLAHAT_ASASYH,اللجان المحدثة لضبط الاصلاحات الأساسية,ALLJAN ALMHDTH LDBT ALASLAHAT ALSASY,org,1,aalam:2.06
-ORG_LJNH_BRAMJ_MDRSH_SADQYH,لجنة برامج المدرسة الصادقية,LJN BRAMJ ALMDRS ALSADQY,org,1,aalam:1.08
-ORG_LJNH_MALYH_DWLYH,اللجنة المالية الدولية,ALLJN ALMALY ALDWLY,org,1,aalam:1.09
-ORG_MJLS_AKBR,المجلس الأكبر,ALMJLS ALKBR,org,1,aalam:1.07
-ORG_MJLS_BLDY_BALHADRH,المجلس البلدي بالحاضرة,ALMJLS ALBLDY BALHADR,org,1,aalam:1.07
-ORG_MJLS_MDRSY_JAM_AZM,مجلس مدرسي الجامع الأعظم,MJLS MDRSY ALJAM ALZM,org,1,aalam:3.12
-ORG_MJLS_SHRY,المجلس الشرعي,ALMJLS ALSHRY,org,2,aalam:1.03
-ORG_MJLS_SHWRY_MLK,مجلس شورى الملك,MJLS SHWR ALMLK,org,1,aalam:1.07
-ORG_MKTBH_JAM_ZYTWNH,مكتبة جامع الزيتونة,MKTB JAM ALZYTWN,org,1,aalam:1.08
-ORG_MSTSHFY_SADQY,المستشفى الصادقي,ALMSTSHF ALSADQY,org,1,aalam:1.08
-ORG_MSTSHFY_ZAFYN,مستشفى العزافين,MSTSHF ALZAFYN,org,1,aalam:1.01
-ORG_MTBH_RSMYH,المطبعة الرسمية,ALMTB ALRSMY,org,2,aalam:1.07
-ORG_MTMR_SHMAL_AFRYQY_BBARYS,مؤتمر الشمال الإفريقي بباريس,MTMR ALSHMAL ALFRYQY BBARYS,org,1,aalam:2.10
-ORG_QSM_MHASBH,قسم المحاسبة,QSM ALMHASB,org,1,aalam:2.10
-ORG_QSR_BARDW,قصر باردو,QSR BARDW,org,1,aalam:1.02
-ORG_TRYQH_MDNYH,الطريقة المدنية,ALTRYQ ALMDNY,org,1,aalam:1.05
-ORG_TRYQH_TYJANYH,الطريقة التيجانية,ALTRYQ ALTYJANY,org,1,aalam:1.03
-ORG_WFD_DSTWRY_AWL_ALY_BARYS,الوفد الدستوري الأول إلى باريس,ALWFD ALDSTWRY ALWL L BARYS,org,2,aalam:3.03
-ORG_WFD_DSTWRY_THANY_ALY_BARYS,الوفد الدستوري الثاني إلى باريس,ALWFD ALDSTWRY ALTHANY L BARYS,org,4,aalam:3.03
-ORG_ZAWYH_SYDY_AHMD_BN_RWS,زاوية سيدي أحمد بن عروس,ZAWY SYDY HMD BN RWS,org,1,aalam:1.01
-PARTY_HZB_HR_DSTWRY_JDYD,الحزب الحر الدستوري الجديد,ALHZB ALHR ALDSTWRY ALJDYD,party,1,aalam:3.03
-PARTY_JNAH_MTHRR_LLHZB_DSTWRY,الجناح المتحرر للحزب الدستوري,ALJNAH ALMTHRR LLHZB ALDSTWRY,party,2,aalam:3.03
-SCH_DAR_MLMYN,دار المعلمين,DAR ALMLMYN,school,1,aalam:3.03
-SCH_JAMH_AZHR,جامعة الأزهر,JAM ALZHR,school,1,aalam:1.03
-SCH_JAMH_ZYTWNYH,الجامعة الزيتونية,ALJAM ALZYTWNY,school,1,aalam:3.12
-SCH_KLYH_HQWQ_BBARYS,كلية الحقوق بباريس,KLY ALHQWQ BBARYS,school,1,aalam:3.03
-SCH_MDRSH_BYR_AHJAR,مدرسة بير الأحجار,MDRS BYR ALHJAR,school,1,aalam:1.03
-SCH_MDRSH_DBAT,مدرسة الضباط,MDRS ALDBAT,school,1,aalam:1.09
-SCH_MDRSH_HRBYH_BBARDW,المدرسة الحربية بباردو,ALMDRS ALHRBY BBARDW,school,5,aalam:1.05
-SCH_MDRSH_HWANYT_ASHWR,مدرسة حوانيت عاشور,MDRS HWANYT ASHWR,school,1,aalam:1.03
-SCH_MDRSH_LYA_LLGHH_WALADAB_RBYH,المدرسة العليا للغة والآداب العربية,ALMDRS ALLYA LLGH WALDAB ALRBY,school,1,aalam:2.10
-SCH_MDRSH_SADQYH,المدرسة الصادقية,ALMDRS ALSADQY,school,4,aalam:1.09
-SCH_MDRSH_SGHAR_MMALYK,مدرسة صغار المماليك,MDRS SGHAR ALMMALYK,school,2,aalam:1.07
-SCH_MDRSH_SLYMANYH,المدرسة السليمانية,ALMDRS ALSLYMANY,school,1,aalam:1.04
-SCH_MDRSH_YWSF_SAHB_TAB,مدرسة يوسف صاحب الطابع,MDRS YWSF SAHB ALTAB,school,1,aalam:1.04
-SCH_MHD_KARNW,معهد كارنو,MHD KARNW,school,1,aalam:3.03
-SCH_MHD_SADQY,المعهد الصادقي,ALMHD ALSADQY,school,2,aalam:3.03
-SCH_MHD_SAN_LWYS_BBARYS,معهد سان لويس بباريس,MHD SAN LWYS BBARYS,school,1,aalam:2.02
-WORK_AQWM_MSALK,أقوم المسالك,QWM ALMSALK,work,1,aalam:1.09
-WORK_AQWM_MSALK_FY_MRFH_AHWAL_MMALK,أقوم المسالك في معرفة أحوال الممالك,QWM ALMSALK FY MRF HWAL ALMMALK,work,1,aalam:2.06
-WORK_ATHAF_AHL_ZMAN,إتحاف أهل الزمان,THAF HL ALZMAN,work,2,aalam:1.01
-WORK_DYWAN_QABADW,ديوان قابادو,DYWAN QABADW,work,1,aalam:1.05
-WORK_DYWAN_SHR,ديوان شعر,DYWAN SHR,work,1,aalam:2.06
-WORK_FHRS_LMY_LMKTBH_JAM_ZYTWNH_AZM,الفهرس العلمي لمكتبة جامع الزيتونة الأعظم,ALFHRS ALLMY LMKTB JAM ALZYTWN ALZM,work,1,aalam:2.10
-WORK_MALM_TWHYD,معالم التوحيد,MALM ALTWHYD,work,1,aalam:2.10
-WORK_MKHTARAT_MN_KHTB_JMYH,مختارات من الخطب الجمعية,MKHTARAT MN ALKHTB ALJMY,work,1,aalam:2.06
-WORK_MNS_FY_AKHBAR_AFRYQYA_WTWNS,المؤنس في أخبار إفريقيا وتونس,ALMNS FY KHBAR FRYQYA WTWNS,work,1,aalam:1.01
-WORK_RHLH_FLYARYH,الرحلة الفليارية,ALRHL ALFLYARY,work,1,aalam:2.10
-WORK_RHLH_NASRYH,الرحلة الناصرية,ALRHL ALNASRY,work,1,aalam:2.10
-WORK_RZNAMH_TWNSYH,الرزنامة التونسية,ALRZNAM ALTWNSY,work,1,aalam:2.10
-WORK_SFWH_ATBAR_BMSTWD_AMSAR_WALAQTAR,صفوة الاعتبار بمستودع الأمصار والأقطار,SFW ALATBAR BMSTWD ALMSAR WALQTAR,work,1,aalam:1.08
-WORK_SHHYRAT_TWNSYAT,شهيرات التونسيات,SHHYRAT ALTWNSYAT,work,1,aalam:1.01
-WORK_TARYKH_BASHY,التاريخ الباشي,ALTARYKH ALBASHY,work,1,aalam:1.02
-WORK_TARYKH_MALM_TWHYD,تاريخ معالم التوحيد,TARYKH MALM ALTWHYD,work,1,aalam:1.02
-WORK_TRJMH_ABN_ABY_DYAF,ترجمة ابن أبي الضياف,TRJM ABN BY ALDYAF,work,1,aalam:1.06
-WORK_WFWD_DSTWRYH,الوفود الدستورية 1920-1919,ALWFWD ALDSTWRY,work,1,aalam:3.03
+org_id,name_ar,name_fr,name_ijmes,gloss_tier,gloss_mode,name_translit,org_kind,n_ties,first_seen_entry
+ASSOC_JMYH_ADAB,جمعية الآداب,Djemiat El Adab,Jamiyyat al-Adab,romanised,transliterated,JMY ALDAB,association,1,aalam:3.02
+ASSOC_JMYH_ADAB_MSRHYH,جمعية الآداب المسرحية,Djemiat El Adab El Masrahia,Jamiyyat al-Adab al-Masrahiyya,romanised,transliterated,JMY ALDAB ALMSRHY,association,1,aalam:3.07
+ASSOC_JMYH_ADAB_TMTHYLYH,جمعية الآداب التمثيلية,Djemiat El Adab Ettamthilia,Jamiyyat al-Adab al-Tamthiliyya,romanised,transliterated,JMY ALDAB ALTMTHYLY,association,1,aalam:2.11
+ASSOC_JMYH_AWQAF_HRMYN_SHRYFYN,جمعية أوقاف الحرمين الشريفين,Djemiat Aouqaf El Haramain Ech-Charifain,Jamiyyat Awqaf al-Haramayn al-Sharifayn,romanised,transliterated,JMY WQAF ALHRMYN ALSHRYFYN,association,1,aalam:2.10
+ASSOC_JMYH_KHLDWNYH,الجمعية الخلدونية,La Khaldounia,al-Khalduniyya,verified,transliterated,ALJMY ALKHLDWNY,association,24,aalam:2.03
+ASSOC_JMYH_KHYRYH_ASLAMYH,الجمعية الخيرية الإسلامية,El Jamiya El Khairia El Islamia,al-Jamiyya al-Khayriyya al-Islamiyya,verified,transliterated,ALJMY ALKHYRY ALSLAMY,association,5,aalam:2.14
+ASSOC_JMYH_NHDH_AQTSADYH,جمعية النهضة الاقتصادية,Djemiat Ennahdha El Iqtisadia,Jamiyyat al-Nahda al-Iqtisadiyya,romanised,transliterated,JMY ALNHD ALAQTSADY,association,1,aalam:3.07
+ASSOC_JMYH_QDMA_SADQYH,جمعية قدماء الصادقية,Association des Anciens de Sadiki,Jamiyyat Qudama al-Sadiqiyya,verified,conventional,JMY QDMA ALSADQY,association,5,aalam:2.04
+ASSOC_JMYH_TMTHYLYH_ADAB,الجمعية التمثيلية الآداب,El Jamiya Et-Tamthiliya lil-Adab,al-Jamiyya al-Tamthiliyya lil-Adab,verified,transliterated,ALJMY ALTMTHYLY ALDAB,association,3,aalam:3.06
+ASSOC_NADY_MSTFY_AGHH,نادي مصطفى آغة,Nadi Mustapha Agha,Nadi Mustafa Agha,romanised,transliterated,NADY MSTF GH,association,1,aalam:3.04
+ASSOC_NADY_QDMA_SADQYH,نادي قدماء الصادقية,Club des anciens élèves du Collège Sadiki,Nadi Qudama al-Sadiqiyya,romanised,conventional,NADY QDMA ALSADQY,association,1,aalam:3.04
+ASSOC_NADY_TWNSY,النادي التونسي,En-Nadi Et-Tounsi,al-Nadi al-Tunsi,verified,transliterated,ALNADY ALTWNSY,association,8,aalam:2.08
+COURT_MHKMH_ASTNAF_BTWNS,محكمة الاستئناف بتونس,Cour d'appel de Tunis,Mahkamat al-Istinaf bi-Tunis,romanised,conventional,MHKM ALASTNAF BTWNS,court,1,aalam:2.15
+COURT_MHKMH_HRBYH,المحكمة الحربية,Tribunal de guerre,al-Mahkama al-Harbiyya,romanised,conventional,ALMHKM ALHRBY,court,1,aalam:2.09
+COURT_MHKMH_JNAYH,المحكمة الجنائية,Tribunal criminel,al-Mahkama al-Jinaiyya,romanised,conventional,ALMHKM ALJNAY,court,1,aalam:2.13
+COURT_MHKMH_QARYH_MKHTLTH,المحكمة العقارية المختلطة,Tribunal Mixte Immobilier,al-Mahkama al-Aqariyya al-Mukhtalata,romanised,conventional,ALMHKM ALQARY ALMKHTLT,court,2,aalam:3.08
+COURT_MHKMH_SKRYH,المحكمة العسكرية,Tribunal militaire,al-Mahkama al-Askariyya,romanised,conventional,ALMHKM ALSKRY,court,2,aalam:2.09
+MSQ_JAM_HLFAWYN,جامع الحلفاوين,Jamaa El Halfaouine,Jami al-Halfawin,romanised,transliterated,JAM ALHLFAWYN,mosque,1,aalam:1.03
+MSQ_JAM_SAHB_TAB,جامع صاحب الطابع,Jamaa Sahib Ettabaa,Jami Sahib al-Tabi,romanised,transliterated,JAM SAHB ALTAB,mosque,2,aalam:1.02
+MSQ_JAM_ZYTWNH,جامع الزيتونة,Jamaa Ez-Zitouna,Jami al-Zaytuna,verified,transliterated,JAM ALZYTWN,mosque,19,aalam:1.03
+NEWS_DBYSH,الدبيش,La Dépêche,al-Dabish,romanised,conventional,ALDBYSH,newspaper,1,aalam:3.03
+NEWS_FRNSA_ASLAMYH,فرنسا الإسلامية,France Islamique,Faransa al-Islamiyya,romanised,conventional,FRNSA ALSLAMY,newspaper,1,aalam:2.04
+NEWS_JRYDH_ALAM,جريدة الإعلام,El Ilam,Jaridat al-Ilam,romanised,transliterated,JRYD ALLAM,newspaper,1,aalam:1.08
+NEWS_JRYDH_AQDAM,جريدة الإقدام,El Ikdam,Jaridat al-Iqdam,romanised,transliterated,JRYD ALQDAM,newspaper,2,aalam:2.09
+NEWS_JRYDH_BRHAN,جريدة البرهان,El Borhan,Jaridat al-Burhan,romanised,transliterated,JRYD ALBRHAN,newspaper,2,aalam:3.02
+NEWS_JRYDH_HADRH,جريدة الحاضرة,El Hadhira,al-Hadira,verified,transliterated,JRYD ALHADR,newspaper,22,aalam:2.01
+NEWS_JRYDH_LSAN_HQ,جريدة لسان الحق,Lissan El Hak,Jaridat Lisan al-Haqq,romanised,transliterated,JRYD LSAN ALHQ,newspaper,1,aalam:3.02
+NEWS_JRYDH_MBSHR,جريدة المبشر,El Moubachir,Jaridat al-Mubashshir,romanised,transliterated,JRYD ALMBSHR,newspaper,1,aalam:3.02
+NEWS_JRYDH_MNTZR,جريدة المنتظر,El Mountazar,Jaridat al-Muntazar,romanised,transliterated,JRYD ALMNTZR,newspaper,1,aalam:3.02
+NEWS_JRYDH_NHDH,جريدة النهضة,En-Nahdha,al-Nahda,verified,transliterated,JRYD ALNHD,newspaper,3,aalam:3.02
+NEWS_JRYDH_NTAJ_AKHBAR,جريدة نتائج الأخبار,Nataïj El Akhbar,Jaridat Nataij al-Akhbar,romanised,transliterated,JRYD NTAJ ALKHBAR,newspaper,2,aalam:3.02
+NEWS_JRYDH_SHAHRAH,جريدة شاهراه,Chahrah,Jaridat Shahrah,romanised,transliterated,JRYD SHAHRAH,newspaper,2,aalam:2.05
+NEWS_JRYDH_SWT_TWNSY,جريدة صوت التونسي,La Voix du Tunisien,Jaridat Sawt al-Tunisi,romanised,conventional,JRYD SWT ALTWNSY,newspaper,2,aalam:3.09
+NEWS_JRYDH_TWNS,جريدة تونس,Tunis,Jaridat Tunis,romanised,transliterated,JRYD TWNS,newspaper,2,aalam:3.08
+NEWS_JRYDH_TWNSY,جريدة التونسي,Et-Tounsi,al-Tunsi,verified,transliterated,JRYD ALTWNSY,newspaper,14,aalam:2.04
+NEWS_JRYDH_TWNS_MSAYH,جريدة تونس المسائية,Tunis El Massaia,Jaridat Tunis al-Masaiyya,romanised,transliterated,JRYD TWNS ALMSAY,newspaper,1,aalam:2.15
+NEWS_MJLH_ALM_ADBY,مجلة العالم الأدبي,El Alem El Adabi,Majallat al-Alam al-Adabi,romanised,transliterated,MJL ALALM ALDBY,newspaper,1,aalam:3.08
+NEWS_ML_TWNSY,العمل التونسي,L'Action Tunisienne,al-Amal al-Tunisi,romanised,conventional,ALML ALTWNSY,newspaper,2,aalam:3.06
+NEWS_MNARH,المنارة,El Menara,al-Manara,romanised,transliterated,ALMNAR,newspaper,1,aalam:3.06
+NEWS_NSHRH_RBYH_LJRYDH_TWNSY,النشرة العربية لجريدة التونسي,En-Nachra El Arabia li Djaridet Ettounsi,al-Nashra al-Arabiyya li-Jaridat al-Tunisi,romanised,transliterated,ALNSHR ALRBY LJRYD ALTWNSY,newspaper,2,aalam:2.04
+NEWS_RAD_TWNSY,الرائد التونسي,Er-Raïd Ettounsi,al-Raid al-Tunisi,romanised,transliterated,ALRAD ALTWNSY,newspaper,2,aalam:1.07
+NEWS_RJAL_WWALM,رجال وعوالم,Ridjal oua Aoualem,Rijal wa Awalim,romanised,transliterated,RJAL WWALM,newspaper,1,aalam:3.06
+NEWS_SHF_HZB_HR_DSTWRY_TWNSY,صحف الحزب الحر الدستوري التونسي,Journaux du Parti libre constitutionnel tunisien,Newspapers of the Tunisian Liberal Constitutional Party,romanised,translated,SHF ALHZB ALHR ALDSTWRY ALTWNSY,newspaper,1,aalam:3.09
+NEWS_SWT_SHB,صوت الشعب,Saout Ech-Chaab,Sawt al-Shab,romanised,transliterated,SWT ALSHB,newspaper,1,aalam:3.06
+NEWS_SWT_TWNSY,صوت التونسي,La Voix du Tunisien,Sawt al-Tunisi,romanised,conventional,SWT ALTWNSY,newspaper,1,aalam:3.06
+NEWS_ZHRH,الزهرة,Ez-Zohra,al-Zahra,romanised,transliterated,ALZHR,newspaper,1,aalam:3.03
+OFFICE_ADARH_JHAT,إدارة الجهات,Administration des régions,Administration of the regions,romanised,translated,DAR ALJHAT,office,1,aalam:1.02
+OFFICE_ADARH_MTBH_RSMYH,إدارة المطبعة الرسمية,Direction de l'Imprimerie officielle,Directorship of the Official Printing Press,romanised,translated,DAR ALMTB ALRSMY,office,1,aalam:3.08
+OFFICE_AGHA_MDYNH_QYSRLY,آغا مدينة قيصرلي,Agha de la ville de Kayseri,Agha of the city of Kayseri,romanised,translated,GHA MDYN QYSRLY,office,1,aalam:2.14
+OFFICE_AMAMH_WKHTABH_JAM_SBHAN_LH,إمامة وخطابة جامع سبحان الله,Imamat et prédication à la mosquée Sobhan Allah,Imamate and preaching at the Subhan Allah mosque,romanised,translated,MAM WKHTAB JAM SBHAN ALLH,office,1,aalam:2.06
+OFFICE_AMAM_KHTYB_BJAM_QSR,إمام خطيب بجامع القصر,Imam prédicateur à la mosquée El Ksar,Imam and preacher at the Qasr mosque,romanised,translated,MAM KHTYB BJAM ALQSR,office,2,aalam:3.11
+OFFICE_AMARH,الإمارة,L'émirat,The emirate,romanised,translated,ALMAR,office,1,aalam:3.08
+OFFICE_AML_BNZRT,عامل بنزرت,caïd de Bizerte,governor of Bizerte,romanised,translated,AML BNZRT,office,1,aalam:2.10
+OFFICE_AML_QABS,عامل قابس,caïd de Gabès,governor of Gabes,romanised,translated,AML QABS,office,1,aalam:2.10
+OFFICE_AML_WSLATYH,عامل الوسلاتية,caïd de Ouslatia,governor of Wislatiyya,romanised,translated,AML ALWSLATY,office,1,aalam:3.05
+OFFICE_AMYN_AM_LLHZB_DSTWRY_JDYD,الأمين العام للحزب الدستوري الجديد,Secrétaire général du Parti libéral constitutionnel nouveau (Néo-Destour),Secretary-General of the New Constitutional Party (Neo-Destour),romanised,translated,ALMYN ALAM LLHZB ALDSTWRY ALJDYD,office,1,aalam:3.04
+OFFICE_AMYN_AM_LLJNH_TNFYDHYH_LLHZB,الأمين العام للجنة التنفيذية للحزب,Secrétaire général du comité exécutif du parti,Secretary-General of the party's executive committee,romanised,translated,ALMYN ALAM LLJN ALTNFYDHY LLHZB,office,1,aalam:3.03
+OFFICE_AMYN_MAL_JMYH_KHYRYH_ASLAMYH,أمين مال الجمعية الخيرية الإسلامية,Trésorier de l'Association islamique de bienfaisance,Treasurer of the Islamic Benevolent Association,romanised,translated,MYN MAL ALJMY ALKHYRY ALSLAMY,office,1,aalam:3.01
+OFFICE_AMYN_SR_KHYR_DYN,أمين سر خير الدين,Secrétaire particulier de Khéredine,Private secretary to Khayr al-Din,romanised,translated,MYN SR KHYR ALDYN,office,1,aalam:2.01
+OFFICE_AMYR_AMRA,أمير أمراء,Émir des émirs,Commander of commanders,romanised,translated,MYR MRA,office,2,aalam:1.06
+OFFICE_AMYR_AY,أمير آلاي,Colonel,Colonel,romanised,translated,MYR LAY,office,1,aalam:1.07
+OFFICE_AMYR_LWA,أمير لواء,Général de brigade,Brigadier general,romanised,translated,MYR LWA,office,1,aalam:1.06
+OFFICE_ASHRAF_LY_DRWS_TRJMH_WALANSHA,الإشراف على دروس الترجمة والإنشاء,Direction des cours de traduction et de rédaction,Supervision of the translation and composition classes,romanised,translated,ALSHRAF L DRWS ALTRJM WALNSHA,office,1,aalam:2.07
+OFFICE_BASH_MFTY,باش مفتي,Grand mufti,Chief mufti,romanised,translated,BASH MFTY,office,1,aalam:1.03
+OFFICE_BASH_MFTY_KAF,باش مفتي الكاف,Grand mufti du Kef,Chief mufti of al-Kaf,romanised,translated,BASH MFTY ALKAF,office,1,aalam:1.04
+OFFICE_DAY_TWNS,داي تونس,Dey de Tunis,Dey of Tunis,romanised,translated,DAY TWNS,office,1,aalam:1.01
+OFFICE_KATB_BTHH_LMYH,كاتب البعثة العلمية,secrétaire de la Mission scientifique,secretary of the scientific mission,romanised,translated,KATB ALBTH ALLMY,office,1,aalam:2.01
+OFFICE_KBYR_AHL_SHWRY,كبير أهل الشورى,chef des gens de la choura,head of the consultative council,romanised,translated,KBYR HL ALSHWR,office,2,aalam:1.04
+OFFICE_KHTH_FTYA_MALKYH,خطة الفتيا المالكية,Charge de la fatwa malékite,Office of the Maliki muftiship,romanised,translated,KHT ALFTYA ALMALKY,office,1,aalam:2.06
+OFFICE_KTABH,الكتابة,Le secrétariat,The secretaryship,romanised,translated,ALKTAB,office,1,aalam:1.06
+OFFICE_MDRS,مدرس,professeur,teacher,romanised,translated,MDRS,office,1,aalam:3.12
+OFFICE_MDRS_MN_TBQH_AWLY,مدرس من الطبقة الأولى,professeur de première classe,first-class teacher,romanised,translated,MDRS MN ALTBQ ALWL,office,1,aalam:1.08
+OFFICE_MDRS_MN_TBQH_AWLY_BJAM_ZYTWNH,مدرس من الطبقة الأولى بجامع الزيتونة,professeur de première classe à la mosquée Zitouna,first-class teacher at the Zaytuna Mosque,romanised,translated,MDRS MN ALTBQ ALWL BJAM ALZYTWN,office,1,aalam:1.05
+OFFICE_MDRS_MN_TBQH_THANYH,مدرس من الطبقة الثانية,professeur de deuxième classe,second-class teacher,romanised,translated,MDRS MN ALTBQ ALTHANY,office,1,aalam:1.08
+OFFICE_MDYR_ADARH_GHABH,مدير إدارة الغابة,directeur de l'administration des Forêts,director of the forestry administration,romanised,translated,MDYR DAR ALGHAB,office,2,aalam:2.07
+OFFICE_MDYR_FLAHH,مدير الفلاحة,directeur de l'Agriculture,director of agriculture,romanised,translated,MDYR ALFLAH,office,1,aalam:2.07
+OFFICE_MDYR_MTBH_RSMYH,مدير المطبعة الرسمية,directeur de l'Imprimerie officielle,director of the official press,romanised,translated,MDYR ALMTB ALRSMY,office,2,aalam:2.10
+OFFICE_MDYR_TSHRYFAT,مدير التشريفات,directeur du protocole,director of protocol,romanised,translated,MDYR ALTSHRYFAT,office,2,aalam:2.03
+OFFICE_MDYR_TSHRYFAT_SNYH,مدير التشريفات السنية,directeur du protocole beylical,director of the beylical protocol,romanised,translated,MDYR ALTSHRYFAT ALSNY,office,1,aalam:3.05
+OFFICE_MDYR_TSHRYFAT_SNYH_WALMTRJM_AWL_BALQSR_MLKY,مدير التشريفات السنية والمترجم الأول بالقصر الملكي,directeur du protocole beylical et premier interprète du palais royal,director of the beylical protocol and first interpreter at the royal palace,romanised,translated,MDYR ALTSHRYFAT ALSNY WALMTRJM ALWL BALQSR ALMLKY,office,1,aalam:2.10
+OFFICE_MFTSH_TLYM_ABTDAY_RBY,مفتش التعليم الابتدائي العربي,inspecteur de l'enseignement primaire arabe,inspector of Arabic primary education,romanised,translated,MFTSH ALTLYM ALABTDAY ALRBY,office,2,aalam:2.15
+OFFICE_MFTY_BALMJLS_SHRY,مفتي بالمجلس الشرعي,mufti au conseil charaïque,mufti of the sharia council,romanised,translated,MFTY BALMJLS ALSHRY,office,1,aalam:1.05
+OFFICE_MFTY_DYAR_MSRYH,مفتي الديار المصرية,mufti d'Égypte,Mufti of Egypt,romanised,translated,MFTY ALDYAR ALMSRY,office,2,aalam:2.03
+OFFICE_MHAM,محام,avocat,lawyer,romanised,translated,MHAM,office,1,aalam:2.08
+OFFICE_MHNH_MHAMAH_LDY_MHAKM_TWNSYH,مهنة المحاماة لدى المحاكم التونسية,profession d'avocat auprès des tribunaux tunisiens,practice of law before the Tunisian courts,romanised,translated,MHN ALMHAMA LD ALMHAKM ALTWNSY,office,1,aalam:3.02
+OFFICE_MLM_BALMDRSH,معلّم بالمدرسة,instituteur à l'école,teacher at the school,romanised,translated,MLM BALMDRS,office,1,aalam:2.07
+OFFICE_MLM_BALMSTYR,معلم بالمستير,instituteur à Monastir,teacher at Monastir,romanised,translated,MLM BALMSTYR,office,1,aalam:3.03
+OFFICE_MLM_BDAHYH_MRSY,معلم بضاحية المرسى,instituteur dans la banlieue de La Marsa,teacher in the suburb of La Marsa,romanised,translated,MLM BDAHY ALMRS,office,1,aalam:3.11
+OFFICE_MNDWB_BMJLS_DWLH,مندوب بمجلس الدولة,délégué au Conseil d'État,delegate to the council of state,romanised,translated,MNDWB BMJLS ALDWL,office,1,aalam:2.05
+OFFICE_MNSB_FY_DYWAN_RYS_HKWMH_TWNSYH,منصب في ديوان رئيس الحكومة التونسية,poste au cabinet du chef du gouvernement tunisien,post in the office of the head of the Tunisian government,romanised,translated,MNSB FY DYWAN RYS ALHKWM ALTWNSY,office,1,aalam:3.04
+OFFICE_MNSB_FY_SLK_TDRYS,منصب في سلك التدريس,poste dans le corps enseignant,post in the teaching corps,romanised,translated,MNSB FY SLK ALTDRYS,office,1,aalam:3.01
+OFFICE_MNSH_BALQSM_AWL_TAB_LLWZARH_KBRY,منشئ بالقسم الأول التابع للوزارة الكبرى,rédacteur à la première section du Grand Vizirat,drafter in the first section attached to the Grand Vizierate,romanised,translated,MNSH BALQSM ALWL ALTAB LLWZAR ALKBR,office,1,aalam:2.01
+OFFICE_MQYM_AM,المقيم العام,Le Résident général,The Resident General,romanised,translated,ALMQYM ALAM,office,1,aalam:3.05
+OFFICE_MQYM_AM_BTWNS,المقيم العام بتونس,Le Résident général à Tunis,The Resident General in Tunis,romanised,translated,ALMQYM ALAM BTWNS,office,1,aalam:2.09
+OFFICE_MQYM_AM_FRNSY_BTWNS,المقيم العام الفرنسي بتونس,Le Résident général de France à Tunis,The French Resident General in Tunis,romanised,translated,ALMQYM ALAM ALFRNSY BTWNS,office,1,aalam:2.07
+OFFICE_MQYM_AM_LFRNSA_BTWNS,مقيم عام لفرنسا بتونس,Résident général de France à Tunis,French resident general in Tunis,romanised,translated,MQYM AM LFRNSA BTWNS,office,2,aalam:3.11
+OFFICE_MSHYKHH_ASLAM_MALKYH,مشيخة الإسلام المالكية,cheikhat de l'Islam malékite,office of the Maliki Shaykh al-Islam,romanised,translated,MSHYKH ALSLAM ALMALKY,office,1,aalam:2.06
+OFFICE_MSTSHAR_BAY,مستشار الباي,conseiller du Bey,adviser to the Bey,romanised,translated,MSTSHAR ALBAY,office,1,aalam:1.02
+OFFICE_MSTSHAR_HKWMH,مستشار الحكومة,conseiller du gouvernement,government adviser,romanised,translated,MSTSHAR ALHKWM,office,1,aalam:2.10
+OFFICE_MTMD_SKRY_LDY_FYLQ_TWNSY,معتمد عسكري لدى الفيلق التونسي,commissaire militaire auprès du corps d'armée tunisien,military agent attached to the Tunisian corps,romanised,translated,MTMD SKRY LD ALFYLQ ALTWNSY,office,1,aalam:3.05
+OFFICE_MTRJM_BADARH_FLAHH,مترجم بإدارة الفلاحة,interprète à la Direction de l'Agriculture,interpreter at the agriculture administration,romanised,translated,MTRJM BDAR ALFLAH,office,1,aalam:3.03
+OFFICE_MTRJM_DLY,مترجم عدلي,interprète judiciaire,judicial interpreter,romanised,translated,MTRJM DLY,office,2,aalam:3.04
+OFFICE_MTRJM_DLY_LDY_MHKMH_MKHTLTH_BTWNS,مترجم عدلي لدى المحكمة المختلطة بتونس,interprète judiciaire auprès du Tribunal mixte de Tunis,judicial interpreter at the mixed court in Tunis,romanised,translated,MTRJM DLY LD ALMHKM ALMKHTLT BTWNS,office,1,aalam:3.05
+OFFICE_MTRJM_LDY_MSALH_DLYH,مترجم لدى المصالح العدلية,interprète auprès des services judiciaires,interpreter with the judicial services,romanised,translated,MTRJM LD ALMSALH ALDLY,office,1,aalam:2.01
+OFFICE_MYD_HYH_MHAMYN,عميد هيئة المحامين,bâtonnier de l'ordre des avocats,president of the bar association,romanised,translated,MYD HY ALMHAMYN,office,1,aalam:3.06
+OFFICE_MYN_HDRH_SLTANYH,معين الحضرة السلطانية,adjoint de la Cour sultanienne,assistant at the sultanic court,romanised,translated,MYN ALHDR ALSLTANY,office,1,aalam:2.09
+OFFICE_NAB_RYS_JMYH_KHLDWNYH,نائب رئيس الجمعية الخلدونية,vice-président de la Khaldounia,vice-president of the Khalduniyya association,romanised,translated,NAB RYS ALJMY ALKHLDWNY,office,1,aalam:2.14
+OFFICE_NAB_RYS_MJLS_AKBR,نائب رئيس المجلس الأكبر,vice-président du Grand Conseil,vice-president of the Grand Council,romanised,translated,NAB RYS ALMJLS ALKBR,office,1,aalam:1.06
+OFFICE_QADY_ASMH_HNFY,قاضي العاصمة الحنفي,cadi hanéfite de la capitale,Hanafi judge of the capital,romanised,translated,QADY ALASM ALHNFY,office,1,aalam:3.01
+OFFICE_QADY_BARDW,قاضي باردو,cadi du Bardo,judge of the Bardo,romanised,translated,QADY BARDW,office,1,aalam:1.05
+OFFICE_QADY_HADRH_MALKY,قاضي الحاضرة المالكي,cadi malékite de la capitale,Maliki judge of the capital,romanised,translated,QADY ALHADR ALMALKY,office,1,aalam:3.10
+OFFICE_QADY_JMAH,قاضي الجماعة,juge de la communauté,judge of the community,romanised,translated,QADY ALJMA,office,1,aalam:1.04
+OFFICE_QAD_MALKY,قاض مالكي,juge malékite,Maliki judge,romanised,translated,QAD MALKY,office,1,aalam:3.12
+OFFICE_QAYD,قايد,caïd,district governor,romanised,translated,QAYD,office,1,aalam:1.07
+OFFICE_QDA_SHRY_BALKAF,القضاء الشرعي بالكاف,La justice charaïque au Kef,The sharia judiciary at al-Kaf,romanised,translated,ALQDA ALSHRY BALKAF,office,1,aalam:1.04
+OFFICE_QYADH_JYSH,قيادة الجيش,commandement de l'armée,army command,romanised,translated,QYAD ALJYSH,office,1,aalam:1.02
+OFFICE_QYADH_LWA,قيادة اللواء,commandement de la brigade,brigade command,romanised,translated,QYAD ALLWA,office,1,aalam:2.09
+OFFICE_RASH_HKWMH_FRNSYH,رئاسة الحكومة الفرنسية,Présidence du gouvernement français,Presidency of the French government,romanised,translated,RAS ALHKWM ALFRNSY,office,1,aalam:3.04
+OFFICE_RASH_JMYH_AWQAF,رئاسة جمعية الأوقاف,Présidence de l'Association des habous,Presidency of the Awqaf Association,romanised,translated,RAS JMY ALWQAF,office,1,aalam:2.10
+OFFICE_RASH_MDHHB_MALKY,رئاسة المذهب المالكي,Présidence du rite malékite,Headship of the Maliki school,romanised,translated,RAS ALMDHHB ALMALKY,office,1,aalam:3.10
+OFFICE_RASH_WZARH_TWNSYH,رئاسة الوزارة التونسية,Présidence du ministère tunisien,Presidency of the Tunisian ministry,romanised,translated,RAS ALWZAR ALTWNSY,office,1,aalam:3.04
+OFFICE_RSH_HSYNY,العرش الحسيني,Le trône husseinite,The Husaynid throne,romanised,translated,ALRSH ALHSYNY,office,2,aalam:1.02
+OFFICE_RSH_MMLKH_TWNSYH,عرش المملكة التونسية,Trône du Royaume de Tunisie,Throne of the Kingdom of Tunisia,verified,translated,RSH ALMMLK ALTWNSY,office,3,aalam:2.09
+OFFICE_RTBH_AMYR_AY,رتبة أمير آلاي,Grade de colonel,Rank of colonel,romanised,translated,RTB MYR LAY,office,1,aalam:2.09
+OFFICE_RTBH_AMYR_LWA,رتبة أمير لواء,Grade de général de brigade,Rank of brigadier general,romanised,translated,RTB MYR LWA,office,1,aalam:2.09
+OFFICE_RTBH_BNBASHY,رتبة بنباشي,Grade de commandant,Rank of major,romanised,translated,RTB BNBASHY,office,1,aalam:2.09
+OFFICE_RTBH_QAMQAM,رتبة قائمقام,Grade de lieutenant-colonel,Rank of lieutenant-colonel,romanised,translated,RTB QAMQAM,office,1,aalam:2.09
+OFFICE_RTBH_YWZBASHY,رتبة يوزباشي,Grade de capitaine,Rank of captain,romanised,translated,RTB YWZBASHY,office,1,aalam:2.09
+OFFICE_RYS_DARH_MHASBAT,رئيس دائرة المحاسبات,Président de la Cour des comptes,President of the Court of Accounts,romanised,translated,RYS DAR ALMHASBAT,office,1,aalam:3.01
+OFFICE_RYS_JMHWRYH_FRNSYH,رئيس الجمهورية الفرنسية,Président de la République française,President of the French Republic,romanised,translated,RYS ALJMHWRY ALFRNSY,office,1,aalam:2.09
+OFFICE_RYS_JMYH_AWQAF,رئيس جمعية الأوقاف,Président de l'Association des habous,President of the Awqaf Association,romanised,translated,RYS JMY ALWQAF,office,1,aalam:2.03
+OFFICE_RYS_MJLS_AKBR,رئيس المجلس الأكبر,Président du Grand Conseil,President of the Grand Council,romanised,translated,RYS ALMJLS ALKBR,office,1,aalam:1.09
+OFFICE_RYS_MJLS_RSH,رئيس مجلس العرش,Président du Conseil du Trône,President of the Throne Council,romanised,translated,RYS MJLS ALRSH,office,1,aalam:2.01
+OFFICE_RYS_QSM_ANSHA_BADARH_MALYH,رئيس قسم الإنشاء بإدارة المالية,Chef du service de la rédaction à l'administration des finances,Head of the drafting section in the finance administration,romanised,translated,RYS QSM ALNSHA BDAR ALMALY,office,1,aalam:3.01
+OFFICE_SAHB_TAB,صاحب الطابع,garde des Sceaux,keeper of the seal,romanised,translated,SAHB ALTAB,office,1,aalam:1.02
+OFFICE_SDR_AZM,الصدر الأعظم,Grand Vizir,Grand Vizier,romanised,translated,ALSDR ALZM,office,2,aalam:2.05
+OFFICE_SDR_AZM_LLDWLH_TRKYH,الصدر الأعظم للدولة التركية,Grand Vizir de l'État turc,Grand Vizier of the Turkish state,romanised,translated,ALSDR ALZM LLDWL ALTRKY,office,1,aalam:2.09
+OFFICE_SHAHD_DL,شاهد عدل,notaire,notary witness,romanised,translated,SHAHD DL,office,1,aalam:1.06
+OFFICE_SHYKH_ASLAM_HNFY,شيخ الإسلام الحنفي,Cheikh al-Islam hanéfite,Hanafi Shaykh al-Islam,romanised,translated,SHYKH ALSLAM ALHNFY,office,1,aalam:2.09
+OFFICE_SHYKH_JAM_AZM,شيخ الجامع الأعظم,cheikh de la Grande Mosquée,shaykh of the Great Mosque,romanised,translated,SHYKH ALJAM ALZM,office,1,aalam:3.12
+OFFICE_SHYKH_JAM_ZYTWNH,شيخ جامع الزيتونة,cheikh de la mosquée Zitouna,shaykh of the Zaytuna Mosque,romanised,translated,SHYKH JAM ALZYTWN,office,1,aalam:3.10
+OFFICE_SHYKH_MDYNH_TWNS,شيخ مدينة تونس,cheikh de la ville de Tunis,shaykh of the city of Tunis,romanised,translated,SHYKH MDYN TWNS,office,1,aalam:2.13
+OFFICE_SLK_TLYM,سلك التعليم,corps enseignant,teaching corps,romanised,translated,SLK ALTLYM,office,1,aalam:2.15
+OFFICE_TDRYS_TARYKH,تدريس التاريخ,Enseignement de l'histoire,Teaching of history,romanised,translated,TDRYS ALTARYKH,office,1,aalam:2.09
+OFFICE_TLYM,التعليم,L'enseignement,Teaching,romanised,translated,ALTLYM,office,1,aalam:2.07
+OFFICE_WALY_BSWSH,والي بسوسة,gouverneur à Sousse,governor at Sousse,romanised,translated,WALY BSWS,office,1,aalam:2.03
+OFFICE_WALY_SFAQS,والي صفاقس,gouverneur de Sfax,governor of Sfax,romanised,translated,WALY SFAQS,office,1,aalam:1.02
+OFFICE_WALY_SWSH,والي سوسة,Gouverneur de Sousse,Governor of Sousse,verified,translated,WALY SWS,office,3,aalam:2.13
+OFFICE_WKYL_MDRSH_SADQYH,وكيل المدرسة الصادقية,intendant du Collège Sadiki,administrator of the Sadiqi school,romanised,translated,WKYL ALMDRS ALSADQY,office,1,aalam:2.04
+OFFICE_WLAYH_FLSTYN,ولاية فلسطين,province de Palestine,province of Palestine,romanised,translated,WLAY FLSTYN,office,2,aalam:2.09
+OFFICE_WZARH_DL,وزارة العدل,Ministère de la Justice,Ministry of Justice,verified,translated,WZAR ALDL,office,6,aalam:2.09
+OFFICE_WZARH_KBRY,الوزارة الكبرى,Grand Vizirat,Grand Vizirate,verified,translated,ALWZAR ALKBR,office,5,aalam:2.03
+OFFICE_WZARH_SHH_WALSHWN_AJTMAYH,وزارة الصحة والشؤون الاجتماعية,ministère de la Santé et des Affaires sociales,Ministry of Health and Social Affairs,romanised,translated,WZAR ALSH WALSHWN ALAJTMAY,office,2,aalam:3.06
+OFFICE_WZARH_ZRAH_WALTJARH,وزارة الزراعة والتجارة,ministère de l'Agriculture et du Commerce,Ministry of Agriculture and Commerce,romanised,translated,WZAR ALZRA WALTJAR,office,2,aalam:2.09
+OFFICE_WZYFH_BALBLAT,وظيفة بالبلاط,fonction à la Cour,post at the court,romanised,translated,WZYF BALBLAT,office,1,aalam:2.09
+OFFICE_WZYR,وزير,ministre,minister,romanised,translated,WZYR,office,1,aalam:1.06
+OFFICE_WZYR_AKBR,الوزير الأكبر,Grand Vizir,Grand Vizier,verified,translated,ALWZYR ALKBR,office,12,aalam:1.02
+OFFICE_WZYR_ASTSHARH,وزير الاستشارة,ministre de la Consultation,minister of consultation,romanised,translated,WZYR ALASTSHAR,office,1,aalam:1.07
+OFFICE_WZYR_AWQAF,وزير الأوقاف,ministre des Habous,minister of religious endowments,romanised,translated,WZYR ALWQAF,office,1,aalam:2.13
+OFFICE_WZYR_BHRYH,وزير البحرية,ministre de la Marine,minister of the navy,romanised,translated,WZYR ALBHRY,office,1,aalam:1.09
+OFFICE_WZYR_DAKHLYH,وزير الداخلية,Ministre de l'Intérieur,Minister of the Interior,verified,translated,WZYR ALDAKHLY,office,4,aalam:2.13
+OFFICE_WZYR_DL_FY_HKWMH_TWNSYH,وزير العدل في الحكومة التونسية,ministre de la Justice du gouvernement tunisien,minister of justice in the Tunisian government,romanised,translated,WZYR ALDL FY ALHKWM ALTWNSY,office,1,aalam:2.05
+OFFICE_WZYR_HRB,وزير الحرب,ministre de la Guerre,minister of war,romanised,translated,WZYR ALHRB,office,1,aalam:1.08
+OFFICE_WZYR_MARF_WALNAFH,وزير المعارف والنافعة,ministre de l'Instruction publique et des Travaux publics,minister of education and public works,romanised,translated,WZYR ALMARF WALNAF,office,1,aalam:1.07
+OFFICE_WZYR_MBASHR,وزير مباشر,ministre en exercice,minister in office,romanised,translated,WZYR MBASHR,office,1,aalam:2.06
+OFFICE_WZYR_QLM_WALASTSHARH,وزير القلم والاستشارة,ministre de la Plume et de la Consultation,minister of the pen and consultation,romanised,translated,WZYR ALQLM WALASTSHAR,office,1,aalam:2.13
+OFFICE_WZYR_SHH_MWMYH,وزير الصحة العمومية,ministre de la Santé publique,minister of public health,romanised,translated,WZYR ALSH ALMWMY,office,1,aalam:3.11
+OFFICE_WZYR_TRBYH_QWMYH,وزير التربية القومية,Ministre de l'Éducation nationale,Minister of National Education,verified,translated,WZYR ALTRBY ALQWMY,office,3,aalam:3.10
+OFFICE_WZYR_WRYS_MJLS,الوزير ورئيس المجلس,Le ministre et président du Conseil,Minister and President of the Council,romanised,translated,ALWZYR WRYS ALMJLS,office,1,aalam:1.09
+ORG_ADARH,الإدارة,l'Administration,the administration,romanised,translated,ALDAR,org,1,aalam:2.04
+ORG_ADARH_AWQAF,إدارة الأوقاف,Direction des Habous,endowments administration,romanised,translated,DAR ALWQAF,org,1,aalam:1.08
+ORG_ADARH_FLAHH,إدارة الفلاحة,Direction de l'Agriculture,agriculture administration,romanised,translated,DAR ALFLAH,org,1,aalam:2.07
+ORG_ADHAH_TWNSYH,الإذاعة التونسية,Radiodiffusion tunisienne,al-Idhaa al-Tunisiyya,romanised,conventional,ALDHA ALTWNSY,org,1,aalam:2.11
+ORG_AJTMAAT_HZB_DSTWRY_JDYD_AWLY_BSWSH,اجتماعات الحزب الدستوري الجديد الأولى بسوسة,premières réunions du Néo-Destour à Sousse,the first meetings of the Neo-Destour Party at Sousse,romanised,translated,AJTMAAT ALHZB ALDSTWRY ALJDYD ALWL BSWS,org,1,aalam:3.03
+ORG_ALH_BYRM,عائلة بيرم,la famille Bayram,Ailat Bayram,romanised,conventional,AL BYRM,org,1,aalam:2.06
+ORG_ATHAD_TJARY,الاتحاد التجاري,El Ittihad Ettijari,al-Ittihad al-Tijari,romanised,transliterated,ALATHAD ALTJARY,org,1,aalam:2.13
+ORG_BAB_ALY,الباب العالي,la Sublime Porte,al-Bab al-Ali,romanised,conventional,ALBAB ALALY,org,1,aalam:2.01
+ORG_BLAT_SLTANY,البلاط السلطاني,la Cour sultanienne,the sultanic court,romanised,translated,ALBLAT ALSLTANY,org,1,aalam:2.05
+ORG_BTHH_LMYH,البعثة العلمية,Mission scientifique,al-Bitha al-Ilmiyya,romanised,conventional,ALBTH ALLMY,org,1,aalam:2.01
+ORG_DWLH_HSYNYH,الدولة الحسينية,l'État husseinite,the Husaynid state,romanised,translated,ALDWL ALHSYNY,org,1,aalam:3.11
+ORG_FH_AJTMAYH_MTKHLFH,فئة اجتماعية متخلفة,une catégorie sociale arriérée,a backward social group,romanised,translated,F AJTMAY MTKHLF,org,1,aalam:2.08
+ORG_FRW_ZYTWNYH,الفروع الزيتونية,les annexes zitouniennes,the Zaytuna branch schools,romanised,translated,ALFRW ALZYTWNY,org,1,aalam:3.10
+ORG_HKWMH_FRNSYH,الحكومة الفرنسية,le gouvernement français,the French government,romanised,translated,ALHKWM ALFRNSY,org,1,aalam:3.11
+ORG_HKWMH_THMANYH,الحكومة العثمانية,le gouvernement ottoman,the Ottoman government,romanised,translated,ALHKWM ALTHMANY,org,1,aalam:2.09
+ORG_HKWMH_THMANYH_JDYDH,الحكومة العثمانية الجديدة,le nouveau gouvernement ottoman,the new Ottoman government,romanised,translated,ALHKWM ALTHMANY ALJDYD,org,1,aalam:2.09
+ORG_HKWMH_TWNSYH,الحكومة التونسية,Gouvernement tunisien,Tunisian government,verified,translated,ALHKWM ALTWNSY,org,4,aalam:1.07
+ORG_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,Jeunes Tunisiens,Harakat al-Shabab al-Tunisi,verified,conventional,HRK ALSHBAB ALTWNSY,org,7,aalam:2.13
+ORG_HRKH_SHBAN_TWNSYYN,حركة الشبان التونسيين,les Jeunes Tunisiens,Harakat al-Shubban al-Tunisiyyin,romanised,conventional,HRK ALSHBAN ALTWNSYYN,org,2,aalam:2.04
+ORG_JMYH_WQTYH_LFD_NZAAT,الجمعية الوقتية لفض النزاعات,la Commission provisoire pour le règlement des litiges,al-Jamiyya al-Waqtiyya li-Fadd al-Nizaat,romanised,conventional,ALJMY ALWQTY LFD ALNZAAT,org,1,aalam:1.06
+ORG_JYSH_TRKY,الجيش التركي,l'armée turque,the Turkish army,romanised,translated,ALJYSH ALTRKY,org,1,aalam:3.05
+ORG_LJAN_MHDTHH_LDBT_ASLAHAT_ASASYH,اللجان المحدثة لضبط الاصلاحات الأساسية,les commissions créées pour régler les réformes fondamentales,the committees set up to regulate the basic reforms,romanised,translated,ALLJAN ALMHDTH LDBT ALASLAHAT ALSASY,org,1,aalam:2.06
+ORG_LJNH_ASLAH_TLYM_ZYTWNY,لجنة إصلاح التعليم الزيتوني,la Commission de réforme de l'enseignement zitounien,Lajnat Islah al-Talim al-Zaytuni,romanised,conventional,LJN SLAH ALTLYM ALZYTWNY,org,1,aalam:2.15
+ORG_LJNH_BRAMJ_MDRSH_SADQYH,لجنة برامج المدرسة الصادقية,la Commission des programmes du Collège Sadiki,Lajnat Baramij al-Madrasa al-Sadiqiyya,romanised,conventional,LJN BRAMJ ALMDRS ALSADQY,org,1,aalam:1.08
+ORG_LJNH_MALYH_DWLYH,اللجنة المالية الدولية,la Commission financière internationale,al-Lajna al-Maliyya al-Duwaliyya,romanised,conventional,ALLJN ALMALY ALDWLY,org,1,aalam:1.09
+ORG_LJNH_ML_LAGHATHH_TRABLSYYN,لجنة عمل لإغاثة الطرابلسيين,le Comité d'action pour le secours aux Tripolitains,Lajnat Amal li-Ighathat al-Tarabulsiyyin,romanised,conventional,LJN ML LGHATH ALTRABLSYYN,org,2,aalam:3.07
+ORG_LJNH_THQAFYH_QWMYH,اللجنة الثقافية القومية,le Comité culturel national,al-Lajna al-Thaqafiyya al-Qawmiyya,romanised,conventional,ALLJN ALTHQAFY ALQWMY,org,1,aalam:3.14
+ORG_MHAFL_LMYH_AFRYQYH_WALSHRQYH,المحافل العلمية الإفريقية والشرقية,les sociétés savantes africaines et orientales,the African and Oriental learned societies,romanised,translated,ALMHAFL ALLMY ALFRYQY WALSHRQY,org,1,aalam:3.10
+ORG_MHD_DRASAT_RBYH_BLNDN,معهد الدراسات العربية بلندن,l'Institut d'études arabes de Londres,Mahad al-Dirasat al-Arabiyya bi-Landan,romanised,conventional,MHD ALDRASAT ALRBY BLNDN,org,1,aalam:3.13
+ORG_MHD_RSHYDY,المعهد الرشيدي,la Rachidia,al-Mahad al-Rashidi,romanised,transliterated,ALMHD ALRSHYDY,org,2,aalam:2.14
+ORG_MJLS_AKBR,المجلس الأكبر,le Grand Conseil,al-Majlis al-Akbar,romanised,conventional,ALMJLS ALKBR,org,1,aalam:1.07
+ORG_MJLS_ALY_LLBLAD_TWNSYH,المجلس الأعلى للبلاد التونسية,le Conseil supérieur du pays tunisien,al-Majlis al-Ala lil-Bilad al-Tunisiyya,romanised,conventional,ALMJLS ALL LLBLAD ALTWNSY,org,1,aalam:2.15
+ORG_MJLS_ALY_LLTLYM_MWMY,المجلس الأعلى للتعليم العمومي,le Conseil supérieur de l'enseignement public,al-Majlis al-Ala lil-Talim al-Umumi,romanised,conventional,ALMJLS ALL LLTLYM ALMWMY,org,1,aalam:2.15
+ORG_MJLS_BLDY_BALHADRH,المجلس البلدي بالحاضرة,le Conseil municipal de la capitale,al-Majlis al-Baladi bi-al-Hadira,romanised,conventional,ALMJLS ALBLDY BALHADR,org,1,aalam:1.07
+ORG_MJLS_BLDY_BTWNS,المجلس البلدي بتونس,le Conseil municipal de Tunis,al-Majlis al-Baladi bi-Tunis,romanised,conventional,ALMJLS ALBLDY BTWNS,org,1,aalam:2.13
+ORG_MJLS_DWLH,مجلس الدولة,le Conseil d'État,Majlis al-Dawla,romanised,conventional,MJLS ALDWL,org,1,aalam:2.04
+ORG_MJLS_KBYR,المجلس الكبير,Grand Conseil,Grand Council,verified,translated,ALMJLS ALKBYR,org,3,aalam:2.15
+ORG_MJLS_MBWTHAN,مجلس المبعوثان,le Medjless El Mabouthane,Majlis al-Mabuthan,romanised,transliterated,MJLS ALMBWTHAN,org,1,aalam:2.09
+ORG_MJLS_MDRSY_JAM_AZM,مجلس مدرسي الجامع الأعظم,le Conseil des professeurs de la Grande Mosquée,Majlis Mudarrisi al-Jami al-Azam,romanised,conventional,MJLS MDRSY ALJAM ALZM,org,1,aalam:3.12
+ORG_MJLS_SHRY,المجلس الشرعي,le Conseil charaïque,al-Majlis al-Shari,romanised,conventional,ALMJLS ALSHRY,org,2,aalam:1.03
+ORG_MJLS_SHWRY,المجلس الشوري,le Conseil consultatif,al-Majlis al-Shuri,romanised,conventional,ALMJLS ALSHWRY,org,1,aalam:2.13
+ORG_MJLS_SHWRY_MLK,مجلس شورى الملك,le Majliss Choura El Malik,Majlis Shura al-Malik,romanised,transliterated,MJLS SHWR ALMLK,org,1,aalam:1.07
+ORG_MJLS_THLATHA_BQSR_KRM,مجلس الثلاثاء بقصر الكرم,le Majliss Ethoulatha bi Ksar El Karam,Majlis al-Thulatha bi-Qasr al-Karam,romanised,transliterated,MJLS ALTHLATHA BQSR ALKRM,org,1,aalam:2.11
+ORG_MKTBH_JAM_ZYTWNH,مكتبة جامع الزيتونة,la bibliothèque de la mosquée Zitouna,Maktabat Jami al-Zaytuna,romanised,conventional,MKTB JAM ALZYTWN,org,1,aalam:1.08
+ORG_MKTBH_KHLDWNYH,المكتبة الخلدونية,la Khaldounia,al-Maktaba al-Khalduniyya,romanised,conventional,ALMKTB ALKHLDWNY,org,1,aalam:2.14
+ORG_MKTB_SYASY_LLHZB_DSTWRY_JDYD,المكتب السياسي للحزب الدستوري الجديد,Bureau politique du Néo-Destour,al-Maktab al-Siyasi lil-Hizb al-Dusturi al-Jadid,verified,conventional,ALMKTB ALSYASY LLHZB ALDSTWRY ALJDYD,org,5,aalam:3.11
+ORG_MKTB_TRJMH,مكتب الترجمة,le bureau de traduction,the translation bureau,romanised,translated,MKTB ALTRJM,org,1,aalam:3.01
+ORG_MSHRW_AHBA_TLBH,مشروع أحباء الطلبة,le Machroua Ahibba Ettalaba,Mashru Ahibba al-Talaba,romanised,transliterated,MSHRW HBA ALTLB,org,1,aalam:3.01
+ORG_MSLHH_TWBWGHRAFYH,المصلحة الطوبوغرافية,le Service topographique,al-Maslaha al-Tubughrafiyya,romanised,conventional,ALMSLH ALTWBWGHRAFY,org,1,aalam:2.14
+ORG_MSSH_JWHR_HWBKYNS,مؤسسة جوهر هوبكينس,la Fondation Johns Hopkins,Muassasat Jawhar Hubkins,romanised,conventional,MSS JWHR HWBKYNS,org,2,aalam:3.13
+ORG_MSTSHFY_SADQY,المستشفى الصادقي,l'hôpital Sadiki,al-Mustashfa al-Sadiqi,romanised,conventional,ALMSTSHF ALSADQY,org,1,aalam:1.08
+ORG_MSTSHFY_ZAFYN,مستشفى العزافين,l'hôpital El Azzafine,Mustashfa al-Azzafin,romanised,conventional,MSTSHF ALZAFYN,org,1,aalam:1.01
+ORG_MTBH_RB,مطبعة العرب,l'Imprimerie El Arab,Matbaat al-Arab,romanised,conventional,MTB ALRB,org,1,aalam:3.08
+ORG_MTBH_RSMYH,المطبعة الرسمية,l'Imprimerie officielle,al-Matbaa al-Rasmiyya,romanised,conventional,ALMTB ALRSMY,org,2,aalam:1.07
+ORG_MTHNH_SRYH,مطحنة عصرية,une minoterie moderne,a modern flour mill,romanised,translated,MTHN SRY,org,1,aalam:2.13
+ORG_MTMR_ASTMARY_BMRSYLYA,المؤتمر الاستعماري بمرسيليا,le Congrès colonial de Marseille,al-Mutamar al-Istimari bi-Marsiliya,romanised,conventional,ALMTMR ALASTMARY BMRSYLYA,org,2,aalam:2.04
+ORG_MTMR_SHMAL_AFRYQYA,مؤتمر شمال إفريقيا,le Congrès de l'Afrique du Nord,Mutamar Shamal Ifriqiya,romanised,conventional,MTMR SHMAL FRYQYA,org,1,aalam:3.05
+ORG_MTMR_SHMAL_AFRYQYA_BBARYS,مؤتمر شمال إفريقيا بباريس,Congrès nord-africain de Paris,"North African Congress, Paris",verified,translated,MTMR SHMAL FRYQYA BBARYS,org,3,aalam:2.07
+ORG_MTMR_SHMAL_AFRYQY_BBARYS,مؤتمر الشمال الإفريقي بباريس,le Congrès nord-africain de Paris,Mutamar al-Shamal al-Ifriqi bi-Baris,romanised,conventional,MTMR ALSHMAL ALFRYQY BBARYS,org,1,aalam:2.10
+ORG_NADY_AMYRH_NAZLY,نادي الأميرة نازلي,le Nadi El Amira Nazli,Nadi al-Amira Nazli,romanised,transliterated,NADY ALMYR NAZLY,org,1,aalam:2.13
+ORG_QSM_MHASBH,قسم المحاسبة,le service de la comptabilité,the accounting department,romanised,translated,QSM ALMHASB,org,1,aalam:2.10
+ORG_QSR_BARDW,قصر باردو,le Palais du Bardo,Qasr Bardu,romanised,conventional,QSR BARDW,org,1,aalam:1.02
+ORG_SALWN_AMYRH_NAZLY,صالون الأميرة نازلي,le Salon El Amira Nazli,Salun al-Amira Nazli,romanised,transliterated,SALWN ALMYR NAZLY,org,2,aalam:2.01
+ORG_SALWN_KHLYL_BWHAJB,صالون خليل بوحاجب,le Salon Khalil Bouhajeb,Salun Khalil Bu Hajib,romanised,transliterated,SALWN KHLYL BWHAJB,org,1,aalam:3.06
+ORG_SLTH_HMAYH,سلطة الحماية,les autorités du Protectorat,the Protectorate authorities,romanised,translated,SLT ALHMAY,org,1,aalam:3.06
+ORG_SLTH_LYA,السلطة العليا,l'autorité supérieure,the supreme authority,romanised,translated,ALSLT ALLYA,org,1,aalam:2.03
+ORG_SLTH_LYA_BALBLAD,السلطة العليا بالبلاد,l'autorité supérieure du pays,the supreme authority in the country,romanised,translated,ALSLT ALLYA BALBLAD,org,1,aalam:3.14
+ORG_SLT_FRNSYH,السلط الفرنسية,les autorités françaises,the French authorities,romanised,translated,ALSLT ALFRNSY,org,1,aalam:3.08
+ORG_TRYQH_KTANYH,الطريقة الكتانية,la Tariqa Kettania,al-Tariqa al-Kattaniyya,romanised,transliterated,ALTRYQ ALKTANY,org,1,aalam:2.05
+ORG_TRYQH_MDNYH,الطريقة المدنية,la Tariqa Madania,al-Tariqa al-Madaniyya,romanised,transliterated,ALTRYQ ALMDNY,org,1,aalam:1.05
+ORG_TRYQH_TYJANYH,الطريقة التيجانية,la Tariqa Tijania,al-Tariqa al-Tijaniyya,romanised,transliterated,ALTRYQ ALTYJANY,org,1,aalam:1.03
+ORG_WFD_ARBYN,وفد الأربعين,la Délégation des Quarante,Wafd al-Arbain,romanised,conventional,WFD ALRBYN,org,1,aalam:3.01
+ORG_WFD_DSTWRY_AWL,الوفد الدستوري الأول,la première délégation destourienne,al-Wafd al-Dusturi al-Awwal,romanised,conventional,ALWFD ALDSTWRY ALWL,org,1,aalam:2.09
+ORG_WFD_DSTWRY_AWL_ALY_BARYS,الوفد الدستوري الأول إلى باريس,la première délégation destourienne à Paris,al-Wafd al-Dusturi al-Awwal ila Baris,romanised,conventional,ALWFD ALDSTWRY ALWL L BARYS,org,2,aalam:3.03
+ORG_WFD_DSTWRY_THANY,الوفد الدستوري الثاني,la deuxième délégation destourienne,al-Wafd al-Dusturi al-Thani,romanised,conventional,ALWFD ALDSTWRY ALTHANY,org,1,aalam:2.09
+ORG_WFD_DSTWRY_THANY_ALY_BARYS,الوفد الدستوري الثاني إلى باريس,Seconde délégation destourienne à Paris,Second Destour delegation to Paris,verified,translated,ALWFD ALDSTWRY ALTHANY L BARYS,org,4,aalam:3.03
+ORG_WZARH_MHMD_SHNYQ,وزارة محمد شنيق,le ministère Mohamed Chenik,Wizarat Muhammad Shanniq,romanised,conventional,WZAR MHMD SHNYQ,org,1,aalam:3.04
+ORG_WZARH_MSTFY_KAK,وزارة مصطفى الكعاك,le ministère Mustapha Kaak,Wizarat Mustafa al-Kaak,romanised,conventional,WZAR MSTF ALKAK,org,1,aalam:3.06
+ORG_WZARH_TFAWDYH,الوزارة التفاوضية,le ministère des négociations,the negotiating government,romanised,translated,ALWZAR ALTFAWDY,org,1,aalam:3.11
+ORG_WZARH_WTNYH,الوزارة الوطنية,le ministère national,the national government,romanised,translated,ALWZAR ALWTNY,org,1,aalam:2.13
+ORG_ZAWYH_KTANYH_BMRAKSH,الزاوية الكتانية بمراكش,la Zaouia Kettania bi Marrakech,al-Zawiya al-Kattaniyya bi-Marrakush,romanised,transliterated,ALZAWY ALKTANY BMRAKSH,org,1,aalam:2.05
+ORG_ZAWYH_SYDY_AHMD_BN_RWS,زاوية سيدي أحمد بن عروس,la Zaouia Sidi Ahmed Ben Arous,Zawiyat Sidi Ahmad Ibn Arus,romanised,transliterated,ZAWY SYDY HMD BN RWS,org,1,aalam:1.01
+PARTY_HZB_ASLAHY,الحزب الإصلاحي,Parti réformiste,Reform Party,verified,translated,ALHZB ALSLAHY,party,3,aalam:3.02
+PARTY_HZB_ATHAD_WALTRQY,حزب الاتحاد والترقي,le Comité Union et Progrès,Hizb al-Ittihad wa al-Taraqqi,romanised,conventional,HZB ALATHAD WALTRQY,party,1,aalam:2.14
+PARTY_HZB_ATLAF_HR,حزب الائتلاف الحر,le Parti de l'Entente libérale,Hizb al-Itilaf al-Hurr,romanised,conventional,HZB ALATLAF ALHR,party,2,aalam:2.09
+PARTY_HZB_DSTWRY,الحزب الدستوري,le Destour,al-Hizb al-Dusturi,romanised,transliterated,ALHZB ALDSTWRY,party,1,aalam:3.07
+PARTY_HZB_DSTWRY_JDYD,الحزب الدستوري الجديد,le Néo-Destour,al-Hizb al-Dusturi al-Jadid,romanised,conventional,ALHZB ALDSTWRY ALJDYD,party,2,aalam:3.04
+PARTY_HZB_HAKM,الحزب الحاكم,le parti au pouvoir,the ruling party,romanised,translated,ALHZB ALHAKM,party,1,aalam:2.05
+PARTY_HZB_HR_DSTWRY,الحزب الحر الدستوري,Parti libre constitutionnel,al-Hizb al-Hurr al-Dusturi,verified,conventional,ALHZB ALHR ALDSTWRY,party,3,aalam:3.11
+PARTY_HZB_HR_DSTWRY_JDYD,الحزب الحر الدستوري الجديد,le Néo-Destour,al-Hizb al-Hurr al-Dusturi al-Jadid,romanised,conventional,ALHZB ALHR ALDSTWRY ALJDYD,party,1,aalam:3.03
+PARTY_HZB_HR_DSTWRY_TWNSY,الحزب الحر الدستوري التونسي,Parti libre constitutionnel tunisien,al-Hizb al-Hurr al-Dusturi al-Tunisi,verified,conventional,ALHZB ALHR ALDSTWRY ALTWNSY,party,5,aalam:2.09
+PARTY_JNAH_MTHRR_LLHZB_DSTWRY,الجناح المتحرر للحزب الدستوري,l'aile libérale du Parti destourien,the liberal wing of the Destour party,romanised,translated,ALJNAH ALMTHRR LLHZB ALDSTWRY,party,2,aalam:3.03
+PARTY_LJNH_ATHAD_WALTRQY,لجنة الاتحاد والترقي,le Comité Union et Progrès,Lajnat al-Ittihad wa al-Taraqqi,romanised,conventional,LJN ALATHAD WALTRQY,party,1,aalam:2.05
+SCH_DAR_MLMYN,دار المعلمين,Dar el-Moallimine,Dar al-Muallimin,romanised,transliterated,DAR ALMLMYN,school,1,aalam:3.03
+SCH_DAR_MLMYN_BTWNS,دار المعلمين بتونس,École normale de Tunis,Dar al-Muallimin bi-Tunis,verified,conventional,DAR ALMLMYN BTWNS,school,3,aalam:2.15
+SCH_DYH_MDRSYH_BALANSARYN,الضيعة المدرسية بالأنصارين,la ferme-école des Ansarine,al-Dayaa al-Madrasiyya bi-al-Ansarin,romanised,conventional,ALDY ALMDRSY BALNSARYN,school,2,aalam:2.13
+SCH_JAMH_AMRYKYH_BALQAHRH,الجامعة الأمريكية بالقاهرة,l'Université américaine du Caire,al-Jamia al-Amrikiyya bi-al-Qahira,romanised,conventional,ALJAM ALMRYKY BALQAHR,school,1,aalam:3.13
+SCH_JAMH_AZHR,جامعة الأزهر,Université al-Azhar,Jamiat al-Azhar,romanised,conventional,JAM ALZHR,school,1,aalam:1.03
+SCH_JAMH_HMBWRGH,جامعة همبورغ,Université de Hambourg,University of Hamburg,verified,translated,JAM HMBWRGH,school,3,aalam:3.13
+SCH_JAMH_SWRBWN,جامعة الصوربون,La Sorbonne,Jamiat al-Surbun,verified,conventional,JAM ALSWRBWN,school,3,aalam:2.05
+SCH_JAMH_ZYTWNYH,الجامعة الزيتونية,Université Ez-Zitouna,al-Jamia al-Zaytuniyya,verified,conventional,ALJAM ALZYTWNY,school,3,aalam:3.10
+SCH_KLYH_ADAB_SWRBWN,كلية الآداب (السوربون),Faculté des lettres (Sorbonne),Kulliyyat al-Adab (al-Surbun),romanised,conventional,KLY ALDAB ALSWRBWN,school,1,aalam:2.13
+SCH_KLYH_HQWQ_BAKS_AN_BRWFANS,كلية الحقوق بإكس آن بروفانس,Faculté de droit d'Aix-en-Provence,Kulliyyat al-Huquq bi-Iks An Brufans,romanised,conventional,KLY ALHQWQ BKS N BRWFANS,school,1,aalam:2.15
+SCH_KLYH_HQWQ_BBARYS,كلية الحقوق بباريس,Faculté de droit de Paris,"Faculty of Law, Paris",verified,translated,KLY ALHQWQ BBARYS,school,3,aalam:2.13
+SCH_KLYH_HQWQ_BMDYNH_AKS,كلية الحقوق بمدينة اكس,Faculté de droit de la ville d'Aix,Kulliyyat al-Huquq bi-Madina Iks,romanised,conventional,KLY ALHQWQ BMDYN AKS,school,1,aalam:2.08
+SCH_KLYH_HQWQ_BTWLWZ,كلية الحقوق بتولوز,Faculté de droit de Toulouse,Kulliyyat al-Huquq bi-Tuluz,romanised,conventional,KLY ALHQWQ BTWLWZ,school,1,aalam:3.07
+SCH_KLYH_LWM_WALMDRSH_TBYH_BMDYNH_DYJWN,كلية العلوم والمدرسة الطبية بمدينة ديجون,Faculté des sciences et École de médecine de Dijon,Kulliyyat al-Ulum wa al-Madrasa al-Tibbiyya bi-Madina Dijun,romanised,conventional,KLY ALLWM WALMDRS ALTBY BMDYN DYJWN,school,1,aalam:3.11
+SCH_KLYH_TB_BBARYS,كلية الطب بباريس,Faculté de médecine de Paris,Kulliyyat al-Tibb bi-Baris,romanised,conventional,KLY ALTB BBARYS,school,1,aalam:3.11
+SCH_KTAB,الكتاب,le Kouttab,al-Kuttab,romanised,transliterated,ALKTAB,school,2,aalam:3.04
+SCH_KWLYJ_DY_FRANS,كوليج دي فرانس,Collège de France,Kulij di Frans,romanised,conventional,KWLYJ DY FRANS,school,2,aalam:2.05
+SCH_MDARS_HRH_LAKYH_AW_DYNYH,المدارس الحرة اللائكية أو الدينية,"les écoles libres, laïques ou religieuses","the free schools, secular or religious",romanised,translated,ALMDARS ALHR ALLAKY W ALDYNY,school,1,aalam:3.11
+SCH_MDRSH_BANKALDY_HRBYH,مدرسة بانكالدي الحربية,École militaire de Bancaldi,Madrasat Bankaldi al-Harbiyya,romanised,conventional,MDRS BANKALDY ALHRBY,school,1,aalam:2.09
+SCH_MDRSH_BYR_AHJAR,مدرسة بير الأحجار,Médersa Bir El Ahjar,Madrasat Bir al-Ahjar,romanised,transliterated,MDRS BYR ALHJAR,school,1,aalam:1.03
+SCH_MDRSH_DBAT,مدرسة الضباط,École des officiers,Madrasat al-Dubbat,romanised,conventional,MDRS ALDBAT,school,2,aalam:1.09
+SCH_MDRSH_HRBYH_BBARDW,المدرسة الحربية بباردو,École militaire du Bardo,al-Madrasa al-Harbiyya bi-Bardu,verified,conventional,ALMDRS ALHRBY BBARDW,school,6,aalam:1.05
+SCH_MDRSH_HRBYH_BMNWBH,المدرسة الحربية بمنوبة,École militaire de la Manouba,al-Madrasa al-Harbiyya bi-Manuba,romanised,conventional,ALMDRS ALHRBY BMNWB,school,2,aalam:3.05
+SCH_MDRSH_HWANYT_ASHWR,مدرسة حوانيت عاشور,Médersa Houanet Achour,Madrasat Hawanit Ashur,romanised,transliterated,MDRS HWANYT ASHWR,school,1,aalam:1.03
+SCH_MDRSH_LWM_SYASYH_BBARYS,مدرسة العلوم السياسية بباريس,École des sciences politiques de Paris,Madrasat al-Ulum al-Siyasiyya bi-Baris,romanised,conventional,MDRS ALLWM ALSYASY BBARYS,school,1,aalam:2.13
+SCH_MDRSH_LWYH,المدرسة العلوية,École Alaoui,al-Madrasa al-Alawiyya,romanised,conventional,ALMDRS ALLWY,school,1,aalam:3.05
+SCH_MDRSH_LYA_LLGHH_WALADAB_RBYH,المدرسة العليا للغة والآداب العربية,École supérieure de langue et de littérature arabes,al-Madrasa al-Ulya lil-Lugha wa al-Adab al-Arabiyya,romanised,conventional,ALMDRS ALLYA LLGH WALDAB ALRBY,school,2,aalam:2.07
+SCH_MDRSH_QRANYH,المدرسة القرآنية,école coranique,al-Madrasa al-Quraniyya,romanised,conventional,ALMDRS ALQRNY,school,1,aalam:3.04
+SCH_MDRSH_QRANYH_SRYH,المدرسة القرآنية العصرية,école coranique moderne,al-Madrasa al-Quraniyya al-Asriyya,romanised,conventional,ALMDRS ALQRNY ALSRY,school,1,aalam:3.05
+SCH_MDRSH_SADQYH,المدرسة الصادقية,Collège Sadiki,al-Madrasa al-Sadiqiyya,verified,conventional,ALMDRS ALSADQY,school,12,aalam:1.09
+SCH_MDRSH_SGHAR_MMALYK,مدرسة صغار المماليك,École des jeunes mamelouks,Madrasat Sighar al-Mamalik,romanised,conventional,MDRS SGHAR ALMMALYK,school,2,aalam:1.07
+SCH_MDRSH_SLYMANYH,المدرسة السليمانية,Médersa Slimania,al-Madrasa al-Sulaymaniyya,romanised,transliterated,ALMDRS ALSLYMANY,school,1,aalam:1.04
+SCH_MDRSH_TARYN,مدرسة العطارين,Médersa El Attarine,Madrasat al-Attarin,romanised,transliterated,MDRS ALTARYN,school,1,aalam:3.10
+SCH_MDRSH_TTBYQYH_LLTJARH_WALSNAH,المدرسة التطبيقية للتجارة والصناعة,l'École pratique de commerce et d'industrie,al-Madrasa al-Tatbiqiyya lil-Tijara wa al-Sinaa,romanised,conventional,ALMDRS ALTTBYQY LLTJAR WALSNA,school,1,aalam:3.11
+SCH_MDRSH_YWSF_SAHB_TAB,مدرسة يوسف صاحب الطابع,Médersa Youssef Sahib Ettabaa,Madrasat Yusuf Sahib al-Tabi,romanised,transliterated,MDRS YWSF SAHB ALTAB,school,1,aalam:1.04
+SCH_MHD_KARNW,معهد كارنو,Lycée Carnot,Mahad Karnu,verified,conventional,MHD KARNW,school,6,aalam:2.15
+SCH_MHD_LWY,المعهد العلوي,Collège Alaoui,al-Mahad al-Alawi,romanised,conventional,ALMHD ALLWY,school,1,aalam:2.15
+SCH_MHD_SADQY,المعهد الصادقي,El Maahad Es-Sadiki,al-Mahad al-Sadiqi,verified,transliterated,ALMHD ALSADQY,school,7,aalam:2.03
+SCH_MHD_SAN_LWYS_BBARYS,معهد سان لويس بباريس,Lycée Saint-Louis de Paris,Mahad San Luwis bi-Baris,romanised,conventional,MHD SAN LWYS BBARYS,school,1,aalam:2.02
+SCH_MHD_SAN_SHARL,معهد سان شارل,Lycée Saint-Charles,Mahad San Sharl,romanised,conventional,MHD SAN SHARL,school,1,aalam:2.13
+SCH_MHD_THANWY_BBARYS,المعهد الثانوي بباريس,lycée de Paris,al-Mahad al-Thanawi bi-Baris,romanised,conventional,ALMHD ALTHANWY BBARYS,school,1,aalam:2.07
+SCH_MHD_THANWY_BKHZNDAR,المعهد الثانوي بخزندار,lycée de Khaznadar,al-Mahad al-Thanawi bi-Khaznadar,romanised,conventional,ALMHD ALTHANWY BKHZNDAR,school,1,aalam:3.14
+SCH_MJM_FRNSY,المجمع الفرنسي,l'Académie française,al-Majma al-Faransi,romanised,conventional,ALMJM ALFRNSY,school,1,aalam:2.09
+SCH_THANWYH_QDYS_LWYS_BTWNS,ثانوية القديس لويس بتونس,Lycée Saint-Louis de Tunis,Thanawiyyat al-Qiddis Luwis bi-Tunis,romanised,conventional,THANWY ALQDYS LWYS BTWNS,school,1,aalam:2.08
+WORK_ADB_TWNSY_FY_QRN_RAB_SHR,الأدب التونسي في القرن الرابع عشر,El Adab Ettounsi fi el-Karn er-Rabi Achar,al-Adab al-Tunisi fi al-Qarn al-Rabi Ashar,romanised,transliterated,ALDB ALTWNSY FY ALQRN ALRAB SHR,work,1,aalam:3.08
+WORK_ADWA_LY_SHAFH_TWNSYH,أضواء على الصحافة التونسية,Adhoua ala Essahafa Ettounisia,Adwa ala al-Sihafa al-Tunisiyya,romanised,transliterated,DWA L ALSHAF ALTWNSY,work,1,aalam:3.02
+WORK_AMRATNA_FY_SHRYH_WALMJTM,امرأتنا في الشريعة والمجتمع,Imraatouna fi ech-Charia wa el-Moujtamaa,Imraatuna fi al-Sharia wa al-Mujtama,romanised,transliterated,AMRTNA FY ALSHRY WALMJTM,work,1,aalam:2.14
+WORK_AQWM_MSALK,أقوم المسالك,Akwam el-Masalik,Aqwam al-Masalik,romanised,transliterated,QWM ALMSALK,work,1,aalam:1.09
+WORK_AQWM_MSALK_FY_MRFH_AHWAL_MMALK,أقوم المسالك في معرفة أحوال الممالك,Akwam el-Masalik fi Maarifat Ahoual el-Mamalik,Aqwam al-Masalik fi Marifat Ahwal al-Mamalik,romanised,transliterated,QWM ALMSALK FY MRF HWAL ALMMALK,work,1,aalam:2.06
+WORK_ARD_QBL_KL_SHY,الأرض قبل كل شيء,El Ard kabla koull chay,al-Ard qabla kull shay,romanised,transliterated,ALRD QBL KL SHY,work,1,aalam:3.06
+WORK_ATHAF_AHL_ZMAN,إتحاف أهل الزمان,Ithaf Ahl ez-Zaman,Ithaf Ahl al-Zaman,romanised,transliterated,THAF HL ALZMAN,work,2,aalam:1.01
+WORK_BHYRH,البحيرة,El Bouhaira,al-Buhayra,romanised,transliterated,ALBHYR,work,1,aalam:3.04
+WORK_BYNY_WBYN_MRY,بيني وبين المعري,Baini wa baina el-Maarri,Bayni wa bayna al-Maarri,romanised,transliterated,BYNY WBYN ALMRY,work,1,aalam:2.11
+WORK_DRS_DYWAN_HMASH,درس ديوان الحماسة,Dars Diwan el-Hamasa,Dars Diwan al-Hamasa,romanised,transliterated,DRS DYWAN ALHMAS,work,1,aalam:3.10
+WORK_DSTWR_THMANY,الدستور العثماني,Ed-Doustour el-Othmani,al-Dustur al-Uthmani,romanised,transliterated,ALDSTWR ALTHMANY,work,1,aalam:2.09
+WORK_DYWAN_QABADW,ديوان قابادو,Diwan Kabadou,Diwan Qabadu,romanised,transliterated,DYWAN QABADW,work,1,aalam:1.05
+WORK_DYWAN_SHR,ديوان شعر,recueil de poésie,collection of poetry,romanised,translated,DYWAN SHR,work,1,aalam:2.06
+WORK_FHRS_LMY_LMKTBH_JAM_ZYTWNH_AZM,الفهرس العلمي لمكتبة جامع الزيتونة الأعظم,El Fihris el-Ilmi li-Maktabat Jami Ezzitouna el-Aazam,al-Fihris al-Ilmi li-Maktabat Jami al-Zaytuna al-Azam,romanised,transliterated,ALFHRS ALLMY LMKTB JAM ALZYTWN ALZM,work,1,aalam:2.10
+WORK_GHADH_KAMYLYA,غادة الكاميليا,La Dame aux camélias,Ghadat al-Kamilya,romanised,conventional,GHAD ALKAMYLYA,work,2,aalam:3.04
+WORK_HRKH_SHBAB_TWNSY,حركة الشباب التونسي,Jeunes Tunisiens,Harakat al-Shabab al-Tunisi,verified,conventional,HRK ALSHBAB ALTWNSY,work,2,aalam:2.13
+WORK_HRKH_TTWYRYH_TWNSYH,الحركة التطويرية التونسية,El Haraka Ettatwiria Ettounisia,al-Haraka al-Tatwiriyya al-Tunisiyya,romanised,transliterated,ALHRK ALTTWYRY ALTWNSY,work,1,aalam:3.09
+WORK_JRBH_WALJRBYWN,جربة والجربيون,Djerba wa el-Djerbiyoun,Jarba wa al-Jarbiyyun,romanised,transliterated,JRB WALJRBYWN,work,1,aalam:2.15
+WORK_KNASH,كناش,Kounnach,Kunnash,romanised,transliterated,KNASH,work,1,aalam:2.08
+WORK_KTYB_FY_DRWS_SKRYH_BALRBYH,كتيب في الدروس العسكرية بالعربية,opuscule de cours militaires en arabe,booklet of military lessons in Arabic,romanised,translated,KTYB FY ALDRWS ALSKRY BALRBY,work,1,aalam:3.05
+WORK_MALM_TWHYD,معالم التوحيد,Maalim Ettawhid,Maalim al-Tawhid,romanised,transliterated,MALM ALTWHYD,work,1,aalam:2.10
+WORK_MHD_RSHYDY_LLMWSYQY_TWNSYH,المعهد الرشيدي للموسيقى التونسية,"La Rachidia, institut de musique tunisienne",al-Mahad al-Rashidi lil-Musiqa al-Tunisiyya,romanised,conventional,ALMHD ALRSHYDY LLMWSYQ ALTWNSY,work,2,aalam:2.14
+WORK_MJML_TARYKH_ADB_TWNSY,مجمل تاريخ الأدب التونسي,Moujmal Tarikh el-Adab Ettounsi,Mujmal Tarikh al-Adab al-Tunisi,romanised,transliterated,MJML TARYKH ALDB ALTWNSY,work,1,aalam:3.04
+WORK_MJM_DWAWYN,مجمع الدواوين,Majmaa ed-Dawawine,Majma al-Dawawin,romanised,transliterated,MJM ALDWAWYN,work,1,aalam:3.08
+WORK_MKHTARAT_MN_KHTB_JMYH,مختارات من الخطب الجمعية,Mokhtarat min el-Khoutab el-Joumouiya,Mukhtarat min al-Khutab al-Jumuiyya,romanised,transliterated,MKHTARAT MN ALKHTB ALJMY,work,1,aalam:2.06
+WORK_MNS_FY_AKHBAR_AFRYQYA_WTWNS,المؤنس في أخبار إفريقيا وتونس,El Mounis fi Akhbar Ifrikia wa Tounis,al-Munis fi Akhbar Ifriqiya wa Tunis,romanised,transliterated,ALMNS FY KHBAR FRYQYA WTWNS,work,1,aalam:1.01
+WORK_MQAMAT_BYNH_WBYN_ABY_LA_MRY,المقامات بينه وبين أبي العلاء المعري,El Makamat bainahou wa baina Abi el-Ala el-Maarri,al-Maqamat baynahu wa bayna Abi al-Ala al-Maarri,romanised,transliterated,ALMQAMAT BYNH WBYN BY ALLA ALMRY,work,1,aalam:2.11
+WORK_MSAL_TWNSYH,مسائل تونسية,Masail Tounisia,Masail Tunisiyya,romanised,transliterated,MSAL TWNSY,work,2,aalam:2.07
+WORK_MSHR_MLKY_FY_SLTNH_AWLAD_HSYN_BN_LY_TRKY,المشرع الملكي في سلطنة أولاد حسين بن علي تركي,El Mochre el-Malaki fi Saltanat Aoulad Hocine Ben Ali Turki,al-Mashra al-Malaki fi Saltanat Awlad Husayn Ibn Ali Turki,romanised,transliterated,ALMSHR ALMLKY FY SLTN WLAD HSYN BN LY TRKY,work,2,aalam:2.07
+WORK_NAZLH_TWNSYH,النازلة التونسية,En-Nazila Ettounisia,al-Nazila al-Tunisiyya,romanised,transliterated,ALNAZL ALTWNSY,work,2,aalam:3.05
+WORK_QSYDH_FY_FYH_ABY_LA_MRY,قصيدة في ألفية أبي العلاء المعري,poème pour le millénaire d'Abou al-Alaa al-Maarri,poem for the millenary of Abu al-Ala al-Maarri,romanised,translated,QSYD FY LFY BY ALLA ALMRY,work,1,aalam:3.04
+WORK_RHLH_ALY_BLAD_SNWSYH,الرحلة إلى بلاد السنوسية,Er-Rihla ila Bilad es-Senoussia,al-Rihla ila Bilad al-Sanusiyya,romanised,transliterated,ALRHL L BLAD ALSNWSY,work,2,aalam:2.07
+WORK_RHLH_ANDLSYH,الرحلة الأندلسية,Er-Rihla el-Andaloussia,al-Rihla al-Andalusiyya,romanised,transliterated,ALRHL ALNDLSY,work,2,aalam:2.01
+WORK_RHLH_FLYARYH,الرحلة الفليارية,Er-Rihla el-Feliaria,al-Rihla al-Filyariyya,romanised,transliterated,ALRHL ALFLYARY,work,1,aalam:2.10
+WORK_RHLH_NASRYH,الرحلة الناصرية,Er-Rihla Ennasiria,al-Rihla al-Nasiriyya,romanised,transliterated,ALRHL ALNASRY,work,1,aalam:2.10
+WORK_RZNAMH_TWNSYH,الرزنامة التونسية,Er-Rouznama Ettounisia,al-Ruznama al-Tunisiyya,romanised,transliterated,ALRZNAM ALTWNSY,work,1,aalam:2.10
+WORK_SBYH_ND_ABN_KHLDWN,العصبية عند ابن خلدون,El Assabia inda Ibn Khaldoun,al-Asabiyya inda Ibn Khaldun,romanised,transliterated,ALSBY ND ABN KHLDWN,work,1,aalam:3.13
+WORK_SFWH_ATBAR_BMSTWD_AMSAR_WALAQTAR,صفوة الاعتبار بمستودع الأمصار والأقطار,Safwat el-Itibar bi-Moustawdaa el-Amsar wa el-Aktar,Safwat al-Itibar bi-Mustawda al-Amsar wa al-Aqtar,romanised,transliterated,SFW ALATBAR BMSTWD ALMSAR WALQTAR,work,1,aalam:1.08
+WORK_SHHYRAT_TWNSYAT,شهيرات التونسيات,Chahirat Ettounisiat,Shahirat al-Tunisiyyat,romanised,transliterated,SHHYRAT ALTWNSYAT,work,1,aalam:1.01
+WORK_TARYKH_BASHY,التاريخ الباشي,Ettarikh el-Bachi,al-Tarikh al-Bashi,romanised,transliterated,ALTARYKH ALBASHY,work,1,aalam:1.02
+WORK_TARYKH_HRKH_WTNYH_TWNSYH,تاريخ الحركة الوطنية التونسية,Tarikh el-Haraka el-Wataniya Ettounisia,Tarikh al-Haraka al-Wataniyya al-Tunisiyya,romanised,transliterated,TARYKH ALHRK ALWTNY ALTWNSY,work,1,aalam:3.09
+WORK_TARYKH_MALM_TWHYD,تاريخ معالم التوحيد,Tarikh Maalim Ettawhid,Tarikh Maalim al-Tawhid,romanised,transliterated,TARYKH MALM ALTWHYD,work,1,aalam:1.02
+WORK_TARYKH_MWSYQY_RBYH,تاريخ الموسيقى العربية,Tarikh el-Moussika el-Arabia,Tarikh al-Musiqa al-Arabiyya,romanised,transliterated,TARYKH ALMWSYQ ALRBY,work,1,aalam:3.04
+WORK_THLATH_QSAD_BALLGHH_FRNSYH,ثلاث قصائد باللغة الفرنسية,trois poèmes en langue française,three poems in French,romanised,translated,THLATH QSAD BALLGH ALFRNSY,work,1,aalam:3.04
+WORK_TLYM_ABTDAY_MKHSS_LLAHALY_FY_BLAD_TWNSYH,التعليم الابتدائي المخصص للأهالي في البلاد التونسية,Ettaalim el-Ibtidai el-Mokhassas lil-Ahali fi el-Bilad Ettounisia,al-Talim al-Ibtidai al-Mukhassas lil-Ahali fi al-Bilad al-Tunisiyya,romanised,transliterated,ALTLYM ALABTDAY ALMKHSS LLHALY FY ALBLAD ALTWNSY,work,1,aalam:3.05
+WORK_TRAJM_ALAM,تراجم الأعلام,Tarajim el-Aalam,Tarajim al-Alam,romanised,transliterated,TRAJM ALLAM,work,1,aalam:3.10
+WORK_TRJMH_ABN_ABY_DYAF,ترجمة ابن أبي الضياف,Tarjamat Ibn Abi ed-Dhiaf,Tarjamat Ibn Abi al-Diyaf,romanised,transliterated,TRJM ABN BY ALDYAF,work,1,aalam:1.06
+WORK_TRYQH_SRYH,الطريقة العصرية,Ettarika el-Asria,al-Tariqa al-Asriyya,romanised,transliterated,ALTRYQ ALSRY,work,1,aalam:2.15
+WORK_TWNS_JDYDH,تونس الجديدة,Tounis el-Jadida,Tunis al-Jadida,romanised,transliterated,TWNS ALJDYD,work,1,aalam:2.15
+WORK_TWNS_SHHYDH,تونس الشهيدة,La Tunisie Martyre,Tunis al-Shahida,verified,conventional,TWNS ALSHHYD,work,4,aalam:2.09
+WORK_WFWD_DSTWRYH,الوفود الدستورية 1920-1919,El Woufoud ed-Doustouria 1919-1920,al-Wufud al-Dusturiyya 1919-1920,romanised,transliterated,ALWFWD ALDSTWRY,work,1,aalam:3.03
+WORK_WRQAT,الورقات,El Warakat,al-Waraqat,romanised,transliterated,ALWRQAT,work,1,aalam:2.01

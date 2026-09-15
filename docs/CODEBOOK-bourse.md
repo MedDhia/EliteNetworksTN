@@ -35,6 +35,30 @@ to link in outside sources that use a different spelling.
 | `alias_raw` | The spelling exactly as printed in the filing. |
 | `matching_key` | Normalised key that caused the merge. Identical keys merge. |
 
+Two merges are not visible in `matching_key`, because they happen before a key
+is taken. Both are recorded here so that an audit of the crosswalk is not
+puzzled by aliases that share no normal form.
+
+**Tickers.** The CMF titles a registration document by the issuer's ticker —
+`Document de référence " HL 2018 "` — so the acronym and the company name
+arrive as two unrelated strings. Nothing in either spelling says they are the
+same firm; the BVMT listing roster is the outside authority that says so, and
+it is consulted for exactly this. A cell is read as a ticker only when it is
+*entirely* the ticker and in capitals. Both conditions matter: `Ab-corporation`
+reduces to the same key as the ticker `AB` once its legal form is dropped, and
+is not Amen Bank. This join is what makes `HL` and `HANNIBAL LEASE` one firm
+rather than two, and it moves 1,046 ties. Only the 75 currently listed
+securities are covered, so a delisted issuer's ticker (`TLF`, `MIC`, `WIC`)
+still stands as its own node — see §6.14.
+
+**Run-on cells.** Where a table's name column was never split from what sits
+beside it, the surplus is stripped before matching: a trailing figure run
+(`SIBTEL 46 200 100 4 620 000` → `SIBTEL`), and a dangling short name left by a
+guillemet whose closing mark fell outside the cell (`Tunisie Leasing et
+Factoring « TLF` → `Tunisie Leasing et Factoring`). A figure run must carry a
+thousands group, so a digit belonging to the name is never removed (`Usine 2`
+survives). `alias_raw` keeps the cell as printed, so the trim is auditable.
+
 ## 3. `multiplex_edges_observed.csv.gz` — the edge list
 
 **The main analytic file.** One row per tie *as reported by one filing*. A tie
@@ -61,6 +85,7 @@ observation per dyad-year is wanted.
 | `shared_actors` | string | Derived layers only: the `entity_id`s that generate the tie. |
 | `doc_node_key`, `doc_type`, `doc_url`, `page` | string/int | Provenance: the filing and the page the tie was read from. |
 | `doc_sha256` | string | Hash of the retrieved PDF, so a later re-publication of the same URL is detectable. |
+| `from_ocr` | 0/1 | The source page carried no text layer and was read by OCR. Weaker evidence — see §6.11. |
 
 ## 4. Layers and their weights
 
@@ -159,6 +184,89 @@ decisions but not board seats; filter on `role` to separate them.
 accounts and grant discharge. Those produce no rows, which is why the table is
 much smaller than the number of filings.
 
+## 4e. `political_connections.csv` — the coded connection variable
+
+One row per (firm, year) for which *some* connection was observed. Absent
+firm-years are not written: a zero here would say "not connected", and what
+the corpus supports is only "not seen connected".
+
+| Variable | Description |
+|---|---|
+| `entity_id`, `canonical_name`, `year` | The firm-year. |
+| `pc_state_ownership` | A state body holds equity in the firm (Boubakri, Cosset and Saffar 2008). |
+| `pc_state_board` | A state body holds a board seat. |
+| `pc_officeholder` | A director's printed title names a political or senior bureaucratic office (Faccio 2006). |
+| `pc_officeholder_former` | That office is held in the past tense — "Ex-ministre" (Hillman 2005). Subset of the above. |
+| `pc_public_bank` | Board or equity tie to a majority state-owned bank (Khwaja and Mian 2005; Diwan et al. 2020). |
+| `pc_public_bank_equity` | That tie is an equity stake rather than a shared director. Subset of the above. |
+| `pc_political_figure` | A director matches the named roster (Rijkers, Freund and Nucifora 2017). **Structurally zero — the roster ships empty.** |
+| `max_state_stake_pct` | Largest state stake stated that year; blank where a filing named the holder but not the size. |
+| `pc_narrow` | Faccio applied strictly: a *sitting* officeholder, a roster match, or a state stake ≥ 10%. |
+| `pc_broad` | Any channel at all. |
+| `n_evidence`, `n_evidence_ocr` | Supporting records, and how many came from OCR'd pages. |
+| `categories` | Pipe-separated categories behind the flags, e.g. `civil_servant\|public_bank_equity`. |
+
+Every coding rule is in `config/bourse_political_connections.csv`, not in
+code, with the literature each follows. Change a line there and rebuild.
+
+`political_connection_evidence.csv` is the long form: one row per supporting
+record, each with `doc_url` and `page`, so every coded 1 reads back to the
+filing that produced it. `political_connections.md` reports the counts and the
+limits.
+
+**The variable measures *disclosed* connection.** A board table that prints a
+director's occupation reveals a ministry post; one that prints only names does
+not, and both are common. The gap is not random — a firm with more to disclose
+may disclose less — so this is a lower bound, and differences across firms may
+be differences in disclosure practice.
+
+**`pc_officeholder` is close to a bank indicator here.** Almost all the firms
+carrying it are banks, because Tunisian bank boards seat ministry officials
+and say so. That is a real feature of the sector, not a coding artefact, but
+it means the channel should not be entered alongside a sector control without
+checking what survives.
+
+**No sitting minister appears on any board in this corpus.** The strongest
+personal ties are a handful of former ministers, former central-bank deputy
+governors and chiefs of cabinet. `pc_narrow` is consequently thin, and rests
+mostly on the 10% state-stake arm rather than on officeholding.
+
+## 4f. `analysis_connection_centrality.md` — connection and position
+
+Asks whether politically connected firms sit more centrally in the firm-firm
+network. The question is close to circular as usually posed, and the report is
+mostly about handling that, so two things in it are worth carrying into any
+write-up.
+
+**The naive answer is wrong in a specific, reversible way.** `pc_broad` shows a
+small positive association with centrality on the whole network and a large
+*negative* one once state-owned banks are deleted from the graph. Almost all
+of its firms are coded connected through `public_bank`, and most of those are
+small participations hanging off a bank: delete the bank and they are more
+peripheral than comparable firms. **Do not use `pc_broad` as a treatment in a
+centrality regression** — it measures that artefact.
+
+**The state channels survive the correction.** A firm the state holds equity
+in, or a board seat on, ranks about 0.18 higher on degree and 0.24 higher on
+betweenness than a firm named in as many filings, and the estimate barely
+moves when every state node is deleted. Only 3 of those 22 firms are public
+banks — the rest are Tunisair, Tunisie Telecom, Carthage Cement, STAR, SIMPAR
+— so this is not a bank effect. `pc_officeholder` also holds but 8 of its 10
+firms are banks, so it cannot be separated from banking here.
+
+The measures disagree in a consistent order — betweenness > degree > strength
+> core, with core null — which is a **brokerage** signature rather than a
+cohesion one: connected firms bridge otherwise-unconnected parts of the
+network rather than sitting inside a dense cluster.
+
+Method: stratified permutation. Firms are binned by the number of documents
+naming them, labels are permuted within bins, and the effect is the rank gap
+averaged within bins. Both are necessary — filing intensity drives observed
+ties and observed connections alike, and an unstratified control mean is
+dominated by once-filed peripheral firms no treated firm could be compared
+with. Inference is by permutation because network observations are not
+independent, so parametric standard errors would be far too small.
+
 ## 5. `multiplex_edges_panel.csv.gz` — the balanced panel
 
 Same columns as the observed edge list, plus:
@@ -198,28 +306,61 @@ These are properties of the sources, and should be stated in any write-up.
    roster snapshot, not at each year. A firm delisted in 2014 is not flagged as
    listed. Entries and exits can be recovered from the `offre_publique` filings
    already in the registry (OPF ≈ entry, OPR ≈ exit).
-4. **Coverage is uneven across firms and years.** Registration documents are
-   filed by issuers raising capital or as required, not annually by everyone.
-   Banks and leasing companies are over-represented. Check
-   `layer_year_coverage.csv` before making any claim about change over time —
-   a rise in observed ties can be a rise in filings.
+4. **Coverage is uneven across firms and years, and the unevenness is
+   sourced.** Three filing types feed the network and each selects differently:
+   registration documents are filed by issuers raising capital or as required;
+   annual reports by many more companies but with the scanned-archive problem
+   in limitation 11; prospectuses only when a company is *in the market*, which
+   is not a random sample of the cote. Banks and leasing companies are
+   over-represented throughout. Observed ties by year:
+
+   | | 1990–99 | 2000–04 | 2005–09 | 2010–14 | 2015–19 | 2020–26 |
+   |---|---|---|---|---|---|---|
+   | Ties | 299 | 214 | 2,310 | 4,186 | 3,913 | 6,552 |
+
+   Treat the usable panel as roughly **2005–2026**. Before 2005 the series is
+   thin and prospectus-driven, so a firm appears in the year it raised money
+   and vanishes otherwise — that is a property of the source, not of the
+   network. Check `layer_year_coverage.csv` before any claim about change over
+   time: a rise in observed ties can be a rise in filings.
 5. **Declared mandates are self-reported and "most significant".** The interlock
    layer is what directors chose to disclose, so it under-counts.
-6. **Extraction is automated.** Table classification and row parsing are rule-
-   based and validated against a sample, not hand-checked for every document.
-   `data/processed/bourse/records/failures.jsonl.gz` lists documents that could not be
-   parsed; `validation_report.md` reports anomalies that survived.
-7. **Known residual artefacts.** Two are worth naming, because they are visible
-   in the current build and will recur on rebuild:
-   * *Share counts can merge.* Where a borderless table prints two grouped
-     figures with only a narrow gap ("975 000 975 000"), column detection
-     occasionally reads them as one. The **percentage is unaffected** — it is
-     identified by its `%` sign — so `weight` is sound where `n_shares` looks
-     implausible. Prefer `pct_capital`/`weight` over `n_shares`.
+6. **Extraction is automated, and the registration documents have been checked
+   against their pages.** Table classification and row parsing are rule-based.
+   `make bourse-verify` re-opens each source PDF, accepts it only if the bytes
+   hash to the digest in `corpus/pdf_manifest.jsonl.gz`, and asks of every
+   record drawn from it whether the name and the figure appear on the page
+   cited. The last full pass read **7,593 records from the 179 registration
+   documents and confirmed 100.0% of names and 99.9% of figures**;
+   `source_verification.md` carries the table and names every record that did
+   not confirm.
+
+   **That pass predates the annual-report corpus, which has not had it.** The
+   verifier covered the 179 registration documents only. The annual reports,
+   the OCR stratum and the movement and resolution filings entered the dataset
+   later and have not been read back against their pages. Run
+   `make bourse-verify` over the full corpus before treating the whole dataset
+   as checked — see §6.1, which explains why this matters more than it sounds.
+
+   This check is not redundant with `validation_report.md`. Those checks test
+   the dataset against itself — stakes that should not exceed 100%, endpoints
+   that should resolve — and a figure read off the wrong row passes all of
+   them, because a misread figure is still internally consistent. Running the
+   source check found four extraction defects that the internal checks could
+   not see, described in §6.1.
+
+   `records/failures.jsonl.gz` lists documents that could not be parsed at all.
+7. **Known residual artefacts.**
    * *Spelling variants survive.* "Mohamed FEKIH" and "Mohamed FKIH" appear as
      two entities, each with 18 firm ties. Whether they are one person is a
      substantive judgement the matcher will not make; resolve it in
      `config/bourse_entity_overrides.csv`.
+   * *Six records out of 7,593 are not confirmed on their page*, all of them
+     rows of tables that interleave a figure column with commentary. They are
+     named individually in `source_verification.md`.
+   * *Thin years.* 1994 and 2001 carry fewer than ten observed edges each. That
+     is a property of how many filings cover them, not a parsing failure.
+
 8. **Succession is only drawn where it is unambiguous.** A resolution that
    seats several directors but names one departing person does not say which of
    them replaced that person. Pairing them all would invent handovers, so a
@@ -271,17 +412,87 @@ These are properties of the sources, and should be stated in any write-up.
     percentage column. An aggregate carries no edge, so a wrong number there
     would be pure loss.
 
-12. **Date an annual report by its file name, not by its text.** The CMF names
+12. **Some tables are rebuilt from word positions, not read off a grid.**
+    Many filings — most pre-2007 prospectuses, and more than half the annual
+    reports — typeset their tables without ruling lines. Those are
+    reconstructed from where the words sit on the page, and the rows carry
+    **`from_words = 1`** (every OCR'd row does too, since OCR produces nothing
+    else). It is a weaker reading than a ruled grid: column boundaries are
+    inferred from inter-word gaps, so a very narrow gap between two figures can
+    merge them. The percentage is unaffected — it is identified by its `%` sign
+    — which is why `weight` is sound where `n_shares` looks implausible.
+
+13. **Date an annual report by its file name, not by its text.** The CMF names
     these files with the financial year, and for a scanned report that is the
     only year available before OCR. Counting coverage from extracted text makes
     the scanned years look empty — a fact about the text layer, not about what
     the regulator published. An earlier draft of this codebook reported no
     annual reports at all for FY2012–2014 for exactly this reason; there are
     195.
+14. **A delisted issuer's ticker is still a separate node.** §2 describes the
+    join that reads a bare ticker as the company it belongs to. Its authority
+    is the BVMT roster, which is a snapshot of the *currently* listed cote — 75
+    securities. An issuer that has since delisted or merged is not in it, so
+    where the CMF titled its filings by ticker the acronym stands as a node of
+    its own: `TLF` (221 ties) beside `Tunisie Leasing et Factoring` (237), and
+    `MIC`, `WIC`, `FIC`, `CRJ` with no expansion anywhere in the corpus. This
+    inflates the firm count and splits the degree of the firms affected, so
+    **actor-level measures on firms — degree, centrality, brokerage — are still
+    understated for delisted issuers**, while dyad-level structural claims are
+    unaffected. The fix is a historical roster, or a researcher judgement per
+    ticker in `config/bourse_entity_overrides.csv`; neither is done here,
+    because guessing which firm an unexpanded three-letter acronym names is
+    exactly the judgement a coder should make explicitly rather than a matcher
+    silently.
 
-   Two firm-years still show declared stakes above 100% (see
-   `validation_report.md`). Both trace to inconsistencies in the filings
-   themselves rather than to parsing, and are left as reported.
+## 6.1 Defects the source check found, and what they mean for earlier builds
+
+Four extraction defects were found by checking records against their pages, and
+all four are fixed. They are recorded here because any analysis run against a
+build from before this fix carries them.
+
+* *Two adjacent figures read as one number.* On a short borderless row the
+  column threshold could exceed every gap on the line, leaving the row as a
+  single cell: `PIRECO 750 000 750 000 3,00%` became a holding of
+  750,000,750,000 shares.
+* *A figure split mid-number.* Where the extractor cut one token in two,
+  `2 666 921` arrived as `2`,`6`,`66`,`921` and was read as **2 shares**; a
+  stake printed `0,005%` was read as **5%**.
+* *Table footnote legends parsed as rows.* 61 records carried names such as
+  `*** Membre indépendant`.
+* *A whole table body read as one row.* Where a table's only ruling lines box
+  the body rather than each row, every cell held its column stacked with
+  newlines. Flattened, the six largest shareholders of Amen Bank became one
+  shareholder holding the concatenation of their six stakes. This one destroyed
+  data rather than merely mangling it, and unwinding it recovered the
+  controlling blocks of several of the largest firms in the corpus.
+
+The first two corrupted `n_shares` and `nominal_amount_tnd` but **not**
+`pct_capital`, which is identified by its `%` sign and was never ambiguous; the
+network layers weight on percentage, so their edge weights were not affected.
+The last two did change the node set.
+
+**The committed records do not yet carry these fixes everywhere.** The fixes
+live in `src/bourse/extract/`, and the registration documents were re-extracted
+with them. The annual reports, the OCR stratum and the movement and resolution
+filings were extracted by a build that did not have them, and re-extracting
+those needs the corpus re-downloaded. The symptom is visible in
+`validation_report.md`: **24 firm-years now declare blockholder stakes above
+100%, the largest at 307.9%.** Concatenated stakes of that kind are the exact
+signature of the whole-table-body defect above — the same arithmetic that made
+Amen Bank's six shareholders into one. Treat `n_shares` and
+`nominal_amount_tnd` on any non-registration filing as unverified until the
+corpus has been re-extracted, and read `pct_capital` in preference to either.
+
+Note for anyone reading the merged history: the codebook previously described
+merged share counts as an artefact that "will recur on rebuild", and attributed
+two firm-years with stakes above 100% to "inconsistencies in the filings
+themselves rather than to parsing". Both statements were wrong. The first is
+fixed at source above. The second were entity-resolution double counts in the
+registration-document corpus, and the arithmetic matched the double-counted
+excess exactly; those two are gone. The 24 firm-years above 100% in the current
+report are a different and larger problem, described in the paragraph above,
+and they are not evidence that the original diagnosis was wrong.
 
 ## 7. `layer_year_coverage.csv`
 

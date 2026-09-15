@@ -20,16 +20,17 @@ RAW = DATA / "raw"
 INTERIM = DATA / "interim"
 
 # This build is namespaced under data/processed/ so it can coexist with the
-# other two rather than overwriting their tables (all three would otherwise
-# write events.csv.gz). The name carries no window: it used to be
+# others rather than overwriting their tables; several would otherwise write
+# events.csv.gz to the same place. The name carries no window: it used to be
 # "multiplex-2008-2012", which stopped being true the moment the window was
 # widened, and the window now lives in config/scope.yaml where it belongs.
 #
-# What distinguishes the three is *what* they extract, not when. This one is
+# What distinguishes the builds is *what* they extract, not when. This one is
 # relational and multiplex: it resolves gazette mentions onto the curated seed
 # network dyad by dyad. src/eltn reads the journal officiel alone for
-# bureaucratic office-holding, and the bourse component reads CMF filings for
-# listed-company boards and ownership.
+# bureaucratic office-holding, the bourse component reads CMF filings for
+# listed-company boards and ownership, src/aalam reads the A'lam Tunisiyun
+# biographical dictionary, and src/rodovid reads the Rodovid genealogies.
 BUILD = "multiplex"
 PROCESSED = DATA / "processed" / BUILD
 GOLD = ROOT / "gold"

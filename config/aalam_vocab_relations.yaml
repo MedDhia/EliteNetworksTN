@@ -40,6 +40,8 @@ relation_types:
   recommended:      "Subject proposed the counterparty for a post"
   colleague_of:     "Named as a friend, associate or fellow of the counterparty"
   eulogised_by:     "Counterparty publicly praised or mourned the subject"
+  read_work_of:     "Subject studied the writings of the counterparty, who is not
+                     a contemporary and did not teach them in person"
 
 # Directed relation pairs. Where the text states one, the converse holds of the
 # counterparty; recording it once and naming the inverse keeps the edge list

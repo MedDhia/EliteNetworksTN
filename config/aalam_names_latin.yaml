@@ -1,0 +1,3076 @@
+# The Latin edition of the registers: every Arabic name, twice.
+#
+# Nothing here is derived. `name_translit` in the processed tables looks like a
+# Latin column and is not one -- it is the vowel-less consonant skeleton that
+# generates the identifiers, so `سالم بو حاجب` comes out `SALM BW HAJB`. Arabic
+# script does not write short vowels, so no procedure recovers `Salem` from
+# that. Every form below was supplied.
+#
+# Two conventions, because the readers differ:
+#   fr     Tunisian French, as the archives and the gazette build spell these
+#          people (Mohamed Tahar Ben Achour, Bechir Sfar). This is also the
+#          author's own orthography: Zmerli wrote in French, and the volume is
+#          Hammadi Sahli's Arabic rendering of him.
+#   ijmes  Middle East studies convention, no diacritics (Muhammad al-Tahir
+#          Ibn Ashur). What an Anglophone literature indexes these people under.
+#
+# `mode` says what kind of rendering it is:
+#   transliterated  renders the Arabic, and is checked against it consonant by
+#                   consonant by `aalam.romanise.spines_agree`, on every row.
+#   conventional    the body's own French name, which is not a rendering of its
+#                   Arabic one: Collège Sadiki for المدرسة الصادقية, Lycée
+#                   Carnot for معهد كارنو. Only `fr` may be conventional; the
+#                   `ijmes` side still transliterates and is still gated.
+#   translated      a common-noun post or a description, where transliterating
+#                   would mean nothing: `وزير الداخلية` is Minister of the
+#                   Interior, and `الأساتذة الذين ساهموا في تكوينهما` is a group
+#                   the book characterises, not a person it names. Reading one
+#                   of these as a proper name is the error the mode prevents.
+#
+# `tier` says how much to trust it. `verified` is the 38 subjects plus the
+# institutions and alters with three or more ties -- the rows a reader meets,
+# checked by hand against the volume. `romanised` is the tail. `described` is
+# the rows that are not names.
+#
+# The gate catches a gloss attached to the wrong name: it refuses `مصطفى آغة`
+# as Mustapha Radhouane, which is the homonym merge the gold coding caught
+# (GOLD-FINDINGS s6). It cannot see a vowel -- Salim, Salem and Sulaym are one
+# spine -- and that is why the rows that matter are verified rather than gated.
+# docs/LIMITATIONS-aalam-tunisiyun.md s10.
+
+# The author's three generations. His judgement about his subjects, not an
+# attribute of the people, which is why the English keeps the definite article
+# he uses rather than turning them into period labels.
+cohorts:
+  "السابقون": "The predecessors"
+  "التابعون": "The followers"
+  "المعاصرون": "The contemporaries"
+
+# The subtitle the volume prints under each subject's dates. Five of the 38 are
+# not subtitles at all: OCR took a sentence out of the body of the essay, and
+# the English below says what that fragment says rather than repairing it into
+# a descriptor the book does not print. Several others carry visible OCR damage
+# (الموة ظف ا لكبيم for الموظف الكبير), rendered by the evident word.
+role_descriptors:
+  "المحسئة والمنقفة": "The benefactress and the cultivated woman"
+  "لقد ولد يوسف صاحب الطابع بملدافيا (أو البغدان باللغة التركية) في": "Yusuf Sahib al-Tabi was born in Moldavia (al-Boghdan in Turkish) in ..."
+  "الفقيه والرّحالة والدبلوماسى": "The jurist, the traveller and the diplomat"
+  "العالم والفقيه والمربي": "The scholar, the jurist and the educator"
+  "الشاعر والمتصوف والمربى": "The poet, the mystic and the educator"
+  "الحقوقي والمؤرخ ورجل الدولة": "The jurist, the historian and the statesman"
+  "الرجل والمواطن والدبلوماسي": "The man, the citizen and the diplomat"
+  "المفكر والأديب والموُرّخ": "The thinker, the man of letters and the historian"
+  "الجندي والمصلح ورجلل الدولة": "The soldier, the reformer and the statesman"
+  "الفنان والعالم والشاعر": "The artist, the scholar and the poet"
+  "المربي والموة ظف ا لكبيم": "The educator and the senior official"
+  "الصحافي والمزارع": "The journalist and the farmer"
+  "أنه لمن المؤسف حمّاً أن نلاحظ ما اكتنف روّادنا السابقين من نسيان»": "It is truly to be regretted that we observe the oblivion enveloping our predecessors ..."
+  "المفكر والمتصوّف": "The thinker and the mystic"
+  "ْ للغوي والفيلسوف والمربي": "The linguist, the philosopher and the educator"
+  "لقد كان المرحوم محمك الأصرم قوي البنية معتدل القامق ذا عيئين": "The late Muhammad al-Asram was of strong build, of middling height, with two eyes ..."
+  "المحامي والأديب والمفكم": "The lawyer, the man of letters and the thinker"
+  "القائد والمنظم ورجل الدولة": "The commander, the organiser and the statesman"
+  "لقد حجرت العادة فى الامبراطورية العثمانية كما فى غيرها من الدول": "Custom in the Ottoman Empire, as in other states, had it that ..."
+  "الشاعر الفيلسوف": "The philosopher-poet"
+  "العالم اللغوي والشاعر": "The linguist and the poet"
+  "صاحب الإنجازات والصحافي": "The man of achievements and the journalist"
+  "المهندس والمربي والباحث الموسيقي": "The engineer, the educator and the scholar of music"
+  "المربي ورجل السياسة": "The educator and the politician"
+  "المدرس والمزارع ورجل العمل": "The teacher, the farmer and the man of affairs"
+  "الصحافي ورجل السياسة": "The journalist and the politician"
+  "المحامي والصحافي ورجل السياسة": "The lawyer, the journalist and the politician"
+  "الشاعر والفناتن": "The poet and the artist"
+  "مما لا شك فيه أن خير الله بن مصطفى أجنبيٌ الأصل. فقد ولد جدّه": "There is no doubt that Khayr Allah Ibn Mustafa was of foreign origin. His grandfather was born ..."
+  "الصحافى والباحث والمناضل": "The journalist, the scholar and the militant"
+  "المحامسي والمفكسر والسياسي": "The lawyer, the thinker and the politician"
+  "الرجل والكاتب والمناضل": "The man, the writer and the militant"
+  "الرجل والكائتب والوطني": "The man, the writer and the patriot"
+  "رجل من رجال عصر النهضة": "A man of the Nahda"
+  "الطبيب والمناضل": "The physician and the militant"
+  "الرجل والقاضى والعلامة": "The man, the judge and the great scholar"
+  "الأديب والباحث والناقد الاجتماعى": "The man of letters, the scholar and the social critic"
+  "الأديبب والمفكر والمربى": "The man of letters, the thinker and the educator"
+
+# One entry per distinct Arabic string in persons.csv and organisations.csv.
+# Ordered by tier and then by the Arabic, so a diff stays readable.
+names:
+  "أحمد الصافي":
+    fr: "Ahmed Safi"
+    ijmes: "Ahmad al-Safi"
+    tier: verified
+    mode: transliterated
+  "أحمد الغطاس":
+    fr: "Ahmed Ghattas"
+    ijmes: "Ahmad al-Ghattas"
+    tier: verified
+    mode: transliterated
+  "أحمد الماطري":
+    fr: "Ahmed Materi"
+    ijmes: "Ahmad al-Matri"
+    tier: verified
+    mode: transliterated
+  "أحمد باي الأول":
+    fr: "Ahmed Bey El Aouel"
+    ijmes: "Ahmad Bay al-Awwal"
+    tier: verified
+    mode: transliterated
+  "أحمد باي الثاني":
+    fr: "Ahmed Bey Eth-Thani"
+    ijmes: "Ahmad Bay al-Thani"
+    tier: verified
+    mode: transliterated
+  "أحمد بن أبي الضياف":
+    fr: "Ahmed Ibn Abi Dhiaf"
+    ijmes: "Ahmad Ibn Abi al-Diyaf"
+    tier: verified
+    mode: transliterated
+  "أحمد بن حسين":
+    fr: "Ahmed Ben Hussein"
+    ijmes: "Ahmad Ibn Husayn"
+    tier: verified
+    mode: transliterated
+  "أحمد بيرم":
+    fr: "Ahmed Bayram"
+    ijmes: "Ahmad Bayram"
+    tier: verified
+    mode: transliterated
+  "إبراهيم الرياحي":
+    fr: "Ibrahim Riahi"
+    ijmes: "Ibrahim al-Riyahi"
+    tier: verified
+    mode: transliterated
+  "الأميرة نازلي":
+    fr: "La princesse Nazli"
+    ijmes: "al-Amira Nazli"
+    tier: verified
+    mode: conventional
+  "البارون دير لانجي":
+    fr: "Le baron d'Erlanger"
+    ijmes: "al-Barun Dir Lanji"
+    tier: verified
+    mode: conventional
+  "البشير بن الخوجة":
+    fr: "Bechir Ben Khoja"
+    ijmes: "al-Bashir Ibn al-Khuja"
+    tier: verified
+    mode: transliterated
+  "البشير صفر":
+    fr: "Bechir Sfar"
+    ijmes: "al-Bashir Safar"
+    tier: verified
+    mode: transliterated
+  "الجامعة الزيتونية":
+    fr: "Université Ez-Zitouna"
+    ijmes: "al-Jamia al-Zaytuniyya"
+    tier: verified
+    mode: conventional
+  "الجمعية التمثيلية الآداب":
+    fr: "El Jamiya Et-Tamthiliya lil-Adab"
+    ijmes: "al-Jamiyya al-Tamthiliyya lil-Adab"
+    tier: verified
+    mode: transliterated
+  "الجمعية الخلدونية":
+    fr: "La Khaldounia"
+    ijmes: "al-Khalduniyya"
+    tier: verified
+    mode: transliterated
+  "الجمعية الخيرية الإسلامية":
+    fr: "El Jamiya El Khairia El Islamia"
+    ijmes: "al-Jamiyya al-Khayriyya al-Islamiyya"
+    tier: verified
+    mode: transliterated
+  "الجنرال حسين":
+    fr: "Général Hussein"
+    ijmes: "General Husayn"
+    tier: verified
+    mode: transliterated
+  "الجنرال خير الدين":
+    fr: "Général Khereddine"
+    ijmes: "General Khayr al-Din"
+    tier: verified
+    mode: transliterated
+  "الحبيب بورقيبة":
+    fr: "Habib Bourguiba"
+    ijmes: "al-Habib Burquiba"
+    tier: verified
+    mode: transliterated
+  "الحزب الإصلاحي":
+    fr: "Parti réformiste"
+    ijmes: "Reform Party"
+    tier: verified
+    mode: translated
+  "الحزب الحر الدستوري":
+    fr: "Parti libre constitutionnel"
+    ijmes: "al-Hizb al-Hurr al-Dusturi"
+    tier: verified
+    mode: conventional
+  "الحزب الحر الدستوري التونسي":
+    fr: "Parti libre constitutionnel tunisien"
+    ijmes: "al-Hizb al-Hurr al-Dusturi al-Tunisi"
+    tier: verified
+    mode: conventional
+  "الحكومة التونسية":
+    fr: "Gouvernement tunisien"
+    ijmes: "Tunisian government"
+    tier: verified
+    mode: translated
+  "السلطان عبد الحميد":
+    fr: "Le sultan Abdelhamid"
+    ijmes: "al-Sultan Abd al-Hamid"
+    tier: verified
+    mode: transliterated
+  "الشاذلي خير الله":
+    fr: "Chedly Kheirallah"
+    ijmes: "al-Shadhili Khayr Allah"
+    tier: verified
+    mode: transliterated
+  "الصادق التلاتلي":
+    fr: "Sadok Tlatli"
+    ijmes: "al-Sadiq al-Tlatli"
+    tier: verified
+    mode: transliterated
+  "الطاهر الحداد":
+    fr: "Tahar Haddad"
+    ijmes: "al-Tahir al-Haddad"
+    tier: verified
+    mode: transliterated
+  "الطاهر الخميري":
+    fr: "Tahar Khemiri"
+    ijmes: "al-Tahir al-Khumayri"
+    tier: verified
+    mode: transliterated
+  "الطاهر بن عاشور":
+    fr: "Tahar Ben Achour"
+    ijmes: "al-Tahir Ibn Ashur"
+    tier: verified
+    mode: transliterated
+  "الطيب الجلولي":
+    fr: "Taïeb Jelloli"
+    ijmes: "al-Tayyib al-Jalluli"
+    tier: verified
+    mode: transliterated
+  "الطيب رضوان":
+    fr: "Taïeb Radhouane"
+    ijmes: "al-Tayyib Radwan"
+    tier: verified
+    mode: transliterated
+  "المجلس الكبير":
+    fr: "Grand Conseil"
+    ijmes: "Grand Council"
+    tier: verified
+    mode: translated
+  "المختار الماطري":
+    fr: "Mokhtar Materi"
+    ijmes: "al-Mukhtar al-Matri"
+    tier: verified
+    mode: transliterated
+  "المدرسة الحربية بباردو":
+    fr: "École militaire du Bardo"
+    ijmes: "al-Madrasa al-Harbiyya bi-Bardu"
+    tier: verified
+    mode: conventional
+  "المدرسة الصادقية":
+    fr: "Collège Sadiki"
+    ijmes: "al-Madrasa al-Sadiqiyya"
+    tier: verified
+    mode: conventional
+  "المعهد الصادقي":
+    fr: "El Maahad Es-Sadiki"
+    ijmes: "al-Mahad al-Sadiqi"
+    tier: verified
+    mode: transliterated
+  "المكتب السياسي للحزب الدستوري الجديد":
+    fr: "Bureau politique du Néo-Destour"
+    ijmes: "al-Maktab al-Siyasi lil-Hizb al-Dusturi al-Jadid"
+    tier: verified
+    mode: conventional
+  "النادي التونسي":
+    fr: "En-Nadi Et-Tounsi"
+    ijmes: "al-Nadi al-Tunsi"
+    tier: verified
+    mode: transliterated
+  "الوزارة الكبرى":
+    fr: "Grand Vizirat"
+    ijmes: "Grand Vizirate"
+    tier: verified
+    mode: translated
+  "الوزير الأكبر":
+    fr: "Grand Vizir"
+    ijmes: "Grand Vizier"
+    tier: verified
+    mode: translated
+  "الوفد الدستوري الثاني إلى باريس":
+    fr: "Seconde délégation destourienne à Paris"
+    ijmes: "Second Destour delegation to Paris"
+    tier: verified
+    mode: translated
+  "تونس الشهيدة":
+    fr: "La Tunisie Martyre"
+    ijmes: "Tunis al-Shahida"
+    tier: verified
+    mode: conventional
+  "جامع الزيتونة":
+    fr: "Jamaa Ez-Zitouna"
+    ijmes: "Jami al-Zaytuna"
+    tier: verified
+    mode: transliterated
+  "جامعة الصوربون":
+    fr: "La Sorbonne"
+    ijmes: "Jamiat al-Surbun"
+    tier: verified
+    mode: conventional
+  "جامعة همبورغ":
+    fr: "Université de Hambourg"
+    ijmes: "University of Hamburg"
+    tier: verified
+    mode: translated
+  "جريدة التونسي":
+    fr: "Et-Tounsi"
+    ijmes: "al-Tunsi"
+    tier: verified
+    mode: transliterated
+  "جريدة الحاضرة":
+    fr: "El Hadhira"
+    ijmes: "al-Hadira"
+    tier: verified
+    mode: transliterated
+  "جريدة النهضة":
+    fr: "En-Nahdha"
+    ijmes: "al-Nahda"
+    tier: verified
+    mode: transliterated
+  "جمعية قدماء الصادقية":
+    fr: "Association des Anciens de Sadiki"
+    ijmes: "Jamiyyat Qudama al-Sadiqiyya"
+    tier: verified
+    mode: conventional
+  "حركة الشباب التونسي":
+    fr: "Jeunes Tunisiens"
+    ijmes: "Harakat al-Shabab al-Tunisi"
+    tier: verified
+    mode: conventional
+  "حرم صالح بن خليفة":
+    fr: "Mme Salah Ben Khalifa"
+    ijmes: "the wife of Salih Ibn Khalifa"
+    tier: verified
+    mode: translated
+  "حسن حسني عبد الوهاب":
+    fr: "Hassan Hosni Abdelwahab"
+    ijmes: "Hasan Husni Abd al-Wahhab"
+    tier: verified
+    mode: transliterated
+  "حسن قلاتي":
+    fr: "Hassen Guellaty"
+    ijmes: "Hasan Gallati"
+    tier: verified
+    mode: transliterated
+  "حسن ڤلاتي":
+    fr: "Hassen Guellaty"
+    ijmes: "Hasan Gallati"
+    tier: verified
+    mode: transliterated
+  "حسونة العياشي":
+    fr: "Hassouna Ayachi"
+    ijmes: "Hasuna al-Ayashi"
+    tier: verified
+    mode: transliterated
+  "حسونة بن مصطفى":
+    fr: "Hassouna Ben Mustapha"
+    ijmes: "Hasuna Ibn Mustafa"
+    tier: verified
+    mode: transliterated
+  "حسين باي الثاني":
+    fr: "Hussein Bey Eth-Thani"
+    ijmes: "Husayn Bay al-Thani"
+    tier: verified
+    mode: transliterated
+  "حمودة باشا":
+    fr: "Hammouda Pacha"
+    ijmes: "Hammuda Pasha"
+    tier: verified
+    mode: transliterated
+  "خليل بوحاجب":
+    fr: "Khelil Bou Hajeb"
+    ijmes: "Khalil Bu Hajib"
+    tier: verified
+    mode: transliterated
+  "خير الله بن مصطفى":
+    fr: "Kheirallah Ben Mustapha"
+    ijmes: "Khayr Allah Ibn Mustafa"
+    tier: verified
+    mode: transliterated
+  "دار المعلمين بتونس":
+    fr: "École normale de Tunis"
+    ijmes: "Dar al-Muallimin bi-Tunis"
+    tier: verified
+    mode: conventional
+  "رشيد بن مصطفى":
+    fr: "Rachid Ben Mustapha"
+    ijmes: "Rashid Ibn Mustafa"
+    tier: verified
+    mode: transliterated
+  "زين العابدين السنوسي":
+    fr: "Zine El Abidine Snoussi"
+    ijmes: "Zayn al-Abidin al-Sanusi"
+    tier: verified
+    mode: transliterated
+  "سالم بو حاجب":
+    fr: "Salem Bou Hajeb"
+    ijmes: "Salim Bu Hajib"
+    tier: verified
+    mode: transliterated
+  "صالح فرحات":
+    fr: "Salah Farhat"
+    ijmes: "Salih Farhat"
+    tier: verified
+    mode: transliterated
+  "صلاح الدين التلاتلي":
+    fr: "Salaheddine Tlatli"
+    ijmes: "Salah al-Din al-Tlatli"
+    tier: verified
+    mode: transliterated
+  "طاهر باشا خير الدين":
+    fr: "Tahar Pacha Khereddine"
+    ijmes: "Tahir Pasha Khayr al-Din"
+    tier: verified
+    mode: transliterated
+  "عبد الجليل الزاوش":
+    fr: "Abdeljelil Zaouche"
+    ijmes: "Abd al-Jalil al-Zawush"
+    tier: verified
+    mode: transliterated
+  "عبد السلام البكوش":
+    fr: "Abdessalem Bakkouche"
+    ijmes: "Abd al-Salam al-Bakkush"
+    tier: verified
+    mode: transliterated
+  "عبد العزيز الثعالبي":
+    fr: "Abdelaziz Thaalbi"
+    ijmes: "Abd al-Aziz al-Thaalibi"
+    tier: verified
+    mode: transliterated
+  "عثمان باي":
+    fr: "Othman Bey"
+    ijmes: "Uthman Bay"
+    tier: verified
+    mode: transliterated
+  "عرش المملكة التونسية":
+    fr: "Trône du Royaume de Tunisie"
+    ijmes: "Throne of the Kingdom of Tunisia"
+    tier: verified
+    mode: translated
+  "عزيزة عثمانة":
+    fr: "Aziza Othmana"
+    ijmes: "Aziza Uthmana"
+    tier: verified
+    mode: transliterated
+  "علي الورداني":
+    fr: "Ali Ouardani"
+    ijmes: "Ali al-Wardani"
+    tier: verified
+    mode: transliterated
+  "علي باش حانبة":
+    fr: "Ali Bach Hamba"
+    ijmes: "Ali Bash Hanba"
+    tier: verified
+    mode: transliterated
+  "علي باي":
+    fr: "Ali Bey"
+    ijmes: "Ali Bay"
+    tier: verified
+    mode: transliterated
+  "علي بو حاجب":
+    fr: "Ali Bou Hajeb"
+    ijmes: "Ali Bu Hajib"
+    tier: verified
+    mode: transliterated
+  "علي بوحاجب":
+    fr: "Ali Bou Hajeb"
+    ijmes: "Ali Bu Hajib"
+    tier: verified
+    mode: transliterated
+  "علي بوشوشة":
+    fr: "Ali Bouchoucha"
+    ijmes: "Ali Bushusha"
+    tier: verified
+    mode: transliterated
+  "عمر ثلاتي":
+    fr: "Omar Tlati"
+    ijmes: "Umar Tlati"
+    tier: verified
+    mode: transliterated
+  "كلية الحقوق بباريس":
+    fr: "Faculté de droit de Paris"
+    ijmes: "Faculty of Law, Paris"
+    tier: verified
+    mode: translated
+  "مؤتمر شمال إفريقيا بباريس":
+    fr: "Congrès nord-africain de Paris"
+    ijmes: "North African Congress, Paris"
+    tier: verified
+    mode: translated
+  "مارسال بيروتون":
+    fr: "Marcel Peyrouton"
+    ijmes: "Marsal Birutun"
+    tier: verified
+    mode: transliterated
+  "محمد الأصرم":
+    fr: "Mohamed El Asram"
+    ijmes: "Muhammad al-Asram"
+    tier: verified
+    mode: transliterated
+  "محمد الأمين الشابي":
+    fr: "Mohamed El Amine Chabbi"
+    ijmes: "Muhammad al-Amin al-Shabbi"
+    tier: verified
+    mode: transliterated
+  "محمد التلاتلي":
+    fr: "Mohamed Tlatli"
+    ijmes: "Muhammad al-Tlatli"
+    tier: verified
+    mode: transliterated
+  "محمد السعيد الخلصي":
+    fr: "Mohamed Said El Khalsi"
+    ijmes: "Muhammad al-Said al-Khalsi"
+    tier: verified
+    mode: transliterated
+  "محمد السنوسي":
+    fr: "Mohamed Snoussi"
+    ijmes: "Muhammad al-Sanusi"
+    tier: verified
+    mode: transliterated
+  "محمد الطاهر بن عاشور":
+    fr: "Mohamed Tahar Ben Achour"
+    ijmes: "Muhammad al-Tahir Ibn Ashur"
+    tier: verified
+    mode: transliterated
+  "محمد العزيز بوعتور":
+    fr: "Mohamed Aziz Bouattour"
+    ijmes: "Muhammad al-Aziz Buattur"
+    tier: verified
+    mode: transliterated
+  "محمد الفاضل بن عاشور":
+    fr: "Mohamed Fadhel Ben Achour"
+    ijmes: "Muhammad al-Fadil Ibn Ashur"
+    tier: verified
+    mode: transliterated
+  "محمد باي":
+    fr: "Mohamed Bey"
+    ijmes: "Muhammad Bay"
+    tier: verified
+    mode: transliterated
+  "محمد باي خير الدين":
+    fr: "Mohamed Bey Khereddine"
+    ijmes: "Muhammad Bay Khayr al-Din"
+    tier: verified
+    mode: transliterated
+  "محمد بن الخوجة":
+    fr: "Mohamed Ben Khoja"
+    ijmes: "Muhammad Ibn al-Khuja"
+    tier: verified
+    mode: transliterated
+  "محمد بورقيبة":
+    fr: "Mohamed Bourguiba"
+    ijmes: "Muhammad Burquiba"
+    tier: verified
+    mode: transliterated
+  "محمد بيرم":
+    fr: "Mohamed Bayram"
+    ijmes: "Muhammad Bayram"
+    tier: verified
+    mode: transliterated
+  "محمد بيرم الخامس":
+    fr: "Mohamed Bayram El Khames"
+    ijmes: "Muhammad Bayram al-Khamis"
+    tier: verified
+    mode: transliterated
+  "محمد رضوان":
+    fr: "Mohamed Radhouane"
+    ijmes: "Muhammad Radwan"
+    tier: verified
+    mode: transliterated
+  "محمد عبده":
+    fr: "Mohamed Abdou"
+    ijmes: "Muhammad Abduh"
+    tier: verified
+    mode: transliterated
+  "محمود الماطري":
+    fr: "Mahmoud Materi"
+    ijmes: "Mahmud al-Matri"
+    tier: verified
+    mode: transliterated
+  "محمود قابادو":
+    fr: "Mahmoud Kabadou"
+    ijmes: "Mahmud Qabadu"
+    tier: verified
+    mode: transliterated
+  "مصطفى آغة":
+    fr: "Mustapha Agha"
+    ijmes: "Mustafa Agha"
+    tier: verified
+    mode: transliterated
+  "مصطفى الكعاك":
+    fr: "Mustapha Kaak"
+    ijmes: "Mustafa al-Kaak"
+    tier: verified
+    mode: transliterated
+  "مصطفى رضوان":
+    fr: "Mustapha Radhouane"
+    ijmes: "Mustafa Radwan"
+    tier: verified
+    mode: transliterated
+  "مصطفى صفر":
+    fr: "Mustapha Sfar"
+    ijmes: "Mustafa Safar"
+    tier: verified
+    mode: transliterated
+  "معهد كارنو":
+    fr: "Lycée Carnot"
+    ijmes: "Mahad Karnu"
+    tier: verified
+    mode: conventional
+  "والي سوسة":
+    fr: "Gouverneur de Sousse"
+    ijmes: "Governor of Sousse"
+    tier: verified
+    mode: translated
+  "وزارة العدل":
+    fr: "Ministère de la Justice"
+    ijmes: "Ministry of Justice"
+    tier: verified
+    mode: translated
+  "وزير التربية القومية":
+    fr: "Ministre de l'Éducation nationale"
+    ijmes: "Minister of National Education"
+    tier: verified
+    mode: translated
+  "وزير الداخلية":
+    fr: "Ministre de l'Intérieur"
+    ijmes: "Minister of the Interior"
+    tier: verified
+    mode: translated
+  "يوسف صاحب الطابع":
+    fr: "Youssef Sahib Ettabaa"
+    ijmes: "Yusuf Sahib al-Tabi"
+    tier: verified
+    mode: transliterated
+  "آغا مدينة قيصرلي":
+    fr: "Agha de la ville de Kayseri"
+    ijmes: "Agha of the city of Kayseri"
+    tier: romanised
+    mode: translated
+  "أبو العباس أحمد":
+    fr: "Abou El Abbas Ahmed"
+    ijmes: "Abu al-Abbas Ahmad"
+    tier: romanised
+    mode: transliterated
+  "أبو العلاء المعري":
+    fr: "Abou El Ala El Maarri"
+    ijmes: "Abu al-Ala al-Maarri"
+    tier: romanised
+    mode: transliterated
+  "أبو القاسم الشابي":
+    fr: "Abou El Kacem Chebbi"
+    ijmes: "Abu al-Qasim al-Shabbi"
+    tier: romanised
+    mode: transliterated
+  "أبو تمام":
+    fr: "Abou Tammam"
+    ijmes: "Abu Tammam"
+    tier: romanised
+    mode: transliterated
+  "أحد القضاة الشرعيين":
+    fr: "Un des juges charaïques"
+    ijmes: "One of the sharia judges"
+    tier: romanised
+    mode: translated
+  "أحمد السقا":
+    fr: "Ahmed Sakka"
+    ijmes: "Ahmad al-Saqqa"
+    tier: romanised
+    mode: transliterated
+  "أحمد بن الطاهر":
+    fr: "Ahmed Ben Tahar"
+    ijmes: "Ahmad Ibn al-Tahir"
+    tier: romanised
+    mode: transliterated
+  "أحمد تيمور":
+    fr: "Ahmed Teymour"
+    ijmes: "Ahmad Taymur"
+    tier: romanised
+    mode: transliterated
+  "أحمد طالب الإبراهيمي":
+    fr: "Ahmed Taleb Ibrahimi"
+    ijmes: "Ahmad Talib al-Ibrahimi"
+    tier: romanised
+    mode: transliterated
+  "أضواء على الصحافة التونسية":
+    fr: "Adhoua ala Essahafa Ettounisia"
+    ijmes: "Adwa ala al-Sihafa al-Tunisiyya"
+    tier: romanised
+    mode: transliterated
+  "أقوم المسالك":
+    fr: "Akwam el-Masalik"
+    ijmes: "Aqwam al-Masalik"
+    tier: romanised
+    mode: transliterated
+  "أقوم المسالك في معرفة أحوال الممالك":
+    fr: "Akwam el-Masalik fi Maarifat Ahoual el-Mamalik"
+    ijmes: "Aqwam al-Masalik fi Marifat Ahwal al-Mamalik"
+    tier: romanised
+    mode: transliterated
+  "أمير آلاي":
+    fr: "Colonel"
+    ijmes: "Colonel"
+    tier: romanised
+    mode: translated
+  "أمير أمراء":
+    fr: "Émir des émirs"
+    ijmes: "Commander of commanders"
+    tier: romanised
+    mode: translated
+  "أمير الأمراء بلنسي":
+    fr: "Amir El Oumara Belinsi"
+    ijmes: "Amir al-Umara Balansi"
+    tier: romanised
+    mode: transliterated
+  "أمير لواء":
+    fr: "Général de brigade"
+    ijmes: "Brigadier general"
+    tier: romanised
+    mode: translated
+  "أمين سر خير الدين":
+    fr: "Secrétaire particulier de Khéredine"
+    ijmes: "Private secretary to Khayr al-Din"
+    tier: romanised
+    mode: translated
+  "أمين مال الجمعية الخيرية الإسلامية":
+    fr: "Trésorier de l'Association islamique de bienfaisance"
+    ijmes: "Treasurer of the Islamic Benevolent Association"
+    tier: romanised
+    mode: translated
+  "أولار":
+    fr: "Aulard"
+    ijmes: "Awlar"
+    tier: romanised
+    mode: conventional
+  "إتحاف أهل الزمان":
+    fr: "Ithaf Ahl ez-Zaman"
+    ijmes: "Ithaf Ahl al-Zaman"
+    tier: romanised
+    mode: transliterated
+  "إدارة الأوقاف":
+    fr: "Direction des Habous"
+    ijmes: "endowments administration"
+    tier: romanised
+    mode: translated
+  "إدارة الجهات":
+    fr: "Administration des régions"
+    ijmes: "Administration of the regions"
+    tier: romanised
+    mode: translated
+  "إدارة الفلاحة":
+    fr: "Direction de l'Agriculture"
+    ijmes: "agriculture administration"
+    tier: romanised
+    mode: translated
+  "إدارة المطبعة الرسمية":
+    fr: "Direction de l'Imprimerie officielle"
+    ijmes: "Directorship of the Official Printing Press"
+    tier: romanised
+    mode: translated
+  "إمام خطيب بجامع القصر":
+    fr: "Imam prédicateur à la mosquée El Ksar"
+    ijmes: "Imam and preacher at the Qasr mosque"
+    tier: romanised
+    mode: translated
+  "إمامة وخطابة جامع سبحان الله":
+    fr: "Imamat et prédication à la mosquée Sobhan Allah"
+    ijmes: "Imamate and preaching at the Subhan Allah mosque"
+    tier: romanised
+    mode: translated
+  "إميل دوركايم":
+    fr: "Émile Durkheim"
+    ijmes: "Imil Durkaym"
+    tier: romanised
+    mode: conventional
+  "إيلي زيرح":
+    fr: "Élie Zérah"
+    ijmes: "Ili Zirah"
+    tier: romanised
+    mode: transliterated
+  "اجتماعات الحزب الدستوري الجديد الأولى بسوسة":
+    fr: "premières réunions du Néo-Destour à Sousse"
+    ijmes: "the first meetings of the Neo-Destour Party at Sousse"
+    tier: romanised
+    mode: translated
+  "احمد الابي":
+    fr: "Ahmed El Abi"
+    ijmes: "Ahmad al-Abi"
+    tier: romanised
+    mode: transliterated
+  "الأدب التونسي في القرن الرابع عشر":
+    fr: "El Adab Ettounsi fi el-Karn er-Rabi Achar"
+    ijmes: "al-Adab al-Tunisi fi al-Qarn al-Rabi Ashar"
+    tier: romanised
+    mode: transliterated
+  "الأرض قبل كل شيء":
+    fr: "El Ard kabla koull chay"
+    ijmes: "al-Ard qabla kull shay"
+    tier: romanised
+    mode: transliterated
+  "الأستاذ بياترا":
+    fr: "El Oustadh Piatra"
+    ijmes: "al-Ustadh Biatra"
+    tier: romanised
+    mode: transliterated
+  "الأشعري":
+    fr: "El Achari"
+    ijmes: "al-Ashari"
+    tier: romanised
+    mode: transliterated
+  "الأمين العام للجنة التنفيذية للحزب":
+    fr: "Secrétaire général du comité exécutif du parti"
+    ijmes: "Secretary-General of the party's executive committee"
+    tier: romanised
+    mode: translated
+  "الأمين العام للحزب الدستوري الجديد":
+    fr: "Secrétaire général du Parti libéral constitutionnel nouveau (Néo-Destour)"
+    ijmes: "Secretary-General of the New Constitutional Party (Neo-Destour)"
+    tier: romanised
+    mode: translated
+  "الإدارة":
+    fr: "l'Administration"
+    ijmes: "the administration"
+    tier: romanised
+    mode: translated
+  "الإذاعة التونسية":
+    fr: "Radiodiffusion tunisienne"
+    ijmes: "al-Idhaa al-Tunisiyya"
+    tier: romanised
+    mode: conventional
+  "الإشراف على دروس الترجمة والإنشاء":
+    fr: "Direction des cours de traduction et de rédaction"
+    ijmes: "Supervision of the translation and composition classes"
+    tier: romanised
+    mode: translated
+  "الإمارة":
+    fr: "L'émirat"
+    ijmes: "The emirate"
+    tier: romanised
+    mode: translated
+  "الاتحاد التجاري":
+    fr: "El Ittihad Ettijari"
+    ijmes: "al-Ittihad al-Tijari"
+    tier: romanised
+    mode: transliterated
+  "الاسكندر دوماس الإبن":
+    fr: "Alexandre Dumas fils"
+    ijmes: "al-Iskandar Dumas al-Ibn"
+    tier: romanised
+    mode: conventional
+  "الباب العالي":
+    fr: "la Sublime Porte"
+    ijmes: "al-Bab al-Ali"
+    tier: romanised
+    mode: conventional
+  "الباي":
+    fr: "Le Bey"
+    ijmes: "The Bey"
+    tier: romanised
+    mode: translated
+  "البحري فيفة":
+    fr: "El Bahri Fifa"
+    ijmes: "al-Bahri Fifa"
+    tier: romanised
+    mode: transliterated
+  "البحيرة":
+    fr: "El Bouhaira"
+    ijmes: "al-Buhayra"
+    tier: romanised
+    mode: transliterated
+  "البشير باي":
+    fr: "Béchir Bey"
+    ijmes: "al-Bashir Bay"
+    tier: romanised
+    mode: transliterated
+  "البعثة العلمية":
+    fr: "Mission scientifique"
+    ijmes: "al-Bitha al-Ilmiyya"
+    tier: romanised
+    mode: conventional
+  "البلاط السلطاني":
+    fr: "la Cour sultanienne"
+    ijmes: "the sultanic court"
+    tier: romanised
+    mode: translated
+  "التاريخ الباشي":
+    fr: "Ettarikh el-Bachi"
+    ijmes: "al-Tarikh al-Bashi"
+    tier: romanised
+    mode: transliterated
+  "التعليم":
+    fr: "L'enseignement"
+    ijmes: "Teaching"
+    tier: romanised
+    mode: translated
+  "التعليم الابتدائي المخصص للأهالي في البلاد التونسية":
+    fr: "Ettaalim el-Ibtidai el-Mokhassas lil-Ahali fi el-Bilad Ettounisia"
+    ijmes: "al-Talim al-Ibtidai al-Mukhassas lil-Ahali fi al-Bilad al-Tunisiyya"
+    tier: romanised
+    mode: transliterated
+  "الجامعة الأمريكية بالقاهرة":
+    fr: "l'Université américaine du Caire"
+    ijmes: "al-Jamia al-Amrikiyya bi-al-Qahira"
+    tier: romanised
+    mode: conventional
+  "الجمعية الوقتية لفض النزاعات":
+    fr: "la Commission provisoire pour le règlement des litiges"
+    ijmes: "al-Jamiyya al-Waqtiyya li-Fadd al-Nizaat"
+    tier: romanised
+    mode: conventional
+  "الجناح المتحرر للحزب الدستوري":
+    fr: "l'aile libérale du Parti destourien"
+    ijmes: "the liberal wing of the Destour party"
+    tier: romanised
+    mode: translated
+  "الجنرال رشيد":
+    fr: "Le Général Rachid"
+    ijmes: "al-Jinral Rashid"
+    tier: romanised
+    mode: transliterated
+  "الجيش التركي":
+    fr: "l'armée turque"
+    ijmes: "the Turkish army"
+    tier: romanised
+    mode: translated
+  "الحركة التطويرية التونسية":
+    fr: "El Haraka Ettatwiria Ettounisia"
+    ijmes: "al-Haraka al-Tatwiriyya al-Tunisiyya"
+    tier: romanised
+    mode: transliterated
+  "الحزب الحاكم":
+    fr: "le parti au pouvoir"
+    ijmes: "the ruling party"
+    tier: romanised
+    mode: translated
+  "الحزب الحر الدستوري الجديد":
+    fr: "le Néo-Destour"
+    ijmes: "al-Hizb al-Hurr al-Dusturi al-Jadid"
+    tier: romanised
+    mode: conventional
+  "الحزب الدستوري":
+    fr: "le Destour"
+    ijmes: "al-Hizb al-Dusturi"
+    tier: romanised
+    mode: transliterated
+  "الحزب الدستوري الجديد":
+    fr: "le Néo-Destour"
+    ijmes: "al-Hizb al-Dusturi al-Jadid"
+    tier: romanised
+    mode: conventional
+  "الحكومة العثمانية":
+    fr: "le gouvernement ottoman"
+    ijmes: "the Ottoman government"
+    tier: romanised
+    mode: translated
+  "الحكومة العثمانية الجديدة":
+    fr: "le nouveau gouvernement ottoman"
+    ijmes: "the new Ottoman government"
+    tier: romanised
+    mode: translated
+  "الحكومة الفرنسية":
+    fr: "le gouvernement français"
+    ijmes: "the French government"
+    tier: romanised
+    mode: translated
+  "الداماد فريد باشا":
+    fr: "Damad Férid Pacha"
+    ijmes: "al-Damad Farid Pasha"
+    tier: romanised
+    mode: transliterated
+  "الدبيش":
+    fr: "La Dépêche"
+    ijmes: "al-Dabish"
+    tier: romanised
+    mode: conventional
+  "الدستور العثماني":
+    fr: "Ed-Doustour el-Othmani"
+    ijmes: "al-Dustur al-Uthmani"
+    tier: romanised
+    mode: transliterated
+  "الدكتور بروزون":
+    fr: "Le Docteur Brouzon"
+    ijmes: "al-Duktur Bruzun"
+    tier: romanised
+    mode: transliterated
+  "الدولة الحسينية":
+    fr: "l'État husseinite"
+    ijmes: "the Husaynid state"
+    tier: romanised
+    mode: translated
+  "الرائد التونسي":
+    fr: "Er-Raïd Ettounsi"
+    ijmes: "al-Raid al-Tunisi"
+    tier: romanised
+    mode: transliterated
+  "الرحلة إلى بلاد السنوسية":
+    fr: "Er-Rihla ila Bilad es-Senoussia"
+    ijmes: "al-Rihla ila Bilad al-Sanusiyya"
+    tier: romanised
+    mode: transliterated
+  "الرحلة الأندلسية":
+    fr: "Er-Rihla el-Andaloussia"
+    ijmes: "al-Rihla al-Andalusiyya"
+    tier: romanised
+    mode: transliterated
+  "الرحلة الفليارية":
+    fr: "Er-Rihla el-Feliaria"
+    ijmes: "al-Rihla al-Filyariyya"
+    tier: romanised
+    mode: transliterated
+  "الرحلة الناصرية":
+    fr: "Er-Rihla Ennasiria"
+    ijmes: "al-Rihla al-Nasiriyya"
+    tier: romanised
+    mode: transliterated
+  "الرزنامة التونسية":
+    fr: "Er-Rouznama Ettounisia"
+    ijmes: "al-Ruznama al-Tunisiyya"
+    tier: romanised
+    mode: transliterated
+  "الزاوية الكتانية بمراكش":
+    fr: "la Zaouia Kettania bi Marrakech"
+    ijmes: "al-Zawiya al-Kattaniyya bi-Marrakush"
+    tier: romanised
+    mode: transliterated
+  "الزمخشري":
+    fr: "Zamakhchari"
+    ijmes: "al-Zamakhshari"
+    tier: romanised
+    mode: transliterated
+  "الزهرة":
+    fr: "Ez-Zohra"
+    ijmes: "al-Zahra"
+    tier: romanised
+    mode: transliterated
+  "السلط الفرنسية":
+    fr: "les autorités françaises"
+    ijmes: "the French authorities"
+    tier: romanised
+    mode: translated
+  "السلطان محمد رشاد":
+    fr: "Le Sultan Mohamed Rechad"
+    ijmes: "al-Sultan Muhammad Rashad"
+    tier: romanised
+    mode: transliterated
+  "السلطان وحيد الدين":
+    fr: "Le Sultan Wahid Eddine"
+    ijmes: "al-Sultan Wahid al-Din"
+    tier: romanised
+    mode: transliterated
+  "السلطة العليا":
+    fr: "l'autorité supérieure"
+    ijmes: "the supreme authority"
+    tier: romanised
+    mode: translated
+  "السلطة العليا بالبلاد":
+    fr: "l'autorité supérieure du pays"
+    ijmes: "the supreme authority in the country"
+    tier: romanised
+    mode: translated
+  "الشاذلي القسطلي":
+    fr: "Chedly El Kastalli"
+    ijmes: "al-Shadhili al-Qastalli"
+    tier: romanised
+    mode: transliterated
+  "الشريف الرضي":
+    fr: "Chérif Er Radhi"
+    ijmes: "al-Sharif al-Radi"
+    tier: romanised
+    mode: transliterated
+  "الشيخ أبو الهدى":
+    fr: "Le Cheikh Abou El Houda"
+    ijmes: "al-Shaykh Abu al-Huda"
+    tier: romanised
+    mode: transliterated
+  "الشيخ ظافر":
+    fr: "Le Cheikh Zafer"
+    ijmes: "al-Shaykh Zafir"
+    tier: romanised
+    mode: transliterated
+  "الشيخ محمد الكتاني":
+    fr: "Le Cheikh Mohamed El Kettani"
+    ijmes: "al-Shaykh Muhammad al-Kattani"
+    tier: romanised
+    mode: transliterated
+  "الصادق الزمرلي":
+    fr: "Sadok Zmerli"
+    ijmes: "al-Sadiq al-Zamarli"
+    tier: romanised
+    mode: transliterated
+  "الصادق باي":
+    fr: "Sadok Bey"
+    ijmes: "al-Sadiq Bay"
+    tier: romanised
+    mode: transliterated
+  "الصدر الأعظم":
+    fr: "Grand Vizir"
+    ijmes: "Grand Vizier"
+    tier: romanised
+    mode: translated
+  "الصدر الأعظم للدولة التركية":
+    fr: "Grand Vizir de l'État turc"
+    ijmes: "Grand Vizier of the Turkish state"
+    tier: romanised
+    mode: translated
+  "الضيعة المدرسية بالأنصارين":
+    fr: "la ferme-école des Ansarine"
+    ijmes: "al-Dayaa al-Madrasiyya bi-al-Ansarin"
+    tier: romanised
+    mode: conventional
+  "الطاهر الأسود":
+    fr: "Tahar El Assoued"
+    ijmes: "al-Tahir al-Aswad"
+    tier: romanised
+    mode: transliterated
+  "الطاهر باي":
+    fr: "Tahar Bey"
+    ijmes: "al-Tahir Bay"
+    tier: romanised
+    mode: transliterated
+  "الطاهر بن عمار":
+    fr: "Tahar Ben Ammar"
+    ijmes: "al-Tahir Ibn Ammar"
+    tier: romanised
+    mode: transliterated
+  "الطاهر بن مسعود":
+    fr: "Tahar Ben Massoud"
+    ijmes: "al-Tahir Ibn Masud"
+    tier: romanised
+    mode: transliterated
+  "الطاهر صفر":
+    fr: "Tahar Sfar"
+    ijmes: "al-Tahir Safar"
+    tier: romanised
+    mode: transliterated
+  "الطريقة التيجانية":
+    fr: "la Tariqa Tijania"
+    ijmes: "al-Tariqa al-Tijaniyya"
+    tier: romanised
+    mode: transliterated
+  "الطريقة العصرية":
+    fr: "Ettarika el-Asria"
+    ijmes: "al-Tariqa al-Asriyya"
+    tier: romanised
+    mode: transliterated
+  "الطريقة الكتانية":
+    fr: "la Tariqa Kettania"
+    ijmes: "al-Tariqa al-Kattaniyya"
+    tier: romanised
+    mode: transliterated
+  "الطريقة المدنية":
+    fr: "la Tariqa Madania"
+    ijmes: "al-Tariqa al-Madaniyya"
+    tier: romanised
+    mode: transliterated
+  "الطيب الرياحي":
+    fr: "Taïeb Riahi"
+    ijmes: "al-Tayyib al-Riyahi"
+    tier: romanised
+    mode: transliterated
+  "العائلة الحسينية":
+    fr: "La famille husseinite"
+    ijmes: "al-Aila al-Husayniyya"
+    tier: romanised
+    mode: conventional
+  "العربي زروق":
+    fr: "El Arbi Zarrouk"
+    ijmes: "al-Arabi Zarruq"
+    tier: romanised
+    mode: transliterated
+  "العرش الحسيني":
+    fr: "Le trône husseinite"
+    ijmes: "The Husaynid throne"
+    tier: romanised
+    mode: translated
+  "العصبية عند ابن خلدون":
+    fr: "El Assabia inda Ibn Khaldoun"
+    ijmes: "al-Asabiyya inda Ibn Khaldun"
+    tier: romanised
+    mode: transliterated
+  "العمل التونسي":
+    fr: "L'Action Tunisienne"
+    ijmes: "al-Amal al-Tunisi"
+    tier: romanised
+    mode: conventional
+  "الغزالي":
+    fr: "El Ghazali"
+    ijmes: "al-Ghazali"
+    tier: romanised
+    mode: transliterated
+  "الفرزدق":
+    fr: "El Farazdak"
+    ijmes: "al-Farazdaq"
+    tier: romanised
+    mode: transliterated
+  "الفروع الزيتونية":
+    fr: "les annexes zitouniennes"
+    ijmes: "the Zaytuna branch schools"
+    tier: romanised
+    mode: translated
+  "الفهرس العلمي لمكتبة جامع الزيتونة الأعظم":
+    fr: "El Fihris el-Ilmi li-Maktabat Jami Ezzitouna el-Aazam"
+    ijmes: "al-Fihris al-Ilmi li-Maktabat Jami al-Zaytuna al-Azam"
+    tier: romanised
+    mode: transliterated
+  "القبطان كمبنون":
+    fr: "Le Capitaine Campenon"
+    ijmes: "al-Qubtan Kambanun"
+    tier: romanised
+    mode: transliterated
+  "القضاء الشرعي بالكاف":
+    fr: "La justice charaïque au Kef"
+    ijmes: "The sharia judiciary at al-Kaf"
+    tier: romanised
+    mode: translated
+  "الكتاب":
+    fr: "le Kouttab"
+    ijmes: "al-Kuttab"
+    tier: romanised
+    mode: transliterated
+  "الكتابة":
+    fr: "Le secrétariat"
+    ijmes: "The secretaryship"
+    tier: romanised
+    mode: translated
+  "اللجان المحدثة لضبط الاصلاحات الأساسية":
+    fr: "les commissions créées pour régler les réformes fondamentales"
+    ijmes: "the committees set up to regulate the basic reforms"
+    tier: romanised
+    mode: translated
+  "اللجنة الثقافية القومية":
+    fr: "le Comité culturel national"
+    ijmes: "al-Lajna al-Thaqafiyya al-Qawmiyya"
+    tier: romanised
+    mode: conventional
+  "اللجنة المالية الدولية":
+    fr: "la Commission financière internationale"
+    ijmes: "al-Lajna al-Maliyya al-Duwaliyya"
+    tier: romanised
+    mode: conventional
+  "المؤتمر الاستعماري بمرسيليا":
+    fr: "le Congrès colonial de Marseille"
+    ijmes: "al-Mutamar al-Istimari bi-Marsiliya"
+    tier: romanised
+    mode: conventional
+  "المؤنس في أخبار إفريقيا وتونس":
+    fr: "El Mounis fi Akhbar Ifrikia wa Tounis"
+    ijmes: "al-Munis fi Akhbar Ifriqiya wa Tunis"
+    tier: romanised
+    mode: transliterated
+  "المتنبي":
+    fr: "El Moutanabbi"
+    ijmes: "al-Mutanabbi"
+    tier: romanised
+    mode: transliterated
+  "المجلس الأعلى للبلاد التونسية":
+    fr: "le Conseil supérieur du pays tunisien"
+    ijmes: "al-Majlis al-Ala lil-Bilad al-Tunisiyya"
+    tier: romanised
+    mode: conventional
+  "المجلس الأعلى للتعليم العمومي":
+    fr: "le Conseil supérieur de l'enseignement public"
+    ijmes: "al-Majlis al-Ala lil-Talim al-Umumi"
+    tier: romanised
+    mode: conventional
+  "المجلس الأكبر":
+    fr: "le Grand Conseil"
+    ijmes: "al-Majlis al-Akbar"
+    tier: romanised
+    mode: conventional
+  "المجلس البلدي بالحاضرة":
+    fr: "le Conseil municipal de la capitale"
+    ijmes: "al-Majlis al-Baladi bi-al-Hadira"
+    tier: romanised
+    mode: conventional
+  "المجلس البلدي بتونس":
+    fr: "le Conseil municipal de Tunis"
+    ijmes: "al-Majlis al-Baladi bi-Tunis"
+    tier: romanised
+    mode: conventional
+  "المجلس الشرعي":
+    fr: "le Conseil charaïque"
+    ijmes: "al-Majlis al-Shari"
+    tier: romanised
+    mode: conventional
+  "المجلس الشوري":
+    fr: "le Conseil consultatif"
+    ijmes: "al-Majlis al-Shuri"
+    tier: romanised
+    mode: conventional
+  "المجمع الفرنسي":
+    fr: "l'Académie française"
+    ijmes: "al-Majma al-Faransi"
+    tier: romanised
+    mode: conventional
+  "المحافل العلمية الإفريقية والشرقية":
+    fr: "les sociétés savantes africaines et orientales"
+    ijmes: "the African and Oriental learned societies"
+    tier: romanised
+    mode: translated
+  "المحامي غودياني":
+    fr: "El Mohami Ghoudiani"
+    ijmes: "al-Muhami Ghudyani"
+    tier: romanised
+    mode: transliterated
+  "المحكمة الجنائية":
+    fr: "Tribunal criminel"
+    ijmes: "al-Mahkama al-Jinaiyya"
+    tier: romanised
+    mode: conventional
+  "المحكمة الحربية":
+    fr: "Tribunal de guerre"
+    ijmes: "al-Mahkama al-Harbiyya"
+    tier: romanised
+    mode: conventional
+  "المحكمة العسكرية":
+    fr: "Tribunal militaire"
+    ijmes: "al-Mahkama al-Askariyya"
+    tier: romanised
+    mode: conventional
+  "المحكمة العقارية المختلطة":
+    fr: "Tribunal Mixte Immobilier"
+    ijmes: "al-Mahkama al-Aqariyya al-Mukhtalata"
+    tier: romanised
+    mode: conventional
+  "المدارس الحرة اللائكية أو الدينية":
+    fr: "les écoles libres, laïques ou religieuses"
+    ijmes: "the free schools, secular or religious"
+    tier: romanised
+    mode: translated
+  "المدرسة التطبيقية للتجارة والصناعة":
+    fr: "l'École pratique de commerce et d'industrie"
+    ijmes: "al-Madrasa al-Tatbiqiyya lil-Tijara wa al-Sinaa"
+    tier: romanised
+    mode: conventional
+  "المدرسة الحربية بمنوبة":
+    fr: "École militaire de la Manouba"
+    ijmes: "al-Madrasa al-Harbiyya bi-Manuba"
+    tier: romanised
+    mode: conventional
+  "المدرسة السليمانية":
+    fr: "Médersa Slimania"
+    ijmes: "al-Madrasa al-Sulaymaniyya"
+    tier: romanised
+    mode: transliterated
+  "المدرسة العلوية":
+    fr: "École Alaoui"
+    ijmes: "al-Madrasa al-Alawiyya"
+    tier: romanised
+    mode: conventional
+  "المدرسة العليا للغة والآداب العربية":
+    fr: "École supérieure de langue et de littérature arabes"
+    ijmes: "al-Madrasa al-Ulya lil-Lugha wa al-Adab al-Arabiyya"
+    tier: romanised
+    mode: conventional
+  "المدرسة القرآنية":
+    fr: "école coranique"
+    ijmes: "al-Madrasa al-Quraniyya"
+    tier: romanised
+    mode: conventional
+  "المدرسة القرآنية العصرية":
+    fr: "école coranique moderne"
+    ijmes: "al-Madrasa al-Quraniyya al-Asriyya"
+    tier: romanised
+    mode: conventional
+  "المستشفى الصادقي":
+    fr: "l'hôpital Sadiki"
+    ijmes: "al-Mustashfa al-Sadiqi"
+    tier: romanised
+    mode: conventional
+  "المشرع الملكي في سلطنة أولاد حسين بن علي تركي":
+    fr: "El Mochre el-Malaki fi Saltanat Aoulad Hocine Ben Ali Turki"
+    ijmes: "al-Mashra al-Malaki fi Saltanat Awlad Husayn Ibn Ali Turki"
+    tier: romanised
+    mode: transliterated
+  "المصلحة الطوبوغرافية":
+    fr: "le Service topographique"
+    ijmes: "al-Maslaha al-Tubughrafiyya"
+    tier: romanised
+    mode: conventional
+  "المطبعة الرسمية":
+    fr: "l'Imprimerie officielle"
+    ijmes: "al-Matbaa al-Rasmiyya"
+    tier: romanised
+    mode: conventional
+  "المعهد الثانوي بباريس":
+    fr: "lycée de Paris"
+    ijmes: "al-Mahad al-Thanawi bi-Baris"
+    tier: romanised
+    mode: conventional
+  "المعهد الثانوي بخزندار":
+    fr: "lycée de Khaznadar"
+    ijmes: "al-Mahad al-Thanawi bi-Khaznadar"
+    tier: romanised
+    mode: conventional
+  "المعهد الرشيدي":
+    fr: "la Rachidia"
+    ijmes: "al-Mahad al-Rashidi"
+    tier: romanised
+    mode: transliterated
+  "المعهد الرشيدي للموسيقى التونسية":
+    fr: "La Rachidia, institut de musique tunisienne"
+    ijmes: "al-Mahad al-Rashidi lil-Musiqa al-Tunisiyya"
+    tier: romanised
+    mode: conventional
+  "المعهد العلوي":
+    fr: "Collège Alaoui"
+    ijmes: "al-Mahad al-Alawi"
+    tier: romanised
+    mode: conventional
+  "المفكرون الرسميون":
+    fr: "Les penseurs officiels"
+    ijmes: "The official thinkers"
+    tier: romanised
+    mode: translated
+  "المقامات بينه وبين أبي العلاء المعري":
+    fr: "El Makamat bainahou wa baina Abi el-Ala el-Maarri"
+    ijmes: "al-Maqamat baynahu wa bayna Abi al-Ala al-Maarri"
+    tier: romanised
+    mode: transliterated
+  "المقيم العام":
+    fr: "Le Résident général"
+    ijmes: "The Resident General"
+    tier: romanised
+    mode: translated
+  "المقيم العام الفرنسي بتونس":
+    fr: "Le Résident général de France à Tunis"
+    ijmes: "The French Resident General in Tunis"
+    tier: romanised
+    mode: translated
+  "المقيم العام بتونس":
+    fr: "Le Résident général à Tunis"
+    ijmes: "The Resident General in Tunis"
+    tier: romanised
+    mode: translated
+  "المقيم العام بيروطون":
+    fr: "El Moukim El Am Peyrouton"
+    ijmes: "al-Muqim al-Am Bayrutun"
+    tier: romanised
+    mode: transliterated
+  "المكتبة الخلدونية":
+    fr: "la Khaldounia"
+    ijmes: "al-Maktaba al-Khalduniyya"
+    tier: romanised
+    mode: conventional
+  "الملك محمد الناصر باي":
+    fr: "El Malek Mohamed Naceur Bey"
+    ijmes: "al-Malik Muhammad al-Nasir Bay"
+    tier: romanised
+    mode: transliterated
+  "المنارة":
+    fr: "El Menara"
+    ijmes: "al-Manara"
+    tier: romanised
+    mode: transliterated
+  "المنصف باي":
+    fr: "Moncef Bey"
+    ijmes: "al-Munsif Bay"
+    tier: romanised
+    mode: transliterated
+  "المنوبي السنوسي":
+    fr: "El Manoubi Snoussi"
+    ijmes: "al-Manubi al-Sanusi"
+    tier: romanised
+    mode: transliterated
+  "النازلة التونسية":
+    fr: "En-Nazila Ettounisia"
+    ijmes: "al-Nazila al-Tunisiyya"
+    tier: romanised
+    mode: transliterated
+  "النشرة العربية لجريدة التونسي":
+    fr: "En-Nachra El Arabia li Djaridet Ettounsi"
+    ijmes: "al-Nashra al-Arabiyya li-Jaridat al-Tunisi"
+    tier: romanised
+    mode: transliterated
+  "الورقات":
+    fr: "El Warakat"
+    ijmes: "al-Waraqat"
+    tier: romanised
+    mode: transliterated
+  "الوزارة التفاوضية":
+    fr: "le ministère des négociations"
+    ijmes: "the negotiating government"
+    tier: romanised
+    mode: translated
+  "الوزارة الوطنية":
+    fr: "le ministère national"
+    ijmes: "the national government"
+    tier: romanised
+    mode: translated
+  "الوزير ورئيس المجلس":
+    fr: "Le ministre et président du Conseil"
+    ijmes: "Minister and President of the Council"
+    tier: romanised
+    mode: translated
+  "الوفد الدستوري الأول":
+    fr: "la première délégation destourienne"
+    ijmes: "al-Wafd al-Dusturi al-Awwal"
+    tier: romanised
+    mode: conventional
+  "الوفد الدستوري الأول إلى باريس":
+    fr: "la première délégation destourienne à Paris"
+    ijmes: "al-Wafd al-Dusturi al-Awwal ila Baris"
+    tier: romanised
+    mode: conventional
+  "الوفد الدستوري الثاني":
+    fr: "la deuxième délégation destourienne"
+    ijmes: "al-Wafd al-Dusturi al-Thani"
+    tier: romanised
+    mode: conventional
+  "الوفود الدستورية 1920-1919":
+    fr: "El Woufoud ed-Doustouria 1919-1920"
+    ijmes: "al-Wufud al-Dusturiyya 1919-1920"
+    tier: romanised
+    mode: transliterated
+  "امرأتنا في الشريعة والمجتمع":
+    fr: "Imraatouna fi ech-Charia wa el-Moujtamaa"
+    ijmes: "Imraatuna fi al-Sharia wa al-Mujtama"
+    tier: romanised
+    mode: transliterated
+  "باش مفتي":
+    fr: "Grand mufti"
+    ijmes: "Chief mufti"
+    tier: romanised
+    mode: translated
+  "باش مفتي الكاف":
+    fr: "Grand mufti du Kef"
+    ijmes: "Chief mufti of al-Kaf"
+    tier: romanised
+    mode: translated
+  "بكار الجلولي":
+    fr: "Bakkar Jellouli"
+    ijmes: "Bakkar al-Jalluli"
+    tier: romanised
+    mode: transliterated
+  "بواسي":
+    fr: "Boissy"
+    ijmes: "Buwasi"
+    tier: romanised
+    mode: transliterated
+  "بوانكاري":
+    fr: "Poincaré"
+    ijmes: "Bwankari"
+    tier: romanised
+    mode: transliterated
+  "بوترو":
+    fr: "Boutroux"
+    ijmes: "Butru"
+    tier: romanised
+    mode: conventional
+  "بول بورد":
+    fr: "Paul Bourde"
+    ijmes: "Bul Burd"
+    tier: romanised
+    mode: transliterated
+  "بول كامبون":
+    fr: "Paul Cambon"
+    ijmes: "Bul Kambun"
+    tier: romanised
+    mode: transliterated
+  "بيار منداس فرانس":
+    fr: "Pierre Mendès France"
+    ijmes: "Biyar Mandas Frans"
+    tier: romanised
+    mode: transliterated
+  "بيني وبين المعري":
+    fr: "Baini wa baina el-Maarri"
+    ijmes: "Bayni wa bayna al-Maarri"
+    tier: romanised
+    mode: transliterated
+  "تاريخ الحركة الوطنية التونسية":
+    fr: "Tarikh el-Haraka el-Wataniya Ettounisia"
+    ijmes: "Tarikh al-Haraka al-Wataniyya al-Tunisiyya"
+    tier: romanised
+    mode: transliterated
+  "تاريخ الموسيقى العربية":
+    fr: "Tarikh el-Moussika el-Arabia"
+    ijmes: "Tarikh al-Musiqa al-Arabiyya"
+    tier: romanised
+    mode: transliterated
+  "تاريخ معالم التوحيد":
+    fr: "Tarikh Maalim Ettawhid"
+    ijmes: "Tarikh Maalim al-Tawhid"
+    tier: romanised
+    mode: transliterated
+  "تدريس التاريخ":
+    fr: "Enseignement de l'histoire"
+    ijmes: "Teaching of history"
+    tier: romanised
+    mode: translated
+  "تراجم الأعلام":
+    fr: "Tarajim el-Aalam"
+    ijmes: "Tarajim al-Alam"
+    tier: romanised
+    mode: transliterated
+  "ترجمة ابن أبي الضياف":
+    fr: "Tarjamat Ibn Abi ed-Dhiaf"
+    ijmes: "Tarjamat Ibn Abi al-Diyaf"
+    tier: romanised
+    mode: transliterated
+  "تونس الجديدة":
+    fr: "Tounis el-Jadida"
+    ijmes: "Tunis al-Jadida"
+    tier: romanised
+    mode: transliterated
+  "ثانوية القديس لويس بتونس":
+    fr: "Lycée Saint-Louis de Tunis"
+    ijmes: "Thanawiyyat al-Qiddis Luwis bi-Tunis"
+    tier: romanised
+    mode: conventional
+  "ثلاث قصائد باللغة الفرنسية":
+    fr: "trois poèmes en langue française"
+    ijmes: "three poems in French"
+    tier: romanised
+    mode: translated
+  "جامع الحلفاوين":
+    fr: "Jamaa El Halfaouine"
+    ijmes: "Jami al-Halfawin"
+    tier: romanised
+    mode: transliterated
+  "جامع صاحب الطابع":
+    fr: "Jamaa Sahib Ettabaa"
+    ijmes: "Jami Sahib al-Tabi"
+    tier: romanised
+    mode: transliterated
+  "جامعة الأزهر":
+    fr: "Université al-Azhar"
+    ijmes: "Jamiat al-Azhar"
+    tier: romanised
+    mode: conventional
+  "جد رشيد بن مصطفى":
+    fr: "Le grand-père de Rachid Ben Mustapha"
+    ijmes: "The grandfather of Rashid Ibn Mustafa"
+    tier: romanised
+    mode: translated
+  "جربة والجربيون":
+    fr: "Djerba wa el-Djerbiyoun"
+    ijmes: "Jarba wa al-Jarbiyyun"
+    tier: romanised
+    mode: transliterated
+  "جريدة الإعلام":
+    fr: "El Ilam"
+    ijmes: "Jaridat al-Ilam"
+    tier: romanised
+    mode: transliterated
+  "جريدة الإقدام":
+    fr: "El Ikdam"
+    ijmes: "Jaridat al-Iqdam"
+    tier: romanised
+    mode: transliterated
+  "جريدة البرهان":
+    fr: "El Borhan"
+    ijmes: "Jaridat al-Burhan"
+    tier: romanised
+    mode: transliterated
+  "جريدة المبشر":
+    fr: "El Moubachir"
+    ijmes: "Jaridat al-Mubashshir"
+    tier: romanised
+    mode: transliterated
+  "جريدة المنتظر":
+    fr: "El Mountazar"
+    ijmes: "Jaridat al-Muntazar"
+    tier: romanised
+    mode: transliterated
+  "جريدة تونس":
+    fr: "Tunis"
+    ijmes: "Jaridat Tunis"
+    tier: romanised
+    mode: transliterated
+  "جريدة تونس المسائية":
+    fr: "Tunis El Massaia"
+    ijmes: "Jaridat Tunis al-Masaiyya"
+    tier: romanised
+    mode: transliterated
+  "جريدة شاهراه":
+    fr: "Chahrah"
+    ijmes: "Jaridat Shahrah"
+    tier: romanised
+    mode: transliterated
+  "جريدة صوت التونسي":
+    fr: "La Voix du Tunisien"
+    ijmes: "Jaridat Sawt al-Tunisi"
+    tier: romanised
+    mode: conventional
+  "جريدة لسان الحق":
+    fr: "Lissan El Hak"
+    ijmes: "Jaridat Lisan al-Haqq"
+    tier: romanised
+    mode: transliterated
+  "جريدة نتائج الأخبار":
+    fr: "Nataïj El Akhbar"
+    ijmes: "Jaridat Nataij al-Akhbar"
+    tier: romanised
+    mode: transliterated
+  "جمال الدين الأفغاني":
+    fr: "Jamaleddine El Afghani"
+    ijmes: "Jamal al-Din al-Afghani"
+    tier: romanised
+    mode: transliterated
+  "جمعية أوقاف الحرمين الشريفين":
+    fr: "Djemiat Aouqaf El Haramain Ech-Charifain"
+    ijmes: "Jamiyyat Awqaf al-Haramayn al-Sharifayn"
+    tier: romanised
+    mode: transliterated
+  "جمعية الآداب":
+    fr: "Djemiat El Adab"
+    ijmes: "Jamiyyat al-Adab"
+    tier: romanised
+    mode: transliterated
+  "جمعية الآداب التمثيلية":
+    fr: "Djemiat El Adab Ettamthilia"
+    ijmes: "Jamiyyat al-Adab al-Tamthiliyya"
+    tier: romanised
+    mode: transliterated
+  "جمعية الآداب المسرحية":
+    fr: "Djemiat El Adab El Masrahia"
+    ijmes: "Jamiyyat al-Adab al-Masrahiyya"
+    tier: romanised
+    mode: transliterated
+  "جمعية النهضة الاقتصادية":
+    fr: "Djemiat Ennahdha El Iqtisadia"
+    ijmes: "Jamiyyat al-Nahda al-Iqtisadiyya"
+    tier: romanised
+    mode: transliterated
+  "حافظ إبراهيم":
+    fr: "Hafez Ibrahim"
+    ijmes: "Hafiz Ibrahim"
+    tier: romanised
+    mode: transliterated
+  "حبيبة مسيكة":
+    fr: "Habiba Msika"
+    ijmes: "Habiba Musika"
+    tier: romanised
+    mode: transliterated
+  "حركة الشبان التونسيين":
+    fr: "les Jeunes Tunisiens"
+    ijmes: "Harakat al-Shubban al-Tunisiyyin"
+    tier: romanised
+    mode: conventional
+  "حزب الائتلاف الحر":
+    fr: "le Parti de l'Entente libérale"
+    ijmes: "Hizb al-Itilaf al-Hurr"
+    tier: romanised
+    mode: conventional
+  "حزب الاتحاد والترقي":
+    fr: "le Comité Union et Progrès"
+    ijmes: "Hizb al-Ittihad wa al-Taraqqi"
+    tier: romanised
+    mode: conventional
+  "حسان ثلاتي":
+    fr: "Hassen Thlati"
+    ijmes: "Hassan Thalati"
+    tier: romanised
+    mode: transliterated
+  "حسين المقدم":
+    fr: "Hussein El Mokaddem"
+    ijmes: "Husayn al-Muqaddam"
+    tier: romanised
+    mode: transliterated
+  "حسين بن علي":
+    fr: "Hussein Ben Ali"
+    ijmes: "Husayn Ibn Ali"
+    tier: romanised
+    mode: transliterated
+  "حمدة بن مصطفى":
+    fr: "Hamda Ben Mustapha"
+    ijmes: "Hamda Ibn Mustafa"
+    tier: romanised
+    mode: transliterated
+  "حمزة فتح الله":
+    fr: "Hamza Fathallah"
+    ijmes: "Hamza Fath Allah"
+    tier: romanised
+    mode: transliterated
+  "حمودة المنستيري":
+    fr: "Hamouda El Monastiri"
+    ijmes: "Hamuda al-Munastiri"
+    tier: romanised
+    mode: transliterated
+  "حمودة بن عبد العزيز":
+    fr: "Hamouda Ben Abdelaziz"
+    ijmes: "Hamuda Ibn Abd al-Aziz"
+    tier: romanised
+    mode: transliterated
+  "خالد بوحاجب":
+    fr: "Khaled Bouhajeb"
+    ijmes: "Khalid Buhajib"
+    tier: romanised
+    mode: transliterated
+  "خطة الفتيا المالكية":
+    fr: "Charge de la fatwa malékite"
+    ijmes: "Office of the Maliki muftiship"
+    tier: romanised
+    mode: translated
+  "خليل بو حاجب":
+    fr: "Khalil Bou Hajeb"
+    ijmes: "Khalil Bu Hajib"
+    tier: romanised
+    mode: transliterated
+  "خليل مطران":
+    fr: "Khalil Moutran"
+    ijmes: "Khalil Mutran"
+    tier: romanised
+    mode: transliterated
+  "دار المعلمين":
+    fr: "Dar el-Moallimine"
+    ijmes: "Dar al-Muallimin"
+    tier: romanised
+    mode: transliterated
+  "داي تونس":
+    fr: "Dey de Tunis"
+    ijmes: "Dey of Tunis"
+    tier: romanised
+    mode: translated
+  "درس ديوان الحماسة":
+    fr: "Dars Diwan el-Hamasa"
+    ijmes: "Dars Diwan al-Hamasa"
+    tier: romanised
+    mode: transliterated
+  "دي تافرن":
+    fr: "Di Tafern"
+    ijmes: "Di Tafarn"
+    tier: romanised
+    mode: transliterated
+  "ديوان شعر":
+    fr: "recueil de poésie"
+    ijmes: "collection of poetry"
+    tier: romanised
+    mode: translated
+  "ديوان قابادو":
+    fr: "Diwan Kabadou"
+    ijmes: "Diwan Qabadu"
+    tier: romanised
+    mode: transliterated
+  "رئاسة الحكومة الفرنسية":
+    fr: "Présidence du gouvernement français"
+    ijmes: "Presidency of the French government"
+    tier: romanised
+    mode: translated
+  "رئاسة المذهب المالكي":
+    fr: "Présidence du rite malékite"
+    ijmes: "Headship of the Maliki school"
+    tier: romanised
+    mode: translated
+  "رئاسة الوزارة التونسية":
+    fr: "Présidence du ministère tunisien"
+    ijmes: "Presidency of the Tunisian ministry"
+    tier: romanised
+    mode: translated
+  "رئاسة جمعية الأوقاف":
+    fr: "Présidence de l'Association des habous"
+    ijmes: "Presidency of the Awqaf Association"
+    tier: romanised
+    mode: translated
+  "رئيس البعثة":
+    fr: "Chef de la mission"
+    ijmes: "Head of the mission"
+    tier: romanised
+    mode: translated
+  "رئيس الجمهورية الفرنسية":
+    fr: "Président de la République française"
+    ijmes: "President of the French Republic"
+    tier: romanised
+    mode: translated
+  "رئيس المجلس الأكبر":
+    fr: "Président du Grand Conseil"
+    ijmes: "President of the Grand Council"
+    tier: romanised
+    mode: translated
+  "رئيس جمعية الأوقاف":
+    fr: "Président de l'Association des habous"
+    ijmes: "President of the Awqaf Association"
+    tier: romanised
+    mode: translated
+  "رئيس دائرة المحاسبات":
+    fr: "Président de la Cour des comptes"
+    ijmes: "President of the Court of Accounts"
+    tier: romanised
+    mode: translated
+  "رئيس قسم الإنشاء بإدارة المالية":
+    fr: "Chef du service de la rédaction à l'administration des finances"
+    ijmes: "Head of the drafting section in the finance administration"
+    tier: romanised
+    mode: translated
+  "رئيس مجلس العرش":
+    fr: "Président du Conseil du Trône"
+    ijmes: "President of the Throne Council"
+    tier: romanised
+    mode: translated
+  "راميلا":
+    fr: "Ramila"
+    ijmes: "Ramila"
+    tier: romanised
+    mode: transliterated
+  "رتبة أمير آلاي":
+    fr: "Grade de colonel"
+    ijmes: "Rank of colonel"
+    tier: romanised
+    mode: translated
+  "رتبة أمير لواء":
+    fr: "Grade de général de brigade"
+    ijmes: "Rank of brigadier general"
+    tier: romanised
+    mode: translated
+  "رتبة بنباشي":
+    fr: "Grade de commandant"
+    ijmes: "Rank of major"
+    tier: romanised
+    mode: translated
+  "رتبة قائمقام":
+    fr: "Grade de lieutenant-colonel"
+    ijmes: "Rank of lieutenant-colonel"
+    tier: romanised
+    mode: translated
+  "رتبة يوزباشي":
+    fr: "Grade de capitaine"
+    ijmes: "Rank of captain"
+    tier: romanised
+    mode: translated
+  "رجال وعوالم":
+    fr: "Ridjal oua Aoualem"
+    ijmes: "Rijal wa Awalim"
+    tier: romanised
+    mode: transliterated
+  "رستم":
+    fr: "Rostom"
+    ijmes: "Rustum"
+    tier: romanised
+    mode: transliterated
+  "روني ميي":
+    fr: "René Millet"
+    ijmes: "Runi Mayy"
+    tier: romanised
+    mode: conventional
+  "زاوية سيدي أحمد بن عروس":
+    fr: "la Zaouia Sidi Ahmed Ben Arous"
+    ijmes: "Zawiyat Sidi Ahmad Ibn Arus"
+    tier: romanised
+    mode: transliterated
+  "زكرياء بن مصطفى":
+    fr: "Zakaria Ben Mustapha"
+    ijmes: "Zakariya Ibn Mustafa"
+    tier: romanised
+    mode: transliterated
+  "سعدي الشيرازي":
+    fr: "Saadi Chirazi"
+    ijmes: "Sadi al-Shirazi"
+    tier: romanised
+    mode: transliterated
+  "سلطة الحماية":
+    fr: "les autorités du Protectorat"
+    ijmes: "the Protectorate authorities"
+    tier: romanised
+    mode: translated
+  "سلك التعليم":
+    fr: "corps enseignant"
+    ijmes: "teaching corps"
+    tier: romanised
+    mode: translated
+  "سليم بن مصطفى":
+    fr: "Slim Ben Mustapha"
+    ijmes: "Salim Ibn Mustafa"
+    tier: romanised
+    mode: transliterated
+  "سيدي أحمد الباهي":
+    fr: "Sidi Ahmed El Bahi"
+    ijmes: "Sidi Ahmad al-Bahi"
+    tier: romanised
+    mode: transliterated
+  "شارليتي":
+    fr: "Charléty"
+    ijmes: "Sharliti"
+    tier: romanised
+    mode: transliterated
+  "شاكير صاحب الطابع":
+    fr: "Chakir Sahib Ettabaa"
+    ijmes: "Shakir Sahib al-Tabi"
+    tier: romanised
+    mode: transliterated
+  "شاهد عدل":
+    fr: "notaire"
+    ijmes: "notary witness"
+    tier: romanised
+    mode: translated
+  "شرف الدين الدغستاني":
+    fr: "Charfeddine Ed-Daghestani"
+    ijmes: "Sharaf al-Din al-Daghistani"
+    tier: romanised
+    mode: transliterated
+  "شهيرات التونسيات":
+    fr: "Chahirat Ettounisiat"
+    ijmes: "Shahirat al-Tunisiyyat"
+    tier: romanised
+    mode: transliterated
+  "شيخ الإسلام الحنفي":
+    fr: "Cheikh al-Islam hanéfite"
+    ijmes: "Hanafi Shaykh al-Islam"
+    tier: romanised
+    mode: translated
+  "شيخ الإسلام محمد بن الخوجة":
+    fr: "Cheikh El Islam Mohamed Ben El Khodja"
+    ijmes: "Shaykh al-Islam Muhammad Ibn al-Khuja"
+    tier: romanised
+    mode: transliterated
+  "شيخ الجامع الأعظم":
+    fr: "cheikh de la Grande Mosquée"
+    ijmes: "shaykh of the Great Mosque"
+    tier: romanised
+    mode: translated
+  "شيخ جامع الزيتونة":
+    fr: "cheikh de la mosquée Zitouna"
+    ijmes: "shaykh of the Zaytuna Mosque"
+    tier: romanised
+    mode: translated
+  "شيخ مدينة تونس":
+    fr: "cheikh de la ville de Tunis"
+    ijmes: "shaykh of the city of Tunis"
+    tier: romanised
+    mode: translated
+  "صاحب الطابع":
+    fr: "garde des Sceaux"
+    ijmes: "keeper of the seal"
+    tier: romanised
+    mode: translated
+  "صالح":
+    fr: "Salah"
+    ijmes: "Salih"
+    tier: romanised
+    mode: transliterated
+  "صالح المهدي":
+    fr: "Salah El Mahdi"
+    ijmes: "Salih al-Mahdi"
+    tier: romanised
+    mode: transliterated
+  "صالح بن خليفة":
+    fr: "Salah Ben Khelifa"
+    ijmes: "Salih Ibn Khalifa"
+    tier: romanised
+    mode: transliterated
+  "صالح بن يوسف":
+    fr: "Salah Ben Youssef"
+    ijmes: "Salih Ibn Yusuf"
+    tier: romanised
+    mode: transliterated
+  "صالح خير الدين":
+    fr: "Salah Kheireddine"
+    ijmes: "Salih Khayr al-Din"
+    tier: romanised
+    mode: transliterated
+  "صالون الأميرة نازلي":
+    fr: "le Salon El Amira Nazli"
+    ijmes: "Salun al-Amira Nazli"
+    tier: romanised
+    mode: transliterated
+  "صالون خليل بوحاجب":
+    fr: "le Salon Khalil Bouhajeb"
+    ijmes: "Salun Khalil Bu Hajib"
+    tier: romanised
+    mode: transliterated
+  "صحف الحزب الحر الدستوري التونسي":
+    fr: "Journaux du Parti libre constitutionnel tunisien"
+    ijmes: "Newspapers of the Tunisian Liberal Constitutional Party"
+    tier: romanised
+    mode: translated
+  "صفوة الاعتبار بمستودع الأمصار والأقطار":
+    fr: "Safwat el-Itibar bi-Moustawdaa el-Amsar wa el-Aktar"
+    ijmes: "Safwat al-Itibar bi-Mustawda al-Amsar wa al-Aqtar"
+    tier: romanised
+    mode: transliterated
+  "صوت التونسي":
+    fr: "La Voix du Tunisien"
+    ijmes: "Sawt al-Tunisi"
+    tier: romanised
+    mode: conventional
+  "صوت الشعب":
+    fr: "Saout Ech-Chaab"
+    ijmes: "Sawt al-Shab"
+    tier: romanised
+    mode: transliterated
+  "عائلة ابن الشيخ":
+    fr: "La famille Ben Cheikh"
+    ijmes: "The Ibn al-Shaykh family"
+    tier: romanised
+    mode: translated
+  "عائلة بيرم":
+    fr: "la famille Bayram"
+    ijmes: "Ailat Bayram"
+    tier: romanised
+    mode: conventional
+  "عامل الوسلاتية":
+    fr: "caïd de Ouslatia"
+    ijmes: "governor of Wislatiyya"
+    tier: romanised
+    mode: translated
+  "عامل بنزرت":
+    fr: "caïd de Bizerte"
+    ijmes: "governor of Bizerte"
+    tier: romanised
+    mode: translated
+  "عامل قابس":
+    fr: "caïd de Gabès"
+    ijmes: "governor of Gabes"
+    tier: romanised
+    mode: translated
+  "عبد الجبار الشريف":
+    fr: "Abdeljabbar Chérif"
+    ijmes: "Abd al-Jabbar al-Sharif"
+    tier: romanised
+    mode: transliterated
+  "عبد القادر التلاتلي":
+    fr: "Abdelkader Ettalatli"
+    ijmes: "Abd al-Qadir al-Talatli"
+    tier: romanised
+    mode: transliterated
+  "عثمان داي":
+    fr: "Othman Dey"
+    ijmes: "Uthman Day"
+    tier: romanised
+    mode: transliterated
+  "علي بن أحمد لاتي":
+    fr: "Ali Ben Ahmed Lati"
+    ijmes: "Ali Ibn Ahmad Lati"
+    tier: romanised
+    mode: transliterated
+  "علي بن احمد":
+    fr: "Ali Ben Ahmed"
+    ijmes: "Ali Ibn Ahmad"
+    tier: romanised
+    mode: transliterated
+  "عمر الخيام":
+    fr: "Omar Khayyam"
+    ijmes: "Umar al-Khayyam"
+    tier: romanised
+    mode: transliterated
+  "عمر بن قفصية":
+    fr: "Omar Ben Gafsia"
+    ijmes: "Umar Ibn Qafsiyya"
+    tier: romanised
+    mode: transliterated
+  "عمر بو حاجب":
+    fr: "Omar Bou Hajeb"
+    ijmes: "Umar Bu Hajib"
+    tier: romanised
+    mode: transliterated
+  "عميد هيئة المحامين":
+    fr: "bâtonnier de l'ordre des avocats"
+    ijmes: "president of the bar association"
+    tier: romanised
+    mode: translated
+  "غادة الكاميليا":
+    fr: "La Dame aux camélias"
+    ijmes: "Ghadat al-Kamilya"
+    tier: romanised
+    mode: conventional
+  "فئة اجتماعية متخلفة":
+    fr: "une catégorie sociale arriérée"
+    ijmes: "a backward social group"
+    tier: romanised
+    mode: translated
+  "فاطمة":
+    fr: "Fatma"
+    ijmes: "Fatima"
+    tier: romanised
+    mode: transliterated
+  "فتاة تونسية من أعيان العاصمة":
+    fr: "Une jeune Tunisienne issue des notables de la capitale"
+    ijmes: "A Tunisian young woman from the notable families of the capital"
+    tier: romanised
+    mode: translated
+  "فتاة من عائلة برجوازية تونسية":
+    fr: "Une jeune fille d'une famille bourgeoise tunisienne"
+    ijmes: "A young woman from a Tunisian bourgeois family"
+    tier: romanised
+    mode: translated
+  "فرنسا الإسلامية":
+    fr: "France Islamique"
+    ijmes: "Faransa al-Islamiyya"
+    tier: romanised
+    mode: conventional
+  "فيكتور سار":
+    fr: "Victor Sar"
+    ijmes: "Fiktur Sar"
+    tier: romanised
+    mode: conventional
+  "قاض مالكي":
+    fr: "juge malékite"
+    ijmes: "Maliki judge"
+    tier: romanised
+    mode: translated
+  "قاضي الجماعة":
+    fr: "juge de la communauté"
+    ijmes: "judge of the community"
+    tier: romanised
+    mode: translated
+  "قاضي الحاضرة المالكي":
+    fr: "cadi malékite de la capitale"
+    ijmes: "Maliki judge of the capital"
+    tier: romanised
+    mode: translated
+  "قاضي العاصمة الحنفي":
+    fr: "cadi hanéfite de la capitale"
+    ijmes: "Hanafi judge of the capital"
+    tier: romanised
+    mode: translated
+  "قاضي باردو":
+    fr: "cadi du Bardo"
+    ijmes: "judge of the Bardo"
+    tier: romanised
+    mode: translated
+  "قايد":
+    fr: "caïd"
+    ijmes: "district governor"
+    tier: romanised
+    mode: translated
+  "قسم المحاسبة":
+    fr: "le service de la comptabilité"
+    ijmes: "the accounting department"
+    tier: romanised
+    mode: translated
+  "قصر باردو":
+    fr: "le Palais du Bardo"
+    ijmes: "Qasr Bardu"
+    tier: romanised
+    mode: conventional
+  "قصيدة في ألفية أبي العلاء المعري":
+    fr: "poème pour le millénaire d'Abou al-Alaa al-Maarri"
+    ijmes: "poem for the millenary of Abu al-Ala al-Maarri"
+    tier: romanised
+    mode: translated
+  "قيادة الجيش":
+    fr: "commandement de l'armée"
+    ijmes: "army command"
+    tier: romanised
+    mode: translated
+  "قيادة اللواء":
+    fr: "commandement de la brigade"
+    ijmes: "brigade command"
+    tier: romanised
+    mode: translated
+  "كاتب البعثة العلمية":
+    fr: "secrétaire de la Mission scientifique"
+    ijmes: "secretary of the scientific mission"
+    tier: romanised
+    mode: translated
+  "كاليغاريس":
+    fr: "Caligaris"
+    ijmes: "Kaligharis"
+    tier: romanised
+    mode: conventional
+  "كامبنون":
+    fr: "Campenon"
+    ijmes: "Kambanun"
+    tier: romanised
+    mode: transliterated
+  "كبير أهل الشورى":
+    fr: "chef des gens de la choura"
+    ijmes: "head of the consultative council"
+    tier: romanised
+    mode: translated
+  "كتيب في الدروس العسكرية بالعربية":
+    fr: "opuscule de cours militaires en arabe"
+    ijmes: "booklet of military lessons in Arabic"
+    tier: romanised
+    mode: translated
+  "كلية الآداب (السوربون)":
+    fr: "Faculté des lettres (Sorbonne)"
+    ijmes: "Kulliyyat al-Adab (al-Surbun)"
+    tier: romanised
+    mode: conventional
+  "كلية الحقوق بإكس آن بروفانس":
+    fr: "Faculté de droit d'Aix-en-Provence"
+    ijmes: "Kulliyyat al-Huquq bi-Iks An Brufans"
+    tier: romanised
+    mode: conventional
+  "كلية الحقوق بتولوز":
+    fr: "Faculté de droit de Toulouse"
+    ijmes: "Kulliyyat al-Huquq bi-Tuluz"
+    tier: romanised
+    mode: conventional
+  "كلية الحقوق بمدينة اكس":
+    fr: "Faculté de droit de la ville d'Aix"
+    ijmes: "Kulliyyat al-Huquq bi-Madina Iks"
+    tier: romanised
+    mode: conventional
+  "كلية الطب بباريس":
+    fr: "Faculté de médecine de Paris"
+    ijmes: "Kulliyyat al-Tibb bi-Baris"
+    tier: romanised
+    mode: conventional
+  "كلية العلوم والمدرسة الطبية بمدينة ديجون":
+    fr: "Faculté des sciences et École de médecine de Dijon"
+    ijmes: "Kulliyyat al-Ulum wa al-Madrasa al-Tibbiyya bi-Madina Dijun"
+    tier: romanised
+    mode: conventional
+  "كمبلون":
+    fr: "Camboulon"
+    ijmes: "Kambulun"
+    tier: romanised
+    mode: transliterated
+  "كناش":
+    fr: "Kounnach"
+    ijmes: "Kunnash"
+    tier: romanised
+    mode: transliterated
+  "كوليج دي فرانس":
+    fr: "Collège de France"
+    ijmes: "Kulij di Frans"
+    tier: romanised
+    mode: conventional
+  "لافيس":
+    fr: "Lavisse"
+    ijmes: "Lufis"
+    tier: romanised
+    mode: conventional
+  "لجنة إصلاح التعليم الزيتوني":
+    fr: "la Commission de réforme de l'enseignement zitounien"
+    ijmes: "Lajnat Islah al-Talim al-Zaytuni"
+    tier: romanised
+    mode: conventional
+  "لجنة الاتحاد والترقي":
+    fr: "le Comité Union et Progrès"
+    ijmes: "Lajnat al-Ittihad wa al-Taraqqi"
+    tier: romanised
+    mode: conventional
+  "لجنة برامج المدرسة الصادقية":
+    fr: "la Commission des programmes du Collège Sadiki"
+    ijmes: "Lajnat Baramij al-Madrasa al-Sadiqiyya"
+    tier: romanised
+    mode: conventional
+  "لجنة عمل لإغاثة الطرابلسيين":
+    fr: "le Comité d'action pour le secours aux Tripolitains"
+    ijmes: "Lajnat Amal li-Ighathat al-Tarabulsiyyin"
+    tier: romanised
+    mode: conventional
+  "لوسيان سان":
+    fr: "Lucien Saint"
+    ijmes: "Lusiyan San"
+    tier: romanised
+    mode: conventional
+  "لويس روني ميي":
+    fr: "Louis René Millet"
+    ijmes: "Luwis Runi Mayy"
+    tier: romanised
+    mode: conventional
+  "مؤتمر الشمال الإفريقي بباريس":
+    fr: "le Congrès nord-africain de Paris"
+    ijmes: "Mutamar al-Shamal al-Ifriqi bi-Baris"
+    tier: romanised
+    mode: conventional
+  "مؤتمر شمال إفريقيا":
+    fr: "le Congrès de l'Afrique du Nord"
+    ijmes: "Mutamar Shamal Ifriqiya"
+    tier: romanised
+    mode: conventional
+  "مؤسسة جوهر هوبكينس":
+    fr: "la Fondation Johns Hopkins"
+    ijmes: "Muassasat Jawhar Hubkins"
+    tier: romanised
+    mode: conventional
+  "مترجم بإدارة الفلاحة":
+    fr: "interprète à la Direction de l'Agriculture"
+    ijmes: "interpreter at the agriculture administration"
+    tier: romanised
+    mode: translated
+  "مترجم عدلي":
+    fr: "interprète judiciaire"
+    ijmes: "judicial interpreter"
+    tier: romanised
+    mode: translated
+  "مترجم عدلي لدى المحكمة المختلطة بتونس":
+    fr: "interprète judiciaire auprès du Tribunal mixte de Tunis"
+    ijmes: "judicial interpreter at the mixed court in Tunis"
+    tier: romanised
+    mode: translated
+  "مترجم لدى المصالح العدلية":
+    fr: "interprète auprès des services judiciaires"
+    ijmes: "interpreter with the judicial services"
+    tier: romanised
+    mode: translated
+  "مجلة العالم الأدبي":
+    fr: "El Alem El Adabi"
+    ijmes: "Majallat al-Alam al-Adabi"
+    tier: romanised
+    mode: transliterated
+  "مجلس الثلاثاء بقصر الكرم":
+    fr: "le Majliss Ethoulatha bi Ksar El Karam"
+    ijmes: "Majlis al-Thulatha bi-Qasr al-Karam"
+    tier: romanised
+    mode: transliterated
+  "مجلس الدولة":
+    fr: "le Conseil d'État"
+    ijmes: "Majlis al-Dawla"
+    tier: romanised
+    mode: conventional
+  "مجلس المبعوثان":
+    fr: "le Medjless El Mabouthane"
+    ijmes: "Majlis al-Mabuthan"
+    tier: romanised
+    mode: transliterated
+  "مجلس شورى الملك":
+    fr: "le Majliss Choura El Malik"
+    ijmes: "Majlis Shura al-Malik"
+    tier: romanised
+    mode: transliterated
+  "مجلس مدرسي الجامع الأعظم":
+    fr: "le Conseil des professeurs de la Grande Mosquée"
+    ijmes: "Majlis Mudarrisi al-Jami al-Azam"
+    tier: romanised
+    mode: conventional
+  "مجمع الدواوين":
+    fr: "Majmaa ed-Dawawine"
+    ijmes: "Majma al-Dawawin"
+    tier: romanised
+    mode: transliterated
+  "مجمل تاريخ الأدب التونسي":
+    fr: "Moujmal Tarikh el-Adab Ettounsi"
+    ijmes: "Mujmal Tarikh al-Adab al-Tunisi"
+    tier: romanised
+    mode: transliterated
+  "محام":
+    fr: "avocat"
+    ijmes: "lawyer"
+    tier: romanised
+    mode: translated
+  "محكمة الاستئناف بتونس":
+    fr: "Cour d'appel de Tunis"
+    ijmes: "Mahkamat al-Istinaf bi-Tunis"
+    tier: romanised
+    mode: conventional
+  "محمد البحري":
+    fr: "Mohamed El Bahri"
+    ijmes: "Muhammad al-Bahri"
+    tier: romanised
+    mode: transliterated
+  "محمد البكوش":
+    fr: "Mohamed El Bakkouche"
+    ijmes: "Muhammad al-Bakkush"
+    tier: romanised
+    mode: transliterated
+  "محمد التركي":
+    fr: "Mohamed Et-Turki"
+    ijmes: "Muhammad al-Turki"
+    tier: romanised
+    mode: transliterated
+  "محمد التلاتلي الأمين الزراعي":
+    fr: "Mohamed Ettalatli El Amine Ezzeraï"
+    ijmes: "Muhammad al-Talatli al-Amin al-Zirai"
+    tier: romanised
+    mode: transliterated
+  "محمد الجنادي":
+    fr: "Mohamed El Jenadi"
+    ijmes: "Muhammad al-Janadi"
+    tier: romanised
+    mode: transliterated
+  "محمد الحبيب باي":
+    fr: "Mohamed El Habib Bey"
+    ijmes: "Muhammad al-Habib Bay"
+    tier: romanised
+    mode: transliterated
+  "محمد الحشايشي":
+    fr: "Mohamed El Hachaïchi"
+    ijmes: "Muhammad al-Hashaishi"
+    tier: romanised
+    mode: transliterated
+  "محمد الخضار":
+    fr: "Mohamed El Khadhar"
+    ijmes: "Muhammad al-Khaddar"
+    tier: romanised
+    mode: transliterated
+  "محمد الرياحي":
+    fr: "Mohamed Er-Riahi"
+    ijmes: "Muhammad al-Riyahi"
+    tier: romanised
+    mode: transliterated
+  "محمد السئوسي":
+    fr: "Mohamed Es-Soussi"
+    ijmes: "Muhammad al-Suusi"
+    tier: romanised
+    mode: transliterated
+  "محمد الصادق باي":
+    fr: "Mohamed Es-Sadok Bey"
+    ijmes: "Muhammad al-Sadiq Bay"
+    tier: romanised
+    mode: transliterated
+  "محمد الصادق بسيس":
+    fr: "Mohamed Es-Sadok Bsis"
+    ijmes: "Muhammad al-Sadiq Bsis"
+    tier: romanised
+    mode: transliterated
+  "محمد الصغير بن يوسف":
+    fr: "Mohamed Es-Seghir Ben Youssef"
+    ijmes: "Muhammad al-Saghir Ibn Yusuf"
+    tier: romanised
+    mode: transliterated
+  "محمد العزيز الجلولي":
+    fr: "Mohamed El Aziz El Jellouli"
+    ijmes: "Muhammad al-Aziz al-Jalluli"
+    tier: romanised
+    mode: transliterated
+  "محمد المدني":
+    fr: "Mohamed El Madani"
+    ijmes: "Muhammad al-Madani"
+    tier: romanised
+    mode: transliterated
+  "محمد المرزوقي":
+    fr: "Mohamed El Marzouki"
+    ijmes: "Muhammad al-Marzuqi"
+    tier: romanised
+    mode: transliterated
+  "محمد المنصف باي":
+    fr: "Mohamed El Moncef Bey"
+    ijmes: "Muhammad al-Munsif Bay"
+    tier: romanised
+    mode: transliterated
+  "محمد الناصر باي":
+    fr: "Mohamed En-Naceur Bey"
+    ijmes: "Muhammad al-Nasir Bay"
+    tier: romanised
+    mode: transliterated
+  "محمد النيفر":
+    fr: "Mohamed En-Nifer"
+    ijmes: "Muhammad al-Nayfar"
+    tier: romanised
+    mode: transliterated
+  "محمد بن عثمان الحشايشي":
+    fr: "Mohamed Ben Othman El Hachaïchi"
+    ijmes: "Muhammad Ibn Uthman al-Hashaishi"
+    tier: romanised
+    mode: transliterated
+  "محمد بن ملوكة":
+    fr: "Mohamed Ben Mellouka"
+    ijmes: "Muhammad Ibn Malluka"
+    tier: romanised
+    mode: transliterated
+  "محمد تركي الاسطنبولي":
+    fr: "Mohamed Turki El Stamboli"
+    ijmes: "Muhammad Turki al-Istanbuli"
+    tier: romanised
+    mode: transliterated
+  "محمد خزنة دار":
+    fr: "Mohamed Khaznadar"
+    ijmes: "Muhammad Khaznadar"
+    tier: romanised
+    mode: transliterated
+  "محمد دباب":
+    fr: "Mohamed Debbab"
+    ijmes: "Muhammad Dabbab"
+    tier: romanised
+    mode: transliterated
+  "محمد شنيق":
+    fr: "Mohamed Chenik"
+    ijmes: "Muhammad Shanniq"
+    tier: romanised
+    mode: transliterated
+  "محمد شوكت باشا":
+    fr: "Mohamed Chaoukat Pacha"
+    ijmes: "Muhammad Shawkat Pasha"
+    tier: romanised
+    mode: transliterated
+  "محمد مزالي":
+    fr: "Mohamed Mzali"
+    ijmes: "Muhammad Mzali"
+    tier: romanised
+    mode: transliterated
+  "محمد نعمان":
+    fr: "Mohamed Noomane"
+    ijmes: "Muhammad Numan"
+    tier: romanised
+    mode: transliterated
+  "محمود خوجة":
+    fr: "Mahmoud Khodja"
+    ijmes: "Mahmud Khuja"
+    tier: romanised
+    mode: transliterated
+  "محمود سامي البارودي":
+    fr: "Mahmoud Sami El Baroudi"
+    ijmes: "Mahmud Sami al-Barudi"
+    tier: romanised
+    mode: transliterated
+  "محمود شوكت باشا":
+    fr: "Mahmoud Chaoukat Pacha"
+    ijmes: "Mahmud Shawkat Pasha"
+    tier: romanised
+    mode: transliterated
+  "محيي الدين السنوسي":
+    fr: "Mohieddine Es-Senoussi"
+    ijmes: "Muhyi al-Din al-Sanusi"
+    tier: romanised
+    mode: transliterated
+  "مختارات من الخطب الجمعية":
+    fr: "Mokhtarat min el-Khoutab el-Joumouiya"
+    ijmes: "Mukhtarat min al-Khutab al-Jumuiyya"
+    tier: romanised
+    mode: transliterated
+  "مدحت باشا":
+    fr: "Midhat Pacha"
+    ijmes: "Midhat Pasha"
+    tier: romanised
+    mode: transliterated
+  "مدرس":
+    fr: "professeur"
+    ijmes: "teacher"
+    tier: romanised
+    mode: translated
+  "مدرس من الطبقة الأولى":
+    fr: "professeur de première classe"
+    ijmes: "first-class teacher"
+    tier: romanised
+    mode: translated
+  "مدرس من الطبقة الأولى بجامع الزيتونة":
+    fr: "professeur de première classe à la mosquée Zitouna"
+    ijmes: "first-class teacher at the Zaytuna Mosque"
+    tier: romanised
+    mode: translated
+  "مدرس من الطبقة الثانية":
+    fr: "professeur de deuxième classe"
+    ijmes: "second-class teacher"
+    tier: romanised
+    mode: translated
+  "مدرسة الضباط":
+    fr: "École des officiers"
+    ijmes: "Madrasat al-Dubbat"
+    tier: romanised
+    mode: conventional
+  "مدرسة العطارين":
+    fr: "Médersa El Attarine"
+    ijmes: "Madrasat al-Attarin"
+    tier: romanised
+    mode: transliterated
+  "مدرسة العلوم السياسية بباريس":
+    fr: "École des sciences politiques de Paris"
+    ijmes: "Madrasat al-Ulum al-Siyasiyya bi-Baris"
+    tier: romanised
+    mode: conventional
+  "مدرسة بانكالدي الحربية":
+    fr: "École militaire de Bancaldi"
+    ijmes: "Madrasat Bankaldi al-Harbiyya"
+    tier: romanised
+    mode: conventional
+  "مدرسة بير الأحجار":
+    fr: "Médersa Bir El Ahjar"
+    ijmes: "Madrasat Bir al-Ahjar"
+    tier: romanised
+    mode: transliterated
+  "مدرسة حوانيت عاشور":
+    fr: "Médersa Houanet Achour"
+    ijmes: "Madrasat Hawanit Ashur"
+    tier: romanised
+    mode: transliterated
+  "مدرسة صغار المماليك":
+    fr: "École des jeunes mamelouks"
+    ijmes: "Madrasat Sighar al-Mamalik"
+    tier: romanised
+    mode: conventional
+  "مدرسة يوسف صاحب الطابع":
+    fr: "Médersa Youssef Sahib Ettabaa"
+    ijmes: "Madrasat Yusuf Sahib al-Tabi"
+    tier: romanised
+    mode: transliterated
+  "مدير إدارة الغابة":
+    fr: "directeur de l'administration des Forêts"
+    ijmes: "director of the forestry administration"
+    tier: romanised
+    mode: translated
+  "مدير التشريفات":
+    fr: "directeur du protocole"
+    ijmes: "director of protocol"
+    tier: romanised
+    mode: translated
+  "مدير التشريفات السنية":
+    fr: "directeur du protocole beylical"
+    ijmes: "director of the beylical protocol"
+    tier: romanised
+    mode: translated
+  "مدير التشريفات السنية والمترجم الأول بالقصر الملكي":
+    fr: "directeur du protocole beylical et premier interprète du palais royal"
+    ijmes: "director of the beylical protocol and first interpreter at the royal palace"
+    tier: romanised
+    mode: translated
+  "مدير الفلاحة":
+    fr: "directeur de l'Agriculture"
+    ijmes: "director of agriculture"
+    tier: romanised
+    mode: translated
+  "مدير المطبعة الرسمية":
+    fr: "directeur de l'Imprimerie officielle"
+    ijmes: "director of the official press"
+    tier: romanised
+    mode: translated
+  "مراد باي":
+    fr: "Mourad Bey"
+    ijmes: "Murad Bay"
+    tier: romanised
+    mode: transliterated
+  "مسائل تونسية":
+    fr: "Masail Tounisia"
+    ijmes: "Masail Tunisiyya"
+    tier: romanised
+    mode: transliterated
+  "مستشار الباي":
+    fr: "conseiller du Bey"
+    ijmes: "adviser to the Bey"
+    tier: romanised
+    mode: translated
+  "مستشار الحكومة":
+    fr: "conseiller du gouvernement"
+    ijmes: "government adviser"
+    tier: romanised
+    mode: translated
+  "مستشفى العزافين":
+    fr: "l'hôpital El Azzafine"
+    ijmes: "Mustashfa al-Azzafin"
+    tier: romanised
+    mode: conventional
+  "مشروع أحباء الطلبة":
+    fr: "le Machroua Ahibba Ettalaba"
+    ijmes: "Mashru Ahibba al-Talaba"
+    tier: romanised
+    mode: transliterated
+  "مشيخة الإسلام المالكية":
+    fr: "cheikhat de l'Islam malékite"
+    ijmes: "office of the Maliki Shaykh al-Islam"
+    tier: romanised
+    mode: translated
+  "مصطفى بن إسماعيل":
+    fr: "Mustapha Ben Ismaïl"
+    ijmes: "Mustafa Ibn Ismail"
+    tier: romanised
+    mode: transliterated
+  "مصطفى خزنه دار":
+    fr: "Mustapha Khazneh Dar"
+    ijmes: "Mustafa Khaznah Dar"
+    tier: romanised
+    mode: transliterated
+  "مصطفى خوجة":
+    fr: "Mustapha Khodja"
+    ijmes: "Mustafa Khuja"
+    tier: romanised
+    mode: transliterated
+  "مطبعة العرب":
+    fr: "l'Imprimerie El Arab"
+    ijmes: "Matbaat al-Arab"
+    tier: romanised
+    mode: conventional
+  "مطحنة عصرية":
+    fr: "une minoterie moderne"
+    ijmes: "a modern flour mill"
+    tier: romanised
+    mode: translated
+  "معالم التوحيد":
+    fr: "Maalim Ettawhid"
+    ijmes: "Maalim al-Tawhid"
+    tier: romanised
+    mode: transliterated
+  "معتمد عسكري لدى الفيلق التونسي":
+    fr: "commissaire militaire auprès du corps d'armée tunisien"
+    ijmes: "military agent attached to the Tunisian corps"
+    tier: romanised
+    mode: translated
+  "معروف الرصافي":
+    fr: "Maarouf Er-Rassafi"
+    ijmes: "Maruf al-Rusafi"
+    tier: romanised
+    mode: transliterated
+  "معلم بالمستير":
+    fr: "instituteur à Monastir"
+    ijmes: "teacher at Monastir"
+    tier: romanised
+    mode: translated
+  "معلم بضاحية المرسى":
+    fr: "instituteur dans la banlieue de La Marsa"
+    ijmes: "teacher in the suburb of La Marsa"
+    tier: romanised
+    mode: translated
+  "معلّم بالمدرسة":
+    fr: "instituteur à l'école"
+    ijmes: "teacher at the school"
+    tier: romanised
+    mode: translated
+  "معهد الدراسات العربية بلندن":
+    fr: "l'Institut d'études arabes de Londres"
+    ijmes: "Mahad al-Dirasat al-Arabiyya bi-Landan"
+    tier: romanised
+    mode: conventional
+  "معهد سان شارل":
+    fr: "Lycée Saint-Charles"
+    ijmes: "Mahad San Sharl"
+    tier: romanised
+    mode: conventional
+  "معهد سان لويس بباريس":
+    fr: "Lycée Saint-Louis de Paris"
+    ijmes: "Mahad San Luwis bi-Baris"
+    tier: romanised
+    mode: conventional
+  "معين الحضرة السلطانية":
+    fr: "adjoint de la Cour sultanienne"
+    ijmes: "assistant at the sultanic court"
+    tier: romanised
+    mode: translated
+  "مفتش التعليم الابتدائي العربي":
+    fr: "inspecteur de l'enseignement primaire arabe"
+    ijmes: "inspector of Arabic primary education"
+    tier: romanised
+    mode: translated
+  "مفتي الديار المصرية":
+    fr: "mufti d'Égypte"
+    ijmes: "Mufti of Egypt"
+    tier: romanised
+    mode: translated
+  "مفتي بالمجلس الشرعي":
+    fr: "mufti au conseil charaïque"
+    ijmes: "mufti of the sharia council"
+    tier: romanised
+    mode: translated
+  "مقيم عام لفرنسا بتونس":
+    fr: "Résident général de France à Tunis"
+    ijmes: "French resident general in Tunis"
+    tier: romanised
+    mode: translated
+  "مكتب الترجمة":
+    fr: "le bureau de traduction"
+    ijmes: "the translation bureau"
+    tier: romanised
+    mode: translated
+  "مكتبة جامع الزيتونة":
+    fr: "la bibliothèque de la mosquée Zitouna"
+    ijmes: "Maktabat Jami al-Zaytuna"
+    tier: romanised
+    mode: conventional
+  "مندوب بمجلس الدولة":
+    fr: "délégué au Conseil d'État"
+    ijmes: "delegate to the council of state"
+    tier: romanised
+    mode: translated
+  "منشئ بالقسم الأول التابع للوزارة الكبرى":
+    fr: "rédacteur à la première section du Grand Vizirat"
+    ijmes: "drafter in the first section attached to the Grand Vizierate"
+    tier: romanised
+    mode: translated
+  "منصب في ديوان رئيس الحكومة التونسية":
+    fr: "poste au cabinet du chef du gouvernement tunisien"
+    ijmes: "post in the office of the head of the Tunisian government"
+    tier: romanised
+    mode: translated
+  "منصب في سلك التدريس":
+    fr: "poste dans le corps enseignant"
+    ijmes: "post in the teaching corps"
+    tier: romanised
+    mode: translated
+  "مهنة المحاماة لدى المحاكم التونسية":
+    fr: "profession d'avocat auprès des tribunaux tunisiens"
+    ijmes: "practice of law before the Tunisian courts"
+    tier: romanised
+    mode: translated
+  "مولاي الحسن الثاني":
+    fr: "Moulay El Hassan Ethani"
+    ijmes: "Mawlay al-Hasan al-Thani"
+    tier: romanised
+    mode: transliterated
+  "ميلران":
+    fr: "Millerand"
+    ijmes: "Milran"
+    tier: romanised
+    mode: conventional
+  "نائب رئيس الجمعية الخلدونية":
+    fr: "vice-président de la Khaldounia"
+    ijmes: "vice-president of the Khalduniyya association"
+    tier: romanised
+    mode: translated
+  "نائب رئيس المجلس الأكبر":
+    fr: "vice-président du Grand Conseil"
+    ijmes: "vice-president of the Grand Council"
+    tier: romanised
+    mode: translated
+  "نادي الأميرة نازلي":
+    fr: "le Nadi El Amira Nazli"
+    ijmes: "Nadi al-Amira Nazli"
+    tier: romanised
+    mode: transliterated
+  "نادي قدماء الصادقية":
+    fr: "Club des anciens élèves du Collège Sadiki"
+    ijmes: "Nadi Qudama al-Sadiqiyya"
+    tier: romanised
+    mode: conventional
+  "نادي مصطفى آغة":
+    fr: "Nadi Mustapha Agha"
+    ijmes: "Nadi Mustafa Agha"
+    tier: romanised
+    mode: transliterated
+  "نسيم شمامة":
+    fr: "Nessim Chemama"
+    ijmes: "Nissim Shamama"
+    tier: romanised
+    mode: transliterated
+  "والي بسوسة":
+    fr: "gouverneur à Sousse"
+    ijmes: "governor at Sousse"
+    tier: romanised
+    mode: translated
+  "والي صفاقس":
+    fr: "gouverneur de Sfax"
+    ijmes: "governor of Sfax"
+    tier: romanised
+    mode: translated
+  "وزارة الزراعة والتجارة":
+    fr: "ministère de l'Agriculture et du Commerce"
+    ijmes: "Ministry of Agriculture and Commerce"
+    tier: romanised
+    mode: translated
+  "وزارة الصحة والشؤون الاجتماعية":
+    fr: "ministère de la Santé et des Affaires sociales"
+    ijmes: "Ministry of Health and Social Affairs"
+    tier: romanised
+    mode: translated
+  "وزارة محمد شنيق":
+    fr: "le ministère Mohamed Chenik"
+    ijmes: "Wizarat Muhammad Shanniq"
+    tier: romanised
+    mode: conventional
+  "وزارة مصطفى الكعاك":
+    fr: "le ministère Mustapha Kaak"
+    ijmes: "Wizarat Mustafa al-Kaak"
+    tier: romanised
+    mode: conventional
+  "وزير":
+    fr: "ministre"
+    ijmes: "minister"
+    tier: romanised
+    mode: translated
+  "وزير الأوقاف":
+    fr: "ministre des Habous"
+    ijmes: "minister of religious endowments"
+    tier: romanised
+    mode: translated
+  "وزير الاستشارة":
+    fr: "ministre de la Consultation"
+    ijmes: "minister of consultation"
+    tier: romanised
+    mode: translated
+  "وزير البحرية":
+    fr: "ministre de la Marine"
+    ijmes: "minister of the navy"
+    tier: romanised
+    mode: translated
+  "وزير الحرب":
+    fr: "ministre de la Guerre"
+    ijmes: "minister of war"
+    tier: romanised
+    mode: translated
+  "وزير الصحة العمومية":
+    fr: "ministre de la Santé publique"
+    ijmes: "minister of public health"
+    tier: romanised
+    mode: translated
+  "وزير العدل في الحكومة التونسية":
+    fr: "ministre de la Justice du gouvernement tunisien"
+    ijmes: "minister of justice in the Tunisian government"
+    tier: romanised
+    mode: translated
+  "وزير القلم والاستشارة":
+    fr: "ministre de la Plume et de la Consultation"
+    ijmes: "minister of the pen and consultation"
+    tier: romanised
+    mode: translated
+  "وزير المعارف والنافعة":
+    fr: "ministre de l'Instruction publique et des Travaux publics"
+    ijmes: "minister of education and public works"
+    tier: romanised
+    mode: translated
+  "وزير مباشر":
+    fr: "ministre en exercice"
+    ijmes: "minister in office"
+    tier: romanised
+    mode: translated
+  "وظيفة بالبلاط":
+    fr: "fonction à la Cour"
+    ijmes: "post at the court"
+    tier: romanised
+    mode: translated
+  "وفد الأربعين":
+    fr: "la Délégation des Quarante"
+    ijmes: "Wafd al-Arbain"
+    tier: romanised
+    mode: conventional
+  "وكيل المدرسة الصادقية":
+    fr: "intendant du Collège Sadiki"
+    ijmes: "administrator of the Sadiqi school"
+    tier: romanised
+    mode: translated
+  "ولاية فلسطين":
+    fr: "province de Palestine"
+    ijmes: "province of Palestine"
+    tier: romanised
+    mode: translated
+  "ابن أبي دينار":
+    fr: "Ibn Abi Dinar"
+    ijmes: "Ibn Abi Dinar"
+    tier: described
+    mode: transliterated
+  "ابن الرومي":
+    fr: "Ibn er-Roumi"
+    ijmes: "Ibn al-Rumi"
+    tier: described
+    mode: transliterated
+  "ابن رشد":
+    fr: "Ibn Rochd"
+    ijmes: "Ibn Rushd"
+    tier: described
+    mode: transliterated
+  "ابن سينا":
+    fr: "Ibn Sina"
+    ijmes: "Ibn Sina"
+    tier: described
+    mode: transliterated
+  "ابنة أحمد باي الثاني":
+    fr: "La fille d'Ahmed Bey II"
+    ijmes: "The daughter of Ahmad Bay the Second"
+    tier: described
+    mode: translated
+  "ابنة الأصرم":
+    fr: "La fille d'El Asram"
+    ijmes: "The daughter of al-Asram"
+    tier: described
+    mode: translated
+  "الأساتذة الذين ساهموا في تكوينهما":
+    fr: "Les professeurs qui ont participé à leur formation"
+    ijmes: "The teachers who took part in the education of the two of them"
+    tier: described
+    mode: translated
+  "الأساتذة القلائل الذين اختارهم والده":
+    fr: "Les quelques professeurs choisis par son père"
+    ijmes: "The few teachers chosen by his father"
+    tier: described
+    mode: translated
+  "زوجته الثانية القيروانية":
+    fr: "Sa seconde épouse, originaire de Kairouan"
+    ijmes: "His second wife, a woman of Kairouan"
+    tier: described
+    mode: translated
+  "شقيق محمد باي خير الدين":
+    fr: "Le frère de Mohamed Bey, Khereddine"
+    ijmes: "The brother of Muhammad Bay, Khayr al-Din"
+    tier: described
+    mode: translated
+  "مخاطبيه الأصغر منه سنا":
+    fr: "Ses interlocuteurs plus jeunes que lui"
+    ijmes: "Those he addressed who were younger than him"
+    tier: described
+    mode: translated
+  "والد محمد بورقيبة التركي الأصل":
+    fr: "Le père de Mohamed Bourguiba, d'origine turque"
+    ijmes: "The father of Muhammad Bourguiba, of Turkish origin"
+    tier: described
+    mode: translated

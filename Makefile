@@ -83,13 +83,14 @@ BPY := PYTHONPATH=src python3
 
 .PHONY: bourse bourse-spine bourse-crawl bourse-resolve bourse-fetch \
         bourse-extract bourse-ocr bourse-movements bourse-resolutions \
-        bourse-build bourse-export bourse-validate bourse-test
+        bourse-build bourse-export bourse-validate bourse-verify bourse-analysis \
+        bourse-political bourse-centrality bourse-test
 
 # bourse-ocr is deliberately out of the default chain: it needs tesseract-ocr
 # with the French model installed, and it takes hours. Run it explicitly.
 bourse: bourse-spine bourse-crawl bourse-resolve bourse-fetch bourse-extract \
         bourse-movements bourse-resolutions bourse-build bourse-export \
-        bourse-validate
+        bourse-validate bourse-political
 
 bourse-spine:    ## BVMT listed-securities roster (firm identity spine)
 	$(BPY) -m bourse.bvmt
@@ -133,6 +134,18 @@ bourse-export:   ## write muxViz edge lists and yearly GraphML
 bourse-validate: ## integrity checks -> validation_report.md
 	$(BPY) -m bourse.validate
 
+bourse-verify:   ## re-read the filings and check every record against the page it cites
+	$(BPY) -m bourse.verify_source
+
+bourse-political: ## code political connections -> firm-year panel + evidence
+	$(BPY) -m bourse.political_connections
+
+bourse-analysis: ## do equity and board ties carry the same control relation?
+	$(BPY) -m bourse.analysis_control_channels
+
+bourse-centrality: ## are politically connected firms more central?
+	$(BPY) -m bourse.analysis_connection_centrality
+
 bourse-test:     ## parser and entity-resolution unit tests
 	$(BPY) tests/test_bourse_extract.py
 
@@ -148,9 +161,10 @@ bourse-test:     ## parser and entity-resolution unit tests
 APY := PYTHONPATH=src python3
 
 .PHONY: aalam aalam-fetch aalam-ingest aalam-segment aalam-extract aalam-model \
-        aalam-relations aalam-codebook aalam-validate aalam-test
+        aalam-relations aalam-romanise aalam-codebook aalam-validate \
+        aalam-gold-draw aalam-gold-score aalam-test
 
-aalam: aalam-segment aalam-extract aalam-model aalam-relations aalam-codebook aalam-validate
+aalam: aalam-segment aalam-extract aalam-model aalam-relations aalam-romanise aalam-codebook aalam-validate
 
 aalam-fetch:      ## download the scan and verify it against the pinned digest
 	$(APY) -m aalam.ingest --fetch --limit 0
@@ -164,9 +178,52 @@ aalam-model:      ## model pass: verify committed assertions quote their entry
 	$(APY) -m aalam.llm --strict
 aalam-relations:  ## registers and the layered edge list
 	$(APY) -m aalam.relations
+aalam-romanise:   ## the Latin edition: name_fr and name_ijmes on every table
+	$(APY) -m aalam.romanise
 aalam-codebook:   ## regenerate the codebook from the data and config
 	$(APY) -m aalam.codebook
 aalam-validate:   ## consistency, coverage and the verbatim-quote guard
 	$(APY) -m aalam.validate --strict
+aalam-gold-draw:  ## stratified, seeded sample -> coding sheets in gold/
+	$(APY) -m aalam.gold draw
+aalam-gold-score: ## coded sheets -> precision/recall with Wilson intervals
+	$(APY) -m aalam.gold score
 aalam-test:       ## parser and normalisation tests
-	$(APY) -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py -q
+	$(APY) -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py \
+	  tests/test_gold_aalam.py tests/test_romanise_aalam.py -q
+
+# --- rodovid ----------------------------------------------------------------
+# A fifth build, independent of the four above and sharing only the data/ root.
+# Source: a crawl of rodovid.org seeded on Tunisian elite families, exported to
+# a workbook whose two sheets are committed as gzipped CSV under
+# data/processed/rodovid/source/. The relation is kinship rather than office,
+# so nothing here joins the other builds on a person id.
+#
+# The three table stages read only committed files and use the standard library
+# alone -- no mirror, no PDFs, no OCR, about fifteen seconds end to end, and
+# byte-identical on every run, which is what lets CI rebuild and diff them.
+# rodovid-figures is the exception: it needs matplotlib and numpy and takes
+# about six minutes, so it is out of the default chain and out of CI.
+RPY := PYTHONPATH=src python3
+
+.PHONY: rodovid rodovid-build rodovid-families rodovid-audit rodovid-dynamic \
+        rodovid-validate rodovid-figures rodovid-figures-dynamic rodovid-test
+
+rodovid: rodovid-build rodovid-families rodovid-audit rodovid-dynamic
+
+rodovid-build:    ## score every person in the export, keep the Tunisians
+	$(RPY) -m rodovid.build
+rodovid-families: ## collapse the kinship graph to marriage alliances between families
+	$(RPY) -m rodovid.families
+rodovid-audit:    ## re-measure what the network figures may be read to say
+	$(RPY) -m rodovid.audit
+rodovid-dynamic:  ## date every marriage, and measure the network period by period
+	$(RPY) -m rodovid.dynamic
+rodovid-validate: ## the dating error, against held-out birth years -> docs/
+	$(RPY) -m rodovid.dynamic --validate
+rodovid-figures:  ## the three static network plates (~6 min; needs matplotlib)
+	$(RPY) -m rodovid.figures
+rodovid-figures-dynamic: ## the three plates over time (~4 min; needs matplotlib)
+	$(RPY) -m rodovid.figures_dynamic
+rodovid-test:     ## filter, family-collapse and dating unit tests
+	$(RPY) -m pytest tests/test_rodovid.py -q

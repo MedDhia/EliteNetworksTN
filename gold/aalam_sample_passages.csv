@@ -1,0 +1,61 @@
+coding_id,stratum,entry_uid,subject_name,cohort,folio_start,folio_end,n_chars,n_edges_extracted,ties_stated,ties_found,ties_missed,passage_relational,coder,notes
+P0001,السابقون,aalam:1.01,عزيزة عثمانة,السابقون,25,32,297,0,0,0,0,no,R1,tomb description only; comparison to Saadian tombs is not a tie
+P0002,السابقون,aalam:1.02,يوسف صاحب الطابع,السابقون,33,48,395,0,1,0,1,yes,R1,missed: Ibn Abi al-Diyaf as biographer (mutarjim hayatihi) of Yusuf; master/merchant unnamed
+P0003,السابقون,aalam:1.02,يوسف صاحب الطابع,السابقون,33,48,796,0,0,0,0,no,R1,post explicitly NOT named (like an interior ministry without the title); Hammuda Pasha's cousins unnamed
+P0004,السابقون,aalam:1.02,يوسف صاحب الطابع,السابقون,33,48,478,0,4,0,4,yes,R1,"missed all: Husayn Bay cousin of Salih and of Ali (2), and ordered both beheaded (2); all third-party, not the entry subject"
+P0005,السابقون,aalam:1.03,إبراهيم الرياحي,السابقون,49,56,277,0,0,0,0,no,R1,"correspondence with unnamed 'Qarawiyyin colleagues' - collective counterparty, no named person or body"
+P0006,السابقون,aalam:1.05,محمود قابادو,السابقون,63,70,585,0,0,0,0,no,R1,character sketch; influence on unnamed peers
+P0007,السابقون,aalam:1.06,أحمد بن أبي الضياف,السابقون,71,78,1426,0,0,0,0,no,R1,his book and the four kings he served are unnamed
+P0008,السابقون,aalam:1.06,أحمد بن أبي الضياف,السابقون,71,78,236,0,0,0,0,no,R1,pure character assessment
+P0009,السابقون,aalam:1.07,الجنرال حسين,السابقون,79,86,267,0,0,0,0,no,R1,"Ahmad Bay I and Muhammad Bay appear only as reign time-markers; posts unnamed, appointer not stated"
+P0010,السابقون,aalam:1.07,الجنرال حسين,السابقون,79,86,331,0,0,0,0,no,R1,new role never named; no named counterparty
+P0011,السابقون,aalam:1.08,محمد بيرم الخامس,السابقون,87,96,309,0,0,0,0,no,R1,itinerary of cities only; family unnamed
+P0012,السابقون,aalam:1.09,الجنرال خير الدين,السابقون,97,112,239,0,0,0,0,no,R1,'the two children' and the tutor are unnamed
+P0013,السابقون,aalam:1.09,الجنرال خير الدين,السابقون,97,112,903,5,7,4,3,yes,R1,"found: appointed min. of marine, head of Majlis al-Akbar, patronage by Muhammad Bay, opposed by Khaznadar. missed: Muhammad Bay cousin of Ahmad Bay I; Muhammad Bay succeeded him as new king; Khaznadar holding al-Wazir al-Akbar. left_post edge is the same dyads as the two appointments, counted once"
+P0014,السابقون,aalam:1.09,الجنرال خير الدين,السابقون,97,112,1059,0,2,0,2,yes,R1,missed: Khayr al-Din enjoying the Sultan's favour; Khayr al-Din resolving to depose Khedive Ismail (opposition). Plotting officials unnamed
+P0015,التابعون,aalam:2.03,علي بوشوشة,التابعون,133,140,449,1,0,0,0,no,R1,"'al-sulta al-ulya' is an unnamed authority, England has no named school; extractor's commissioned_by edge is an over-extraction by the naming rule"
+P0016,التابعون,aalam:2.03,علي بوشوشة,التابعون,133,140,839,1,1,1,0,yes,R1,founded al-Hadira 1888; the young collaborators are unnamed
+P0017,التابعون,aalam:2.03,علي بوشوشة,التابعون,133,140,329,1,1,1,0,yes,R1,board membership of 'the association' (anaphoric to Khalduniyya); electors unnamed
+P0018,التابعون,aalam:2.03,علي بوشوشة,التابعون,133,140,459,0,1,0,1,yes,R1,missed: he runs/directs his newspaper (anaphoric to al-Hadira); clubs and musicians unnamed
+P0019,التابعون,aalam:2.04,علي باش حانبة,التابعون,141,158,1558,4,6,3,3,yes,R1,"footnote list of 7 exiled leaders, coded as subject-anchored co-exile ties; found Thaalibi, Nu'man, Zmerli, missed Guellaty, Darghouth, Kahia. 'al-idara' opposed_by edge not counted (unnamed body)"
+P0020,التابعون,aalam:2.04,علي باش حانبة,التابعون,141,158,266,0,0,0,0,no,R1,eulogy plus footnote on repatriation of remains
+P0021,التابعون,aalam:2.05,محمد باي خير الدين,التابعون,159,168,303,2,2,2,0,yes,R1,son of Khayr al-Din Pasha; Khayr al-Din Pasha as al-Wazir al-Akbar. both caught
+P0022,التابعون,aalam:2.05,محمد باي خير الدين,التابعون,159,168,787,0,0,0,0,no,R1,travel and spiritual reflection; no named person or body
+P0023,التابعون,aalam:2.05,محمد باي خير الدين,التابعون,159,168,375,0,0,0,0,no,R1,places only (Sidi Bou Said)
+P0024,التابعون,aalam:2.06,سالم بو حاجب,التابعون,169,176,240,0,0,0,0,no,R1,Zaytuna is named but its teachers are an unnamed collective and the subject is not mentioned
+P0025,التابعون,aalam:2.06,سالم بو حاجب,التابعون,169,176,243,0,0,0,0,no,R1,old shaykhs and men of government unnamed; subject not named in passage
+P0026,التابعون,aalam:2.06,سالم بو حاجب,التابعون,169,176,253,3,3,3,0,yes,R1,"Majlis Shar'i, khittat al-futya al-malikiyya, mashyakhat al-islam al-malikiyya - all caught; his students who preceded him are unnamed"
+P0027,التابعون,aalam:2.07,محمد الأصرم,التابعون,177,186,284,1,0,0,0,no,R1,'the secondary institute' and the Paris libraries are not named bodies; extractor's studied_at edge supplies a name the passage lacks
+P0028,التابعون,aalam:2.07,محمد الأصرم,التابعون,177,186,478,5,5,5,0,yes,R1,"co-translation with Victor Serres (counted once for both books), Asram as translator of the 2 named works, and the 2 original authors - all caught"
+P0029,التابعون,aalam:2.09,طاهر باشا خير الدين,التابعون,193,224,270,0,0,0,0,no,R1,"negated patronage ties, no party named; the high post is cut off unnamed"
+P0030,التابعون,aalam:2.09,طاهر باشا خير الدين,التابعون,193,224,1611,3,3,3,0,yes,R1,"commissioned by the Sultan, rank of qa'immaqam, elder brother Muhammad Bay Khayr al-Din - all caught; the two praising marshals are unnamed"
+P0031,التابعون,aalam:2.09,طاهر باشا خير الدين,التابعون,193,224,507,0,0,0,0,no,R2,argument about unnamed ulama/bourgeoisie; no named counterparty
+P0032,التابعون,aalam:2.09,طاهر باشا خير الدين,التابعون,193,224,370,0,0,0,0,no,R2,Tahir Khayr al-Din endorses a stance; no named person or body on the other end
+P0033,التابعون,aalam:2.09,طاهر باشا خير الدين,التابعون,193,224,523,0,0,0,0,no,R2,"budget/judicial reform background, no named parties"
+P0034,التابعون,aalam:2.10,محمد بن الخوجة,التابعون,225,236,13,0,0,0,0,no,R2,dates only
+P0035,التابعون,aalam:2.10,محمد بن الخوجة,التابعون,225,236,374,2,3,2,1,yes,R2,"kinship chain found (Muhammad b. al-Khuja son of al-Bashir, al-Bashir son of Shaykh al-Islam Muhammad b. al-Khuja); missed the post tie Shaykh al-Islam held by the grandfather"
+P0036,التابعون,aalam:2.11,مصطفى آغة,التابعون,237,242,247,0,0,0,0,no,R2,verse of poetry quoted but poet not named
+P0037,التابعون,aalam:2.12,عبد السلام البكوش,التابعون,243,252,495,2,4,2,2,yes,R2,"reading ties to al-Sa'di and Umar al-Khayyam returned (mislabeled studied_under, but pair captured); missed both authorship ties Sa'di->Gulistan and Khayyam->Ruba'iyyat"
+P0038,التابعون,aalam:2.13,عبد الجليل الزاوش,التابعون,253,270,321,0,0,0,0,no,R2,family 'known for service to the Husaynid house' - attributing it to the subject requires inference
+P0039,التابعون,aalam:2.13,عبد الجليل الزاوش,التابعون,253,270,286,1,1,1,0,yes,R2,studied at Lycee Saint-Charles
+P0040,التابعون,aalam:2.13,عبد الجليل الزاوش,التابعون,253,270,351,0,0,0,0,no,R2,"'that lycee' alluded to, not named; curriculum background only"
+P0041,التابعون,aalam:2.13,عبد الجليل الزاوش,التابعون,253,270,362,0,0,0,0,no,R2,"intellectual formation described, no named parties"
+P0042,التابعون,aalam:2.13,عبد الجليل الزاوش,التابعون,253,270,444,0,0,0,0,no,R2,unnamed Tunisian students and guests; no named body
+P0043,التابعون,aalam:2.13,عبد الجليل الزاوش,التابعون,253,270,276,0,0,0,0,no,R2,"founding of jaridat al-Tunisi stated in the passive, no named founder"
+P0044,التابعون,aalam:2.13,عبد الجليل الزاوش,التابعون,253,270,298,1,1,1,0,yes,R2,"al-Zawush member of the Tunis municipal council; persuading its members is the same pair, counted once"
+P0045,التابعون,aalam:2.13,عبد الجليل الزاوش,التابعون,253,270,227,0,0,0,0,no,R2,character/role appraisal only
+P0046,المعاصرون,aalam:3.02,محمد بورقيبة,المعاصرون,295,300,481,2,3,2,1,yes,R2,child_of father and studied at Jami al-Zaytuna found; missed the father's service in the Ottoman regular army corps
+P0047,المعاصرون,aalam:3.02,محمد بورقيبة,المعاصرون,295,300,615,1,1,1,0,yes,R2,took up the post of advocate before the Tunisian courts; the men met on his travels are unnamed
+P0048,المعاصرون,aalam:3.03,حسونة العياشي,المعاصرون,301,306,353,2,3,2,1,yes,R2,founded and headed al-Jamiyya al-Khayriyya al-Islamiyya found; missed his management/modernization of the named awqaf al-Qulla
+P0049,المعاصرون,aalam:3.03,حسونة العياشي,المعاصرون,301,306,431,0,0,0,0,no,R2,"reading and unpublished research, no named work or party"
+P0050,المعاصرون,aalam:3.04,محمد السعيد الخلصي,المعاصرون,307,318,328,1,1,1,0,yes,R2,post of mutarjim adli; correspondents are unnamed friends
+P0051,المعاصرون,aalam:3.05,خير الله بن مصطفى,المعاصرون,319,326,958,2,2,2,0,yes,R2,founded al-Madrasa al-Quraniyya al-Asriyya (footnote) and took part in the North Africa congress; the other schools and 'rifaq' are unnamed
+P0052,المعاصرون,aalam:3.05,خير الله بن مصطفى,المعاصرون,319,326,298,0,0,0,0,no,R2,"OCR-damaged; praises an unnamed administration, no name in the passage"
+P0053,المعاصرون,aalam:3.06,علي بو حاجب,المعاصرون,327,332,253,2,2,2,0,yes,R2,wrote in Sawt al-Shab under the named series al-Ard qabla kull shay
+P0054,المعاصرون,aalam:3.06,علي بو حاجب,المعاصرون,327,332,359,0,0,0,0,no,R2,articles in unnamed local papers; opponents unnamed
+P0055,المعاصرون,aalam:3.07,حسن ڤلاتي,المعاصرون,333,340,652,3,3,3,0,yes,R2,"Ali Bash Hanba director of al-Tunisi, Qallati collaborating with Bash Hanba and with al-Zawush; the club/paper link is body-to-body"
+P0056,المعاصرون,aalam:3.07,حسن ڤلاتي,المعاصرون,333,340,395,0,0,0,0,no,R2,Italian foreign ministry vs protectorate authorities is body-to-body; the committee is unnamed
+P0057,المعاصرون,aalam:3.07,حسن ڤلاتي,المعاصرون,333,340,400,0,0,0,0,no,R2,salon meetings with unnamed intellectuals
+P0058,المعاصرون,aalam:3.11,محمود الماطري,المعاصرون,355,360,424,0,0,0,0,no,R2,"eulogy of al-Matri as physician, no named party or body"
+P0059,المعاصرون,aalam:3.11,محمود الماطري,المعاصرون,355,360,390,2,2,2,0,yes,R2,enrolled at the Dijon science faculty/medical school and worked at al-Madrasa al-Tatbiqiyya lil-Tijara wal-Sinaa; the boarding lycee is unnamed
+P0060,المعاصرون,aalam:3.12,محمد الطاهر بن عاشور,المعاصرون,361,368,799,0,2,0,2,yes,R2,footnote states Marcus Aurelius was Roman emperor and authored Afkar (Meditations); extractor returned nothing - footnote material ignored

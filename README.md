@@ -342,17 +342,27 @@ Why the CMF filings:
 - **boards are dated too.** Adopted AGM resolutions date every appointment,
   co-optation and renewal to the meeting that took it, and name the departing
   director a co-optation replaces — a handover the source states rather than
-  one inferred from consecutive snapshots.
+  one inferred from consecutive snapshots;
+- **three filing types, not one.** Registration documents are the richest but
+  the rarest. Annual reports are filed by far more issuers, and prospectuses
+  are the only source with real depth before 2005 — they state who controls a
+  company because a buyer needs to know. All three go through the same
+  extractor, which keys on table headers rather than section numbering.
 
-Current build: **213 registration documents, 400 operation notices and 529
-adopted-resolution filings → 3,285 entities → 12,604 observed ties across
-thirteen layers**, 1994–2026, with 75 entities linked to a BVMT security by
+Current build: **1,887 filings — 215 registration documents, 1,027 annual
+reports and 642 prospectuses, plus 400 operation notices and 529
+adopted-resolution filings → 6,319 entities → 17,474 observed ties across
+thirteen layers**, 1990–2026, with 75 entities linked to a BVMT security by
 ISIN, plus 400 dated operations, 606 dated board decisions and 29 listing
 events. Ownership weights are percentages of capital as reported; interlock
-weights are counts of shared directors. Coverage thins sharply before ~2008 —
-treat the usable panel as roughly 2008–2026 and check
-`data/processed/bourse/layer_year_coverage.csv` before reading any time trend,
-because a rise in observed ties can be a rise in filings.
+weights are counts of shared directors.
+
+A third of that corpus was scanned from paper and carries no text layer at
+all, so it is read with OCR and fed to the same table extractor; 1,683 ties
+come from those pages and are flagged `from_ocr = 1` so the scanned stratum
+can be weighted or dropped. Treat the usable panel as roughly 2005–2026, and
+check `data/processed/bourse/layer_year_coverage.csv` before reading any time
+trend, because a rise in observed ties can still be a rise in filings.
 
 Read [`docs/CODEBOOK-bourse.md`](docs/CODEBOOK-bourse.md) for variable
 definitions and [`docs/SOURCES-bourse.md`](docs/SOURCES-bourse.md) for what each
@@ -363,8 +373,29 @@ the panel is an assumption rather than an observation.
 ```bash
 make bourse          # spine -> crawl -> resolve -> fetch -> extract -> movements
                      # -> resolutions -> build -> export -> validate
+make bourse-ocr      # read the scanned third of the archive (slow; needs
+                     # tesseract-ocr and tesseract-ocr-fra installed)
 make bourse-test
+make bourse-verify   # re-read the filings; check each record against its page
 ```
+
+The source corpus is larger than a typical working disk (~27 GB), so
+`bourse-fetch` and `bourse-extract` are resumable: `--skip-processed` and
+`--skip-extracted` let a batch be extracted and its PDFs deleted before the
+next is fetched. `bourse.fetch_parallel` downloads over a few connections at
+once for the large annual reports, where the cost is transfer rather than the
+delay between requests.
+
+`make bourse-verify` is the check the rest of the suite cannot do. Every other
+check tests the dataset against itself, and a figure read off the wrong row
+passes all of them, because a misread figure is still internally consistent.
+This one re-opens each source PDF, accepts it only if the bytes hash to the
+digest recorded in the corpus manifest, and asks of every record whether its
+name and its figure appear on the page it cites. The result is written to
+`data/processed/bourse/source_verification.md`, which names every record that
+did not confirm. Running it is what turned up the four extraction defects
+recorded in §6.1 of the codebook. It needs the source PDFs present, so run
+`make bourse-fetch` first if a previous extraction pruned them.
 
 CI (`.github/workflows/ci.yml`) runs the test suite on Python 3.11 and 3.12, and
 rebuilds this dataset from the committed extraction records to check that the
@@ -414,15 +445,23 @@ begins with OCR rather than a download. The scan is not redistributed;
 and flags per page, and the OCR'd text is committed so the tables rebuild — and
 the provenance guard runs — without an OCR engine installed.
 
-Current build: **384 pages → 455,131 characters → 38 entries → 48 persons,
-17 organisations and 33 ties across four layers** (tutelage, office, kinship,
-membership).
+Current build: **384 pages → 455,131 characters → all 38 entries → 242 persons,
+366 organisations and 873 ties across four layers** (tutelage, office, kinship,
+membership). 28 of the 38 subjects are tied to at least one other subject, and
+the institutions that bind them are legible: Zaytuna (10 subjects), the Sadiqi
+college (8), the newspaper *al-Hadira* (7), the Khaldouniyya and the Young
+Tunisians (6 each).
 
 **Read [`docs/LIMITATIONS-aalam-tunisiyun.md`](docs/LIMITATIONS-aalam-tunisiyun.md)
-before using any of it.** In particular: the model pass has so far been run on
-**3 of the 38 entries (9.5% of the text)**, so this is a working pipeline rather
-than a census of the book's content, and there is **no gold-standard score yet**
-— the counts are lower bounds of unknown tightness.
+before using any of it.** In particular: the gold sample is coded —
+**precision 0.907** (95% CI 0.860–0.940) and **recall 0.672** (0.550–0.774) on
+206 ties and 60 passages — but it is a **self-audit**, drawn and coded by the
+same system that wrote the extractors, so the layer-by-layer comparisons hold
+and the headline numbers are not citable. Tutelage is the weakest layer at
+0.821, and it is the layer this build exists for; 709 of the 873 ties carry no
+date, because a biography states that a relation existed far more often than it
+says when; and 866 of 873 ties come from the model pass rather than the rule
+table, for the reason given below.
 
 ### How it reads narrative prose
 
@@ -437,20 +476,94 @@ matched on a bare verb cannot tell a clause's subject from its object. An
 earlier version that ignored this made Yusuf Sahib al-Tabi the son of Hammuda
 Pasha. Cues marked `vso` are recorded but never emitted.
 
-The **model pass** covers the remainder, and is not trusted. Every assertion
-must quote its entry verbatim; `aalam.validate` checks each quote against the
-entry text on **every row rather than a sample**, and drops any that is not
-literally present. A tie the book does not state has no sentence to quote. The
-pass output is committed as a record and everything downstream is
-deterministic, so the tables rebuild byte-identically and re-running the model
-is a reviewable diff — the arrangement the bourse build already uses.
+The **model pass** covers the remainder, and carries almost the whole dataset.
+It is not trusted. Every assertion must quote its entry verbatim;
+`aalam.validate` checks each quote against the entry text on **every row rather
+than a sample**, and drops any that is not literally present. A tie the book
+does not state has no sentence to quote. The pass output is committed as a
+record and everything downstream is deterministic, so the tables rebuild
+byte-identically and re-running the model is a reviewable diff — the
+arrangement the bourse build already uses.
+
+That gate catches invention but not misreading, and the difference is not
+academic. The book names what a man read by listing its authors
+(«والغزالي وابن رشد، قد استأثروا بعنايته»), which read as a teaching tie makes
+a scholar dead in 1198 the teacher of a man born in 1871. Ten such ties got
+through, 12% of the tutelage layer at the time, every quote genuine. They are
+now reclassified to `read_work_of`, flagged for review, and a validation check
+fails the build if one survives. The class was found by reading twelve rows at
+random, which is the honest measure of how much else may be there.
+
+### Reading it without Arabic
+
+Every name in the volume is Arabic script, and the column that looks like the
+Latin one is not: `name_translit` is a vowel-less consonant skeleton built to
+generate identifiers, so `سالم بو حاجب` comes out `SALM BW HAJB`. Arabic does
+not write short vowels, and nothing recovers `Salem` from that.
+
+`python -m aalam.romanise` therefore writes two supplied columns on every
+table. **`name_fr`** is Tunisian French orthography (Mohamed Tahar Ben Achour,
+Bechir Sfar), which is how these people are spelled in Tunisian archives and
+what joins this build to the gazette build, whose 45,634 persons and 8,803
+organisations are all named in French. **`name_ijmes`** is the Middle East
+studies convention without diacritics (Muhammad al-Tahir Ibn Ashur). The edge
+tables carry both on both ends.
+
+Neither translates: a newspaper called جريدة الحاضرة is `al-Hadira`, never
+"The Metropolis". Where a row is a common-noun post rather than a name
+(`وزير الداخلية`) it is translated instead, and `gloss_mode` says so, because
+reading `Minister of the Interior` as somebody's name is the error the column
+exists to prevent.
+
+**Every gloss is gated.** A Latin form is reduced to its consonants and
+compared with the same reduction of the Arabic, on every row rather than a
+sample — the counterpart of the verbatim-quote gate on the extraction passes.
+It refuses `مصطفى آغة` glossed as Mustapha Radhouane, which is the exact
+homonym merge the gold coding caught. It cannot see a vowel: `Salim` and
+`Salem` are one spine, because the Arabic never recorded the difference. So
+`gloss_tier` marks the 112 rows a reader actually meets, which were checked by
+hand, apart from the tail, which was not. See
+[`docs/LIMITATIONS-aalam-tunisiyun.md`](docs/LIMITATIONS-aalam-tunisiyun.md)
+§10.
+
+`evidence_quote` stays Arabic. It is the verbatim gate, and a translated quote
+proves nothing about the page.
+
+### Figures
+
+`python scripts/figures_aalam.py` writes four figures into `figures/` in two
+editions, one labelled in Arabic and one in Latin, each a 300 dpi PNG and a
+vector PDF, in the house style shared with the gazette build
+(`scripts/house_style.py`). The Latin plates take the `_en` suffix and come
+from the same four functions, so the two editions cannot drift apart:
+
+| Figure | What it shows |
+|---|---|
+| `fig01_aalam_two_mode` | the institutions that tie three or more of the 38 together, and who passed through them |
+| `fig02_aalam_tutelage` | the largest chain of teacher-pupil ties, drawn teacher to pupil |
+| `fig03_aalam_subject_backbone` | the 46 pairs of subjects the book joins, by layer |
+| `fig04_aalam_lives` | the 37 datable life spans, grouped by the author's three cohorts |
+
+Arabic labels are passed **raw**. This matplotlib shapes and orders Arabic
+itself, so putting a string through `arabic-reshaper` and `python-bidi` first —
+the usual advice — processes it twice and silently produces reversed, disjoint
+text that still looks like Arabic to anyone who cannot read it.
 
 ```bash
-make aalam-fetch     # download the scan, verified against a pinned sha256
-make aalam-ingest    # OCR 384 pages at native resolution (~6 min)
-make aalam           # segment -> extract -> model -> relations -> codebook -> validate
+make aalam-fetch       # download the scan, verified against a pinned sha256
+make aalam-ingest      # OCR 384 pages at native resolution (~6 min)
+make aalam             # segment -> extract -> model -> relations -> codebook -> validate
+make aalam-gold-draw   # seeded stratified sample -> coding sheets in gold/
+make aalam-gold-score  # coded sheets -> precision/recall with Wilson intervals
 make aalam-test
 ```
+
+The gold pass is two sheets because precision and recall are not answerable
+from the same unit. Precision is judged per tie, stratified by layer and by
+extractor so the rule pass and the model pass are scored apart. Recall is
+judged per passage: a tie the extractor never found is not in the table to be
+sampled, so a coder reads paragraphs of the book and counts what they state
+against what came back.
 
 Code is `src/aalam/`, outputs are `data/processed/aalam-tunisiyun/`. See
 [`docs/CODEBOOK-aalam-tunisiyun.md`](docs/CODEBOOK-aalam-tunisiyun.md) for
@@ -458,3 +571,139 @@ variable definitions. As with the other builds the output trees are kept apart;
 whether the gazette's person registry and this one should share identifiers is
 the same open question, with the same answer — not yet. The `name_translit`
 column exists so the two can be joined by eye in the meantime.
+
+## A fifth build: elite genealogies, and who married whom
+
+The four builds above read what institutions wrote down — appointments,
+filings, a biographical dictionary. This one reads kinship, from a crawl of
+[rodovid.org](https://rodovid.org) seeded on Tunisian elite families and
+exported to a workbook (`RodovidData234862.xls`). It was migrated here from
+[ElectionsTN](https://github.com/MedDhia/ElectionsTN), where it sat beside
+election returns it had nothing to do with.
+
+Crawls follow marriages, so the export overran its subject: alongside the
+Tunisian families it carries French aristocratic and industrial lineages,
+German, Russian, Danish and Swedish royalty, the Ottoman house and its Abkhaz
+and Circassian beys, the London Rothschild–Montefiore connection, and Egyptian
+and Persian court families. **Slightly more than four rows in ten had nothing
+to do with Tunisia**, and separating them is most of what this build does.
+
+Nothing is hand-listed. Each of the 65,535 people is scored on four signals —
+the places and beylical offices named in their own record, a character n-gram
+model over the name, the place evidence of everyone else sharing the surname,
+and the evidence of relatives one and two steps away in the kinship graph — and
+kept when the weighted sum is positive. Every component is written out per
+person, so the call can be audited or re-thresholded without rerunning
+anything, and the two flags (`married_in`, `tunisia_link`) mark the rows where
+the signals disagree.
+
+Current build: **37,819 Tunisians and 23,565 kinship ties kept, 27,716 people
+excluded**, collapsed to **3,642 marriage alliances carrying 3,912 marriages
+between 1,853 families**.
+
+| figure | what |
+|---|---|
+| `fig01_rodovid_alliances` | all 1,853 families; the thirty widest-married named, and a corona of the 955 that married into the field exactly once |
+| `fig02_rodovid_alliance_core` | the 5-core, 236 families. The 6-core is empty, so this is the deepest core the network has |
+| `fig03_rodovid_alliance_null` | that core beside a degree-preserving rewiring of itself |
+
+**What the network is not.** A force-directed picture always looks like it has
+neighbourhoods, because putting connected things near each other is the
+algorithm's whole job. These do not: the elite here marries *widely*, not into
+circles. Against 50 rewirings that give every family the same number of allies
+and deal the marriages at random, the observed network closes 1.00x as many
+triangles as chance on the whole graph and 1.19x inside the core, and core
+modularity sits at z=+1.9, inside the noise of the null itself. The third
+figure is that comparison drawn — two panels a reader cannot tell apart. The
+beylical house is the reason the picture has a centre at all: `Bey` marries
+into 160 different families, 218 marriages, where the next widest, `Mrad`,
+reaches 95. `make rodovid-audit` recomputes all of it and exits non-zero if any
+of it stops being true, which is why it runs in CI.
+
+### Putting the marriages in time
+
+The network above has no time in it. `make rodovid-dynamic` puts the marriages
+in order — which is harder than it sounds, because **the export carries 22,976
+marriage lines and 16 of them name a year**. What the records do carry is birth
+years, 7,247 of them, and a kinship graph to carry them along. Each person is
+dated; each couple is placed by the birth years of the two spouses; a period is
+the generation the spouses belong to, and the wedding follows a generation
+later — the measured parent-child gap is 31 years, so a couple in the 1900 bin
+married around 1925–1935. Every offset is measured on the data, and the error
+is measured too, by holding out nine in ten observed birth years and
+re-deriving them: MAE 5.6 years one kinship hop out, 14.7 at six, and **95% of
+held-out people land inside one 25-year bin**
+([`docs/VALIDATION-rodovid-dynamic.md`](docs/VALIDATION-rodovid-dynamic.md)).
+
+That dates **18,782 people and 86% of the alliances**, which is enough to watch
+the field assemble itself:
+
+| | 1775 | 1875 | 1925 | 1975 |
+|---|---:|---:|---:|---:|
+| families | 57 | 400 | 1,215 | 1,639 |
+| in the largest component | 32% | 59% | 94% | 97% |
+| closure vs. a degree-preserving null | — | 2.10 | 1.37 | 0.98 |
+| concentration vs. random, within the period | 0.4 | 2.5 | 8.7 | 2.2 |
+| endogamy | 9.5% | 7.8% | 5.3% | 1.5% |
+
+**The field connects.** Through 1850 the alliance network is pockets — a third
+of families in the largest component, and no triangles at all. By 1925 it is
+94%, by 1975 97%; within a single generation's marriages the same shift runs
+from 9% to 90%. Separate marriage circles become one field.
+
+**Closure appears, then goes.** The static build's headline — closure 1.00x its
+degree-preserving null, a web and not a set of blocs — turns out to be an
+average over a series that is not flat. Closure rises to 2.10 in the 1875
+cohort and 2.28 in the 1900 one, then falls back to 1.0 from 1950. The
+exception is one half-century, and it is now dated.
+
+**`Bey` is more accumulation than dominance.** The beylical house tops the
+cumulative network in all eleven periods, from 16 allied families to 158 — but
+it tops any single *generation* in only five, and never after 1950, when
+`Mahjoub`, `Moussa` and `Mrabet` lead cohorts of their own. This is why the
+build measures every period twice, cumulative and windowed: a house present
+from 1775 has two centuries to collect allies and one arriving in 1950 has a
+single generation, so the cumulative series would show rising concentration
+even if no generation's marriage market were concentrated at all.
+
+Three more plates, from `make rodovid-figures-dynamic`:
+
+| figure | what |
+|---|---|
+| `fig04_rodovid_network_growth` | the network at six dates, every family in the same place in all six, so what moves between panels is the network and not the drawing |
+| `fig05_rodovid_structure_over_time` | how big, how connected, how closed, how concentrated — each against the null that makes it comparable across periods |
+| `fig06_rodovid_houses_over_time` | the ten widest-married houses, marriages per generation |
+
+`alliance_panel.csv` is the dynamic edge list in long format — family pair ×
+period — which is what a networkDynamic object, a Gephi timeline or a panel
+regression reads.
+
+**Two things not to do with it**, both in
+[`docs/LIMITATIONS-rodovid.md`](docs/LIMITATIONS-rodovid.md) §9. A period is a
+birth cohort, not a wedding date, so these periods do not line up with
+political events and should not be read against them. And the 14% of couples
+that cannot be dated are the thinly recorded ones — systematically the smaller
+and more peripheral families — so concentration is biased upward and the growth
+in the number of families is partly the record improving rather than the field
+growing.
+
+```bash
+make rodovid          # build -> families -> audit -> dynamic; ~30 s, stdlib only
+make rodovid-validate # the dating error, against held-out birth years
+make rodovid-figures  # the three static plates (~6 min; needs matplotlib)
+make rodovid-figures-dynamic   # the three plates over time (~4 min)
+make rodovid-test
+```
+
+Code is `src/rodovid/`, outputs are `data/processed/rodovid/`, and both source
+sheets are committed gzipped under `source/` so the build needs no Excel
+reader and CI can rebuild from the real inputs and diff the result.
+
+**Read [`docs/LIMITATIONS-rodovid.md`](docs/LIMITATIONS-rodovid.md) before
+using any of it.** Two things above all. **The export is truncated**: both
+sheets came out of Excel at exactly 65,535 rows, the BIFF8 limit, so 22,857 of
+the people kept here have no surviving tie and every count on the kinship graph
+is a floor. And **there is no human-coded gold sample** — the 0.966 printed on
+every run is the name model's agreement with the place signal that trained it,
+not a precision. Variable definitions are in
+[`docs/CODEBOOK-rodovid.md`](docs/CODEBOOK-rodovid.md).

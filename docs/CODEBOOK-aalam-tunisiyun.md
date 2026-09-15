@@ -44,22 +44,31 @@ A biography states a relation far more often than it dates one. Where the senten
 | `header_name_agrees` |  |
 | `needs_review` | Set where something did not reconcile. Never silently corrected. |
 | `review_note` |  |
+| `cohort_en` | The three cohorts in English. Zmerli's judgement, not an attribute of the people. |
+| `role_descriptor_en` | `role_descriptor_ar` in English. Five of the 38 are an OCR failure that captured a sentence instead of the subtitle; the English says what the fragment says rather than repairing it. |
 
 ### `persons.csv`
 
-98 rows. Person register. `is_subject` separates the 38 men and women who have an essay of their own from the alters merely named inside one.
+242 rows. Person register. `is_subject` separates the 38 men and women who have an essay of their own from the alters merely named inside one.
 
 | column | note |
 |---|---|
 | `person_id` | `PERSON_<SURNAME>_<GIVEN>`, from the identity key only. Titles are stripped, so الجنرال خير الدين and خير الدين باشا are one person. |
 | `name_ar` |  |
-| `name_translit` | Deterministic lossy ASCII, for joining by eye with the other builds. Not a scholarly transliteration. |
+| `name_fr` | Tunisian French orthography (Mohamed Tahar Ben Achour, Bechir Sfar). The form used in Tunisian archives and the one that joins this build to the gazette build, whose persons and organisations are all French. |
+| `name_ijmes` | Middle East studies convention without diacritics (Muhammad al-Tahir Ibn Ashur, al-Bashir Safar). |
+| `gloss_tier` | `verified` where the Latin form was checked by hand: the 38 subjects, and the institutions and alters with three or more ties. `romanised` for the tail, where the consonants are gated but the vowels are a reading. `described` where the row is not a name. |
+| `gloss_mode` | `transliterated` renders the Arabic and is gated against it consonant by consonant. `conventional` marks a body whose own French name is not a rendering of its Arabic one (Collège Sadiki for المدرسة الصادقية). `translated` marks a common-noun post or a description, where no transliteration would mean anything -- do not read one as a proper name. |
+| `name_translit` | Deterministic lossy ASCII, the input to the identifier. Drops ayn and hamza, merges the emphatics, writes no vowels. NOT a transliteration and not readable as one: use `name_fr` or `name_ijmes`. |
 | `is_subject` | `yes` for the 38 with an essay; `no` for someone named inside one. Degrees are not comparable across this line. |
+| `name_kind` | `named` where the book gives a name; `described` where it places the person only by a relation (ابنة الأصرم, شقيق محمد باي). A described node is a real tie to an unidentified person, and two such nodes may or may not be the same person. Do not merge them, and exclude them before counting a population. |
 | `entry_uid` | `aalam:<cohort>.<entry>`, e.g. aalam:2.09 for the ninth essay of part two. |
 | `cohort` | The author's own generational division: السابقون (predecessors), التابعون (followers), المعاصرون (contemporaries). Assigned by Zmerli, not by us. |
+| `cohort_en` | The three cohorts in English. Zmerli's judgement, not an attribute of the people. |
 | `birth_year` | From the entry heading. Empty where the volume itself prints '(... - YYYY)'. |
 | `death_year` | From the entry heading. |
 | `role_descriptor_ar` | The epithet the author gives the subject beneath the dates, e.g. الجندي والمصلح ورجل الدولة. His characterisation, not a coding. |
+| `role_descriptor_en` | `role_descriptor_ar` in English. Five of the 38 are an OCR failure that captured a sentence instead of the subtitle; the English says what the fragment says rather than repairing it. |
 | `rank` | A title carried in the name (pasha, bey, agha, general). Stripped from the identifier, kept here as evidence of standing. |
 | `n_assertions` |  |
 | `n_ties` |  |
@@ -67,20 +76,24 @@ A biography states a relation far more often than it dates one. Where the senten
 
 ### `organisations.csv`
 
-127 rows. Schools, mosques, courts, ministries, newspapers and societies named as the other end of a tie.
+358 rows. Schools, mosques, courts, ministries, newspapers and societies named as the other end of a tie.
 
 | column | note |
 |---|---|
 | `org_id` |  |
 | `name_ar` |  |
-| `name_translit` | Deterministic lossy ASCII, for joining by eye with the other builds. Not a scholarly transliteration. |
-| `org_kind` |  |
+| `name_fr` | Tunisian French orthography (Mohamed Tahar Ben Achour, Bechir Sfar). The form used in Tunisian archives and the one that joins this build to the gazette build, whose persons and organisations are all French. |
+| `name_ijmes` | Middle East studies convention without diacritics (Muhammad al-Tahir Ibn Ashur, al-Bashir Safar). |
+| `gloss_tier` | `verified` where the Latin form was checked by hand: the 38 subjects, and the institutions and alters with three or more ties. `romanised` for the tail, where the consonants are gated but the vowels are a reading. `described` where the row is not a name. |
+| `gloss_mode` | `transliterated` renders the Arabic and is gated against it consonant by consonant. `conventional` marks a body whose own French name is not a rendering of its Arabic one (Collège Sadiki for المدرسة الصادقية). `translated` marks a common-noun post or a description, where no transliteration would mean anything -- do not read one as a proper name. |
+| `name_translit` | Deterministic lossy ASCII, the input to the identifier. Drops ayn and hamza, merges the emphatics, writes no vowels. NOT a transliteration and not readable as one: use `name_fr` or `name_ijmes`. |
+| `org_kind` | What the body is: school, mosque, newspaper, association, party, court, office, work, or `org` where the volume does not say. `office` is a post rather than a body people meet in, and `work` is a published title. |
 | `n_ties` |  |
 | `first_seen_entry` |  |
 
 ### `edges/all.csv`
 
-255 rows. Every relational assertion, one row per tie, with the sentence that states it.
+873 rows. Every relational assertion, one row per tie, with the sentence that states it.
 
 | column | note |
 |---|---|
@@ -89,8 +102,12 @@ A biography states a relation far more often than it dates one. Where the senten
 | `relation` | The directed relation; see the controlled vocabulary below. |
 | `from_id` |  |
 | `from_name` |  |
+| `from_fr` | `from_name` in Tunisian French orthography. |
+| `from_ijmes` | `from_name` in the Middle East studies convention. |
 | `to_id` |  |
 | `to_name` |  |
+| `to_fr` | `to_name` in Tunisian French orthography. |
+| `to_ijmes` | `to_name` in the Middle East studies convention. |
 | `to_kind` |  |
 | `subjects_studied` | For a tutelage tie, the subjects named as read with the teacher (الفقه, النحو …), pipe-separated. |
 | `year` | A single year where the sentence states one. |
@@ -106,7 +123,7 @@ A biography states a relation far more often than it dates one. Where the senten
 
 ### `edges/tutelage.csv`
 
-41 rows. Who studied under whom, and where. The layer no other build in this repository has.
+162 rows. Who studied under whom, and where. The layer no other build in this repository has.
 
 | column | note |
 |---|---|
@@ -115,8 +132,12 @@ A biography states a relation far more often than it dates one. Where the senten
 | `relation` | The directed relation; see the controlled vocabulary below. |
 | `from_id` |  |
 | `from_name` |  |
+| `from_fr` | `from_name` in Tunisian French orthography. |
+| `from_ijmes` | `from_name` in the Middle East studies convention. |
 | `to_id` |  |
 | `to_name` |  |
+| `to_fr` | `to_name` in Tunisian French orthography. |
+| `to_ijmes` | `to_name` in the Middle East studies convention. |
 | `to_kind` |  |
 | `subjects_studied` | For a tutelage tie, the subjects named as read with the teacher (الفقه, النحو …), pipe-separated. |
 | `year` | A single year where the sentence states one. |
@@ -132,7 +153,7 @@ A biography states a relation far more often than it dates one. Where the senten
 
 ### `edges/office.csv`
 
-106 rows. Posts taken up and left.
+291 rows. Posts taken up and left.
 
 | column | note |
 |---|---|
@@ -141,8 +162,12 @@ A biography states a relation far more often than it dates one. Where the senten
 | `relation` | The directed relation; see the controlled vocabulary below. |
 | `from_id` |  |
 | `from_name` |  |
+| `from_fr` | `from_name` in Tunisian French orthography. |
+| `from_ijmes` | `from_name` in the Middle East studies convention. |
 | `to_id` |  |
 | `to_name` |  |
+| `to_fr` | `to_name` in Tunisian French orthography. |
+| `to_ijmes` | `to_name` in the Middle East studies convention. |
 | `to_kind` |  |
 | `subjects_studied` | For a tutelage tie, the subjects named as read with the teacher (الفقه, النحو …), pipe-separated. |
 | `year` | A single year where the sentence states one. |
@@ -158,7 +183,7 @@ A biography states a relation far more often than it dates one. Where the senten
 
 ### `edges/kinship.csv`
 
-23 rows. Descent, marriage and affinity.
+74 rows. Descent, marriage and affinity.
 
 | column | note |
 |---|---|
@@ -167,8 +192,12 @@ A biography states a relation far more often than it dates one. Where the senten
 | `relation` | The directed relation; see the controlled vocabulary below. |
 | `from_id` |  |
 | `from_name` |  |
+| `from_fr` | `from_name` in Tunisian French orthography. |
+| `from_ijmes` | `from_name` in the Middle East studies convention. |
 | `to_id` |  |
 | `to_name` |  |
+| `to_fr` | `to_name` in Tunisian French orthography. |
+| `to_ijmes` | `to_name` in the Middle East studies convention. |
 | `to_kind` |  |
 | `subjects_studied` | For a tutelage tie, the subjects named as read with the teacher (الفقه, النحو …), pipe-separated. |
 | `year` | A single year where the sentence states one. |
@@ -184,7 +213,7 @@ A biography states a relation far more often than it dates one. Where the senten
 
 ### `edges/membership.csv`
 
-85 rows. Belonging to, founding or heading a body.
+346 rows. Belonging to, founding or heading a body.
 
 | column | note |
 |---|---|
@@ -193,8 +222,12 @@ A biography states a relation far more often than it dates one. Where the senten
 | `relation` | The directed relation; see the controlled vocabulary below. |
 | `from_id` |  |
 | `from_name` |  |
+| `from_fr` | `from_name` in Tunisian French orthography. |
+| `from_ijmes` | `from_name` in the Middle East studies convention. |
 | `to_id` |  |
 | `to_name` |  |
+| `to_fr` | `to_name` in Tunisian French orthography. |
+| `to_ijmes` | `to_name` in the Middle East studies convention. |
 | `to_kind` |  |
 | `subjects_studied` | For a tutelage tie, the subjects named as read with the teacher (الفقه, النحو …), pipe-separated. |
 | `year` | A single year where the sentence states one. |
@@ -247,6 +280,7 @@ A biography states a relation far more often than it dates one. Where the senten
 | `recommended` | Subject proposed the counterparty for a post |
 | `colleague_of` | Named as a friend, associate or fellow of the counterparty |
 | `eulogised_by` | Counterparty publicly praised or mourned the subject |
+| `read_work_of` | Subject studied the writings of the counterparty, who is not a contemporary and did not teach them in person |
 
 ### Cue bindings
 
@@ -258,35 +292,37 @@ The rule pass emits only cues bound by a preposition or a possessive pronoun. Ar
 
 | relation | n |
 |---|---|
-| `appointed_to` | 58 |
-| `member_of` | 24 |
-| `authored` | 19 |
-| `headed` | 17 |
-| `child_of` | 15 |
-| `studied_at` | 15 |
-| `colleague_of` | 14 |
-| `studied_under` | 13 |
-| `wrote_for` | 11 |
-| `founded` | 10 |
-| `commissioned_by` | 10 |
-| `succeeded` | 10 |
-| `taught_at` | 8 |
-| `patronised_by` | 6 |
-| `kin_of` | 5 |
-| `opposed_by` | 5 |
-| `taught` | 5 |
-| `left_post` | 4 |
-| `sibling_of` | 2 |
-| `married_to` | 1 |
-| `eulogised_by` | 1 |
-| `recommended` | 1 |
-| `patronised` | 1 |
+| `appointed_to` | 153 |
+| `member_of` | 91 |
+| `studied_at` | 64 |
+| `authored` | 63 |
+| `colleague_of` | 57 |
+| `headed` | 52 |
+| `founded` | 47 |
+| `wrote_for` | 46 |
+| `taught_at` | 36 |
+| `child_of` | 33 |
+| `studied_under` | 32 |
+| `commissioned_by` | 26 |
+| `opposed_by` | 25 |
+| `patronised_by` | 21 |
+| `kin_of` | 20 |
+| `left_post` | 20 |
+| `succeeded` | 16 |
+| `read_work_of` | 16 |
+| `sibling_of` | 12 |
+| `taught` | 11 |
+| `patronised` | 10 |
+| `married_to` | 9 |
+| `eulogised_by` | 5 |
+| `recommended` | 5 |
+| `licensed_by` | 3 |
 
 ### Edges by layer
 
 | layer | n |
 |---|---|
-| `office` | 106 |
-| `membership` | 85 |
-| `tutelage` | 41 |
-| `kinship` | 23 |
+| `membership` | 346 |
+| `office` | 291 |
+| `tutelage` | 162 |
+| `kinship` | 74 |
