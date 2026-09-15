@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Causal Verification of Gender Biases: Matching & Fixed Effects (1957–2026)</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #FCFCFB;
+            color: #1A1917;
+            margin: 0;
+            padding: 24px;
+        }
+        .header {
+            max-width: 1400px;
+            margin: 0 auto 20px auto;
+        }
+        h1 {
+            font-size: 22px;
+            margin: 0 0 8px 0;
+            font-weight: 700;
+        }
+        p.subtitle {
+            font-size: 13px;
+            color: #6C6D64;
+            margin: 0 0 20px 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #D3D0C7;
+            border-radius: 6px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .chart-box {
+            width: 100%;
+            height: 400px;
+        }
+        .footer {
+            max-width: 1400px;
+            margin: 24px auto 0 auto;
+            font-size: 11px;
+            color: #6C6D64;
+            border-top: 1px solid #D3D0C7;
+            padding-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Causal Identification & Robustness Verification: Matching Techniques and High-Dimensional Fixed Effects</h1>
+        <p class="subtitle">Empirical validation across 70 years of Tunisian Official Gazette appointments (JORT 1957–2026, N = 100,582 spells, N = 45,634 officials).</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <div id="chart-velocity" class="chart-box"></div>
+        </div>
+        <div class="card">
+            <div id="chart-love" class="chart-box"></div>
+        </div>
+        <div class="card">
+            <div id="chart-tournament" class="chart-box"></div>
+        </div>
+        <div class="card">
+            <div id="chart-steps" class="chart-box"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <b>Data Source:</b> Official Gazette of the Republic of Tunisia (JORT 1957–2026). Extracted from MedDhia/EliteNetworksTN.<br>
+        <b>Methodological Notes:</b> Coarsened Exact Matching (CEM) matches on exact rank score, 5-year cohort window, and line ministry portfolio. Propensity Score Matching (PSM) implements 1:1 nearest-neighbor matching within a 0.2 SD logit caliper. High-dimensional fixed effects absorb all ministry-specific temporal dynamics and institutional sorting.
+    </div>
+
+    <script>
+        // Chart 1: Velocity Estimators
+        const velData = [{
+            y: ['Raw Unadjusted Diff', 'Pooled OLS (Rank+Year)', 'Multi-Way FE (Step+Min+Cohort)', 'High-Dim (Ministry × Cohort FE)', 'Coarsened Exact Matching (CEM)', 'Propensity Score Match (PSM)'],
+            x: [5.500885413733432, 12.940953743383083, 9.778723563447581, 9.708039638944332, 8.936246020619397, 5.309691982879971],
+            error_x: {
+                type: 'data',
+                symmetric: false,
+                array: [1.4366265664450513, 1.465978304517506, 1.431558180556756, 1.4368802340759093, 1.4183491333044547, 1.6414023097821637],
+                arrayminus: [1.4366265664450513, 1.465978304517506, 1.431558180556756, 1.4368802340759093, 1.4183491333044564, 1.6414023097821637]
+            },
+            type: 'scatter',
+            mode: 'markers',
+            marker: { color: '#D9480F', size: 10 }
+        }];
+        const layoutVel = {
+            title: { text: '<b>A. Promotion Wait-Time Delay Across Estimators</b>', font: { size: 13 } },
+            xaxis: { title: 'Estimated Delay for Women (Months)' },
+            shapes: [{ type: 'line', x0: 0, x1: 0, y0: -0.5, y1: 5.5, line: { color: '#6C6D64', dash: 'dash', width: 1.5 } }],
+            font: { family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 10 },
+            margin: { l: 200, r: 20, t: 35, b: 45 }
+        };
+        Plotly.newPlot('chart-velocity', velData, layoutVel, { responsive: true });
+
+        // Chart 2: Love Plot
+        const loveData = [
+            {
+                y: ['Appointment Year', 'Starting Rank Score', 'Ministry: min_affaires_etrangeres', 'Ministry: min_affaires_sociales', 'Ministry: min_agriculture', 'Ministry: min_autre', 'Ministry: min_culture', 'Ministry: min_defense'],
+                x: [0.6619259782897867, 0.023831920329045526, -0.1920888735009567, 0.06879455475621515, -0.10167705557482656, -0.08151615239792591, 0.05737326209727642, -0.034492892496637305],
+                mode: 'markers',
+                name: 'Raw Sample',
+                marker: { color: '#DC2626', size: 8 }
+            },
+            {
+                y: ['Appointment Year', 'Starting Rank Score', 'Ministry: min_affaires_etrangeres', 'Ministry: min_affaires_sociales', 'Ministry: min_agriculture', 'Ministry: min_autre', 'Ministry: min_culture', 'Ministry: min_defense'],
+                x: [0.017967371707660895, 0.00406317112620734, 0.0, 0.015592135616514947, 0.0, 0.009778504092011609, 0.007692566034318773, 0.0],
+                mode: 'markers',
+                name: 'PSM Matched Sample',
+                marker: { color: '#0D9488', size: 9, symbol: 'diamond' }
+            }
+        ];
+        const layoutLove = {
+            title: { text: '<b>B. Covariate Balance (Love Plot: Before vs. After PSM)</b>', font: { size: 13 } },
+            xaxis: { title: 'Standardized Mean Difference (SMD)' },
+            shapes: [
+                { type: 'line', x0: 0, x1: 0, y0: -0.5, y1: 7.5, line: { color: '#1A1917', width: 1 } },
+                { type: 'line', x0: 0.05, x1: 0.05, y0: -0.5, y1: 7.5, line: { color: '#0D9488', dash: 'dot', width: 1 } },
+                { type: 'line', x0: -0.05, x1: -0.05, y0: -0.5, y1: 7.5, line: { color: '#0D9488', dash: 'dot', width: 1 } }
+            ],
+            font: { family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 10 },
+            margin: { l: 150, r: 20, t: 35, b: 45 },
+            legend: { orientation: 'h', y: -0.2 }
+        };
+        Plotly.newPlot('chart-love', loveData, layoutLove, { responsive: true });
+
+        // Chart 3: Tournament Gaps
+        const tournData = [
+            {
+                y: ['Director (Rank ≥ 55)', 'Director General (Rank ≥ 65)', 'Apex Cabinet / Minister (Rank ≥ 70)'],
+                x: [-5.929670745374814, -5.393611761291628, -5.150236122964708],
+                orientation: 'h',
+                name: 'Raw Baseline Gap',
+                type: 'bar',
+                marker: { color: '#6C6D64', opacity: 0.6 }
+            },
+            {
+                y: ['Director (Rank ≥ 55)', 'Director General (Rank ≥ 65)', 'Apex Cabinet / Minister (Rank ≥ 70)'],
+                x: [-1.6214536930263086, -2.349083083960943, -2.8541079363067134],
+                orientation: 'h',
+                name: 'Within-Ministry-Cohort FE',
+                type: 'bar',
+                marker: { color: '#D9480F' }
+            },
+            {
+                y: ['Director (Rank ≥ 55)', 'Director General (Rank ≥ 65)', 'Apex Cabinet / Minister (Rank ≥ 70)'],
+                x: [-2.2045395017154483, -2.3335458529748787, -2.806400298836896],
+                orientation: 'h',
+                name: 'CEM Exact Matched ATT',
+                type: 'bar',
+                marker: { color: '#7C3AED' }
+            }
+        ];
+        const layoutTourn = {
+            title: { text: '<b>C. Career Tournament Apex Gaps: FE vs. CEM ATT</b>', font: { size: 13 } },
+            barmode: 'group',
+            xaxis: { title: 'Percentage Point Penalty for Women (pp)' },
+            font: { family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 10 },
+            margin: { l: 180, r: 20, t: 35, b: 45 },
+            legend: { orientation: 'h', y: -0.2 }
+        };
+        Plotly.newPlot('chart-tournament', tournData, layoutTourn, { responsive: true });
+
+        // Chart 4: Step Delays
+        const stepData = [{
+            y: ['Chef de serv. → Sous-dir (35 → 45)', 'Sous-dir → Directeur (45 → 55)', 'Directeur → Dir. Général (55 → 65)'],
+            x: [6.641039562843428, 9.930506173834207, 12.724596940533383],
+            error_x: {
+                type: 'data',
+                symmetric: false,
+                array: [2.17296678009658, 3.222318735170669, 8.950519719020397],
+                arrayminus: [2.17296678009658, 3.2223187351706724, 8.9505197190204]
+            },
+            type: 'scatter',
+            mode: 'markers',
+            marker: { color: '#B5852A', size: 11 }
+        }];
+        const layoutStep = {
+            title: { text: '<b>D. Monotonic Escalation of Delay Across Ladder Rungs</b>', font: { size: 13 } },
+            xaxis: { title: 'Within-Ministry-Cohort Delay (Months)' },
+            shapes: [{ type: 'line', x0: 0, x1: 0, y0: -0.5, y1: 2.5, line: { color: '#6C6D64', dash: 'dash', width: 1.5 } }],
+            font: { family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 10 },
+            margin: { l: 200, r: 20, t: 35, b: 45 }
+        };
+        Plotly.newPlot('chart-steps', stepData, layoutStep, { responsive: true });
+    </script>
+</body>
+</html>
