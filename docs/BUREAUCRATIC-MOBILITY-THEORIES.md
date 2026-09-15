@@ -20,6 +20,7 @@ Across **53,475 observed bureaucratic transitions**, **40,642 career entrants**,
 10. **Colonization of the Civilian State by Former Interior Employees** (1957–2026)
 11. **Causal Identification of Gender Biases via Matching and High-Dimensional Fixed Effects** (1957–2026)
 12. **Comparative Institutional Gender Biases Across Five Regimes** (1957–2026)
+13. **Causal Effects of Unexpected Changes of Presidency: Coups, Revolutions, and Bureaucratic Realignment** (1987, 2011, 2021)
 
 ---
 
@@ -253,7 +254,46 @@ Kais Saied (2019–26)     +0.74 mo (p = 0.656)    0.33 (44.2% → 14.5%)   38.9
 
 ---
 
-## 9. Figures & Scripts Index
+## 9. Causal Effects of Unexpected Changes of Presidency: Coups, Revolutions, and Bureaucratic Realignment (1987, 2011, 2021)
+
+Evaluating the quasi-experimental effects of three unanticipated regime shocks:
+1. **The 7 November 1987 Coup d'État**: Ben Ali abruptly ousts Habib Bourguiba under medical incapacitation.
+2. **The 14 January 2011 Revolution**: Sudden collapse of the 23-year police state and flight of Ben Ali.
+3. **The 25 July 2021 Presidential Self-Coup**: Kais Saied's Republic Day activation of Article 80, freezing parliament and sacking Mechichi.
+
+Because these transitions arrived without prior public warning, bureaucrats could not anticipate the timing or manipulate their appointments beforehand, satisfying the exogeneity conditions for a quasi-natural experiment.
+
+```
+======================================================================================================================================
+Rupture Event    Presidency Shock        RDiT Jump (SE)    36-Mo Survival Gap    DG Exit Gap (24m)   Excess Demotion Gap   Governor Surge
+--------------------------------------------------------------------------------------------------------------------------------------
+7 Nov 1987       Bourguiba → Ben Ali     -1.91 (1.53, ns)  -2.4 pp (p < 0.05)    -14.2 pp (p < 0.01) -1.2 pp (n.s.)        14 → 15 (1.1x)
+14 Jan 2011      Ben Ali → Revolution    -1.70 (1.82, ns)  -5.0 pp (p < 0.001)   -12.6 pp (p < 0.01) -2.2 pp (n.s.)        7 → 34  (4.9x)
+25 Jul 2021      Saied Article 80 Coup   -1.23 (0.75, ns)  +4.2 pp (p < 0.001)   +8.0 pp  (p < 0.05) +9.9 pp (p < 0.001)   1 → 31  (31.0x)
+======================================================================================================================================
+```
+
+### Core Empirical Discoveries:
+1. **Administrative Paralysis vs. Compensatory Rebound**:
+   - In both 2011 and 2021, the immediate aftermath (months 0–3) experienced a **sharp ~60–66% collapse in monthly appointments**, reflecting an initial administrative freeze.
+   - However, the subsequent trajectories diverged sharply: 2011 exploded into a **2.33x compensatory replacement burst** by months 6–12 (3,211 appointments), whereas 2021 returned strictly to its flat pre-rupture baseline. In 1987, Ben Ali—who was already Prime Minister and Interior Minister—had already initiated appointments and steadily accelerated them (+1.33x by month 12).
+2. **The Paradox of Paralyzed Persistence Under Kais Saied**:
+   - Compared against five same-era placebo cohorts (same calendar day 3–7 years prior), incumbent survival at 36 months dropped by **-2.4 pp under Ben Ali** and **-5.0 pp under the Revolution** (systemic decapitation).
+   - In contrast, under Kais Saied, officials in post at the rupture were **+4.2 pp MORE likely to remain in post** after 36 months than in ordinary times. Saied froze routine rotations and left positions in caretaker acting status, resulting in bureaucratic entrapment and paralysis rather than outright dismissals.
+3. **Selective Decapitation Along Hierarchical Tiers**:
+   - In both 1987 and 2011, purges targeted the **Director-General tier (Rank 65)** most severely: DG survival dropped by **-14.2 pp in 1987** and **-12.6 pp in 2011**, while operational civil servants ($\le 45$) were almost completely insulated ($-1.2\text{ pp}$ and $-2.9\text{ pp}$).
+   - In 2021, survival was higher across all tiers (+3.3 pp to +8.0 pp), confirming the systemic freeze across the hierarchy.
+4. **Subordination Mechanisms: Co-optation vs. Weaponized Demotion**:
+   - Among officials in post on the eve of each rupture who took a subsequent post within 3 years:
+     - **1987 & 2011**: Surviving cadres were heavily promoted (57.3% and 54.6%), with net demotion rates virtually identical to or below ordinary times (-1.2 pp and -2.2 pp). Both Ben Ali and the post-revolutionary troika co-opted surviving bureaucrats.
+     - **2021**: Kais Saied weaponized **institutional demotion**: 31.7% of surviving movers were demoted to lower-ranking posts (**+9.9 pp excess demotion**, $p < 0.001$). Demotions spiked highest in Justice (+28 pp), Higher Education (+25 pp), and Finance (+18 pp). Saied subordinated the civil service not by mass dismissals, but by demoting senior executives down the ladder.
+5. **Territorial Governor Sweeps & Military Infiltration**:
+   - Ben Ali immediately staffed state structures with military officers: military-linked appointments jumped from 26.2% to **37.1% (+10.8 pp)**.
+   - Regional governors (Rank 80) were wiped out and reconstituted immediately after 2011 (34 appointed in 12m, 4.9x surge) and under Saied (31 appointed in 12m, 31x surge).
+
+---
+
+## 10. Figures & Scripts Index
 
 ### Python Pipeline Scripts (`scripts/`)
 1. `mobility_model.py`: Multivariate logit model & machine learning feature attribution (Keller framework).
@@ -268,6 +308,7 @@ Kais Saied (2019–26)     +0.74 mo (p = 0.656)    0.33 (44.2% → 14.5%)   38.9
 10. `test_gender_biases.py`: Theory 10 (Formal Tests of Gender Bias: Sticky Floors, Retinues, Silo Traps & Quarantines).
 11. `test_matching_and_fe_publication.py`: Theory 11 (Causal Verification: Coarsened Exact Matching, PSM, and High-Dimensional Fixed Effects).
 12. `compare_gender_biases_regimes.py`: Theory 12 (Cross-Regime Comparative Gender Biases: Promotion Clocks, Funnels, and Patronage Deficits across Five Regimes).
+13. `test_unexpected_presidential_shocks.py`: Theory 13 (Causal Effects of Unexpected Changes of Presidency: Coups, Revolutions, RDiT, Incumbent Survival, and Demotion Shocks).
 
 ### Publication Figures (`figures/`)
 * `fig_mobility_01_odds_ratios.png` & `.pdf`: Multivariate Logit Model of Upward Mobility.
@@ -293,5 +334,8 @@ Kais Saied (2019–26)     +0.74 mo (p = 0.656)    0.33 (44.2% → 14.5%)   38.9
 * `fig_theory_11_matching_fixed_effects_interactive.html`: Interactive Plotly Dashboard of Matching & Fixed Effects Models.
 * `fig_theory_12_gender_biases_regimes.png` & `.pdf`: Comparative Institutional Gender Biases Across Five Regimes (1957–2026).
 * `fig_theory_12_gender_biases_regimes_interactive.html`: Interactive Plotly Dashboard of Cross-Regime Gender Biases.
+* `fig_theory_13_presidential_shocks.png` & `.pdf`: Causal Effects of Unexpected Changes of Presidency (1987, 2011, 2021).
+* `fig_theory_13_presidential_shocks_interactive.html`: Interactive Plotly Dashboard of Unexpected Presidential Shocks.
+
 
 
