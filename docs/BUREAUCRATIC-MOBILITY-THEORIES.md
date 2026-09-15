@@ -254,42 +254,74 @@ Kais Saied (2019–26)     +0.74 mo (p = 0.656)    0.33 (44.2% → 14.5%)   38.9
 
 ---
 
-## 9. Causal Effects of Unexpected Changes of Presidency: Coups, Revolutions, and Bureaucratic Realignment (1987, 2011, 2021)
+## 9. Causal Effects of Unexpected Changes of Presidency: Regression Discontinuity Design (RDD) & Difference-in-Differences (DiD)
 
-Evaluating the quasi-experimental effects of three unanticipated regime shocks:
-1. **The 7 November 1987 Coup d'État**: Ben Ali abruptly ousts Habib Bourguiba under medical incapacitation.
+Evaluating the quasi-experimental causal effects of three unanticipated regime shocks across Tunisian administrative history:
+1. **The 7 November 1987 Medical Coup d'État**: Zine El Abidine Ben Ali abruptly ousts Habib Bourguiba under medical incapacitation.
 2. **The 14 January 2011 Revolution**: Sudden collapse of the 23-year police state and flight of Ben Ali.
-3. **The 25 July 2021 Presidential Self-Coup**: Kais Saied's Republic Day activation of Article 80, freezing parliament and sacking Mechichi.
+3. **The 25 July 2021 Presidential Auto-Coup**: Kais Saïed's Republic Day activation of Article 80, freezing parliament, sacking Prime Minister Hichem Mechichi, and assuming executive rule.
 
-Because these transitions arrived without prior public warning, bureaucrats could not anticipate the timing or manipulate their appointments beforehand, satisfying the exogeneity conditions for a quasi-natural experiment.
+Because these transitions occurred without prior public warning, bureaucrats could not anticipate the exact timing or manipulate their appointments beforehand, satisfying the exogeneity conditions for sharp Regression Discontinuity Designs in Time (RDiT) and Difference-in-Differences (DiD).
+
+---
+
+### Econometric Identification Strategies
+
+#### 1. Sharp Regression Discontinuity in Time (RDD / RDiT)
+To identify the immediate structural rupture in administrative throughput, we estimate local linear regressions on daily appointment volume within a symmetric bandwidth of $h = \pm 180$ days ($X \in [-180, +180]$):
+$$Y_t = \alpha + \beta_1 X_t + \tau_{\text{RDD}} \cdot \mathbf{1}[X_t \ge 0] + \beta_2 (X_t \cdot \mathbf{1}[X_t \ge 0]) + \varepsilon_t$$
+where $X_t$ is the normalized running variable (days from shock, cutoff $c = 0$), $\tau_{\text{RDD}}$ captures the discontinuous jump at the instant of transition, $\beta_1$ is the pre-shock counterfactual secular trend, and $\beta_2$ represents the post-shock slope divergence, estimated with HC1 heteroskedasticity-consistent robust standard errors.
+
+Similarly, we estimate sharp RDD models on daily appointee composition at $c = 0$:
+- **Apex Political Executive Share**: Discontinuous jump $\tau_{\text{Apex}}$ in appointments with Rank $\ge 70$ (Ministers, Chiefs of Staff, Secretary Generals, Regional Governors).
+- **Security & Military Infiltration Share**: Discontinuous jump $\tau_{\text{Security}}$ in appointees originating from or appointed into Interior and Defense commands.
+
+#### 2. Hierarchical Difference-in-Differences (DiD): 24-Month Incumbent Survival
+To test whether presidential shocks induce targeted political decapitation vs. systemic administrative disruption, we estimate a $2 \times 2$ Difference-in-Differences model on all civil servants in post at the rupture date:
+$$\text{Survival24}_{ij} = \alpha + \beta_1 \text{TreatedCohort}_i + \beta_2 \text{HighRank}_{ij} + \delta_{\text{DiD}} (\text{TreatedCohort}_i \times \text{HighRank}_{ij}) + \varepsilon_{ij}$$
+- **Treated Cohort**: Incumbents in active post on the day of the unexpected shock ($t_0$).
+- **Control Placebo Cohorts**: Matched incumbent cohorts in active post on the *exact same calendar day* in the 5 consecutive pre-shock baseline years ($t_0 - 3, t_0 - 4, t_0 - 5, t_0 - 6, t_0 - 7$), purging seasonal gazetting cycles and routine annual attrition.
+- **Hierarchical Contrast**: Senior Leadership / Grand Corps Executives (Rank $\ge 65$, Directors-General and Apex) versus the Operational Civil Service (Rank $\le 45$, Section Heads and operational cadres).
+- **Identification Parameter**: $\delta_{\text{DiD}}$ measures the excess political purge penalty inflicted specifically on senior leadership beyond ordinary turnover.
+
+#### 3. Difference-in-Differences on Weaponized Demotion (Movers within 36 Months)
+Among incumbent bureaucrats who survive in state service and record a subsequent mobility event within 36 months, we test whether regime transitions weaponize downward bureaucratic mobility:
+$$\text{Demoted}_i = \alpha + \delta_{\text{DiD}} \text{TreatedCohort}_i + \varepsilon_i$$
+where $\text{Demoted}_i = \mathbf{1}[\text{Rank}_{t+1} < \text{Rank}_t]$.
+
+---
+
+### Econometric Estimation Results
 
 ```
-======================================================================================================================================
-Rupture Event    Presidency Shock        RDiT Jump (SE)    36-Mo Survival Gap    DG Exit Gap (24m)   Excess Demotion Gap   Governor Surge
---------------------------------------------------------------------------------------------------------------------------------------
-7 Nov 1987       Bourguiba → Ben Ali     -1.91 (1.53, ns)  -2.4 pp (p < 0.05)    -14.2 pp (p < 0.01) -1.2 pp (n.s.)        14 → 15 (1.1x)
-14 Jan 2011      Ben Ali → Revolution    -1.70 (1.82, ns)  -5.0 pp (p < 0.001)   -12.6 pp (p < 0.01) -2.2 pp (n.s.)        7 → 34  (4.9x)
-25 Jul 2021      Saied Article 80 Coup   -1.23 (0.75, ns)  +4.2 pp (p < 0.001)   +8.0 pp  (p < 0.05) +9.9 pp (p < 0.001)   1 → 31  (31.0x)
-======================================================================================================================================
+========================================================================================================================================
+Quasi-Experiment     Presidency Transition    Daily Volume RDD Jump (τ)   Apex Share RDD Jump     Security RDD Jump       Hierarchical DiD (δ)    Excess Demotion DiD (δ)
+----------------------------------------------------------------------------------------------------------------------------------------
+7 Nov 1987 Coup      Bourguiba → Ben Ali      +0.74 (1.24, p = 0.55)      -1.05 pp (5.66, p=0.85) +34.24 pp (5.93, p<10⁻⁷) -5.01 pp (2.40, p=0.037)  -1.24 pp (1.46, p=0.40)
+14 Jan 2011 Rev.     Ben Ali → Revolution     -7.59 (2.12, p = 0.0003)    +39.56 pp (4.10, p<10⁻²¹) -12.65 pp (4.94, p=0.010) -7.54 pp (1.23, p<10⁻⁹)   -2.22 pp (0.73, p=0.002)
+25 Jul 2021 Coup     Saïed Article 80 Coup    -5.02 (1.36, p = 0.0002)    +3.42 pp (3.39, p=0.31) +2.63 pp (5.79, p=0.65) +3.40 pp (0.74, p<10⁻⁵)   +9.95 pp (0.90, p=8.1e-28)
+========================================================================================================================================
 ```
 
-### Core Empirical Discoveries:
-1. **Administrative Paralysis vs. Compensatory Rebound**:
-   - In both 2011 and 2021, the immediate aftermath (months 0–3) experienced a **sharp ~60–66% collapse in monthly appointments**, reflecting an initial administrative freeze.
-   - However, the subsequent trajectories diverged sharply: 2011 exploded into a **2.33x compensatory replacement burst** by months 6–12 (3,211 appointments), whereas 2021 returned strictly to its flat pre-rupture baseline. In 1987, Ben Ali—who was already Prime Minister and Interior Minister—had already initiated appointments and steadily accelerated them (+1.33x by month 12).
-2. **The Paradox of Paralyzed Persistence Under Kais Saied**:
-   - Compared against five same-era placebo cohorts (same calendar day 3–7 years prior), incumbent survival at 36 months dropped by **-2.4 pp under Ben Ali** and **-5.0 pp under the Revolution** (systemic decapitation).
-   - In contrast, under Kais Saied, officials in post at the rupture were **+4.2 pp MORE likely to remain in post** after 36 months than in ordinary times. Saied froze routine rotations and left positions in caretaker acting status, resulting in bureaucratic entrapment and paralysis rather than outright dismissals.
-3. **Selective Decapitation Along Hierarchical Tiers**:
-   - In both 1987 and 2011, purges targeted the **Director-General tier (Rank 65)** most severely: DG survival dropped by **-14.2 pp in 1987** and **-12.6 pp in 2011**, while operational civil servants ($\le 45$) were almost completely insulated ($-1.2\text{ pp}$ and $-2.9\text{ pp}$).
-   - In 2021, survival was higher across all tiers (+3.3 pp to +8.0 pp), confirming the systemic freeze across the hierarchy.
-4. **Subordination Mechanisms: Co-optation vs. Weaponized Demotion**:
-   - Among officials in post on the eve of each rupture who took a subsequent post within 3 years:
-     - **1987 & 2011**: Surviving cadres were heavily promoted (57.3% and 54.6%), with net demotion rates virtually identical to or below ordinary times (-1.2 pp and -2.2 pp). Both Ben Ali and the post-revolutionary troika co-opted surviving bureaucrats.
-     - **2021**: Kais Saied weaponized **institutional demotion**: 31.7% of surviving movers were demoted to lower-ranking posts (**+9.9 pp excess demotion**, $p < 0.001$). Demotions spiked highest in Justice (+28 pp), Higher Education (+25 pp), and Finance (+18 pp). Saied subordinated the civil service not by mass dismissals, but by demoting senior executives down the ladder.
-5. **Territorial Governor Sweeps & Military Infiltration**:
-   - Ben Ali immediately staffed state structures with military officers: military-linked appointments jumped from 26.2% to **37.1% (+10.8 pp)**.
-   - Regional governors (Rank 80) were wiped out and reconstituted immediately after 2011 (34 appointed in 12m, 4.9x surge) and under Saied (31 appointed in 12m, 31x surge).
+### Core Substantive Discoveries
+
+1. **Sharp RDD Discontinuity on State Output at $c = 0$**:
+   - **Smooth Continuity in 1987 ($\tau = +0.74\text{ acts/day}, p = 0.55$)**: The 7 November 1987 coup produced no discontinuous rupture in overall administrative volume. Because Ben Ali had already been serving as Prime Minister and Minister of Interior, the bureaucratic machinery continued operating without immediate institutional friction.
+   - **Discontinuous Collapse in 2011 ($\tau = -7.59\text{ acts/day}, p = 0.0003$)**: The sudden flight of Ben Ali caused an immediate, severe halt in administrative decisions, dropping from a pre-shock trend of ~9.5 acts/day down to ~2 acts/day on day zero.
+   - **Discontinuous Freeze in 2021 ($\tau = -5.02\text{ acts/day}, p = 0.0002$)**: Saïed's activation of Article 80 similarly caused a sharp, statistically significant drop in daily gazetted acts ($\tau = -5.02, p < 0.001$), freezing administrative rotations before gradually climbing through ad-hoc presidential decrees.
+
+2. **Sharp Realignment of Appointee Composition at $c = 0$**:
+   - **1987 Military Infiltration ($\tau_{\text{Security}} = +34.24\text{ pp}, p = 7.7 \times 10^{-9}$)**: Immediately upon seizing power, Ben Ali flooded ministerial cabinets, regional governorships, and public enterprises with military and intelligence personnel, jumping discontinuously from 10.3% to over 44% of appointments.
+   - **2011 Apex Purge & Democratic Expansion ($\tau_{\text{Apex}} = +39.56\text{ pp}, p = 4.5 \times 10^{-21}$)**: The post-revolutionary transition was characterized by an immediate surge in apex political appointments (replacing RCD ministers, governors, and heads of public agencies), while security sector appointments dropped discontinuously by $-12.65\text{ pp}$ ($p = 0.010$).
+
+3. **Hierarchical Difference-in-Differences on 24-Month Survival**:
+   - **1987 Ben Ali Coup ($N = 52,798$)**: Senior leadership suffered an extra **$\delta_{\text{DiD}} = -5.01\text{ pp}$ ($SE = 2.40, t = -2.08, p = 0.037$)** survival penalty. Operational civil servants experienced 92.4% survival (virtually identical to the 93.8% placebo baseline), whereas Directors-General and Apex cadres dropped to 72.6% (vs. 79.0% placebo).
+   - **2011 Revolution ($N = 140,946$)**: Targeted political decapitation reached its historical zenith, with **$\delta_{\text{DiD}} = -7.54\text{ pp}$ ($SE = 1.23, t = -6.13, p = 8.6 \times 10^{-10}$)**. Senior leadership survival collapsed from 84.3% in ordinary times to 73.8% post-revolution, while lower-tier civil servants remained predominantly insulated (88.9% vs. 91.9%).
+   - **2021 Saïed Auto-Coup ($N = 209,663$)**: Reversing the pattern of 1987 and 2011, senior executives experienced a **positive DiD retention effect**: **$\delta_{\text{DiD}} = +3.40\text{ pp}$ ($SE = 0.74, t = 4.62, p = 3.9 \times 10^{-6}$)**. High-ranking cadres had an 88.7% survival rate (compared to 81.7% in placebo baselines). Saïed refrained from clean-slate dismissals, choosing instead to freeze high-ranking executives in place under provisional acting mandates.
+
+4. **The Weaponized Demotion Shock of 2021**:
+   - **1987 & 2011 Co-opted Survivors**: Among surviving officials who transitioned to new posts within 3 years, demotions were not elevated relative to placebo baselines ($\delta_{\text{DiD}} = -1.24\text{ pp}, p = 0.40$ in 1987; $\delta_{\text{DiD}} = -2.22\text{ pp}, p = 0.002$ in 2011). Both Ben Ali and the post-revolutionary troika co-opted surviving bureaucrats through upward or lateral promotion.
+   - **2021 Subordination Through Downward Mobility ($\delta_{\text{DiD}} = +9.95\text{ pp}, t = 11.05, p = 2.3 \times 10^{-28}$)**: Under Kais Saïed, the demotion rate among surviving mobile bureaucrats surged from a baseline of 21.77% up to **31.72%**. Surviving cadres were systematically stripped of directorships and reassigned to subordinate posts. Sectoral breakdowns reveal extreme demotion spikes in **Justice (+28.2 pp)**, **Higher Education (+25.1 pp)**, and **Finance (+18.4 pp)**.
 
 ---
 
@@ -308,7 +340,7 @@ Rupture Event    Presidency Shock        RDiT Jump (SE)    36-Mo Survival Gap   
 10. `test_gender_biases.py`: Theory 10 (Formal Tests of Gender Bias: Sticky Floors, Retinues, Silo Traps & Quarantines).
 11. `test_matching_and_fe_publication.py`: Theory 11 (Causal Verification: Coarsened Exact Matching, PSM, and High-Dimensional Fixed Effects).
 12. `compare_gender_biases_regimes.py`: Theory 12 (Cross-Regime Comparative Gender Biases: Promotion Clocks, Funnels, and Patronage Deficits across Five Regimes).
-13. `test_unexpected_presidential_shocks.py`: Theory 13 (Causal Effects of Unexpected Changes of Presidency: Coups, Revolutions, RDiT, Incumbent Survival, and Demotion Shocks).
+13. `test_rdd_and_did_presidential_shocks.py`: Theory 13 (Formal Regression Discontinuity Design [RDD] and Difference-in-Differences [DiD] on Unexpected Presidential Shocks).
 
 ### Publication Figures (`figures/`)
 * `fig_mobility_01_odds_ratios.png` & `.pdf`: Multivariate Logit Model of Upward Mobility.
@@ -334,8 +366,9 @@ Rupture Event    Presidency Shock        RDiT Jump (SE)    36-Mo Survival Gap   
 * `fig_theory_11_matching_fixed_effects_interactive.html`: Interactive Plotly Dashboard of Matching & Fixed Effects Models.
 * `fig_theory_12_gender_biases_regimes.png` & `.pdf`: Comparative Institutional Gender Biases Across Five Regimes (1957–2026).
 * `fig_theory_12_gender_biases_regimes_interactive.html`: Interactive Plotly Dashboard of Cross-Regime Gender Biases.
-* `fig_theory_13_presidential_shocks.png` & `.pdf`: Causal Effects of Unexpected Changes of Presidency (1987, 2011, 2021).
-* `fig_theory_13_presidential_shocks_interactive.html`: Interactive Plotly Dashboard of Unexpected Presidential Shocks.
+* `fig_theory_13_presidential_shocks.png` & `.pdf`: Sharp RDD and Difference-in-Differences Causal Estimates of Unexpected Presidential Transitions.
+* `fig_theory_13_presidential_shocks_interactive.html`: Interactive Plotly RDD & DiD Dashboard of Presidential Transitions.
+
 
 
 
