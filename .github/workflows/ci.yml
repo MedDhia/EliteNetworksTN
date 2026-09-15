@@ -215,7 +215,14 @@ jobs:
       - name: Tests
         run: make rodovid-test
       - name: Rebuild the dataset
-        run: make rodovid-build rodovid-families
+        run: make rodovid-build rodovid-families rodovid-dynamic
+
+      # The dating error is measured, not asserted, so it is recomputed here
+      # rather than trusted from the committed report. It writes into docs/,
+      # which nothing diffs, so a changed error table reaches main only with
+      # the change that caused it.
+      - name: Re-measure the dating error
+        run: make rodovid-validate
 
       # Not a validation report but a standing check on what the network
       # figures may be read to say: the 5-core is still 236 families and still

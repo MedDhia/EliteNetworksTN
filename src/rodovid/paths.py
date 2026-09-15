@@ -34,6 +34,13 @@ EXCLUDED = PROCESSED / "excluded_individuals.csv"
 FAMILY_NODES = PROCESSED / "family_nodes.csv"
 FAMILY_ALLIANCES = PROCESSED / "family_alliances.csv"
 
+# Dated, written by rodovid.dynamic. The marriages are undated in the source;
+# these carry years derived from birth years, with the provenance of each.
+PERSON_YEARS = PROCESSED / "person_years.csv"
+MARRIAGES = PROCESSED / "marriages_dated.csv"
+ALLIANCE_PANEL = PROCESSED / "alliance_panel.csv"
+EVOLUTION = PROCESSED / "network_evolution.csv"
+
 # The three plates, written by rodovid.figures.
 FIG_ALLIANCES = "fig01_rodovid_alliances"
 FIG_CORE = "fig02_rodovid_alliance_core"

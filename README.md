@@ -557,9 +557,78 @@ into 160 different families, 218 marriages, where the next widest, `Mrad`,
 reaches 95. `make rodovid-audit` recomputes all of it and exits non-zero if any
 of it stops being true, which is why it runs in CI.
 
+### Putting the marriages in time
+
+The network above has no time in it. `make rodovid-dynamic` puts the marriages
+in order — which is harder than it sounds, because **the export carries 22,976
+marriage lines and 16 of them name a year**. What the records do carry is birth
+years, 7,247 of them, and a kinship graph to carry them along. Each person is
+dated; each couple is placed by the birth years of the two spouses; a period is
+the generation the spouses belong to, and the wedding follows a generation
+later — the measured parent-child gap is 31 years, so a couple in the 1900 bin
+married around 1925–1935. Every offset is measured on the data, and the error
+is measured too, by holding out nine in ten observed birth years and
+re-deriving them: MAE 5.6 years one kinship hop out, 14.7 at six, and **95% of
+held-out people land inside one 25-year bin**
+([`docs/VALIDATION-rodovid-dynamic.md`](docs/VALIDATION-rodovid-dynamic.md)).
+
+That dates **18,782 people and 86% of the alliances**, which is enough to watch
+the field assemble itself:
+
+| | 1775 | 1875 | 1925 | 1975 |
+|---|---:|---:|---:|---:|
+| families | 57 | 400 | 1,215 | 1,639 |
+| in the largest component | 32% | 59% | 94% | 97% |
+| closure vs. a degree-preserving null | — | 2.10 | 1.37 | 0.98 |
+| concentration vs. random, within the period | 0.4 | 2.5 | 8.7 | 2.2 |
+| endogamy | 9.5% | 7.8% | 5.3% | 1.5% |
+
+**The field connects.** Through 1850 the alliance network is pockets — a third
+of families in the largest component, and no triangles at all. By 1925 it is
+94%, by 1975 97%; within a single generation's marriages the same shift runs
+from 9% to 90%. Separate marriage circles become one field.
+
+**Closure appears, then goes.** The static build's headline — closure 1.00x its
+degree-preserving null, a web and not a set of blocs — turns out to be an
+average over a series that is not flat. Closure rises to 2.10 in the 1875
+cohort and 2.28 in the 1900 one, then falls back to 1.0 from 1950. The
+exception is one half-century, and it is now dated.
+
+**`Bey` is more accumulation than dominance.** The beylical house tops the
+cumulative network in all eleven periods, from 16 allied families to 158 — but
+it tops any single *generation* in only five, and never after 1950, when
+`Mahjoub`, `Moussa` and `Mrabet` lead cohorts of their own. This is why the
+build measures every period twice, cumulative and windowed: a house present
+from 1775 has two centuries to collect allies and one arriving in 1950 has a
+single generation, so the cumulative series would show rising concentration
+even if no generation's marriage market were concentrated at all.
+
+Three more plates, from `make rodovid-figures-dynamic`:
+
+| figure | what |
+|---|---|
+| `fig04_rodovid_network_growth` | the network at six dates, every family in the same place in all six, so what moves between panels is the network and not the drawing |
+| `fig05_rodovid_structure_over_time` | how big, how connected, how closed, how concentrated — each against the null that makes it comparable across periods |
+| `fig06_rodovid_houses_over_time` | the ten widest-married houses, marriages per generation |
+
+`alliance_panel.csv` is the dynamic edge list in long format — family pair ×
+period — which is what a networkDynamic object, a Gephi timeline or a panel
+regression reads.
+
+**Two things not to do with it**, both in
+[`docs/LIMITATIONS-rodovid.md`](docs/LIMITATIONS-rodovid.md) §9. A period is a
+birth cohort, not a wedding date, so these periods do not line up with
+political events and should not be read against them. And the 14% of couples
+that cannot be dated are the thinly recorded ones — systematically the smaller
+and more peripheral families — so concentration is biased upward and the growth
+in the number of families is partly the record improving rather than the field
+growing.
+
 ```bash
-make rodovid          # build -> families -> audit; ~15 s, standard library only
-make rodovid-figures  # the three plates (~6 min; needs matplotlib)
+make rodovid          # build -> families -> audit -> dynamic; ~30 s, stdlib only
+make rodovid-validate # the dating error, against held-out birth years
+make rodovid-figures  # the three static plates (~6 min; needs matplotlib)
+make rodovid-figures-dynamic   # the three plates over time (~4 min)
 make rodovid-test
 ```
 
