@@ -4,9 +4,9 @@
 
 PY := PYTHONPATH=src python3
 
-.PHONY: all seed mirror calendar segment extract resolve spells export codebook validate test clean-derived
+.PHONY: all seed mirror calendar segment extract rne resolve orgentity spells orgties personties orgattrs legalform holes project export tergm codebook validate test clean-derived
 
-all: seed mirror calendar segment extract resolve spells export codebook validate
+all: seed mirror calendar segment extract rne resolve orgentity spells orgties personties orgattrs legalform holes project export tergm codebook validate
 
 seed:      ## ingest and clean the curated seed edge list
 	$(PY) -m elitenet.seed
@@ -23,6 +23,9 @@ segment:   ## split issues into announcement blocks and state acts
 extract:   ## pull dated relational events out of blocks and acts
 	$(PY) -m elitenet.extract
 
+rne:       ## link JORT identifiers to the national business register
+	$(PY) -m elitenet.rne
+
 resolve:   ## link mentions to the seed network on the (person, org) dyad
 	$(PY) -m elitenet.resolve
 
@@ -31,6 +34,30 @@ spells:    ## build tie spells and panel snapshots
 
 export:    ## write SQLite, dynamic GEXF, networkDynamic and snapshot files
 	$(PY) -m elitenet.export
+
+orgties:   ## build the organisation-to-organisation tie layer
+	$(PY) -m elitenet.orgties
+
+orgentity: ## organisation entities keyed on the matricule / RC number
+	$(PY) -m elitenet.orgentity
+
+personties: ## build the person-to-person kinship layer
+	$(PY) -m elitenet.personties
+
+orgattrs:  ## organisation identifiers (tax ID, RC number) and addresses
+	$(PY) -m elitenet.orgattrs
+
+legalform: ## SARL/SA status per registered company, and who is connected to them
+	$(PY) -m elitenet.legalform
+
+project:   ## collapse every layer into one graph, at three nested tiers
+	$(PY) -m elitenet.project
+
+holes:     ## how much observed sparsity is resolution error, not structure
+	$(PY) -m elitenet.holes
+
+tergm:     ## re-index the yearly panel into TERGM-estimable inputs
+	$(PY) -m elitenet.tergm
 
 codebook:  ## regenerate CODEBOOK.md from the data and config
 	$(PY) -m elitenet.codebook

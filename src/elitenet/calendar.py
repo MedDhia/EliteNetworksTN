@@ -120,6 +120,19 @@ def _to_date(m: re.Match) -> date | None:
         return None
 
 
+# A date inside a street name is not a date. The Imprimerie Officielle's
+# masthead address reads "42, rue du 18 Janvier 1952 -- TUNIS" (the street is
+# named after a historical date), and it appears in 752 issues. Masthead and
+# header agreement protected all but five of them, which is exactly the kind of
+# margin not to rely on: those five were dated 1952 and produced 93 events
+# whose act postdates its own publication.
+RE_STREET_DATE = re.compile(
+    r"(?:rue|avenue|av\.|boulevard|bd\.|place|impasse|cit[eé]|passage)"
+    r"\s+(?:du|de\s+la|des|d[eu]?')?\s*$",
+    re.IGNORECASE,
+)
+
+
 def find_dates(text: str) -> list[date]:
     """Find every Gregorian date in `text`.
 
@@ -128,7 +141,11 @@ def find_dates(text: str) -> list[date]:
     diacritics.
     """
     out = []
-    for m in RE_DATE_TXT.finditer(_fold(text)):
+    folded = _fold(text)
+    for m in RE_DATE_TXT.finditer(folded):
+        # Skip a date that a street keyword introduces.
+        if RE_STREET_DATE.search(folded[max(0, m.start() - 28):m.start()]):
+            continue
         d = _to_date(m)
         if d:
             out.append(d)
@@ -221,12 +238,36 @@ def resolve_issue(collection: str, year_dir: int, issue: str, text: str,
             row["annee_implied_year"] = implied
 
     # --- weekday, read before the choice so it can arbitrate ---
+    # A double issue prints a range: "Mardi 3-Vendredi 6 Septembre 1957". The
+    # date parsed from that is the later bound, which is the right conservative
+    # reading for a publication upper bound -- but the *first* weekday then
+    # belongs to the other end of the range, so testing only the first turns
+    # 574 correctly dated issues between 1957 and 1995 into weekday mismatches.
+    #
+    # Taking every weekday in the masthead would be wrong too, because the
+    # 1950s-60s masthead also prints the publication schedule ("paraît le
+    # MARDI et le VENDREDI"), which would make the test nearly vacuous. So the
+    # candidates come from the masthead *line that carries the date*, which is
+    # the range itself and not the schedule.
+    def _wd_on_line_of(d: date | None) -> set[int]:
+        if d is None:
+            return set()
+        for line in head.splitlines():
+            if d in find_dates(line):
+                return {WEEKDAYS_FR[w] for w in
+                        (_fold(m.group("wd")) for m in RE_WEEKDAY.finditer(line))
+                        if w in WEEKDAYS_FR}
+        return set()
+
     mwd = RE_WEEKDAY.search(head)
     stated = _fold(mwd.group("wd")) if mwd else ""
     row["weekday_stated"] = stated
     stated_idx = WEEKDAYS_FR.get(stated)
 
     def _wd_ok(d: date | None) -> bool:
+        on_line = _wd_on_line_of(d)
+        if on_line:
+            return d.weekday() in on_line
         return bool(d is not None and stated_idx is not None
                     and d.weekday() == stated_idx)
 
@@ -264,7 +305,7 @@ def resolve_issue(collection: str, year_dir: int, issue: str, text: str,
     if chosen and stated_idx is not None:
         actual = list(WEEKDAYS_FR)[chosen.weekday()]
         row["weekday_actual"] = actual
-        ok = chosen.weekday() == stated_idx
+        ok = _wd_ok(chosen)
         row["weekday_consistent"] = ok
         if not ok:
             # With masthead and headers concordant, a lone weekday mismatch is
@@ -282,7 +323,16 @@ def resolve_issue(collection: str, year_dir: int, issue: str, text: str,
         row["annee_consistent"] = ok
         if not ok:
             notes.append(f"annee implies {implied}, date says {chosen.year}")
-            conf = min(conf, 0.60)
+            # The printed ordinal is the least reliable of the three signals.
+            # The series epoch is not constant across seventy years (1985's
+            # "128e annee" gives 1857, 1962's "106" gives 1856) and the
+            # 1950s-60s OCR mangles it outright -- the 1957 issue prints "75",
+            # which would imply 1882. So where the weekday independently
+            # confirms the date, a bad ordinal is a fault in the ordinal rather
+            # than evidence against the date: the same reasoning already
+            # applied to a lone weekday mismatch above.
+            if not _wd_ok(chosen):
+                conf = min(conf, 0.60)
 
     # --- Hijri plausibility (a band check only; no conversion is attempted) ---
     mh = RE_HIJRI_YEAR.search(head)
@@ -295,9 +345,17 @@ def resolve_issue(collection: str, year_dir: int, issue: str, text: str,
             notes.append(f"hijri {hy} implausible for {chosen.year}")
 
     # --- directory-year sanity ---
+    # The directory year comes from the upstream archive's own filing and is
+    # the one signal not read out of OCR, so it wins. A year or two out is a
+    # turn-of-year issue; further out means the date was read off something
+    # that is not the masthead, and an assertively wrong publication date is
+    # worse than none -- it silently shifts every event in the issue and, used
+    # as an upper bound, drops acts as impossible. One 1963 issue was dated
+    # 1996 this way.
     if chosen and not (year_dir - 1 <= chosen.year <= year_dir + 1):
-        notes.append(f"date year {chosen.year} far from directory year {year_dir}")
-        conf = min(conf, 0.40)
+        notes.append(f"date year {chosen.year} far from directory year "
+                     f"{year_dir}; date rejected")
+        chosen, source, conf = None, "none", 0.0
 
     if chosen:
         row["pub_date"] = chosen.isoformat()

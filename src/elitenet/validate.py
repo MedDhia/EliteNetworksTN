@@ -17,14 +17,18 @@ from __future__ import annotations
 
 import argparse
 import csv
+import gzip
 import json
 from collections import Counter, defaultdict
 from datetime import date
 from pathlib import Path
 
-from .paths import DOCS, INTERIM, PROCESSED, ROOT, ensure_dirs, load_config
+from .paths import (DOCS, INTERIM, PROCESSED, ROOT, ensure_dirs,
+                    load_config, window)
+from .project import TIERS as PROJECTION_TIERS
+from .resolve import MAX_SNOWBALL_PASSES
 
-WINDOW = (date(2008, 1, 1), date(2012, 12, 31))
+WINDOW = window()
 
 
 class Report:
@@ -53,11 +57,36 @@ class Report:
         return "\n".join(out)
 
 
+# The large derived tables are committed *gzipped* and git-ignored
+# uncompressed (see .gitignore), so in a fresh clone -- and therefore in CI --
+# only `<name>.gz` exists. Reading the plain name and silently returning [] for
+# a missing file meant every ERROR-level check over events, spells and
+# resolution passed on an empty list: the gate was real locally and vacuous in
+# CI, which is how 87 impossible act dates sailed through it. The `.gz` is the
+# canonical committed form, so fall back to it rather than treating the table
+# as absent. A table that is genuinely missing still yields [], but no table
+# the repository actually carries can read as empty again.
 def _read(path: Path) -> list[dict]:
-    if not path.exists():
+    fh = _open_table(path)
+    if fh is None:
         return []
-    with path.open(encoding="utf-8", newline="") as fh:
+    with fh:
         return list(csv.DictReader(fh))
+
+
+def _open_table(path: Path):
+    if path.exists():
+        return path.open(encoding="utf-8", newline="")
+    gz = path.with_suffix(path.suffix + ".gz")
+    if gz.exists():
+        return gzip.open(gz, "rt", encoding="utf-8", newline="")
+    return None
+
+
+# Whether a table is readable at all, for the checks that need to distinguish
+# "the stage has not run" from "the stage ran and produced nothing".
+def _table_exists(path: Path) -> bool:
+    return path.exists() or path.with_suffix(path.suffix + ".gz").exists()
 
 
 BLOCKS = INTERIM / "blocks.jsonl"
@@ -72,6 +101,16 @@ BLOCKS = INTERIM / "blocks.jsonl"
 # The stage whose output each skippable input is, so the report says how to
 # make the check runnable rather than only that it was not run.
 _REBUILD_WITH = {"blocks.jsonl": "segment", "act_citations.csv": "extract"}
+_STAGE_FOR = {"node_key.csv": "tergm", "org_tie_spells.csv": "orgties",
+              "org_identifiers.csv": "orgattrs",
+              "org_entities.csv": "orgentity",
+              "org_entity_members.csv": "orgentity",
+              "person_tie_spells.csv": "personties",
+              "projection_summary.csv": "project",
+              "projection_nodes.csv": "project",
+              "rne_company_forms.csv": "legalform",
+              "rne_company_persons.csv": "legalform",
+              "resolution.csv": "resolve"}
 
 
 def _skip(rep: Report, check: str, needs: Path) -> None:
@@ -80,6 +119,23 @@ def _skip(rep: Report, check: str, needs: Path) -> None:
             f"not checked: {needs.relative_to(ROOT)} is absent (a git-ignored "
             f"intermediate). Run `make mirror {stage}` to rebuild it, then "
             f"re-validate.")
+
+
+# Distinct from _skip above: these outputs are committed, not git-ignored, so
+# their absence means the stage has not been run rather than that the input was
+# deliberately left out of the repository.
+def _skip_stage(rep: Report, check: str, needs: Path, why: str = "is absent") -> None:
+    """Record that a check could not run, and say exactly why.
+
+    `why` exists because "is absent" is not always the truth. A table can be
+    present and still predate the column a check needs, and reporting that as
+    an absent file sends a reader looking for a missing file that is right
+    there. Saying which is which is the whole value of this WARN.
+    """
+    stage = _STAGE_FOR.get(needs.name, "all")
+    rep.add("WARN", check,
+            f"not checked: {needs.relative_to(ROOT)} {why}. "
+            f"Run `make {stage}` to build it, then re-validate.")
 
 
 def check_calendar(rep: Report) -> None:
@@ -216,6 +272,24 @@ def check_resolution(rep: Report) -> None:
             f"{len(no_org)} resolved links lack organisation agreement "
             f"(a name-only link is not an identification)")
 
+    # The inferred tier is reported separately and never folded into the line
+    # above. It rests on the name being unique on both sides rather than on the
+    # organisation agreeing, which is weaker in KIND, not in degree -- so the
+    # invariant over `resolved` stays absolute and a consumer can drop the
+    # inference with one filter on `link_status` or on the `gazette_inferred`
+    # evidence tier in the spells and panel tables.
+    inferred = [r for r in res if r["link_status"] == "inferred"]
+    if inferred:
+        people = len({r["resolved_person_id"] for r in inferred
+                      if r["resolved_person_id"]})
+        rep.add("WARN", "links inferred from name rarity",
+                f"{len(inferred)} links over {people} persons rest on the name "
+                f"being borne by one seed person and matching one gazette "
+                f"candidate, with no organisation to anchor them. They are "
+                f"NOT counted as resolved. Exclude them for any claim that "
+                f"needs dyad-anchored identification; include them for "
+                f"coverage.")
+
     # A person holding an implausible number of simultaneous posts is usually
     # several people merged into one, so it is an automatic homonym detector.
     per_person = Counter(r["resolved_person_id"] for r in resolved)
@@ -296,6 +370,743 @@ def check_citations(rep: Report) -> None:
             f"{len(cits)} citations, {len(dated)} with a resolvable cited date")
 
 
+def check_org_entities(rep: Report) -> None:
+    """Organisation entities, and the proof that refining identity lost nothing.
+
+    The merge hubs came from identity being "the seed node this mention
+    fuzzy-matched": `fuzz.token_set_ratio` treats containment as identity, so
+    a seed firm whose label normalised to "TROIS" absorbed every mention
+    containing the French word for three and became the highest-degree
+    organisation in the org-org layer. The fix refines identity rather than
+    discarding matches, so the thing to check is that **every** organisation
+    mention still reaches an entity. A mention that reached none would be a
+    firm silently deleted from the dataset, which is the one outcome this
+    change was not allowed to have.
+    """
+    if not _table_exists(PROCESSED / "org_entities.csv"):
+        _skip_stage(rep, "organisation entities",
+                    PROCESSED / "org_entities.csv")
+        return
+    ents = _read(PROCESSED / "org_entities.csv")
+    members = _read(PROCESSED / "org_entity_members.csv")
+    have_members = _table_exists(PROCESSED / "org_entity_members.csv")
+
+    by_basis = Counter(e["entity_basis"] for e in ents)
+    rep.add("INFO", "organisation entities",
+            f"{len(ents)} entities over {len(members)} distinct mentions: "
+            + ", ".join(f"{k}={v}" for k, v in by_basis.most_common()))
+
+    # The no-data-lost guard, machine-checked rather than asserted in a commit
+    # message.
+    if not have_members:
+        # Without the map there is no coverage to check, and reporting every
+        # mention as unmapped would be a false ERROR rather than a finding --
+        # the same "stage produced nothing" versus "stage has not run"
+        # distinction the skip helpers exist for.
+        _skip_stage(rep, "every org mention has an entity",
+                    PROCESSED / "org_entity_members.csv")
+    else:
+        events = _read(PROCESSED / "events.csv")
+        mentions = {(e.get("org_mention") or "").strip() for e in events}
+        mentions.discard("")
+        mapped = {m["org_mention"] for m in members}
+        missing = mentions - mapped
+        rep.add("ERROR" if missing else "INFO",
+                "every org mention has an entity",
+                f"{len(missing)} of {len(mentions)} organisation mentions in "
+                f"events.csv reach no entity"
+                + (f", e.g. {sorted(missing)[0][:60]!r}" if missing else ""))
+
+    # The residual error, stated with its direction. Name-keyed entities split
+    # one firm across spellings, which is the mirror image of the merge this
+    # change fixed: it understates degree where the merge overstated it.
+    name_keyed = by_basis.get("name", 0) + by_basis.get("ambiguous_mention", 0)
+    share = name_keyed / len(ents) if ents else 0
+    rep.add("WARN" if share > 0.5 else "INFO", "entities keyed only by name",
+            f"{name_keyed} of {len(ents)} entities ({share:.0%}) have no hard "
+            f"identifier and are keyed on the mention, so two spellings of one "
+            f"such firm stay separate -- the mirror image of the merge, and it "
+            f"understates degree rather than overstating it")
+
+    spanning = [m for m in members
+                if int(m.get("n_entities_on_mention") or 1) > 1]
+    rep.add("INFO", "mentions spanning several entities",
+            f"{len(spanning)} mentions carry more than one hard identifier, so "
+            f"the mention-level map is modal for them; the per-event key in "
+            f"orgentity.entity_key is the authoritative assignment")
+
+    adopted = [e for e in ents if e.get("seed_link_is_identity") == "1"]
+    rep.add("INFO", "entities linked to a seed organisation",
+            f"{len(adopted)} of {len(ents)} entities carry an identity-grade "
+            f"seed link and adopt that node's id, so seed ties and the dyadic "
+            f"covariates projected from them stay on the same vertex")
+
+
+def check_org_attrs(rep: Report) -> None:
+    """Organisation identifiers, and what they say about resolution quality.
+
+    A matricule fiscal and a registre-de-commerce number are hard identifiers:
+    a firm has one of each. So an organisation node carrying two is a defect,
+    and this is the only check in the pipeline that can see an
+    organisation-resolution **merge** -- a merge otherwise looks exactly like a
+    well-corroborated match, since both names really do appear beside the same
+    kind of clause.
+
+    Reported at WARN, not ERROR, for the reason the merged-homonym check on the
+    person side is: some conflicts are genuine re-registrations, and the build
+    should not fail over an ambiguity in the source. The number is what matters,
+    and it belongs in the report where a reader will see it.
+    """
+    if not _table_exists(PROCESSED / "org_identifiers.csv"):
+        _skip_stage(rep, "organisation identifiers",
+                    PROCESSED / "org_identifiers.csv")
+        return
+    ids = _read(PROCESSED / "org_identifiers.csv")
+
+    by_type = Counter(r["id_type"] for r in ids)
+    rep.add("INFO", "organisation identifiers",
+            f"{len(ids)} (organisation, identifier, value) rows: "
+            + ", ".join(f"{k}={v}" for k, v in by_type.most_common()))
+
+    for id_type in ("matricule_fiscal", "registre_commerce"):
+        rows = [r for r in ids if r["id_type"] == id_type]
+        if not rows:
+            continue
+        orgs = {r["org_id"] for r in rows}
+        clashing = {r["org_id"] for r in rows if r["is_conflicting"] == "1"}
+        share = f"{len(clashing)/len(orgs):.0%}" if orgs else "—"
+        rep.add("WARN" if clashing else "INFO",
+                f"conflicting {id_type}",
+                f"{len(clashing)} of {len(orgs)} organisations carrying one "
+                f"hold two or more values ({share}); a few values clustered "
+                f"around one is OCR, many with nothing in common is an "
+                f"organisation-resolution merge. See "
+                f"docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md")
+
+    # The severity, not just the count. A node holding two values of an
+    # identifier has a bad value; a node holding hundreds is hundreds of firms
+    # collapsed into one, which does not degrade a variable but fabricates a
+    # hub, and any centrality computed over it is meaningless. This is reported
+    # separately because the two are different findings with the same shape.
+    per_org: Counter = Counter()
+    for r in ids:
+        if r["is_conflicting"] == "1":
+            per_org[(r["org_id"], r["org_label"], r["id_type"])] += 1
+    # Counted two ways on purpose. `per_org` is keyed on (node, identifier
+    # kind), so a node holding both a bad matricule and a bad RC number
+    # appears twice -- reporting that total as a count of NODES overstated it
+    # by a third, 383 against 288.
+    severe = [(k, n) for k, n in per_org.items() if n >= 10]
+    severe_nodes = {k[0] for k, _n in severe}
+    if per_org:
+        worst = max(per_org.items(), key=lambda kv: kv[1])
+        rep.add("WARN" if severe else "INFO", "organisation merge hubs",
+                f"{len(severe_nodes)} organisations ({len(severe)} "
+                f"organisation-identifier pairs) hold 10 or more values of a "
+                f"single hard identifier and are near-certainly several firms "
+                f"merged into one; worst is {worst[0][1] or worst[0][0]} with "
+                f"{worst[1]} distinct {worst[0][2].replace('_', ' ')} values. "
+                f"Exclude these before computing organisation-level structure "
+                f"— `org_identifiers.csv` carries `n_values_for_org`, and "
+                f"`exports/tergm/node_key.csv` carries `merge_suspect`.")
+
+    # An identifier is per-organisation, so a value shared by two nodes is the
+    # same defect seen from the other side: either one firm split across two
+    # nodes, or a misread that collided.
+    shared = Counter()
+    for r in ids:
+        shared[(r["id_type"], r["value_normalised"])] += 1
+    multi = [k for k, n in shared.items() if n > 1]
+    rep.add("WARN" if multi else "INFO", "identifiers shared across nodes",
+            f"{len(multi)} identifier values appear on more than one "
+            f"organisation node (one firm split in two, or a collision)")
+
+    addrs = _read(PROCESSED / "org_addresses.csv")
+    if addrs:
+        moved = [a for a in addrs if a["obs_kind"] == "moved_to"]
+        per_org = Counter(a["org_id"] for a in addrs)
+        rep.add("INFO", "organisation addresses",
+                f"{len(addrs)} dated address observations over "
+                f"{len(per_org)} organisations; {len(moved)} are transfer "
+                f"destinations; "
+                f"{sum(1 for n in per_org.values() if n > 1)} organisations "
+                f"have more than one address on record")
+        undated = [a for a in addrs if not a["observed_date"]]
+        rep.add("ERROR" if undated else "INFO", "addresses are dated",
+                f"{len(undated)} address observations carry no date, so they "
+                f"cannot be ordered into a sequence of seats")
+
+
+def check_org_ties(rep: Report) -> None:
+    """The organisation-to-organisation layer.
+
+    Its errors are the kind that read as findings. A self-tie inflates a firm's
+    ownership degree; a reversed direction asserts the opposite ownership
+    relation and looks entirely plausible; a confirmation promoted to an onset
+    invents the dating the layer is careful not to claim.
+    """
+    spells = _read(PROCESSED / "org_tie_spells.csv")
+    if not spells:
+        _skip_stage(rep, "org ties", PROCESSED / "org_tie_spells.csv")
+        return
+    dated = [s for s in spells if s["evidence_tier"] == "gazette_dated"]
+    seedy = [s for s in spells if s["evidence_tier"] == "seed_undated"]
+
+    rep.add("INFO", "org ties",
+            f"{len(dated)} dated, {len(seedy)} undated seed ties; "
+            f"{len({(s['holder_id'], s['target_id']) for s in dated})} dated dyads")
+    rep.add("INFO", "org tie relations",
+            ", ".join(f"{k}={v}" for k, v in
+                      Counter(s["relation"] for s in spells).most_common(8)))
+
+    loops = [s for s in spells if s["holder_id"] == s["target_id"]]
+    rep.add("ERROR" if loops else "INFO", "org ties are not self-loops",
+            f"{len(loops)} ties whose holder and target are the same organisation")
+
+    neg = [s for s in spells if s["onset"] and s["terminus"]
+           and s["terminus"] < s["onset"]]
+    rep.add("ERROR" if neg else "INFO", "org tie durations are not negative",
+            f"{len(neg)} org tie spells end before they begin")
+
+    # A confirmation bounds the onset from above and asserts nothing below it.
+    # An onset filled in from one would be a manufactured date.
+    bad_cens = [s for s in dated
+                if s["onset"] and s["left_censored"] == "True"]
+    rep.add("ERROR" if bad_cens else "INFO", "org tie censoring is consistent",
+            f"{len(bad_cens)} spells assert an onset while flagged left-censored")
+
+    # A closed-world check over a node universe that now has two authorities.
+    # An organisation's identity is its ENTITY -- keyed on a hard identifier
+    # where it has one -- because identity used to be "the seed node this
+    # mention fuzzy-matched", and a seed label that normalised to a common
+    # French word absorbed every mention containing it. So an endpoint may
+    # legitimately be an `ORGE_` entity rather than a seed node. It may not be
+    # neither: a dangling id is still an error, which is what this checks.
+    known = {n["node_id"] for n in _read(PROCESSED / "seed_nodes.csv")}
+    have_entities = _table_exists(PROCESSED / "org_entities.csv")
+    known |= {e["org_entity_id"] for e in _read(PROCESSED / "org_entities.csv")}
+    unknown = [s for s in spells
+               if s["holder_id"] not in known or s["target_id"] not in known]
+    if unknown and not have_entities:
+        # Half the node universe is missing, so every entity endpoint reads as
+        # dangling. That is a stage that has not run, not a broken dataset --
+        # the distinction `_skip_stage` exists to preserve.
+        _skip_stage(rep, "org tie endpoints are known nodes",
+                    PROCESSED / "org_entities.csv")
+        return
+    rep.add("ERROR" if unknown else "INFO",
+            "org tie endpoints are known nodes",
+            f"{len(unknown)} ties with an endpoint in neither "
+            f"seed_nodes.csv nor org_entities.csv")
+
+    lc = sum(1 for s in dated if s["left_censored"] == "True")
+    rc = sum(1 for s in dated if s["right_censored"] == "True")
+    rep.add("INFO", "org tie censoring",
+            f"left_censored={lc} ({lc / max(1, len(dated)):.0%}), "
+            f"right_censored={rc} ({rc / max(1, len(dated)):.0%})")
+
+
+def check_person_ties(rep: Report) -> None:
+    """The kinship layer.
+
+    Its errors read as findings too, and one of them is worse than the org-tie
+    equivalents: a `née` marker counted as a marriage invents a husband out of
+    a woman's birth name, and the resulting tie is entirely plausible on
+    inspection. So the marriage/maiden split is checked at ERROR level, not
+    reported as a count.
+    """
+    spells = _read(PROCESSED / "person_tie_spells.csv")
+    if not spells:
+        _skip_stage(rep, "person ties", PROCESSED / "person_tie_spells.csv")
+        return
+
+    rep.add("INFO", "person ties",
+            f"{len(spells)} kinship dyads; "
+            f"{sum(1 for s in spells if s.get('is_marriage') == '1')} marriages, "
+            f"{sum(1 for s in spells if s.get('relation') == 'maiden_name_of')} "
+            f"natal-surname links")
+    rep.add("INFO", "person tie relations",
+            ", ".join(f"{k}={v}" for k, v in
+                      Counter(s.get("relation", "") for s in spells).most_common(6)))
+
+    mislabelled = [s for s in spells
+                   if (s.get("relation") == "maiden_name_of")
+                   == (s.get("is_marriage") == "1")]
+    rep.add("ERROR" if mislabelled else "INFO",
+            "a natal surname is not a marriage",
+            f"{len(mislabelled)} spells whose relation and is_marriage disagree")
+
+    loops = [s for s in spells if s.get("person_id") == s.get("kin_id")]
+    rep.add("ERROR" if loops else "INFO", "kinship ties are not self-loops",
+            f"{len(loops)} ties whose two ends are the same person")
+
+    # The gazette does not publish weddings. An onset here would be invented,
+    # and a duration analysis would then read filing frequency as marriage
+    # tenure.
+    onsets = [s for s in spells if s.get("onset")]
+    rep.add("ERROR" if onsets else "INFO", "no marriage onset is asserted",
+            f"{len(onsets)} spells assert an onset the sources cannot date")
+    not_lc = [s for s in spells if s.get("left_censored") != "True"]
+    rep.add("ERROR" if not_lc else "INFO", "kinship onsets are left-censored",
+            f"{len(not_lc)} spells not flagged left-censored")
+
+    # Only `widow_of` dates a boundary. A terminus on anything else is a
+    # boundary the sources do not state.
+    bad_term = [s for s in spells
+                if s.get("terminus") and s.get("relation") != "widow_of"]
+    rep.add("ERROR" if bad_term else "INFO", "only a widow marker ends a tie",
+            f"{len(bad_term)} non-widow spells carry a terminus")
+
+    # A closed-world check on the person side, against the same two
+    # authorities the org side uses: a seed node, or a resolution row that
+    # named the mention.
+    known = {n["node_id"] for n in _read(PROCESSED / "seed_nodes.csv")
+             if n["node_type"] == "PERSON"}
+    if known:
+        unknown = [s for s in spells
+                   if s.get("person_id") not in known
+                   or s.get("kin_id") not in known]
+        rep.add("ERROR" if unknown else "INFO",
+                "kinship endpoints are known persons",
+                f"{len(unknown)} ties with an endpoint outside seed_nodes.csv")
+
+    inferred = [s for s in spells if s.get("evidence_tier") == "kinship_inferred"]
+    if inferred:
+        rep.add("WARN", "kinship ties resting on an inferred endpoint",
+                f"{len(inferred)} of {len(spells)} dyads have at least one end "
+                f"named by name rarity rather than by an organisation agreeing; "
+                f"they carry evidence_tier=kinship_inferred and are excluded "
+                f"from any filter on kinship_dated")
+
+    queue = _read(PROCESSED / "person_ties_review_queue.csv")
+    if queue:
+        reasons = Counter(r.get("queue_reason", "") for r in queue)
+        rep.add("INFO", "person tie review queue",
+                f"{len(queue)} observations retained but not tied: "
+                + ", ".join(f"{k}={v}" for k, v in reasons.most_common()))
+
+
+def check_snowball(rep: Report) -> None:
+    """The snowball tier: that it is labelled, bounded and separable.
+
+    A snowball propagates its own errors, so what is checked here is not
+    whether the links are right -- no invariant can settle that -- but whether
+    a reader can find and drop them. If `resolve_pass` were absent or wrong,
+    the tier would be indistinguishable from first-pass resolution, and that is
+    the failure that matters.
+    """
+    rows = _read(PROCESSED / "resolution.csv")
+    if not rows:
+        _skip_stage(rep, "snowball passes", PROCESSED / "resolution.csv")
+        return
+    sb = [r for r in rows if r.get("link_status") == "snowball"]
+    if "resolve_pass" not in rows[0]:
+        # Two very different states look the same from here, and conflating
+        # them is the same mistake as reading an absent table as an empty one.
+        #
+        # A resolution table with no snowballed links and no column is one
+        # built before the tier existed -- a stage that has not re-run, which
+        # is what `_skip_stage` is for. Failing on it would make every clone
+        # and every CI run red until the whole pipeline is rebuilt, and would
+        # say "broken dataset" where the truth is "stale stage".
+        #
+        # A table carrying snowballed links with no column to tell them apart
+        # is the genuine defect the check was written for, and stays an ERROR.
+        if not sb:
+            _skip_stage(rep, "snowball passes", PROCESSED / "resolution.csv",
+                        "predates the snowball tier (no resolve_pass column, "
+                        "and no link claims to have been snowballed)")
+            return
+        rep.add("ERROR", "snowball passes are recorded",
+                f"{len(sb)} links have link_status=snowball but resolution.csv "
+                f"has no resolve_pass column, so a snowballed link cannot be "
+                f"told from a first-pass one")
+        return
+
+    by_pass = Counter(r.get("resolve_pass", "") for r in sb)
+    by_basis = Counter(r.get("snowball_basis", "") for r in sb)
+    rep.add("INFO", "snowball links",
+            f"{len(sb)} of {len(rows)} mentions named by a later pass"
+            + (f" ({', '.join(f'pass {k}={v}' for k, v in sorted(by_pass.items()))})"
+               if sb else ""))
+    if sb:
+        rep.add("INFO", "snowball bases",
+                ", ".join(f"{k}={v}" for k, v in by_basis.most_common()))
+        # The marginal yield per round, which is the only way to tell a
+        # snowball that converged from one that was cut off by the cap. A
+        # last round still adding links means the bound bound, not that the
+        # evidence ran out -- and that is a different dataset from one that
+        # stopped because nothing was left to name.
+        passes = sorted(int(p) for p in by_pass if str(p).isdigit())
+        if passes:
+            trail = ", ".join(f"pass {p}: +{by_pass[str(p)]}" for p in passes)
+            rep.add("INFO", "snowball marginal yield", trail)
+            last = passes[-1]
+            if by_pass[str(last)] and last >= MAX_SNOWBALL_PASSES:
+                rep.add("WARN", "snowball stopped at the cap, not convergence",
+                        f"pass {last} still added {by_pass[str(last)]} links and "
+                        f"is the last allowed (scope.yaml snowball.max_passes="
+                        f"{MAX_SNOWBALL_PASSES}). Links the evidence supports "
+                        f"are therefore missing; raise the bound and re-run "
+                        f"`make resolve` to converge.")
+
+    # Every snowballed row must say which pass and which rule named it.
+    unlabelled = [r for r in sb
+                  if not r.get("snowball_basis") or r.get("resolve_pass") in ("", "0")]
+    rep.add("ERROR" if unlabelled else "INFO",
+            "every snowballed link names its pass and rule",
+            f"{len(unlabelled)} rows with link_status=snowball but no "
+            f"pass number or basis")
+
+    # A pass number has to be explained, but NOT necessarily by a named
+    # person. The rules that name an ORGANISATION -- a known identifier, or
+    # the person's own seed organisations -- stamp the pass on a row whose
+    # person may still be unresolved, and that is the intended behaviour: the
+    # firm was identified by a later pass even though the individual was not.
+    #
+    # The first version of this check assumed a pass could only ever name a
+    # person, and fired on 878 rows doing exactly what rules 0 and 1 are for.
+    # The invariant actually wanted is narrower and is split in three.
+    ORG_RULES = {"identifier_names_org", "person_names_org"}
+    PERSON_RULES = {"org_names_person", "colleagues_name_person"}
+    stamped = [r for r in rows if r.get("resolve_pass") not in ("", "0")]
+
+    unexplained = [r for r in stamped if not r.get("snowball_basis")]
+    rep.add("ERROR" if unexplained else "INFO",
+            "a pass number names the rule that earned it",
+            f"{len(unexplained)} rows carry a pass number with no snowball_basis")
+
+    no_org = [r for r in stamped
+              if r.get("snowball_basis") in ORG_RULES and not r.get("resolved_org_id")]
+    rep.add("ERROR" if no_org else "INFO",
+            "an organisation-naming pass leaves an organisation named",
+            f"{len(no_org)} rows name an organisation rule but carry no resolved_org_id")
+
+    no_person = [r for r in stamped
+                 if r.get("snowball_basis") in PERSON_RULES
+                 and r.get("link_status") != "snowball"]
+    rep.add("ERROR" if no_person else "INFO",
+            "a person-naming pass leaves link_status=snowball",
+            f"{len(no_person)} rows name a person rule without link_status=snowball")
+
+    if sb:
+        rep.add("WARN", "resolution rests partly on snowballed anchors",
+                f"{len(sb)} links were made from an anchor a later pass "
+                f"supplied rather than from the organisation agreeing. They "
+                f"carry link_status=snowball and evidence_tier="
+                f"gazette_snowball downstream; filter resolve_pass==0 to "
+                f"reproduce the single-pass build exactly")
+
+
+def check_company_forms(rep: Report) -> None:
+    """Legal form per registered company, and the people attached to them.
+
+    The invariant worth machine-checking here is not a count but a
+    *prohibition*: an undetermined legal form must never be written down as a
+    determined one. Everything in this table asserts SARL, SUARL or SA, so a
+    blank or out-of-vocabulary form is a claim the sources do not support and
+    is an ERROR. The 76% of the register whose form is unknown is reported as
+    a bound, and is absent from the table by construction rather than
+    recorded as "not SARL/SA".
+    """
+    forms = _read(PROCESSED / "rne_company_forms.csv")
+    if not forms:
+        _skip_stage(rep, "company legal forms",
+                    PROCESSED / "rne_company_forms.csv")
+        return
+
+    allowed = {"SARL", "SUARL", "SA"}
+    counts = Counter(r.get("legal_form", "") for r in forms)
+    rep.add("INFO", "company legal forms",
+            f"{len(forms)} register-listed companies with a determined form; "
+            + ", ".join(f"{k}={v}" for k, v in counts.most_common()))
+    rep.add("INFO", "company form basis",
+            ", ".join(f"{k}={v}" for k, v in Counter(
+                r.get("form_basis", "") for r in forms).most_common()))
+
+    bad = [r for r in forms if r.get("legal_form") not in allowed]
+    rep.add("ERROR" if bad else "INFO",
+            "every company in the form table has a determined form",
+            f"{len(bad)} rows whose legal_form is blank or out of vocabulary")
+
+    # A conversion is a claim about order, so it needs a date. Asserting one
+    # without a date would let a reader plot a transformation that has no
+    # position in time.
+    undated = [r for r in forms
+               if r.get("is_conversion") == "1" and not r.get("conversion_date")]
+    conv = sum(1 for r in forms if r.get("is_conversion") == "1")
+    rep.add("ERROR" if undated else "INFO", "every conversion carries a date",
+            f"{conv} companies changed legal form; {len(undated)} without a date")
+
+    # A conversion must not rest on a single filing on either side. This is
+    # the regression guard for the rule that read HANNIBAL LEASE as a SARL on
+    # one filing against 47 of the other form.
+    thin = []
+    for r in forms:
+        if r.get("is_conversion") != "1":
+            continue
+        stated = dict(
+            (p.split(":", 1)[0], int(p.split(":", 1)[1]))
+            for p in (r.get("forms_stated") or "").split("|") if ":" in p)
+        if min(stated.get(r.get("legal_form_first"), 0),
+               stated.get(r.get("legal_form"), 0)) < 2:
+            thin.append(r)
+    rep.add("ERROR" if thin else "INFO",
+            "a conversion is sustained on both sides",
+            f"{len(thin)} conversions where one form has a single filing")
+
+    persons = _read(PROCESSED / "rne_company_persons.csv")
+    if not persons:
+        _skip_stage(rep, "company officers",
+                    PROCESSED / "rne_company_persons.csv")
+        return
+    grades = Counter(r.get("link_grade", "") for r in persons)
+    seed = sum(1 for r in persons if r.get("is_seed_elite") == "1")
+    rep.add("INFO", "company officers",
+            f"{len(persons)} person-company links over "
+            f"{len({r.get('person_key', '') for r in persons})} people; "
+            + ", ".join(f"{k}={v}" for k, v in grades.most_common()))
+    rep.add("INFO", "company officers from the seed roster",
+            f"{seed} of {len(persons)} links reach a seed elite "
+            f"({100 * seed / max(len(persons), 1):.1f}%); the rest are named "
+            "in print but outside the 13,630-name roster")
+
+    # Closed world: every person link must be to a company the form table
+    # admits. A link to a company that is not in scope would mean the two
+    # tables disagree about what the population is.
+    known = {r.get("company_key", "") for r in forms}
+    dangling = [r for r in persons if r.get("company_key", "") not in known]
+    rep.add("ERROR" if dangling else "INFO",
+            "every officer link is to a company in the form table",
+            f"{len(dangling)} links whose company is not in scope")
+
+    # A seed-elite flag and a gazette_only grade are contradictory: the flag
+    # is what tells an analyst the link can be joined to the seed roster.
+    mismatch = [r for r in persons
+                if (r.get("link_grade") == "gazette_only")
+                == (r.get("is_seed_elite") == "1")]
+    rep.add("ERROR" if mismatch else "INFO",
+            "a gazette-only officer is not flagged as a seed elite",
+            f"{len(mismatch)} links whose grade and seed flag disagree")
+
+
+def check_projection(rep: Report) -> None:
+    """The whole dataset as one graph, at three nested tiers.
+
+    The checks here are arithmetic and structural rather than substantive,
+    because the substantive question -- which tier to believe -- is the
+    reader's. What must hold is that each tier's parts add up, that the tiers
+    really are nested, and that no node is typed as a person in one layer and
+    an organisation in another. That last one is not hypothetical: typing a
+    node by the column it sat in made 307 people into organisations, because
+    the seed sheet's kinship edges ride in `spells.csv` with the kin in the
+    `org_id` column.
+    """
+    summary = _read(PROCESSED / "projection_summary.csv")
+    if not summary:
+        _skip_stage(rep, "one-graph projection",
+                    PROCESSED / "projection_summary.csv")
+        return
+
+    for r in summary:
+        rep.add("INFO",
+                f"projection: {r['tier']} / {r.get('state_floor', 'none')}",
+                f"{int(r['individuals']):,} individuals + "
+                f"{int(r['organisations']):,} organisations = "
+                f"{int(r['nodes']):,} nodes, {int(r['edges']):,} edges; "
+                f"giant component {int(r['giant_component']):,} "
+                f"({r['giant_pct']}%) = {int(r['giant_individuals']):,} people "
+                f"and {int(r['giant_organisations']):,} firms; "
+                f"{int(r['isolates']):,} isolates. {r['edge_definition']}")
+
+    def _bad(pred):
+        return [r["tier"] for r in summary if pred(r)]
+
+    parts = _bad(lambda r: int(r["individuals"]) + int(r["organisations"])
+                 != int(r["nodes"]))
+    rep.add("ERROR" if parts else "INFO",
+            "every projected node is a person or an organisation",
+            f"{len(parts)} tiers where individuals + organisations != nodes"
+            + (f": {', '.join(parts)}" if parts else ""))
+
+    split = _bad(lambda r: int(r["connected_nodes"]) + int(r["isolates"])
+                 != int(r["nodes"]))
+    rep.add("ERROR" if split else "INFO",
+            "connected nodes and isolates partition the projection",
+            f"{len(split)} tiers where connected + isolates != nodes"
+            + (f": {', '.join(split)}" if split else ""))
+
+    giant = _bad(lambda r: int(r["giant_individuals"])
+                 + int(r["giant_organisations"]) != int(r["giant_component"])
+                 or int(r["giant_component"]) > int(r["nodes"]))
+    rep.add("ERROR" if giant else "INFO",
+            "the giant component's composition adds up",
+            f"{len(giant)} tiers whose giant component does not decompose"
+            + (f": {', '.join(giant)}" if giant else ""))
+
+    # The tiers are defined as nested unions, so a count that falls between
+    # them means a tier dropped something a narrower tier had -- which would
+    # make the whole comparison meaningless. Grouped by `state_floor`,
+    # because that is a FILTER rather than a tier: the decision-level family
+    # is nested within itself, and is expected to be smaller than the
+    # unfiltered one at every tier.
+    order = {t: i for i, t in enumerate(PROJECTION_TIERS)}
+    by_floor: dict[str, list[dict]] = defaultdict(list)
+    for r in summary:
+        by_floor[r.get("state_floor", "none")].append(r)
+    regress = []
+    ranked = []
+    for floor, rows in sorted(by_floor.items()):
+        rows = sorted(rows, key=lambda r: order.get(r["tier"], 99))
+        if floor == "none":
+            ranked = rows
+        for prev, cur in zip(rows, rows[1:]):
+            for k in ("nodes", "edges", "individuals", "organisations"):
+                if int(cur[k]) < int(prev[k]):
+                    regress.append(f"{k} {prev['tier']}->{cur['tier']} "
+                                   f"({floor})")
+    ranked = ranked or sorted(summary, key=lambda r: order.get(r["tier"], 99))
+
+    # A filter can only remove, so at matching tiers the decision-level
+    # family must never be larger than the unfiltered one.
+    paired = {(r["tier"], r.get("state_floor", "none")): r for r in summary}
+    bigger = [t for t in PROJECTION_TIERS
+              if (t, "decision") in paired and (t, "none") in paired
+              and int(paired[(t, "decision")]["nodes"])
+              > int(paired[(t, "none")]["nodes"])]
+    rep.add("ERROR" if bigger else "INFO",
+            "the decision-level floor only removes",
+            f"{len(bigger)} tiers where the filtered graph is larger than the "
+            f"unfiltered one" + (f": {', '.join(bigger)}" if bigger else ""))
+    rep.add("ERROR" if regress else "INFO",
+            "the projection tiers are nested",
+            f"{len(regress)} counts that fall as the tier widens"
+            + (f": {', '.join(regress)}" if regress else ""))
+
+    nodes = _read(PROCESSED / "projection_nodes.csv")
+    if not nodes:
+        _skip_stage(rep, "projected node table",
+                    PROCESSED / "projection_nodes.csv")
+        return
+    conflict = [r for r in nodes if r.get("node_type") not in
+                ("PERSON", "ORGANISATION")]
+    rep.add("ERROR" if conflict else "INFO",
+            "no projected node is both a person and an organisation",
+            f"{len(conflict)} nodes whose type is unresolved or contradictory")
+
+    widest = ranked[-1]  # the unfiltered widest tier
+    if len(nodes) != int(widest["nodes"]):
+        rep.add("ERROR", "the node table covers the widest tier",
+                f"{len(nodes)} rows against {int(widest['nodes'])} nodes "
+                f"reported for {widest['tier']}")
+    else:
+        rep.add("INFO", "the node table covers the widest tier",
+                f"{len(nodes)} rows, matching {widest['tier']}")
+
+    # An isolate is a node with no tie. Recomputing it from the node table
+    # and comparing to the summary catches the two drifting apart.
+    deg0 = sum(1 for r in nodes if r.get("degree") == "0")
+    rep.add("ERROR" if deg0 != int(widest["isolates"]) else "INFO",
+            "isolates in the node table match the summary",
+            f"{deg0} degree-0 rows against {int(widest['isolates'])} reported")
+
+
+def check_tergm_panel(rep: Report) -> None:
+    """The invariants R/build_tergm_panel.R relies on, at ERROR level.
+
+    These are not stylistic. A bipartite network object is a claim about the
+    *ordering* of vertex ids -- mode 1 occupies 1..n1 -- and nothing in the
+    file format enforces it. Break the ordering and `network` still builds an
+    object, `btergm` still estimates, and every degree and star coefficient is
+    silently computed against a reference distribution containing dyads that
+    cannot exist. There is no error message for that, which is why it is
+    checked here instead.
+    """
+    d = PROCESSED / "exports" / "tergm"
+    if not _table_exists(d / "node_key.csv"):
+        _skip_stage(rep, "tergm panel", d / "node_key.csv")
+        return
+    key = _read(d / "node_key.csv")
+    edges = _read(d / "edges_yearly.csv")
+    activity = _read(d / "vertex_activity_yearly.csv")
+    attrs = _read(d / "node_attrs_yearly.csv")
+
+    m1 = [int(r["vertex_id"]) for r in key if r["mode"] == "1"]
+    m2 = [int(r["vertex_id"]) for r in key if r["mode"] == "2"]
+    ids = sorted(m1 + m2)
+    ordered = bool(m1) and bool(m2) and max(m1) < min(m2)
+    contiguous = ids == list(range(1, len(ids) + 1))
+    rep.add("ERROR" if not (ordered and contiguous) else "INFO",
+            "tergm vertex key is mode-blocked",
+            f"{len(m1)} persons then {len(m2)} organisations; "
+            f"bipartite = {len(m1)}; "
+            f"mode-blocked={ordered}, ids contiguous from 1={contiguous}")
+
+    n1 = len(m1)
+    bad = [e for e in edges
+           if not (int(e["tail"]) <= n1 < int(e["head"]))]
+    rep.add("ERROR" if bad else "INFO", "tergm edges respect the mode split",
+            f"{len(bad)} of {len(edges)} ties do not run from mode 1 to mode 2")
+
+    # An organisation cannot blink out of existence and return: activity has to
+    # be one interval. A hole would be an artifact of a bad lifecycle date, and
+    # would make the risk set assert something the sources do not.
+    seq: dict[int, list[tuple[str, str]]] = defaultdict(list)
+    for r in activity:
+        seq[int(r["vertex_id"])].append((r["period"], r["active"]))
+    holes = 0
+    for rows in seq.values():
+        s = "".join(a for _p, a in sorted(rows))
+        if "1" in s and "0" in s.strip("0"):
+            holes += 1
+    rep.add("ERROR" if holes else "INFO", "tergm risk set is contiguous",
+            f"{holes} vertices go inactive and then active again")
+
+    # Every observed tie must lie inside the risk set, or the estimator is being
+    # handed a structural zero that is also an observed edge.
+    active = {(r["period"], int(r["vertex_id"])) for r in activity
+              if r["active"] == "1"}
+    outside = [e for e in edges
+               if (e["period"], int(e["tail"])) not in active
+               or (e["period"], int(e["head"])) not in active]
+    rep.add("ERROR" if outside else "INFO", "tergm ties lie inside the risk set",
+            f"{len(outside)} ties fall in a period where an endpoint is inactive")
+
+    # The panel must cover the window the rest of the pipeline is configured
+    # for. This check exists because the rectangularity test below derives its
+    # periods from the panel itself, so a panel built under a narrower window
+    # is internally consistent and passes: the window could be widened, every
+    # other stage rebuilt, and this panel left behind, with analyses quietly
+    # running on five years of a seventy-year configuration.
+    #
+    # The period axis is read off the activity table, not the edge list. A year
+    # in which no tie is observed has no edge rows but is still a period of the
+    # panel -- an empty network, not an absent one -- and taking the axis from
+    # the edges would report the early decades, which carry 37 dated ties
+    # between them, as missing.
+    from .spells import periods as _periods
+    configured = [p for p, _s, _e in _periods("yearly")]
+    present = sorted({r["period"] for r in activity} or
+                     {r["period"] for r in edges})
+    missing = [p for p in configured if p not in set(present)]
+    extra = [p for p in present if p not in set(configured)]
+    rep.add("ERROR" if (missing or extra) else "INFO",
+            "tergm panel covers the configured window",
+            f"{len(present)} periods present, {len(configured)} configured"
+            + (f"; {len(missing)} missing ({missing[0]}..{missing[-1]})"
+               if missing else "")
+            + (f"; {len(extra)} outside the window" if extra else ""))
+
+    # btergm reads one vertex set per period; a ragged panel silently drops rows.
+    per = present
+    ragged = [p for p in per
+              if sum(1 for r in attrs if r["period"] == p) != len(key)
+              or sum(1 for r in activity if r["period"] == p) != len(key)]
+    rep.add("ERROR" if ragged else "INFO", "tergm panel is rectangular",
+            f"{len(per)} periods x {len(key)} vertices; "
+            f"{len(ragged)} periods with a short attribute or activity table")
+
+
 def run(fail_on_error: bool = False) -> int:
     ensure_dirs()
     rep = Report()
@@ -308,9 +1119,17 @@ def run(fail_on_error: bool = False) -> int:
     check_negative_control(rep)
     check_cabinets(rep)
     check_citations(rep)
+    check_org_ties(rep)
+    check_org_entities(rep)
+    check_org_attrs(rep)
+    check_person_ties(rep)
+    check_snowball(rep)
+    check_company_forms(rep)
+    check_projection(rep)
+    check_tergm_panel(rep)
 
     DOCS.mkdir(parents=True, exist_ok=True)
-    (DOCS / "VALIDATION-multiplex-2008-2012.md").write_text(rep.render(), encoding="utf-8")
+    (DOCS / "VALIDATION-multiplex.md").write_text(rep.render(), encoding="utf-8")
     print(rep.render())
     if fail_on_error and rep.errors:
         print(f"\nFAILED: {rep.errors} error-level checks")

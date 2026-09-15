@@ -67,7 +67,137 @@ TABLE_DOCS: dict[str, str] = {
     "panel_edges_monthly.csv":
         "As above at monthly resolution, because the January 2011 rupture is "
         "invisible at annual resolution.",
+    "node_key.csv":
+        "**Mode-blocked** vertex key for the TERGM panel: persons take ids "
+        "1..n1 and organisations n1+1..n, which is what makes `bipartite = n1` "
+        "a true statement about the ordering. `label_suspect` marks a vertex "
+        "whose name is not a firm name (an address, a role fragment, a clause) "
+        "and which should probably be excluded.",
+    "edges_yearly.csv":
+        "The yearly panel re-indexed to bipartite vertex ids and reduced to "
+        "**binary** ties: two roles in one firm in one year is two panel rows "
+        "and one tie, with the roles preserved pipe-joined. "
+        "`dissolution_observed` marks the minority of ties actually seen to "
+        "end, as opposed to right-censored.",
+    "vertex_activity_yearly.csv":
+        "The risk set. An organisation is active between its constitution and "
+        "dissolution, widened where needed to cover a period in which it "
+        "demonstrably holds a tie, so activity is always one contiguous "
+        "interval. `birth_known = 0` means left-censored and at risk from the "
+        "window start. Persons are active throughout: the gazette records "
+        "appointments, not births.",
+    "node_attrs_yearly.csv":
+        "Per-period nodal covariates, rectangular by construction (every "
+        "vertex appears in every period, isolates included). Use "
+        "`cum_degree_lag` rather than `cum_degree` in `nodecov`: degree "
+        "measured at t is a function of the ties being modelled at t.",
+    "org_ties.csv":
+        "Organisation-to-organisation observations, one row per resolved "
+        "(holder, target, relation) assertion. Both endpoints must resolve to "
+        "**distinct** seed organisations; a mention resolving to the subject "
+        "firm is a self-tie and is dropped rather than counted.",
+    "org_tie_spells.csv":
+        "The org-org layer as intervals, in the same vocabulary as "
+        "`spells.csv`. It is a **separate, one-mode, directed** layer: adding "
+        "these rows to `spells.csv` would silently break every two-mode term "
+        "in the TERGM panel. `evidence_tier` separates gazette-dated spells "
+        "from the undated seed ties carried alongside them. Read "
+        "`docs/ORG-TIES-multiplex.md` before modelling: the dominant clause "
+        "confirms a standing holding rather than dating its start, so onsets "
+        "here are overwhelmingly left-censored.",
+    "panel_org_ties_yearly.csv":
+        "The org-org layer by calendar year, the input to "
+        "`R/build_org_ownership.R`.",
+    "person_ties.csv":
+        "One row per kinship claim in print: a marriage (`spouse_of`), a "
+        "widowhood (`widow_of`) or a natal surname (`maiden_name_of`), read "
+        "off the `epouse` / `ep.` / `EP` / `veuve` / `nee` markers. "
+        "`is_marriage` is 0 for `maiden_name_of`: \"nee X\" is the same "
+        "woman's birth name, not a husband, and counting it as a marriage "
+        "would be wrong about both the tie and its direction. Both ends carry "
+        "a person id; where only one end could be named the observation is in "
+        "`person_ties_review_queue.csv` rather than dropped. `org_mention` is "
+        "the block the claim was read from -- the resolver's anchor -- and is "
+        "NOT a claim that either party holds office in that firm.",
+    "person_tie_spells.csv":
+        "The kinship layer as intervals. A **separate, one-mode** layer over "
+        "persons, for the same reason the org-org layer is separate: a "
+        "person-person tie in `spells.csv` would silently break every "
+        "two-mode term in the TERGM panel. Every onset is left-censored "
+        "without exception -- the gazette does not publish weddings -- so "
+        "`onset` is empty and `onset_hi` is the first date the tie was seen "
+        "in print. Only a `widow_of` marker bounds a terminus. See "
+        "`docs/INFERENCE-TIERS-multiplex.md`.",
+    "panel_person_ties_yearly.csv":
+        "The kinship layer by calendar year. Every row is `probable` at best: "
+        "a period counts as active from the first date the tie was printed, "
+        "not from the marriage, which is unknown.",
+    "person_ties_review_queue.csv":
+        "Kinship observations retained but not tied, because one or both ends "
+        "could not be named. `failed_end` and `failed_mention` say which.",
+    "org_ties_review_queue.csv":
+        "Org-org observations a human has to settle. `queue_reason` separates "
+        "a dyad whose link score landed in the ambiguous band from the far "
+        "larger set with **one end resolved**: there the resolved end anchors "
+        "the dyad and only a single name is in question, so `failed_mention`, "
+        "`near_org_label` and `near_score` carry what the coder needs.",
+    "org_entities.csv":
+        "**The unit of analysis for an organisation.** One row per firm as "
+        "this corpus can distinguish it, keyed in priority order on the "
+        "normalised matricule fiscal, then the registre-de-commerce number, "
+        "then the normalised mention. Identity used to be *the seed node a "
+        "mention fuzzy-matched*, and `fuzz.token_set_ratio` treats containment "
+        "as identity, so a seed firm whose label normalised to `TROIS` -- the "
+        "French for three -- absorbed every mention containing that word and "
+        "became the highest-degree organisation in the org-org layer. Keying "
+        "on a hard identifier splits those hubs and simultaneously *joins* "
+        "spelling variants, since one matricule often covers several. "
+        "`seed_org_id` retains the seed link and `seed_match_basis` says what "
+        "it rests on, so the previous view is exactly reproducible. "
+        "`is_identity = 0` marks an entity that is retained but claims to "
+        "identify nothing -- a mention carrying several matricules with no "
+        "identifier on this event.",
+    "org_entity_members.csv":
+        "Mention to entity, one row per distinct organisation mention, so "
+        "every mention is accounted for and none is silently orphaned — the "
+        "validator checks exactly that. The map is **modal** where a mention "
+        "spans several entities (`n_entities_on_mention > 1`); the per-event "
+        "key in `orgentity.entity_key` is authoritative.",
+    "org_identifiers.csv":
+        "Hard identifiers per organisation: the matricule fiscal and the "
+        "registre-de-commerce number, one row per (organisation, kind, "
+        "value). These are **stable** attributes -- a firm keeps them -- which "
+        "is why `is_conflicting = 1` is a defect rather than a change over "
+        "time: it means the node holds two values of an identifier a firm has "
+        "one of. A one-character difference is OCR; a wholly different value "
+        "is an organisation-resolution merge, and every tie on that node is "
+        "then suspect. See `docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md`.",
+    "org_addresses.csv":
+        "Stated seats, one row per (organisation, normalised address, kind), "
+        "dated. **Time-varying**, unlike the identifiers: `obs_kind` is "
+        "`moved_to` where the address is the destination named in a transfer "
+        "clause and `stated` where it is the seat as printed. Aggregated on "
+        "the normalised form, because casing, accents and the street "
+        "abbreviation vary between two printings of one address and comparing "
+        "raw strings would report a move that never happened.",
+    "dyad_cov_yearly.csv":
+        "Dyadic covariates as **sparse triplets** -- dense would be 2,592 x "
+        "2,915 per covariate per period. Projected from the seed sheet's "
+        "undated kinship and shareholding ties, which is what makes them "
+        "exogenous. `kin_in_org`, `owner_of` and `prior_comembership` are "
+        "lagged to t-1 and so are absent in the first period; "
+        "`is_shareholder` needs no lag and is present in all of them.",
 }
+
+# Under exports/tergm/, and documented by basename above. Kept separate so the
+# codebook can introduce them as a group: they are one artifact, not five.
+TERGM_TABLES = [
+    "exports/tergm/node_key.csv",
+    "exports/tergm/edges_yearly.csv",
+    "exports/tergm/vertex_activity_yearly.csv",
+    "exports/tergm/node_attrs_yearly.csv",
+    "exports/tergm/dyad_cov_yearly.csv",
+]
 
 COLUMN_NOTES: dict[str, str] = {
     "act_date": "Date of the decision itself ('en date du'). This is when the event happened.",
@@ -95,8 +225,39 @@ COLUMN_NOTES: dict[str, str] = {
     "certainty": "`certain` both endpoints dated; `probable` inside the certain core but an "
                  "endpoint is censored; `possible` only inside the outer envelope; `undated` a "
                  "seed tie with no time information.",
-    "link_status": "`resolved` (score >= 0.70), `ambiguous` (0.45-0.70, or a rival within 0.05), "
+    "link_status": "`resolved` (score >= 0.70, the organisation agreed), `ambiguous` (0.45-0.70, "
+                   "or a rival within 0.05), `inferred` (no anchor, but the name is unique on "
+                   "both the seed side and across the corpus), `snowball` (named by a later pass "
+                   "from an anchor the first pass produced -- see `resolve_pass`), "
                    "`unresolved` (< 0.45, retained as a candidate new person).",
+    "resolve_pass": "Which snowball pass first named this row. 0 is the single dyad-anchored "
+                    "pass; filtering to `resolve_pass == 0` reproduces the pre-snowball build "
+                    "exactly. A snowball propagates its own errors, so this column is what "
+                    "makes the propagation measurable.",
+    "snowball_basis": "Which rule named a snowballed row: `person_names_org` (a named person's "
+                      "own seed organisations were the candidate set), `org_names_person` (an "
+                      "organisation a previous pass named supplied the anchor), or "
+                      "`colleagues_name_person` (two or more named co-mentions tied to one "
+                      "seed organisation).",
+    "entity_basis": "How an organisation entity is keyed: `matricule_fiscal`, "
+                    "`registre_commerce`, `address_corroborated` (two name-keyed spellings "
+                    "joined by a shared, discriminating seat), `name`, or "
+                    "`ambiguous_mention` (the mention carries several identifiers and so "
+                    "identifies none of them -- explicitly not an identity).",
+    "person_address": "A stated residence, verbatim. NOT an identity claim: two brothers share "
+                      "a house. It is the discriminator the corpus otherwise lacks for telling "
+                      "two people of one name apart. An election of address at a lawyer's "
+                      "office is excluded.",
+    "person_married_name": "The other surname a spousal or natal marker attaches to this "
+                           "person. Ambiguous by itself -- see `person_ties.csv`, which "
+                           "separates a marriage from a birth name.",
+    "is_marriage": "1 for `spouse_of` and `widow_of`, 0 for `maiden_name_of`.",
+    "last_seen": "The last date a kinship tie was seen in print. NOT a terminus -- the "
+                 "marriage was not observed to end -- but the only bound available for "
+                 "truncating a panel that otherwise runs a 1960 marriage through to the "
+                 "end of the window. Nothing in the sources resolves that, so the rows "
+                 "are emitted and the bound is carried: dropping them would assert the "
+                 "opposite, that the marriage ended when the printing stopped.",
     "s_org": "Organisation agreement. Required for a resolution: a name-only link is not an "
              "identification.",
     "s_name": "Name similarity. The surname gates the score and the given names decide it, so a "
@@ -191,22 +352,46 @@ def build() -> Path:
         "bound asserted.",
         "",
         "## Time origin for networkDynamic", "",
-        "`exports/rnd/*.csv` express time as **integer days since 2008-01-01**. "
+        f"`exports/rnd/*.csv` express time as **integer days since "
+        f"{scope['window']['start']}**. "
         "Censored endpoints are `-Inf` and `Inf`, which `networkDynamic` accepts "
         "natively; the window boundary is deliberately *not* substituted for an "
         "unknown date, because 'still in post at the end of observation' is a "
-        "different claim from 'left on 2012-12-31'.",
+        f"different claim from 'left on {scope['window']['end']}'.",
         "",
         "## Tables", "",
     ]
     for name in TABLE_DOCS:
         p = PROCESSED / name
-        if p.exists():
-            lines += _table_section(p)
+        if "/" in name or not p.exists():
+            continue
+        lines += _table_section(p)
+
+    if any((PROCESSED / n).exists() for n in TERGM_TABLES):
+        lines += [
+            "## TERGM panel", "",
+            "Written by `make tergm`. These are the yearly panel re-indexed for "
+            "a temporal ERGM, not a separate measurement: the ties are the same "
+            "ties. What they add is a declared bipartite split, a vertex set "
+            "that does not move between periods, an explicit risk set, and "
+            "covariates -- none of which an edge list can carry.",
+            "",
+            "**Before specifying a model, read "
+            "`docs/TERGM-multiplex.md`.** 82.1% of dated spells are "
+            "right-censored, so a dissolution parameter fitted to this panel "
+            "estimates when the gazette prints an exit rather than when a tie "
+            "ends.",
+            "",
+        ]
+        for name in TERGM_TABLES:
+            p = PROCESSED / name
+            if p.exists():
+                lines += _table_section(p)
+
     lines += _vocab_section()
     lines += _observed_counts()
 
-    dest = ROOT / "docs" / "CODEBOOK-multiplex-2008-2012.md"
+    dest = ROOT / "docs" / "CODEBOOK-multiplex.md"
     dest.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return dest
 

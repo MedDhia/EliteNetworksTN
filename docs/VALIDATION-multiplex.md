@@ -1,0 +1,102 @@
+# Validation report
+
+Generated 2026-09-15.
+
+## WARN
+
+- **weekday mismatch** — 47 issues where the printed weekday disagrees with the date (date retained; a lone weekday is likelier a misprint)
+- **zero-length spells** — 146 spells open and close on the same day (an officer appointed and replaced in one act)
+- **overlapping single-holder posts** — 133 overlaps on gerant/pdg/dg/president posts — candidate resolution errors
+- **links inferred from name rarity** — 12833 links over 4742 persons rest on the name being borne by one seed person and matching one gazette candidate, with no organisation to anchor them. They are NOT counted as resolved. Exclude them for any claim that needs dyad-anchored identification; include them for coverage.
+- **improbably many posts** — 69 resolved persons hold more than 12 dyads (possible merged homonyms), worst: ('PERSON_TRABELSI_MOHAMED', 89)
+- **entities keyed only by name** — 146921 of 235216 entities (62%) have no hard identifier and are keyed on the mention, so two spellings of one such firm stay separate -- the mirror image of the merge, and it understates degree rather than overstating it
+- **conflicting matricule_fiscal** — 2318 of 78944 organisations carrying one hold two or more values (3%); a few values clustered around one is OCR, many with nothing in common is an organisation-resolution merge. See docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md
+- **conflicting registre_commerce** — 2162 of 33558 organisations carrying one hold two or more values (6%); a few values clustered around one is OCR, many with nothing in common is an organisation-resolution merge. See docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md
+- **organisation merge hubs** — 156 organisations (205 organisation-identifier pairs) hold 10 or more values of a single hard identifier and are near-certainly several firms merged into one; worst is SOCIETE M with 154 distinct matricule fiscal values. Exclude these before computing organisation-level structure — `org_identifiers.csv` carries `n_values_for_org`, and `exports/tergm/node_key.csv` carries `merge_suspect`.
+- **identifiers shared across nodes** — 4693 identifier values appear on more than one organisation node (one firm split in two, or a collision)
+- **kinship ties resting on an inferred endpoint** — 9 of 14 dyads have at least one end named by name rarity rather than by an organisation agreeing; they carry evidence_tier=kinship_inferred and are excluded from any filter on kinship_dated
+- **resolution rests partly on snowballed anchors** — 459 links were made from an anchor a later pass supplied rather than from the organisation agreeing. They carry link_status=snowball and evidence_tier=gazette_snowball downstream; filter resolve_pass==0 to reproduce the single-pass build exactly
+
+## INFO
+
+- **calendar coverage** — 9647/9749 issues dated (99.0%)
+- **calendar needs review** — 417 issues flagged
+- **events** — 781233 extracted
+- **act date after publication** — 0 events where the act postdates the issue that published it
+- **retroactive effective dates** — 21363 acts take effect before their own date (lawful)
+- **provenance present** — 0 events without a verbatim quote
+- **source citation present** — 0 events without an issue reference
+- **date precision** — exact=696521, pub_only=84712
+- **event types** — appointed=275919, constituted=150066, resides_at=83123, charged_with_functions=62783, capital_increased=43163, shares_transferred=39464, org_tie=30333, resigned=25972
+- **quotes verbatim** — 0/2000 sampled quotes not found in their source block
+- **spells** — 12538 dated, 37950 undated seed ties
+- **no negative durations** — 0 spells end before they begin
+- **censoring** — right_censored=8989, closed=3549, left_censored=2707
+- **closure mechanism** — (open)=8470, event:resigned=1855, org_dissolved=1099, displaced_by=522, withdrawn_inconsistent=519, event:revoked=71, event:terminated=2
+- **resolution status** — unresolved=433796, inferred=12833, resolved=11288, ambiguous=3801, snowball=459
+- **resolutions are dyad-anchored** — 0 resolved links lack organisation agreement (a name-only link is not an identification)
+- **review queue** — 3801 ambiguous dyads queued; 306328 gazette-only candidate persons retained
+- **seed elites with a dated gazette event** — top 100: 94 (94%); top 500: 434 (87%); top 1000: 814 (81%); all 13630: 5514 (40.5%)
+- **negative control** — 0 officer events found in 118975 auction/fonds-de-commerce blocks, which are excluded from extraction (0 expected by construction)
+- **ministerial appointments by year** — 1958=6, 1959=1, 1960=2, 1961=3, 1962=3, 1964=1, 1965=3, 1966=10, 1967=4, 1968=3, 1969=10, 1970=4, 1971=12, 1972=20, 1973=12, 1974=18, 1975=4, 1976=7, 1977=13, 1978=17, 1979=6, 1980=43, 1981=63, 1982=21, 1983=53, 1984=44, 1985=37, 1986=45, 1987=81, 1988=45, 1989=27, 1990=36, 1991=45, 1992=47, 1993=36, 1994=42, 1995=41, 1996=39, 1997=50, 1998=27, 1999=45, 2000=44, 2001=56, 2002=33, 2003=25, 2004=29, 2005=67, 2006=42, 2007=55, 2008=57, 2009=30, 2010=57, 2011=102, 2012=178, 2013=118, 2014=138, 2015=195, 2016=190, 2017=164, 2018=131, 2019=73, 2020=243, 2021=88, 2022=69, 2023=20, 2024=52, 2025=15, 2026=3
+- **seed cabinets** — 7 government nodes in the seed sheet: CHAHED GOVERNMENT, ESSID GOVERNMENT, FAKHFAKH GOVERNMENT, JEBALI GOVERNMENT, JOMAA GOVERNMENT, LAARAYEDH GOVERNMENT, MECHICHI GOVERNMENT
+- **act citation graph** — 420593 citations, 408017 with a resolvable cited date
+- **org ties** — 3505 dated, 4636 undated seed ties; 3459 dated dyads
+- **org tie relations** — shareholder_confirmed=5712, auditor=1544, shares_ceded=283, shares_acquired=227, funder=201, member=79, branch=45, corporate_officer=33
+- **org ties are not self-loops** — 0 ties whose holder and target are the same organisation
+- **org tie durations are not negative** — 0 org tie spells end before they begin
+- **org tie censoring is consistent** — 0 spells assert an onset while flagged left-censored
+- **org tie endpoints are known nodes** — 0 ties with an endpoint in neither seed_nodes.csv nor org_entities.csv
+- **org tie censoring** — left_censored=2994 (85%), right_censored=3222 (92%)
+- **organisation entities** — 235216 entities over 302716 distinct mentions: name=143918, matricule_fiscal=73827, registre_commerce=13621, ambiguous_mention=3003, address_corroborated=847
+- **every org mention has an entity** — 0 of 277960 organisation mentions in events.csv reach no entity
+- **mentions spanning several entities** — 9574 mentions carry more than one hard identifier, so the mention-level map is modal for them; the per-event key in orgentity.entity_key is the authoritative assignment
+- **entities linked to a seed organisation** — 12317 of 235216 entities carry an identity-grade seed link and adopt that node's id, so seed ties and the dyadic covariates projected from them stay on the same vertex
+- **organisation identifiers** — 123523 (organisation, identifier, value) rows: matricule_fiscal=86127, registre_commerce=37396
+- **organisation addresses** — 229600 dated address observations over 172927 organisations; 12021 are transfer destinations; 24512 organisations have more than one address on record
+- **addresses are dated** — 0 address observations carry no date, so they cannot be ordered into a sequence of seats
+- **person ties** — 14 kinship dyads; 13 marriages, 1 natal-surname links
+- **person tie relations** — spouse_of=12, maiden_name_of=1, widow_of=1
+- **a natal surname is not a marriage** — 0 spells whose relation and is_marriage disagree
+- **kinship ties are not self-loops** — 0 ties whose two ends are the same person
+- **no marriage onset is asserted** — 0 spells assert an onset the sources cannot date
+- **kinship onsets are left-censored** — 0 spells not flagged left-censored
+- **only a widow marker ends a tie** — 0 non-widow spells carry a terminus
+- **kinship endpoints are known persons** — 0 ties with an endpoint outside seed_nodes.csv
+- **person tie review queue** — 8749 observations retained but not tied: neither_end_named=8338, one_end_unnamed=411
+- **snowball links** — 459 of 462177 mentions named by a later pass (pass 1=387, pass 2=72)
+- **snowball bases** — org_names_person=231, colleagues_name_person=228
+- **snowball marginal yield** — pass 1: +387, pass 2: +72
+- **every snowballed link names its pass and rule** — 0 rows with link_status=snowball but no pass number or basis
+- **a pass number names the rule that earned it** — 0 rows carry a pass number with no snowball_basis
+- **an organisation-naming pass leaves an organisation named** — 0 rows name an organisation rule but carry no resolved_org_id
+- **a person-naming pass leaves link_status=snowball** — 0 rows name a person rule without link_status=snowball
+- **company legal forms** — 74537 register-listed companies with a determined form; SARL=57190, SUARL=12822, SA=4525
+- **company form basis** — gazette_rubric=66592, register_name_only=4578, gazette_and_register_name_agree=3169, gazette_and_register_name_disagree=198
+- **every company in the form table has a determined form** — 0 rows whose legal_form is blank or out of vocabulary
+- **every conversion carries a date** — 746 companies changed legal form; 0 without a date
+- **a conversion is sustained on both sides** — 0 conversions where one form has a single filing
+- **company officers** — 96930 person-company links over 72689 people; gazette_only=89593, resolved=4719, inferred=2520, snowball=98
+- **company officers from the seed roster** — 7337 of 96930 links reach a seed elite (7.6%); the rest are named in print but outside the 13,630-name roster
+- **every officer link is to a company in the form table** — 0 links whose company is not in scope
+- **a gazette-only officer is not flagged as a seed elite** — 0 links whose grade and seed flag disagree
+- **projection: seed_anchored / none** — 13,630 individuals + 26,755 organisations = 40,385 nodes, 46,579 edges; giant component 27,002 (66.9%) = 8,808 people and 18,194 firms; 1 isolates. validated affiliations, ownership ties and kinship only
+- **projection: officer_layer / none** — 80,868 individuals + 68,650 organisations = 149,518 nodes, 135,358 edges; giant component 63,307 (42.3%) = 33,683 people and 29,624 firms; 1 isolates. plus the SARL/SA officer roster (admits gazette-only people)
+- **projection: all_sources / none** — 631,754 individuals + 324,687 organisations = 956,441 nodes, 394,113 edges; giant component 200,991 (21.0%) = 130,333 people and 70,658 firms; 535,386 isolates. plus gazette CO-MENTION and the whole register (outer bound)
+- **projection: seed_anchored / decision** — 13,630 individuals + 26,711 organisations = 40,341 nodes, 45,211 edges; giant component 26,213 (65.0%) = 8,472 people and 17,741 firms; 66 isolates. validated affiliations, ownership ties and kinship only; state ties restricted to decision-making rank
+- **projection: officer_layer / decision** — 80,856 individuals + 68,603 organisations = 149,459 nodes, 133,957 edges; giant component 62,690 (41.9%) = 33,379 people and 29,311 firms; 65 isolates. plus the SARL/SA officer roster (admits gazette-only people); state ties restricted to decision-making rank
+- **projection: all_sources / decision** — 599,456 individuals + 324,554 organisations = 924,010 nodes, 338,136 edges; giant component 156,584 (16.9%) = 90,127 people and 66,457 firms; 537,436 isolates. plus gazette CO-MENTION and the whole register (outer bound); state ties restricted to decision-making rank
+- **every projected node is a person or an organisation** — 0 tiers where individuals + organisations != nodes
+- **connected nodes and isolates partition the projection** — 0 tiers where connected + isolates != nodes
+- **the giant component's composition adds up** — 0 tiers whose giant component does not decompose
+- **the decision-level floor only removes** — 0 tiers where the filtered graph is larger than the unfiltered one
+- **the projection tiers are nested** — 0 counts that fall as the tier widens
+- **no projected node is both a person and an organisation** — 0 nodes whose type is unresolved or contradictory
+- **the node table covers the widest tier** — 956441 rows, matching all_sources
+- **isolates in the node table match the summary** — 535386 degree-0 rows against 535386 reported
+- **tergm vertex key is mode-blocked** — 5809 persons then 7442 organisations; bipartite = 5809; mode-blocked=True, ids contiguous from 1=True
+- **tergm edges respect the mode split** — 0 of 128096 ties do not run from mode 1 to mode 2
+- **tergm risk set is contiguous** — 0 vertices go inactive and then active again
+- **tergm ties lie inside the risk set** — 0 ties fall in a period where an endpoint is inactive
+- **tergm panel covers the configured window** — 70 periods present, 70 configured
+- **tergm panel is rectangular** — 70 periods x 13251 vertices; 0 periods with a short attribute or activity table

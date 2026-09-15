@@ -54,6 +54,39 @@ EVENT_FIELDS = [
 ]
 
 
+# The accuracy figures in docs/GOLD-SCORE-multiplex.md were coded on 2008-2012
+# blocks and are now quoted for a dataset spanning 1957-2026. They are not
+# wrong; they are out of the scope of their own evidence. Three things changed
+# when the window widened, and each is a different extraction problem:
+#
+#  * before 2004 the corpus is almost entirely state acts -- the commercial
+#    register effectively begins in 2004 -- so the clause families being
+#    matched are different ones;
+#  * the 1960s-80s scans are the worst OCR in the corpus, where digit
+#    confusion (4 for 6) and broken diacritics are routine;
+#  * after 2012 the register continues but the political vocabulary changes,
+#    and five of the seed sheet's seven governments sit here.
+#
+# A pooled figure over all of that would hide whichever era is worst, so the
+# sample is allocated across eras and precision is reported per era. The
+# 2008-2012 era remains in the design so the new figures can be read against
+# the published ones on the same footing.
+ERAS = (
+    ("1957-1979", 1957, 1979),
+    ("1980-2003", 1980, 2003),
+    ("2004-2007", 2004, 2007),
+    ("2008-2012", 2008, 2012),
+    ("2013-2026", 2013, 2026),
+)
+
+
+def _era(year: int) -> str:
+    for name, lo, hi in ERAS:
+        if lo <= year <= hi:
+            return name
+    return "out-of-window"
+
+
 def _stratum(block: dict) -> str:
     if block["block_type"] == "act":
         return f"{block['year']}|journal-officiel|act"
@@ -61,10 +94,17 @@ def _stratum(block: dict) -> str:
     return f"{block['year']}|annonces-legales|{fam}"
 
 
-def draw(n: int = DEFAULT_N) -> dict:
-    """Draw a seeded stratified sample and write the coding sheets."""
+def draw(n: int = DEFAULT_N, by_era: bool = False,
+         out: Path | None = None) -> dict:
+    """Draw a seeded stratified sample and write the coding sheets.
+
+    `by_era` allocates across eras rather than proportionally, and `out`
+    directs the sheets elsewhere so an era-targeted sample does not overwrite
+    a sample that has already been coded.
+    """
     ensure_dirs()
-    GOLD.mkdir(parents=True, exist_ok=True)
+    out = out or GOLD
+    out.mkdir(parents=True, exist_ok=True)
 
     by_stratum: dict[str, list[dict]] = defaultdict(list)
     with (INTERIM / "blocks.jsonl").open(encoding="utf-8") as fh:
@@ -74,13 +114,32 @@ def draw(n: int = DEFAULT_N) -> dict:
                 continue
             by_stratum[_stratum(b)].append(b)
 
-    # Proportional allocation with a floor of one per stratum, so every
-    # year-by-rubric cell is represented and a failure localised to one of them
-    # cannot hide in the pooled figure.
+    # Two allocations, because they answer different questions.
+    #
+    # Proportional allocation estimates the accuracy of the dataset as a whole:
+    # every block is equally likely, so the figure describes the corpus a user
+    # actually has. But the corpus is dominated by the post-2004 register, so a
+    # proportional sample of 400 puts a handful of blocks in the 1960s and
+    # cannot say anything about the era whose OCR is worst.
+    #
+    # Era allocation divides the sample equally across eras and proportionally
+    # within each, which estimates accuracy *per era* at the cost of no longer
+    # being a corpus-wide estimate. Neither supersedes the other; the report
+    # says which one produced it.
     total = sum(len(v) for v in by_stratum.values())
     alloc: dict[str, int] = {}
-    for stratum, blocks in by_stratum.items():
-        alloc[stratum] = max(1, round(n * len(blocks) / total))
+    if by_era:
+        eras = defaultdict(list)
+        for stratum in by_stratum:
+            eras[_era(int(stratum.split("|", 1)[0]))].append(stratum)
+        for era, strata in eras.items():
+            n_era = sum(len(by_stratum[st]) for st in strata)
+            budget = n / len(eras)
+            for st in strata:
+                alloc[st] = max(1, round(budget * len(by_stratum[st]) / n_era))
+    else:
+        for stratum, blocks in by_stratum.items():
+            alloc[stratum] = max(1, round(n * len(blocks) / total))
 
     rng = random.Random(SEED)
     chosen: list[dict] = []
@@ -128,13 +187,13 @@ def draw(n: int = DEFAULT_N) -> dict:
             })
         texts[cid] = b["text"]
 
-    _write(GOLD / "sample_blocks.csv", sheet, SHEET_FIELDS)
-    _write(GOLD / "sample_events.csv", ev_rows, EVENT_FIELDS)
-    with (GOLD / "sample_texts.jsonl").open("w", encoding="utf-8") as fh:
+    _write(out / "sample_blocks.csv", sheet, SHEET_FIELDS)
+    _write(out / "sample_events.csv", ev_rows, EVENT_FIELDS)
+    with (out / "sample_texts.jsonl").open("w", encoding="utf-8") as fh:
         for cid, text in texts.items():
             fh.write(json.dumps({"coding_id": cid, "text": text},
                                 ensure_ascii=False) + "\n")
-    (GOLD / "CODING_INSTRUCTIONS.md").write_text(_instructions(), encoding="utf-8")
+    (out / "CODING_INSTRUCTIONS.md").write_text(_instructions(), encoding="utf-8")
 
     return {
         "sampling_seed": SEED, "strata": len(by_stratum),
@@ -192,7 +251,7 @@ not equally bad.
 
     python -m elitenet.gold score
 
-writes `docs/GOLD-SCORE-multiplex-2008-2012.md` with precision and recall by
+writes `docs/GOLD-SCORE-multiplex.md` with precision and recall by
 event type and by stratum, with intervals.
 """
 
@@ -214,9 +273,12 @@ def _wilson(k: int, n: int) -> tuple[float, float, float]:
     return p, max(0.0, centre - half), min(1.0, centre + half)
 
 
-def score() -> dict:
-    ev_path = GOLD / "sample_events.csv"
-    bl_path = GOLD / "sample_blocks.csv"
+def score(src: Path | None = None) -> dict:
+    src = src or GOLD
+    dest_name = ("GOLD-SCORE-BY-ERA-multiplex.md" if src != GOLD
+                 else "GOLD-SCORE-multiplex.md")
+    ev_path = src / "sample_events.csv"
+    bl_path = src / "sample_blocks.csv"
     if not ev_path.exists():
         raise SystemExit("no sample found; run `python -m elitenet.gold draw` first")
 
@@ -228,7 +290,19 @@ def score() -> dict:
     judged = [e for e in events if (e.get("verdict") or "").strip()]
     coded_blocks = [b for b in blocks if (b.get("block_relational") or "").strip()]
 
-    lines = ["# Gold-sample score", "",
+    lines = ["# Gold-sample score"
+             + (" by era" if src != GOLD else ""), "",
+             ("Allocated **equally across eras** and proportionally within "
+              "each, which estimates accuracy per era and is deliberately "
+              "**not** a corpus-wide estimate: the corpus is dominated by the "
+              "post-2004 register, so a proportional sample says nothing about "
+              "the decades whose OCR is worst. For the corpus-wide figure see "
+              "`GOLD-SCORE-multiplex.md`."
+              if src != GOLD else
+              "Allocated **proportionally** over blocks, so this is a "
+              "corpus-wide estimate. For accuracy broken out by era, which a "
+              "pooled figure hides, see `GOLD-SCORE-BY-ERA-multiplex.md`."),
+             "",
              f"Sampling seed `{SEED}`. "
              f"{len(judged)} of {len(events)} extracted events judged; "
              f"{len(coded_blocks)} of {len(blocks)} blocks coded.", ""]
@@ -238,7 +312,7 @@ def score() -> dict:
                   "`gold/`; see `gold/CODING_INSTRUCTIONS.md`.", "",
                   "**Until this is coded, treat every event count in the dataset "
                   "as a lower bound of unknown tightness.**", ""]
-        _emit(lines)
+        _emit(lines, dest_name)
         return {"judged": 0, "coded_blocks": len(coded_blocks)}
 
     # --- precision --------------------------------------------------------
@@ -282,6 +356,42 @@ def score() -> dict:
     for e in judged:
         if e["verdict"].strip() != "unclear":
             by_year[cid_year.get(e["coding_id"], "?")].append(e["verdict"].strip())
+    # --- precision by era ------------------------------------------------
+    # A pooled figure over 1957-2026 hides whichever era is worst, and the
+    # eras differ in kind: before 2004 the corpus is state acts rather than
+    # company filings, the 1960s-80s scans carry the worst OCR, and after 2012
+    # the political vocabulary changes. Reported before the by-year table
+    # because with a sample of a few hundred the yearly cells are too thin to
+    # read, while the era cells are not.
+    by_era_v: dict[str, list[str]] = defaultdict(list)
+    for e in judged:
+        if e["verdict"].strip() != "unclear":
+            y = cid_year.get(e["coding_id"], "")
+            by_era_v[_era(int(y)) if y.isdigit() else "?"].append(
+                e["verdict"].strip())
+    order = [nm for nm, _l, _h in ERAS] + ["out-of-window", "?"]
+    lines += ["### Precision by era", "",
+              "| era | n | correct | precision | 95% CI |",
+              "| --- | --- | --- | --- | --- |"]
+    for era in order:
+        vs = by_era_v.get(era)
+        if not vs:
+            continue
+        k = sum(1 for v in vs if v == "correct")
+        pp, l, h = _wilson(k, len(vs))
+        lines.append(f"| {era} | {len(vs)} | {k} | {pp:.3f} | {l:.3f}–{h:.3f} |")
+    thin = [era for era in order
+            if by_era_v.get(era) and len(by_era_v[era]) < 20]
+    lines.append("")
+    if thin:
+        lines += [f"The interval is wide for {', '.join(thin)}: fewer than 20 "
+                  "decidable events were coded there, so those rows bound the "
+                  "error rate loosely rather than estimating it.", ""]
+    missing = [nm for nm, _l, _h in ERAS if nm not in by_era_v]
+    if missing:
+        lines += [f"**No coded events at all in {', '.join(missing)}.** "
+                  "Accuracy in those years is unmeasured, not good.", ""]
+
     lines += ["### Precision by year", "",
               "| year | n | precision | 95% CI |", "| --- | --- | --- | --- |"]
     for year, vs in sorted(by_year.items()):
@@ -317,20 +427,24 @@ def score() -> dict:
                   "be estimated.", ""]
 
     lines += ["## Caveat on provenance of these figures", "",
-              "Read `docs/LIMITATIONS-multiplex-2008-2012.md` for who coded this "
+              "Read `docs/LIMITATIONS-multiplex.md` for who coded this "
               "sample. A figure produced by the same agent that wrote the "
               "extractors is a self-audit: it is a real check on a rule-based "
               "parser, since the judgement is made against the printed French "
               "rather than against the code, but it is not independent. Any "
               "published figure should rest on coding by someone who did not "
               "write the rules.", ""]
-    _emit(lines)
+    _emit(lines, dest_name)
     return {"judged": len(judged), "precision": round(p, 4),
             "spurious": spurious, "coded_blocks": len(coded_blocks)}
 
 
-def _emit(lines: list[str]) -> None:
-    dest = Path("docs") / "GOLD-SCORE-multiplex-2008-2012.md"
+# The era sample gets its own report rather than overwriting the published
+# one. The 2008-2012 figures were correctly measured on 2008-2012 blocks and
+# stay usable there; replacing them with a wider-but-thinner estimate would
+# throw away evidence rather than add to it.
+def _emit(lines: list[str], dest_name: str = "GOLD-SCORE-multiplex.md") -> None:
+    dest = Path("docs") / dest_name
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"wrote {dest}")
@@ -349,8 +463,14 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Gold-sample drawing and scoring.")
     ap.add_argument("command", choices=["draw", "score"])
     ap.add_argument("-n", type=int, default=DEFAULT_N, help="target sample size")
+    ap.add_argument("--eras", action="store_true",
+                    help="allocate the sample across eras rather than "
+                         "proportionally, and write to gold/era/ so an "
+                         "already-coded sample is not overwritten")
     args = ap.parse_args(argv)
-    stats = draw(args.n) if args.command == "draw" else score()
+    out = (GOLD / "era") if args.eras else GOLD
+    stats = (draw(args.n, by_era=args.eras, out=out)
+             if args.command == "draw" else score(src=out))
     for k, v in stats.items():
         print(f"  {k:24} {v}")
     return 0

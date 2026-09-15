@@ -27,15 +27,23 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
-from .paths import INTERIM, PROCESSED, ensure_dirs, load_config
+from .orgentity import OrgEntityResolver
+from .paths import INTERIM, PROCESSED, ensure_dirs, load_config, window
 
-WINDOW_START = date(2008, 1, 1)
-WINDOW_END = date(2012, 12, 31)
+WINDOW_START, WINDOW_END = window()
 
 OPENING = {"appointed", "constituted", "charged_with_functions", "delegated_to_body"}
 CONFIRMING = {"renewed"}
 CLOSING = {"resigned", "revoked", "terminated", "retired"}
 ORG_CLOSING = {"dissolved", "liquidated"}
+
+# Person-to-person claims. They carry an `org_mention` -- the block they were
+# read from, which is what the dyad-anchored person resolver needs to put a
+# name to a node -- but that anchor is not a statement that either party holds
+# office in the firm. Without this set the fallback `role = "unspecified"`
+# below would turn every spouse named in a company filing into a member of it.
+# `personties.py` is what builds the tie these events do support.
+KINSHIP = {"spouse_of", "widow_of", "maiden_name_of"}
 
 SPELL_FIELDS = [
     "spell_id", "person_id", "person_label", "org_id", "org_label",
@@ -102,13 +110,21 @@ class Spell:
         return self.terminus is None and self.terminus_rule == ""
 
 
-def build_spells(events: list[dict], resolution: dict, roles_cfg: dict) -> tuple[list[Spell], int]:
+def build_spells(events: list[dict], resolution: dict, roles_cfg: dict,
+                 org_entity: OrgEntityResolver | None = None
+                 ) -> tuple[list[Spell], int, set[tuple[str, str]]]:
     """Group resolved events into spells per (person, organisation, role)."""
     single_holder = set(roles_cfg["single_holder_roles"])
+    # The organisation an event is about. Identity now comes from the event's
+    # own hard identifier where it has one, so two spellings of one firm land
+    # on one vertex and a generic seed label can no longer absorb both. The
+    # resolver falls back to the old behaviour when the entity stage has not
+    # run, which keeps this stage runnable on its own.
+    org_entity = org_entity or OrgEntityResolver.load()
 
     # Organisation-level events (dissolution, liquidation) carry no person, so
-    # they cannot be looked up by dyad. Build a mention -> resolved id map from
-    # the dyads that were resolved, so a firm's death can close its open ties.
+    # they cannot be looked up by dyad. Build a mention -> id map from the
+    # dyads that were resolved, so a firm's death can close its open ties.
     org_of_mention: dict[str, str] = {}
     for r in resolution.values():
         if r.get("org_mention") and r.get("resolved_org_id"):
@@ -116,10 +132,15 @@ def build_spells(events: list[dict], resolution: dict, roles_cfg: dict) -> tuple
 
     groups: dict[tuple[str, str, str], list[dict]] = defaultdict(list)
     org_events: dict[str, list[dict]] = defaultdict(list)
+    inferred_dyads: set[tuple[str, str]] = set()
+    snowballed_dyads: set[tuple[str, str]] = set()
     for e in events:
+        if e["event_type"] in KINSHIP:
+            continue
         res = resolution.get(f"{e.get('person_mention','')}||{e.get('org_mention','')}")
         if e["event_type"] in ORG_CLOSING:
-            oid = ((res or {}).get("resolved_org_id")
+            oid = (org_entity.for_event(e)
+                   or (res or {}).get("resolved_org_id")
                    or org_of_mention.get(e.get("org_mention") or ""))
             if oid:
                 org_events[oid].append(e)
@@ -127,9 +148,28 @@ def build_spells(events: list[dict], resolution: dict, roles_cfg: dict) -> tuple
         if not res or res["link_status"] == "unresolved":
             continue
         pid = res["resolved_person_id"]
-        oid = res["resolved_org_id"] or ("ORGMENTION_" + (e.get("org_mention") or "")[:60])
+        oid = (org_entity.for_event(e)
+               or res["resolved_org_id"]
+               or ("ORGMENTION_" + (e.get("org_mention") or "")[:60]))
         if not pid or not oid:
             continue
+        # A spell built on an INFERRED link is carried in its own evidence
+        # tier, not as ordinary dated evidence. The link rests on the name
+        # being unique on both sides rather than on the organisation agreeing,
+        # which is weaker in kind and not merely in degree -- and
+        # `evidence_tier` is what reaches `panel_edges_*.csv`, so this is what
+        # lets an analysis drop the inference in one filter.
+        # A snowballed link is the same kind of claim as an inferred one: it
+        # rests on an anchor that a later pass supplied rather than on the
+        # organisation agreeing in the first place. Both are kept out of
+        # `gazette_dated`, which is what `v_spells_dated` and the TERGM panel
+        # read, so neither can enter an analysis unnoticed. They are not
+        # merged: `resolution.csv` names the pass and the rule, and the tier
+        # here names the kind.
+        if res.get("link_status") in ("inferred", "snowball"):
+            inferred_dyads.add((pid, oid))
+            if res["link_status"] == "snowball":
+                snowballed_dyads.add((pid, oid))
         role = e.get("role_canonical") or "unspecified"
         groups[(pid, oid, role)].append(e)
 
@@ -300,7 +340,7 @@ def build_spells(events: list[dict], resolution: dict, roles_cfg: dict) -> tuple
             sp.terminus_rule = "org_dissolved"
             sp.terminus_interval_censored = True
 
-    return spells, replaced
+    return spells, replaced, inferred_dyads, snowballed_dyads
 
 
 def seed_only_spells(resolved_person_ids: set[str]) -> list[Spell]:
@@ -333,7 +373,28 @@ def seed_only_spells(resolved_person_ids: set[str]) -> list[Spell]:
     return out
 
 
-def finalise(sp: Spell) -> dict:
+def _tier(sp: Spell, inferred: set[tuple[str, str]],
+          snowballed: set[tuple[str, str]]) -> str:
+    """The evidence tier a spell reaches the panel with.
+
+    Only `gazette_dated` means "the organisation agreed and the date is in
+    print". The two weaker tiers are named separately rather than lumped,
+    because they fail differently: an inferred link rests on a name being
+    unique corpus-wide, a snowballed one on an anchor a later pass supplied,
+    and a snowball can propagate its own error where an inference cannot.
+    """
+    if sp.evidence_tier != "gazette_dated":
+        return sp.evidence_tier
+    key = (sp.person_id, sp.org_id)
+    if key in snowballed:
+        return "gazette_snowball"
+    return "gazette_inferred" if key in inferred else sp.evidence_tier
+
+
+def finalise(sp: Spell, inferred: set[tuple[str, str]] | None = None,
+             snowballed: set[tuple[str, str]] | None = None) -> dict:
+    inferred = inferred or set()
+    snowballed = snowballed or set()
     left_cens = sp.onset is None
     right_cens = sp.terminus is None and sp.terminus_rule == ""
     dur = dur_lo = dur_hi = ""
@@ -361,21 +422,32 @@ def finalise(sp: Spell) -> dict:
         "onset_event_id": sp.onset_event_id, "terminus_event_id": sp.terminus_event_id,
         "expected_end_date": _iso(sp.expected_end),
         "duration_days": dur, "duration_lo": dur_lo, "duration_hi": dur_hi,
-        "evidence_n": len(sp.observations), "evidence_tier": sp.evidence_tier,
+        "evidence_n": len(sp.observations),
+        "evidence_tier": _tier(sp, inferred, snowballed),
         "link_status": sp.link_status, "confidence": sp.confidence,
         "needs_review": sp.link_status == "ambiguous",
     }
 
 
 def periods(granularity: str) -> list[tuple[str, date, date]]:
+    """Panel periods. Yearly spans the whole window; monthly only its
+    `panel.monthly_window` sub-range, because 840 monthly periods over the full
+    window would be mostly reporting noise (a month is shorter than the
+    gazette's publication lag) on networks too sparse to read."""
     out = []
     if granularity == "yearly":
         for y in range(WINDOW_START.year, WINDOW_END.year + 1):
             out.append((str(y), date(y, 1, 1), date(y, 12, 31)))
     else:
-        for y in range(WINDOW_START.year, WINDOW_END.year + 1):
+        mw = (load_config("scope").get("panel") or {}).get("monthly_window") or {}
+        lo = date.fromisoformat(mw["start"]) if mw.get("start") else WINDOW_START
+        hi = date.fromisoformat(mw["end"]) if mw.get("end") else WINDOW_END
+        lo, hi = max(lo, WINDOW_START), min(hi, WINDOW_END)
+        for y in range(lo.year, hi.year + 1):
             for m in range(1, 13):
                 end = date(y + (m == 12), (m % 12) + 1, 1) - timedelta(days=1)
+                if end < lo or date(y, m, 1) > hi:
+                    continue
                 out.append((f"{y}-{m:02d}", date(y, m, 1), end))
     return out
 
@@ -432,15 +504,15 @@ def run(include_seed: bool = True) -> dict:
     with (INTERIM / "events_raw.jsonl").open(encoding="utf-8") as fh:
         events = [json.loads(line) for line in fh]
 
-    spells, replaced = build_spells(events, resolution, roles_cfg)
-    rows = [finalise(s) for s in spells]
+    spells, replaced, inferred, snowballed = build_spells(events, resolution, roles_cfg)
+    rows = [finalise(s, inferred, snowballed) for s in spells]
     obs_rows = [{"spell_id": r["spell_id"], **o}
                 for r, s in zip(rows, spells) for o in s.observations]
 
     n_gazette = len(rows)
     if include_seed:
         resolved_ids = {r["person_id"] for r in rows}
-        rows += [finalise(s) for s in seed_only_spells(resolved_ids)]
+        rows += [finalise(s, inferred, snowballed) for s in seed_only_spells(resolved_ids)]
 
     # Hygiene: a terminus that precedes its onset is not a short spell, it is a
     # contradiction. Rather than clamp it to zero length, the end is withdrawn

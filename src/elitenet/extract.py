@@ -20,22 +20,26 @@ import html
 import json
 import re
 from datetime import date
+from functools import lru_cache
 from pathlib import Path
 
 from . import grammar as G
+from .names import parse_org
 from .paths import INTERIM, PROCESSED, ensure_dirs, load_config
 
 EVENT_FIELDS = [
     "event_id", "event_type", "source_type", "block_uid", "issue_uid",
     "collection", "year", "issue", "folio_page", "ocr_page",
     "person_mention", "person_married_name",
-    "org_mention", "org_mf", "counterparty_mention",
+    "person_address", "person_address_normalised",
+    "org_mention", "org_mf", "org_rc", "org_address", "org_postal_code",
+    "counterparty_mention",
     "role_canonical", "role_verbatim", "portfolio", "ministry",
     "act_date", "registration_date", "filing_date", "effective_date", "pub_date",
     "event_date", "event_date_source", "event_date_lo", "event_date_hi",
     "date_precision", "mandate_years", "amount_dt", "legal_form", "domain",
     "extractor", "pattern_id", "extract_confidence", "evidence_quote",
-    "needs_review",
+    "alt_group", "needs_review",
 ]
 
 CITATION_FIELDS = [
@@ -229,6 +233,12 @@ def org_name(text: str) -> str:
     return _tidy_org(m.group("v")) if m else ""
 
 
+def _same_org(a: str, b: str) -> bool:
+    """Whether two mentions normalise to the same organisation."""
+    ka, kb = parse_org(a or "").match_key, parse_org(b or "").match_key
+    return bool(ka) and ka == kb
+
+
 def _tidy_org(raw: str) -> str:
     # The OCR layer leaves HTML entities in place, and an undecoded "&amp;"
     # survived into 2,654 organisation names, where it blocks resolution.
@@ -266,6 +276,34 @@ def _quote(clause: str, limit: int = 200) -> str:
     return re.sub(r"\s+", " ", clause).strip()[:limit]
 
 
+# Dates an act cannot legitimately carry later than its own publication.
+# `effective_date` is deliberately absent: an act published in 1974 may
+# lawfully take effect in 1975, and 1,629 acts in this corpus take effect
+# before their own date, which is equally lawful.
+_CANNOT_POSTDATE_PUBLICATION = ("act_date", "registration_date", "filing_date")
+
+
+def drop_impossible_dates(dates: dict, pub_date: str) -> dict:
+    """An act cannot be published before it happens.
+
+    Where a parsed date postdates the issue, the reading is wrong -- usually an
+    OCR-damaged numeral, and the corpus shows the shape of it: an act printed
+    "1976-01-31" in a 1974 issue whose day and month match the issue to within
+    a week, so 1974 was read as 1976. The date is dropped rather than repaired
+    by guessing, and the event falls back to the next available date.
+
+    Shared by both extractors. It used to live only in the corporate path,
+    which left 87 state acts asserting an act date after their own publication
+    -- the kind of divergence that appears the moment two copies of a rule
+    exist.
+    """
+    if not pub_date:
+        return dates
+    return {k: ("" if k in _CANNOT_POSTDATE_PUBLICATION and v and v > pub_date
+                else v)
+            for k, v in dates.items()}
+
+
 def _dates_for_block(text: str, pub_date: str) -> dict:
     """Pull the several distinct dates a block can carry."""
     out: dict[str, str] = {}
@@ -286,14 +324,7 @@ def _dates_for_block(text: str, pub_date: str) -> dict:
             d = G.parse_date_string(m.group("date"))
             if d:
                 out["act_date"] = d.isoformat()
-    # An act cannot be published before it happens. Where a parsed date
-    # postdates the issue, the reading is wrong -- usually a transposed or
-    # OCR-damaged numeral -- so it is dropped rather than repaired by guessing,
-    # and the event falls back to the next available date.
-    if pub_date:
-        for key in ("act_date", "registration_date", "filing_date"):
-            if out.get(key) and out[key] > pub_date:
-                out.pop(key)
+    out = {k: v for k, v in drop_impossible_dates(out, pub_date).items() if v}
     out["pub_date"] = pub_date
     return out
 
@@ -338,6 +369,183 @@ def is_convocation(block: dict) -> bool:
     return bool(RE_CONVOCATION.search(head))
 
 
+# The two hard identifiers the register prints beside a company name, and its
+# stated seat. The matricule fiscal was already captured as a resolution
+# signal; the registre-de-commerce number and the address were pattern-matched
+# only to *reject* such lines as company names, so neither reached any output.
+# Recorded on the event row rather than resolved here: the mention has not been
+# linked to an organisation yet at this point, and `orgattrs` does the join.
+def _org_identifiers(text: str) -> tuple[str, str, str]:
+    rcm = G.RE_RC.search(text)
+    rc = G.normalise_rc(rcm.group("rc")) if rcm else ""
+
+    # The transfer clause states the seat being left and the one being taken.
+    # Reading either as "the address" would be wrong, so only the destination
+    # is recorded, and only when both ends parse and differ -- otherwise the
+    # clause was matched on a fragment.
+    address = ""
+    mv = G.RE_SIEGE_MOVE.search(text)
+    if mv:
+        frm = G.trim_address(mv.group("from"))
+        to = G.trim_address(mv.group("to"))
+        if frm and to and G.normalise_address(frm) != G.normalise_address(to):
+            address = to
+    if not address:
+        sg = G.RE_SIEGE.search(text)
+        address = G.trim_address(sg.group("addr")) if sg else ""
+
+    pm = G.RE_POSTAL.search(address)
+    return rc, address, (pm.group("code") if pm else "")
+
+
+@lru_cache(maxsize=1)
+def _relational_domains() -> frozenset[str]:
+    return frozenset(load_config("vocab_events")["relational_domains"])
+
+
+def _anchor_org(block: dict, text: str) -> str:
+    """The block's organisation, where reading one is sound.
+
+    `org_name` is written for the corporate and association notices and is
+    unreliable outside them: on a property notice it returned "Cette vente est
+    publiee au journal Echourouk du 21 decembre" as the company. The kinship
+    and residence passes run over every domain, so they ask for the anchor only
+    where it means something -- an empty anchor costs nothing, since the
+    unanchored resolution row is tried as well, while a junk one adds a junk
+    organisation mention to every table keyed on mentions.
+    """
+    if block["block_type"] == "act":
+        return ""
+    return org_name(text) if block.get("domain") in _relational_domains() else ""
+
+
+def extract_kinship(block: dict) -> list[dict]:
+    """Marriage and maiden-name claims, from any block in any domain.
+
+    Run outside the domain filter that governs every other extractor. A
+    marriage is a fact about two people and does not become less true because
+    the notice announcing it is a property sale rather than a company filing --
+    and the property and judicial notices, which `run()` skips as
+    non-relational, are where a large share of the markers actually sit.
+
+    The block's organisation, where it has one, is carried as `org_mention`.
+    That is not a claim that either spouse holds office in it: it is the anchor
+    the person resolver needs, since person resolution in this pipeline is
+    dyad-anchored, and it is what lets a spouse named in a firm's filing be
+    matched against the seed roster for that firm.
+    """
+    text = block["text"]
+    links = G.find_name_links(text)
+    if not links:
+        return []
+    org = _anchor_org(block, text)
+    dates = _dates_for_block(text, block["pub_date"])
+    ev_date, ev_src, ev_lo, ev_hi, precision = _resolve_event_date(dates, block["pub_date"])
+
+    base = {
+        "source_type": "acte" if block["block_type"] == "act" else "annonce",
+        "block_uid": block["block_uid"], "issue_uid": block["issue_uid"],
+        "collection": block["collection"], "year": block["year"],
+        "issue": block["issue"],
+        "folio_page": block.get("folio_page_start") or "",
+        "ocr_page": block.get("ocr_page_start") or "",
+        "org_mention": org, "org_mf": "", "org_rc": "",
+        "org_address": "", "org_postal_code": "",
+        "ministry": "", "portfolio": "",
+        "act_date": dates.get("act_date", ""),
+        "registration_date": dates.get("registration_date", ""),
+        "filing_date": dates.get("filing_date", ""),
+        "effective_date": dates.get("effective_date", ""),
+        "pub_date": block["pub_date"],
+        "event_date": ev_date, "event_date_source": ev_src,
+        "event_date_lo": ev_lo, "event_date_hi": ev_hi,
+        "date_precision": precision,
+        "legal_form": block.get("legal_form", ""),
+        "domain": block.get("domain", ""),
+        "extractor": "rule", "extract_confidence": 0.90,
+        "alt_group": "", "mandate_years": "", "amount_dt": "",
+        "role_canonical": "", "needs_review": False,
+    }
+
+    events: list[dict] = []
+    seen: set[tuple] = set()
+    for person, other, relation, marker, offset in links:
+        key = (relation, person, other)
+        if key in seen:
+            continue
+        seen.add(key)
+        quote = text[max(0, offset - 40): offset + 160]
+        events.append({
+            **base,
+            "event_type": relation,
+            "pattern_id": f"kin.{relation}",
+            "person_mention": person,
+            # The married/natal surname column keeps its existing meaning: the
+            # other name the marker attaches to this person.
+            "person_married_name": other,
+            "counterparty_mention": other,
+            "role_verbatim": marker,
+            "event_id": _event_id(block["block_uid"], relation, person, other),
+            "evidence_quote": _quote(quote),
+        })
+    return events
+
+
+def extract_residences(block: dict) -> list[dict]:
+    """Where a person is stated to live, from any block in any domain.
+
+    A residence is not an identity claim -- two brothers share a house, and a
+    business centre houses two hundred firms -- so it is recorded as an
+    attribute and left for `resolve` to *score*, never to match on. What it
+    buys is the discriminator the corpus otherwise lacks: two mentions of
+    "Mohamed Trabelsi" at one address are one man, and at two addresses they
+    are two, which is the largest remaining error in the person layer.
+
+    Run outside the domain filter, like kinship, and for the same reason: the
+    property and judicial notices `run()` skips as non-relational are where
+    most stated residences are.
+    """
+    text = block["text"]
+    found = G.find_residences(text)
+    if not found:
+        return []
+    dates = _dates_for_block(text, block["pub_date"])
+    ev_date, ev_src, ev_lo, ev_hi, precision = _resolve_event_date(dates, block["pub_date"])
+    org = _anchor_org(block, text)
+
+    out: list[dict] = []
+    seen: set[tuple[str, str]] = set()
+    for person, address, offset in found:
+        norm = G.normalise_address(address)
+        if not norm or (person, norm) in seen:
+            continue
+        seen.add((person, norm))
+        out.append({
+            "event_type": "resides_at", "pattern_id": "person.residence",
+            "source_type": "acte" if block["block_type"] == "act" else "annonce",
+            "block_uid": block["block_uid"], "issue_uid": block["issue_uid"],
+            "collection": block["collection"], "year": block["year"],
+            "issue": block["issue"],
+            "folio_page": block.get("folio_page_start") or "",
+            "ocr_page": block.get("ocr_page_start") or "",
+            "person_mention": person,
+            "person_address": address,
+            "person_address_normalised": norm,
+            "org_mention": org,
+            "pub_date": block["pub_date"],
+            "event_date": ev_date, "event_date_source": ev_src,
+            "event_date_lo": ev_lo, "event_date_hi": ev_hi,
+            "date_precision": precision,
+            "act_date": dates.get("act_date", ""),
+            "domain": block.get("domain", ""),
+            "extractor": "rule", "extract_confidence": 0.85,
+            "evidence_quote": _quote(text[max(0, offset - 60): offset + 140]),
+            "event_id": _event_id(block["block_uid"], "resides_at", person, norm),
+            "needs_review": False,
+        })
+    return out
+
+
 def extract_corporate(block: dict) -> list[dict]:
     if is_convocation(block):
         return []
@@ -345,6 +553,7 @@ def extract_corporate(block: dict) -> list[dict]:
     org = org_name(text)
     mfm = G.RE_MF.search(text)
     mf = G.normalise_mf(mfm.group("mf")) if mfm else ""
+    rc, address, postal = _org_identifiers(text)
     dates = _dates_for_block(text, block["pub_date"])
     ev_date, ev_src, ev_lo, ev_hi, precision = _resolve_event_date(dates, block["pub_date"])
     capital = G.parse_capital(text)
@@ -357,6 +566,7 @@ def extract_corporate(block: dict) -> list[dict]:
         "folio_page": block.get("folio_page_start") or "",
         "ocr_page": block.get("ocr_page_start") or "",
         "org_mention": org, "org_mf": mf,
+        "org_rc": rc, "org_address": address, "org_postal_code": postal,
         "ministry": "", "portfolio": "",
         "act_date": dates.get("act_date", ""),
         "registration_date": dates.get("registration_date", ""),
@@ -382,6 +592,7 @@ def extract_corporate(block: dict) -> list[dict]:
         row.setdefault("role_verbatim", "")
         row.setdefault("mandate_years", "")
         row.setdefault("amount_dt", "")
+        row.setdefault("alt_group", "")
         key = (row["event_type"], row["person_mention"], row["role_canonical"],
                row["org_mention"], row["event_date"], row.get("counterparty_mention", ""))
         if key in seen:
@@ -406,6 +617,92 @@ def extract_corporate(block: dict) -> list[dict]:
                  person_mention=rep, counterparty_mention=_tidy_org(m.group("org")),
                  role_canonical="representant", role_verbatim="représentée par",
                  extract_confidence=0.90, evidence_quote=_quote(m.group(0)))
+
+    # --- corporate parties: an organisation tied to another organisation - #
+    # Kept apart from the person-level and organisation-level cue lists for the
+    # same reason those are kept apart from each other: one clause routinely
+    # states several acts, and a single first-match-wins pass drops all but one.
+    #
+    # The holder goes in counterparty_mention, which already exists for exactly
+    # this -- an entity other than the subject firm -- and is already carried
+    # through events.csv. `relation` is recorded in role_canonical so the layer
+    # can be filtered without a schema change.
+    #
+    # Nothing is resolved here. Whether the holder and the subject are distinct
+    # seed organisations is a resolution question, and a self-match is dropped
+    # there, not guessed at here.
+    # For a transfer, the company being bought into is named in the clause; for
+    # a standing holding or an audit mandate it is the block's subject firm.
+    mt = G.RE_ORG_TARGET.search(text)
+    stated_target = _tidy_org(G.trim_org_party(mt.group("org"))) if mt else ""
+
+    def _ok(name: str) -> bool:
+        # A bare form marker with no name behind it ("la societe") resolves to
+        # nothing and would only add noise.
+        return len(name) >= 6 and bool(re.search(r"[A-Za-zÀ-ÿ]{3}", name))
+
+    # Both candidate targets are emitted, not one chosen here. Letting the
+    # stated target override the subject firm was measured and is net
+    # negative: it fires on 4% of ownership blocks and where it fires it costs
+    # eight resolutions for every four it wins, because RE_ORG_TARGET
+    # sometimes captures a clause rather than a name. Resolution is the stage
+    # that knows which candidate is a seed organisation, so both go forward
+    # sharing an `alt_group`, and `orgties` keeps whichever end resolves --
+    # preferring the stated target when both do, since it is the targeted
+    # capture. The group key is what stops the pair being counted as two
+    # different dyads.
+    for rx, relation, conf in (
+        (G.RE_ORG_ACQUIRES,    "shares_acquired",       0.88),
+        (G.RE_ORG_CEDES,       "shares_ceded",          0.88),
+        (G.RE_ORG_SHAREHOLDER, "shareholder_confirmed", 0.80),
+        (G.RE_ORG_SUBSCRIBES,  "capital_subscribed",    0.88),
+        (G.RE_ORG_AUDITOR,     "auditor",               0.90),
+        (G.RE_ORG_BRANCH,      "branch",                0.90),
+        (G.RE_ORG_SUBSIDIARY,  "subsidiary_of",         0.88),
+    ):
+        for m in rx.finditer(text):
+            holder = _tidy_org(G.trim_org_party(m.group("org")))
+            if not _ok(holder):
+                continue
+            # Ordered by preference: the stated target first.
+            cands = [c for c in (stated_target, org) if _ok(c or "")]
+            # A self-tie compared on raw strings slips through: "la societe
+            # Alpha Holding" and "Societe Alpha Holding" are the same firm and
+            # differ only by an article. Compare on the normalised key that
+            # resolution uses for exact matching. Resolution drops self-matches
+            # again once both ends carry seed ids -- this only keeps the
+            # obvious ones out of events.csv.
+            cands = [c for c in cands if not _same_org(c, holder)]
+            if len(cands) == 2 and _same_org(*cands):
+                cands = cands[:1]
+            if not cands:
+                continue
+            group = (_event_id(block["block_uid"], relation, holder, m.start())
+                     if len(cands) > 1 else "")
+            for target in cands:
+                # The block's matricule, RC number and seat belong to the
+                # firm the notice is ABOUT. Where the tie's target is a
+                # company named inside the clause instead, those columns
+                # describe a different organisation, and carrying them here
+                # attributes one firm's tax ID to another -- which is exactly
+                # the kind of conflict the identifier tables are meant to
+                # detect, manufactured by the extractor. So they are cleared
+                # rather than copied.
+                own = _same_org(target, org)
+                emit(event_type="org_tie", pattern_id=f"corp.org_{relation}",
+                     counterparty_mention=holder, org_mention=target,
+                     role_canonical=relation, alt_group=group,
+                     org_mf=mf if own else "",
+                     org_rc=rc if own else "",
+                     org_address=address if own else "",
+                     org_postal_code=postal if own else "",
+                     role_verbatim=_tidy_org(m.group(0))[:90],
+                     # The fallback candidate is the same evidence read a
+                     # second way, so it carries the same confidence; which
+                     # one survives is resolution's call, not a confidence
+                     # question.
+                     extract_confidence=conf,
+                     evidence_quote=_quote(m.group(0)))
 
     # --- association bureau: "Role : Name" ------------------------------- #
     if block.get("domain") == "association":
@@ -572,7 +869,10 @@ def extract_state(block: dict) -> tuple[list[dict], list[dict]]:
         if d:
             eff = d.isoformat()
 
-    dates = {"act_date": act_date, "effective_date": eff, "pub_date": block["pub_date"]}
+    dates = drop_impossible_dates(
+        {"act_date": act_date, "effective_date": eff,
+         "pub_date": block["pub_date"]}, block["pub_date"])
+    act_date = dates["act_date"]
     ev_date, ev_src, ev_lo, ev_hi, precision = _resolve_event_date(dates, block["pub_date"])
 
     base = {
@@ -581,7 +881,9 @@ def extract_state(block: dict) -> tuple[list[dict], list[dict]]:
         "year": block["year"], "issue": block["issue"],
         "folio_page": block.get("folio_page_start") or "",
         "ocr_page": block.get("ocr_page_start") or "",
-        "org_mention": ministry, "org_mf": "", "ministry": ministry,
+        "org_mention": ministry, "org_mf": "",
+        "org_rc": "", "org_address": "", "org_postal_code": "",
+        "ministry": ministry,
         "act_date": act_date, "registration_date": "", "filing_date": "",
         "effective_date": eff, "pub_date": block["pub_date"],
         "event_date": ev_date, "event_date_source": ev_src,
@@ -708,7 +1010,8 @@ def run(limit: int | None = None) -> dict:
 
     ev_path = INTERIM / "events_raw.jsonl"
     stats = {"blocks": 0, "blocks_with_events": 0, "events": 0, "citations": 0,
-             "corporate_blocks": 0, "state_acts": 0, "skipped_domain": 0}
+             "corporate_blocks": 0, "state_acts": 0, "skipped_domain": 0,
+             "kinship_events": 0, "person_attr_events_from_skipped_domain": 0}
     by_type: dict[str, int] = {}
 
     with (INTERIM / "blocks.jsonl").open(encoding="utf-8") as src, \
@@ -721,6 +1024,11 @@ def run(limit: int | None = None) -> dict:
                 break
             block = json.loads(line)
             stats["blocks"] += 1
+            # Kinship and residence run on every block, including the
+            # domains skipped below: a marriage and an address are facts about
+            # people and do not depend on the notice's subject matter.
+            kin = extract_kinship(block) + extract_residences(block)
+            stats["kinship_events"] += len(kin)
             if block["block_type"] == "act":
                 stats["state_acts"] += 1
                 events, citations = extract_state(block)
@@ -732,7 +1040,9 @@ def run(limit: int | None = None) -> dict:
                 events = extract_corporate(block)
             else:
                 stats["skipped_domain"] += 1
-                continue
+                stats["person_attr_events_from_skipped_domain"] += len(kin)
+                events = []
+            events = events + kin
             if events:
                 stats["blocks_with_events"] += 1
             for e in events:

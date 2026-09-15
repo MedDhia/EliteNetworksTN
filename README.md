@@ -204,11 +204,11 @@ than this repository when quoting the source.
 
 ---
 
-## A second build: firms, the state, and a curated elite network, 2008–2012
+## A second build: firms, the state, and a curated elite network, 1957–2026
 
 The build described above works from the *Journal Officiel* proper and covers
 the bureaucratic state across 1957–2026. A second, separate build sits
-alongside it under `data/processed/multiplex-2008-2012/`. It answers a
+alongside it under `data/processed/multiplex/`. It answers a
 different question and draws on sources the first build does not touch:
 
 - it starts from a **curated multiplex elite network** of 32,741 ties over
@@ -216,30 +216,93 @@ different question and draws on sources the first build does not touch:
   parliamentary blocs, civil-society bodies, kinship and pedagogical lineage —
   which has no time dimension of its own, and dates it against the gazette;
 - it adds the ***annonces légales*** series, the corporate register, which the
-  first build does not use at all: 172,054 announcement blocks yielding
+  first build does not use at all: 411,940 announcement blocks yielding
   company formations, officer appointments and resignations, share transfers,
   capital changes, dissolutions, and association registrations;
-- it is scoped to **2008–2012**, straddling the January 2011 rupture, at both
-  yearly and monthly resolution.
+- it is scoped to the **full range the sources support, 1957–2026**, at yearly
+  resolution throughout and monthly across 2008–2014, where the January 2011
+  rupture is invisible at annual resolution. Widening it from the original
+  2008–2012 mattered more than expected: **five of the seed sheet's seven
+  governments postdate 2012**, which is why the narrow window could date only
+  12.5% of seed ties.
 
-Current build: 1,271 issues → 207,369 blocks → 197,532 dated events → 4,287
-dated tie spells plus 27,585 undated seed ties, and 48,176 act citations.
-90% of the hundred highest-degree seed elites acquire at least one dated event.
+Current build: 9,749 issues → 879,131 blocks → **689,169 dated events** →
+13,031 dated person–organisation spells plus 27,585 undated seed ties, 2,314
+dated organisation–organisation spells over 2,255 dyads, 37,600 organisation
+identifier records and 420,593 act citations. 94% of the hundred
+highest-degree seed elites acquire at least one dated event, 81% of the
+highest-degree thousand, and 39.4% of all 13,630.
+
+Two of those numbers are worth reading together. Coverage is strongly
+correlated with prominence — that is a property of the sources, since the
+gazette publishes acts for every registered company while the seed sheet is a
+curated elite — and the corporate half of the record does not exist before
+2004, so 1957–2003 contributes state appointments and almost no company
+filings.
 
 Extraction accuracy on a seeded stratified sample, coded against the printed
 French: **precision 0.982** (95% CI 0.937–0.995) with **no spurious events**,
-**recall 0.967** (0.886–0.991). This is a self-audit, not an independent
-estimate — see `docs/GOLD-SCORE-multiplex-2008-2012.md` and the limitations.
+**recall 0.967** (0.886–0.991). Two caveats, and both matter: this is a
+self-audit rather than an independent estimate, and it was coded on
+**2008–2012 blocks only**, so it is out of the scope of its own evidence for a
+1957–2026 dataset. `gold draw --eras` samples across eras instead and reports
+per era; until those rows are coded, accuracy outside 2008–2012 is *unmeasured*
+rather than good. See `docs/GOLD-SCORE-multiplex.md` and the limitations.
 
-Read `docs/CODEBOOK-multiplex-2008-2012.md` for variable definitions and
-`docs/LIMITATIONS-multiplex-2008-2012.md` before using it.
-`docs/GOLD-FINDINGS-multiplex-2008-2012.md` records the twenty extraction
+Read `docs/CODEBOOK-multiplex.md` for variable definitions and
+`docs/LIMITATIONS-multiplex.md` before using it. For temporal ERGMs,
+`make tergm` writes a bipartite network panel with an explicit risk set and
+lagged kinship, shareholding and co-membership covariates; read
+`docs/TERGM-multiplex.md` first, because right-censoring makes the
+dissolution side of such a model uninterpretable here.
+
+`make orgties` builds a second, **one-mode and directed** network of
+organisation-to-organisation ties — mostly shareholding, plus audit mandates
+and branches — kept apart from the bipartite panel because adding those rows to
+it would break every two-mode term silently. The ordinary closure terms
+(`triangle`, `gwesp`) are valid there and are not valid on the bipartite panel;
+`R/build_org_ownership.R` and `docs/ORG-TIES-multiplex.md` say why, and why the
+onsets in that layer are overwhelmingly left-censored.
+
+`make orgattrs` records what the register prints beside a company name: the
+matricule fiscal, the registre-de-commerce number and the stated seat. The
+identifiers are not only description. A firm has one tax ID, so a node carrying
+two is either OCR damage or an **organisation-resolution merge** — which makes
+this the only check in the pipeline that can see a merge, since a merge
+otherwise looks exactly like a well-corroborated match. See
+`docs/ORG-IDENTIFIER-CONFLICTS-multiplex.md`.
+
+`make personties` builds a third layer: **kinship**, one-mode over persons,
+read off the `épouse` / `ép.` / `EP` / `veuve` markers the gazette drops into
+shareholder and transaction lines. It is separate from the bipartite panel for
+the same reason the ownership layer is. Two things to know before using it.
+`née X` is a woman's **natal surname**, not a husband, so it is a distinct
+relation with `is_marriage = 0` — the validator checks that at ERROR level,
+because a `née` read as a marriage invents a man and the resulting tie looks
+entirely plausible. And no marriage onset is ever observed: the gazette does
+not publish weddings, so every onset is left-censored by construction and a
+duration analysis over this layer would be measuring publication frequency.
+
+Coverage beyond the dyad anchor rests on **four labelled inference tiers** —
+kinship ties, subsidiaries (`filiale de <firm>`), address corroboration of
+organisation identity, and multi-seed snowballing, where what one pass named
+becomes the anchor for what it could not. Each is additive over a first pass
+left exactly as it was, and each is droppable in one filter:
+`resolve_pass == 0` reproduces the single-pass build, `evidence_tier` separates
+`gazette_dated` from `gazette_inferred` and `gazette_snowball`, and
+`entity_basis` marks an address-corroborated merge. Read
+`docs/INFERENCE-TIERS-multiplex.md` for what each rests on and how each can be
+wrong — a snowball propagates its own errors, which is why the pass number is
+recorded rather than the tier being merged into `resolved`.
+
+`docs/GOLD-FINDINGS-multiplex.md` records the twenty extraction
 defects the gold sample exposed, which is also why the figures above supersede
 those of the first release.
 
 ```bash
 make all        # seed -> mirror -> calendar -> segment -> extract -> resolve
-                # -> spells -> export -> codebook -> validate
+                # -> orgentity -> spells -> orgties -> personties
+                # -> orgattrs -> export -> tergm -> codebook -> validate
 make test
 ```
 

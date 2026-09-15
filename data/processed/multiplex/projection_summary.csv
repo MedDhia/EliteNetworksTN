@@ -1,0 +1,7 @@
+tier,state_floor,edge_definition,individuals,organisations,nodes,edges,components,isolates,connected_nodes,connected_pct,giant_component,giant_pct,giant_individuals,giant_organisations,second_component,third_component,components_of_size_2
+seed_anchored,none,"validated affiliations, ownership ties and kinship only",13630,26755,40385,46579,4541,1,40384,100.0,27002,66.9,8808,18194,29,22,2749
+officer_layer,none,plus the SARL/SA officer roster (admits gazette-only people),80868,68650,149518,135358,33071,1,149517,100.0,63307,42.3,33683,29624,52,36,23799
+all_sources,none,plus gazette CO-MENTION and the whole register (outer bound),631754,324687,956441,394113,621234,535386,421055,44.0,200991,21.0,130333,70658,41,36,62292
+seed_anchored,decision,"validated affiliations, ownership ties and kinship only; state ties restricted to decision-making rank",13630,26711,40341,45211,4737,66,40275,99.8,26213,65.0,8472,17741,35,34,2798
+officer_layer,decision,plus the SARL/SA officer roster (admits gazette-only people); state ties restricted to decision-making rank,80856,68603,149459,133957,33232,65,149394,100.0,62690,41.9,33379,29311,52,36,23836
+all_sources,decision,plus gazette CO-MENTION and the whole register (outer bound); state ties restricted to decision-making rank,599456,324554,924010,338136,625684,537436,386574,41.8,156584,16.9,90127,66457,44,41,63270

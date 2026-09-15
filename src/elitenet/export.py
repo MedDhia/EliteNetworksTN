@@ -25,7 +25,7 @@ from datetime import date, datetime
 from pathlib import Path
 from xml.sax.saxutils import escape as _xml_escape
 
-from .paths import INTERIM, PROCESSED, ensure_dirs, load_config
+from .paths import INTERIM, PROCESSED, ensure_dirs, load_config, window
 
 def escape(text: str) -> str:
     """Escape a string for use inside an XML attribute.
@@ -38,7 +38,9 @@ def escape(text: str) -> str:
 
 
 EXPORTS = PROCESSED / "exports"
-T0 = date(2008, 1, 1)          # networkDynamic time origin; documented in the codebook
+# networkDynamic time origin: the first day of the window, documented in the
+# codebook. Read from config so it cannot drift from the data it indexes.
+T0 = window()[0]
 
 TABLES = {
     "seed_nodes": PROCESSED / "seed_nodes.csv",
@@ -54,6 +56,26 @@ TABLES = {
     "spell_observations": PROCESSED / "spell_observations.csv",
     "panel_edges_yearly": PROCESSED / "panel_edges_yearly.csv",
     "panel_edges_monthly": PROCESSED / "panel_edges_monthly.csv",
+    "org_ties": PROCESSED / "org_ties.csv",
+    "org_tie_spells": PROCESSED / "org_tie_spells.csv",
+    "panel_org_ties_yearly": PROCESSED / "panel_org_ties_yearly.csv",
+    "rne_org_links": PROCESSED / "rne_org_links.csv",
+    "rne_unmatched_identifiers": PROCESSED / "rne_unmatched_identifiers.csv",
+    "suspect_holes": PROCESSED / "suspect_holes.csv",
+    "hole_exposure_by_layer": PROCESSED / "hole_exposure_by_layer.csv",
+    "low_degree_audit": PROCESSED / "low_degree_audit.csv",
+    "person_ties": PROCESSED / "person_ties.csv",
+    "person_tie_spells": PROCESSED / "person_tie_spells.csv",
+    "panel_person_ties_yearly": PROCESSED / "panel_person_ties_yearly.csv",
+    "org_entities": PROCESSED / "org_entities.csv",
+    "org_entity_members": PROCESSED / "org_entity_members.csv",
+    "org_identifiers": PROCESSED / "org_identifiers.csv",
+    "org_addresses": PROCESSED / "org_addresses.csv",
+    "projection_summary": PROCESSED / "projection_summary.csv",
+    "projection_isolates": PROCESSED / "projection_isolates.csv",
+    "projection_nodes": PROCESSED / "projection_nodes.csv",
+    "rne_company_forms": PROCESSED / "rne_company_forms.csv",
+    "rne_company_persons": PROCESSED / "rne_company_persons.csv",
 }
 
 VIEWS = {
@@ -72,6 +94,30 @@ VIEWS = {
         "'https://jort.tn/view/'||e.collection||'/fr/'||e.year||'/'||e.issue AS viewer_url, "
         "'https://lake.jort.tn/'||e.collection||'/fr/'||e.year||'/'||e.issue||'.pdf' AS pdf_url "
         "FROM events e LEFT JOIN issue_calendar c ON c.issue_uid=e.issue_uid",
+    # The organisation-to-organisation layer. Ownership is separated from the
+    # professional-service and structural relations carried alongside it,
+    # because an audit mandate and a shareholding mean very different things and
+    # an analysis that mixed them would be reporting neither.
+    "v_org_ties":
+        "SELECT holder_id, holder_label, target_id, target_label, relation, "
+        "onset, terminus, left_censored, right_censored, evidence_tier, "
+        "confidence FROM org_tie_spells WHERE is_ownership='1'",
+    "v_org_ties_dated":
+        "SELECT * FROM org_tie_spells WHERE evidence_tier='gazette_dated' "
+        "AND link_status='resolved'",
+    "v_org_panel_yearly":
+        "SELECT * FROM panel_org_ties_yearly WHERE is_ownership='1'",
+    # The kinship layer. Marriage is separated from the natal-surname link
+    # carried alongside it: "nee X" is the same woman's birth name, not a
+    # husband, and an analysis that counted it as a marriage would be wrong
+    # about both the tie and the direction.
+    "v_marriages":
+        "SELECT person_id, person_label, kin_id, kin_label, relation, "
+        "onset_hi AS first_seen, terminus, right_censored, evidence_tier, "
+        "confidence FROM person_tie_spells WHERE is_marriage='1'",
+    "v_marriages_named":
+        "SELECT * FROM person_tie_spells WHERE is_marriage='1' "
+        "AND evidence_tier='kinship_dated'",
     "v_person_year_degree":
         "SELECT panel_id, from_node_id AS person_id, COUNT(*) AS degree "
         "FROM panel_edges_yearly WHERE evidence_tier='gazette_dated' "
@@ -129,6 +175,11 @@ def build_sqlite() -> dict:
         'CREATE INDEX ix_spells_org ON spells(org_id)',
         'CREATE INDEX ix_panel_y ON panel_edges_yearly(panel_id)',
         'CREATE INDEX ix_res_key ON resolution(mention_key)',
+        'CREATE INDEX ix_orgent_seed ON org_entities(seed_org_id)',
+        'CREATE INDEX ix_orgmem_ment ON org_entity_members(org_mention)',
+        'CREATE INDEX ix_orgid_org ON org_identifiers(org_id)',
+        'CREATE INDEX ix_orgid_val ON org_identifiers(value_normalised)',
+        'CREATE INDEX ix_orgaddr_org ON org_addresses(org_id)',
     ):
         try:
             con.execute(idx)
@@ -188,7 +239,8 @@ def write_gexf(dated_only: bool, filename: str) -> dict:
              '<gexf xmlns="http://www.gexf.net/1.3" version="1.3">',
              '  <meta lastmodifieddate="%s">' % date.today().isoformat(),
              '    <creator>EliteNetworksTN</creator>',
-             '    <description>Tunisian elite network 2008-2012, '
+             f'    <description>Tunisian elite network '
+             f'{T0.isoformat()} to {window()[1].isoformat()}, '
              'dated from the Journal Officiel</description>',
              '  </meta>',
              '  <graph mode="dynamic" timeformat="date" defaultedgetype="directed">',
@@ -349,7 +401,22 @@ def _csv(path: Path, rows: list[dict], fields: list[str]) -> None:
 # tens of megabytes, which does not belong in a git history, but they are the
 # substance of the dataset and should not merely be "rebuildable".
 GZIP_TABLES = ["events.csv", "blocks_index.csv", "resolution.csv",
-               "panel_edges_monthly.csv", "gazette_only_persons.csv"]
+               "panel_edges_monthly.csv", "panel_edges_yearly.csv",
+               "gazette_only_persons.csv", "spells.csv",
+               # The organisation attribute tables reach the same scale: an
+               # address per observation over 10,528 firms is 17 MB, and the
+               # org-tie queue carries 10,586 rows with their evidence quotes.
+               "org_addresses.csv", "org_identifiers.csv",
+               "org_ties_review_queue.csv", "person_ties_review_queue.csv",
+               # 39 MB, 15 MB and 27 MB respectively at full corpus size.
+               "org_entities.csv", "org_entity_keys.csv",
+               "org_entity_members.csv",
+               # 96,002 companies and 113,400 officer links, the latter
+               # carrying an evidence quote per row.
+               "rne_company_forms.csv", "rne_company_persons.csv",
+               # 956,441 rows: every node of the widest projection tier,
+               # more than half of them register entries with no tie.
+               "projection_nodes.csv"]
 
 
 def gzip_large_tables() -> dict:

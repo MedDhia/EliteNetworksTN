@@ -45,5 +45,5 @@ not equally bad.
 
     python -m elitenet.gold score
 
-writes `docs/GOLD-SCORE-multiplex-2008-2012.md` with precision and recall by
+writes `docs/GOLD-SCORE-multiplex.md` with precision and recall by
 event type and by stratum, with intervals.

@@ -12,7 +12,7 @@ suppressPackageStartupMessages({
   library(tsna)
 })
 
-base <- file.path("data", "processed", "multiplex-2008-2012", "exports", "rnd")
+base <- file.path("data", "processed", "multiplex", "exports", "rnd")
 T0   <- as.Date("2008-01-01")
 
 edge_spells   <- read.csv(file.path(base, "edge_spells.csv"),   stringsAsFactors = FALSE)
