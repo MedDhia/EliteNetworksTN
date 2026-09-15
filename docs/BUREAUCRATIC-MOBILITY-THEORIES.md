@@ -149,7 +149,39 @@ Total Appointments Under Regime              3.5%             16.3%             
 
 ---
 
-## 6. Figures & Scripts Index
+---
+
+## 6. Empirical Tests of Institutional Gender Bias (1957–2026)
+
+Testing six formal political science and sociological hypotheses of gender bias across $N = 100,582$ career spells and $N = 56,716$ observed career transitions:
+
+```
+========================================================================================================================
+Empirical Hypothesis / Dimension                   Metric / Test                           Female OR / Diff      p-value
+------------------------------------------------------------------------------------------------------------------------
+1. "Sticky Floor" Wait-Time Penalty                 Mean Time in Rank to Promotion          +12.1 months delay    < 10⁻⁴⁸
+   • Chef de service → Sous-directeur (35 → 45)     Mean Wait Time Difference               +1.9 months delay       0.091
+   • Sous-directeur → Directeur (45 → 55)           Mean Wait Time Difference               +6.4 months delay     < 0.001
+   • Directeur → Directeur Général (55 → 65)        Mean Wait Time Difference               +8.9 months delay       0.060
+2. Ministerial Personal Retinue Exclusion           Multivariate Logit on Retinue Spells    OR = 0.539 [0.45, 0.65] 1.2 × 10⁻¹¹
+3. Ministerial Arrival Sweep Bypassing (<120d)      Multivariate Logit on Turnover Sweeps   OR = 0.862 [0.79, 0.94] 4.6 × 10⁻⁴
+4. Departmental Silo Trap (Network Clustering)      Betweenness × Colleague Degree Model    OR = 0.919 [0.87, 0.97]     0.002
+5. Career Tournament Apex Funnel                    Logit on Lifetime DG Attainment         OR = 0.651 [0.59, 0.72] 7.2 × 10⁻¹⁶
+   • Political Executive Cabinets / Governors       Logit on Lifetime Apex (Rank ≥ 70)      OR = 0.476 [0.41, 0.55] 1.0 × 10⁻²⁷
+6. Territorial Command Quarantine                   Regional Governors & Delegates Share    OR = 0.052 [0.02, 0.12] < 10⁻³⁰
+========================================================================================================================
+```
+
+### Substantive Findings:
+1. **The "Sticky Floor" Velocity Penalty**: While female officials who stay in the system eventually receive lateral reappointments, their promotion clock is severely retarded (+12.1 months overall; +6.4 months from Sous-directeur to Director; +8.9 months from Director to DG).
+2. **Exclusion from Informal Patronage Retinues**: Women face a **46.1% discount** ($OR = 0.539$) in being recruited into ministers' mobile personal entourages, cutting them off from the highest-velocity advancement tracks in the state.
+3. **The Local Silo Trap**: While high local degree inside a single department hurts mobility for both genders, women suffer **more than double the clustering penalty** ($\beta = -0.0843, p = 0.002$), remaining locked in departmental dead-ends without boundary-spanning mobility.
+4. **Territorial Quarantine**: Across the entire 70-year history of the Tunisian republic, regional governorships and delegacies remained a **98.55% male monopoly** (only 6 women appointed out of 413 recorded territorial executives).
+5. **Refuting the "Glass Cliff" via Super-Survivor Selection**: Women who successfully breach the glass ceiling to reach Director General or Cabinet do not suffer premature removal; instead, their mean tenure is **+0.49 years longer** ($p = 0.001$), reflecting a heavy filter where only indispensable technocratic super-specialists survive to the top.
+
+---
+
+## 7. Figures & Scripts Index
 
 ### Python Pipeline Scripts (`scripts/`)
 1. `mobility_model.py`: Multivariate logit model & machine learning feature attribution (Keller framework).
@@ -161,6 +193,7 @@ Total Appointments Under Regime              3.5%             16.3%             
 7. `interior_colonization_state.py`: Theory 8 (Longitudinal Colonization of Civilian State by Interior Personnel).
 8. `generate_interior_sankey.py`: High-resolution Bézier Sankey visualizations and interactive Plotly dashboard.
 9. `gender_vertical_mobility.py`: Theory 9 (Vertical Mobility of Women, Tournament Penalties & Sectoral Ceilings).
+10. `test_gender_biases.py`: Theory 10 (Formal Tests of Gender Bias: Sticky Floors, Retinues, Silo Traps & Quarantines).
 
 ### Publication Figures (`figures/`)
 * `fig_mobility_01_odds_ratios.png` & `.pdf`: Multivariate Logit Model of Upward Mobility.
@@ -180,3 +213,5 @@ Total Appointments Under Regime              3.5%             16.3%             
 * `fig_theory_08_interior_sankey_interactive.html`: Interactive 4-View Plotly Sankey Dashboard.
 * `fig_theory_09_gender_vertical_mobility.png` & `.pdf`: Vertical Mobility of Women, Scissor Effect & Tournament Curves.
 * `fig_theory_09_gender_vertical_mobility_interactive.html`: Interactive Plotly Dashboard of Gender Mobility Across Regimes.
+* `fig_theory_10_gender_biases.png` & `.pdf`: Empirical Tests of Institutional Gender Bias (Sticky Floors, Retinues, Silo Traps & Quarantines).
+* `fig_theory_10_gender_biases_interactive.html`: Interactive Plotly Forest Plot and Sticky Floor Dashboard.
