@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Theory 14: Gender Biases Forest Plots (1957–2026)</title>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 24px; background: #F9FAFB; color: #111827; }
+        .header { max-width: 1100px; margin: 0 auto 24px; padding-bottom: 16px; border-bottom: 1px solid #E5E7EB; }
+        .header h1 { margin: 0 0 8px; font-size: 22px; font-weight: 700; color: #111827; }
+        .header p { margin: 0; font-size: 13px; color: #6B7280; }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 28px; max-width: 1100px; margin: 0 auto; }
+        .card { background: #FFFFFF; border-radius: 8px; border: 1px solid #E5E7EB; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .card h2 { margin: 0 0 4px; font-size: 15px; font-weight: 600; color: #111827; }
+        .card p.sub { margin: 0 0 16px; font-size: 12px; color: #6B7280; }
+        .caption { margin-top: 14px; font-size: 11px; color: #4B5563; line-height: 1.45; border-top: 1px solid #F3F4F6; padding-top: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Theory 14: Gender Biases Across Political Regimes (Forest Plots)</h1>
+    <p>Econometric synthesis of the sticky floor, hierarchical glass ceiling, coercive quarantine, and regime rupture shocks (1957–2026).</p>
+</div>
+
+<div class="grid">
+    <div class="card">
+        <h2>Figure 14a: Promotion Velocity Penalty Across Regimes (Sticky Floor)</h2>
+        <p class="sub">Adjusted female promotion delay in months vs. male peers (OLS with Rank Controls & 95% CIs)</p>
+        <div id="plot_delay" style="height: 380px;"></div>
+        <div class="caption"><b>Notes:</b> Reference line at 0 indicates equal promotion speed. Positive values indicate female delay. Total promotions N = 22,319.</div>
+    </div>
+
+    <div class="card">
+        <h2>Figure 14b: Hierarchical Glass Ceiling Odds Ratios Across Regimes</h2>
+        <p class="sub">Adjusted Odds Ratio (OR) of female placement in Senior Leadership vs. Entry Cadres (Logit & 95% CIs)</p>
+        <div id="plot_glass" style="height: 380px;"></div>
+        <div class="caption"><b>Notes:</b> Reference line at 1.0 denotes gender parity. Values < 1.0 indicate under-representation of women in senior ranks. Total N = 41,790.</div>
+    </div>
+
+    <div class="card">
+        <h2>Figure 14c: Coercive & Territorial Quarantine Odds Across Regimes</h2>
+        <p class="sub">Odds Ratio (OR) of female appointment in Interior, Defense, or Regional Governance</p>
+        <div id="plot_coercive" style="height: 380px;"></div>
+        <div class="caption"><b>Notes:</b> Reference line at 1.0 indicates gender parity in coercive/sovereign portfolios. Values < 1.0 indicate quarantine of women. Total N = 99,270.</div>
+    </div>
+
+    <div class="card">
+        <h2>Figure 14d: Female Incumbent 24-Month Survival Advantage Across Regimes</h2>
+        <p class="sub">Adjusted percentage-point difference in 24-month tenure survival for women vs. men</p>
+        <div id="plot_survival" style="height: 380px;"></div>
+        <div class="caption"><b>Notes:</b> Reference line at 0 pp indicates equal hazard. Positive values indicate higher female tenure stability. Total N = 99,270.</div>
+    </div>
+
+    <div class="card">
+        <h2>Figure 14e: Presidential Shock Discontinuities in Female Appointments</h2>
+        <p class="sub">Sharp RDD Discontinuity (tau) in female appointment share at historical cutoffs</p>
+        <div id="plot_shocks" style="height: 300px;"></div>
+        <div class="caption"><b>Notes:</b> Local linear RDD estimates (h = ±180 days, uniform kernel). Discontinuities in percentage points. Total N across windows = 5,065 acts.</div>
+    </div>
+</div>
+
+<script>
+    const layoutBase = {
+        margin: {l: 180, r: 160, t: 20, b: 50},
+        xaxis: {zeroline: false, showgrid: true, gridcolor: '#F3F4F6'},
+        yaxis: {autorange: 'reversed'},
+        font: {family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', size: 11}
+    };
+
+    // 14a Delay
+    Plotly.newPlot('plot_delay', [{
+        y: ['Bourguiba (1957–87)', 'Ben Ali (1987–2011)', 'Transition (2011–14)', 'Essebsi (2014–19)', 'Kais Saied (2019–26)', 'Pooled (All Regimes)'],
+        x: [15.743751825763816, 15.769101202659993, 10.829166083962145, 7.862064420950883, 3.4076462823523217, 5.477122057994517],
+        error_x: {
+            type: 'data',
+            symmetric: false,
+            array: [8.511518565451738, 2.315403325240357, 2.540060490785743, 2.278065439060832, 2.0532849552311463, 1.433916911726147],
+            arrayminus: [8.511518565451741, 2.315403325240357, 2.5400604907857467, 2.278065439060832, 2.0532849552311463, 1.433916911726147],
+            color: '#374151', width: 4
+        },
+        mode: 'markers',
+        marker: {size: 8, color: ['#A03B2C', '#1B5FC1', '#0D9488', '#B5852A', '#7C3AED', '#111827'], symbol: 'square'}
+    }], Object.assign({}, layoutBase, {
+        shapes: [{type: 'line', x0: 0, x1: 0, y0: -0.5, y1: 5.5, line: {dash: 'dash', color: '#6B7280', width: 1}}],
+        xaxis: {title: 'Female Promotion Delay (Months)'}
+    }));
+
+    // 14b Glass
+    Plotly.newPlot('plot_glass', [{
+        y: ['Bourguiba (1957–87)', 'Ben Ali (1987–2011)', 'Transition (2011–14)', 'Essebsi (2014–19)', 'Kais Saied (2019–26)', 'Pooled (All Regimes)'],
+        x: [0.17425088298963187, 0.24685109476478398, 0.3012472025462796, 0.3015454202789288, 0.34692987605454223, 0.32460917695942376],
+        error_x: {
+            type: 'data',
+            symmetric: false,
+            array: [0.16740131136319097, 0.043027271460089195, 0.05617279680276055, 0.04764247610790101, 0.05450415525659286, 0.02522115916501555],
+            arrayminus: [0.0853787178914904, 0.036640640703849786, 0.04734457480513582, 0.041142234967877556, 0.047103928298922904, 0.02340282952364109],
+            color: '#374151', width: 4
+        },
+        mode: 'markers',
+        marker: {size: 8, color: ['#A03B2C', '#1B5FC1', '#0D9488', '#B5852A', '#7C3AED', '#111827'], symbol: 'square'}
+    }], Object.assign({}, layoutBase, {
+        shapes: [{type: 'line', x0: 1, x1: 1, y0: -0.5, y1: 5.5, line: {dash: 'dash', color: '#6B7280', width: 1}}],
+        xaxis: {title: 'Odds Ratio (OR) of Senior Executive Rank'}
+    }));
+
+    // 14c Coercive
+    Plotly.newPlot('plot_coercive', [{
+        y: ['Bourguiba (1957–87)', 'Ben Ali (1987–2011)', 'Transition (2011–14)', 'Essebsi (2014–19)', 'Kais Saied (2019–26)', 'Pooled (All Regimes)'],
+        x: [0.3741514826723942, 0.7526818689477489, 1.0044943269193736, 0.8367466156226638, 0.9972264371363452, 0.919581187867486],
+        error_x: {
+            type: 'data',
+            symmetric: false,
+            array: [0.11774795165180468, 0.05984600944346319, 0.08571520036121694, 0.07813246709915989, 0.07661585011407224, 0.03487405338642735],
+            arrayminus: [0.08956214953303682, 0.05543810549141848, 0.07897604115455503, 0.07145980124605111, 0.07114950877289439, 0.03359981909336429],
+            color: '#374151', width: 4
+        },
+        mode: 'markers',
+        marker: {size: 8, color: ['#A03B2C', '#1B5FC1', '#0D9488', '#B5852A', '#7C3AED', '#111827'], symbol: 'square'}
+    }], Object.assign({}, layoutBase, {
+        shapes: [{type: 'line', x0: 1, x1: 1, y0: -0.5, y1: 5.5, line: {dash: 'dash', color: '#6B7280', width: 1}}],
+        xaxis: {title: 'Odds Ratio (OR) in Sovereign/Security Portfolios'}
+    }));
+
+    // 14d Survival
+    Plotly.newPlot('plot_survival', [{
+        y: ['Bourguiba (1957–87)', 'Ben Ali (1987–2011)', 'Transition (2011–14)', 'Essebsi (2014–19)', 'Kais Saied (2019–26)', 'Pooled (All Regimes)'],
+        x: [6.645191337380208, 8.116102609623127, 9.23371053305218, 5.075196281387851, 1.8096087550630107, 2.8707637816829576],
+        error_x: {
+            type: 'data',
+            symmetric: false,
+            array: [2.663826793179723, 0.974255408460948, 1.4579843500289655, 1.3238456692847782, 1.6239265892959405, 0.62178118872977],
+            arrayminus: [2.6638267931797235, 0.974255408460948, 1.4579843500289646, 1.3238456692847786, 1.62392658929594, 0.62178118872977],
+            color: '#374151', width: 4
+        },
+        mode: 'markers',
+        marker: {size: 8, color: ['#A03B2C', '#1B5FC1', '#0D9488', '#B5852A', '#7C3AED', '#111827'], symbol: 'square'}
+    }], Object.assign({}, layoutBase, {
+        shapes: [{type: 'line', x0: 0, x1: 0, y0: -0.5, y1: 5.5, line: {dash: 'dash', color: '#6B7280', width: 1}}],
+        xaxis: {title: 'Female 24-Month Survival Gap (pp)'}
+    }));
+
+    // 14e Shocks
+    Plotly.newPlot('plot_shocks', [{
+        y: ['1987 Ben Ali Coup (7 Nov 1987)', '2011 Revolution (14 Jan 2011)', '2021 Saïed Auto-Coup (25 Jul 2021)'],
+        x: [-3.131251118276385, -18.267006008505305, -9.10860766640985],
+        error_x: {
+            type: 'data',
+            symmetric: false,
+            array: [6.012581075091361, 7.126274375769825, 11.221018551806404],
+            arrayminus: [6.0125810750913615, 7.126274375769825, 11.221018551806406],
+            color: '#374151', width: 4
+        },
+        mode: 'markers',
+        marker: {size: 8, color: ['#A03B2C', '#1B5FC1', '#B5852A'], symbol: 'square'}
+    }], Object.assign({}, layoutBase, {
+        shapes: [{type: 'line', x0: 0, x1: 0, y0: -0.5, y1: 2.5, line: {dash: 'dash', color: '#6B7280', width: 1}}],
+        xaxis: {title: 'Sharp RDD Discontinuity in Female Share (pp)'}
+    }));
+</script>
+
+</body>
+</html>
