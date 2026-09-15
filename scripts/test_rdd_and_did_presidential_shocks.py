@@ -389,7 +389,7 @@ def get_local_linear_prediction(mod, x_min=-180, x_max=180, n_points=200):
 
 def plot_rdd_volume_single(key, res, t0, datestr, gloss, color, fig_id):
     """Render the most minimalist single-plot RDD visual for appointment volume (Chetty/AER style)."""
-    fig, ax = plt.subplots(figsize=(7.5, 4.4), dpi=300)
+    fig, ax = plt.subplots(figsize=(7.5, 4.8), dpi=300)
     fig.patch.set_facecolor("#FFFFFF")
     ax.set_facecolor("#FFFFFF")
 
@@ -418,6 +418,7 @@ def plot_rdd_volume_single(key, res, t0, datestr, gloss, color, fig_id):
     se = mod.bse["d"]
     pval = mod.pvalues["d"]
     sig_stars = "^{***}" if pval < 0.001 else ("^{**}" if pval < 0.01 else ("^{*}" if pval < 0.05 else ""))
+    sig_txt = "***" if pval < 0.001 else ("**" if pval < 0.01 else ("*" if pval < 0.05 else "n.s."))
 
     # Header: Title + Subtitle reporting the exact discontinuity estimate
     ax.set_title(
@@ -453,6 +454,24 @@ def plot_rdd_volume_single(key, res, t0, datestr, gloss, color, fig_id):
     ax.spines["bottom"].set_color(RULE)
     ax.tick_params(colors=INK, labelsize=8.0)
 
+    # Academic publication caption positioned below horizontal axis
+    caption_text = (
+        f"Figure 13{fig_id}: Daily appointment volume around the {key} shock ({gloss}).\n"
+        f"Notes: Dots depict 7-day binned sample averages. Solid lines show local linear fit (p = 1, h = ±180 days, uniform kernel)\n"
+        rf"with 95% HC1 confidence intervals. Cutoff c = 0 ({datestr}): $\hat{{\tau}} = {jump:+.2f}$ ({sig_txt}) acts/day (SE = {se:.2f}, p = {pval:.4f}). Daily N = {len(daily):,}."
+    )
+    ax.text(
+        0.0,
+        -0.22,
+        caption_text,
+        transform=ax.transAxes,
+        fontsize=7.2,
+        color="#4B5563",
+        va="top",
+        ha="left",
+        linespacing=1.3,
+    )
+
     png_path = FIGS / f"fig_theory_13{fig_id}_rdd_{key}_volume.png"
     pdf_path = FIGS / f"fig_theory_13{fig_id}_rdd_{key}_volume.pdf"
 
@@ -466,7 +485,7 @@ def plot_rdd_volume_single(key, res, t0, datestr, gloss, color, fig_id):
 
 def plot_rdd_composition_single(key, res_dict, t0, datestr, gloss, outcome_col, outcome_name, fig_id, color):
     """Render the most minimalist single-plot RDD visual for appointment composition."""
-    fig, ax = plt.subplots(figsize=(7.5, 4.4), dpi=300)
+    fig, ax = plt.subplots(figsize=(7.5, 4.8), dpi=300)
     fig.patch.set_facecolor("#FFFFFF")
     ax.set_facecolor("#FFFFFF")
 
@@ -497,6 +516,7 @@ def plot_rdd_composition_single(key, res_dict, t0, datestr, gloss, outcome_col, 
     se = mod.bse["d"]
     pval = mod.pvalues["d"]
     sig_stars = "^{***}" if pval < 0.001 else ("^{**}" if pval < 0.01 else ("^{*}" if pval < 0.05 else ""))
+    sig_txt = "***" if pval < 0.001 else ("**" if pval < 0.01 else ("*" if pval < 0.05 else "n.s."))
 
     # Header: Title + Subtitle
     ax.set_title(
@@ -532,6 +552,24 @@ def plot_rdd_composition_single(key, res_dict, t0, datestr, gloss, outcome_col, 
     ax.spines["bottom"].set_color(RULE)
     ax.tick_params(colors=INK, labelsize=8.0)
 
+    # Academic publication caption positioned below horizontal axis
+    caption_text = (
+        f"Figure 13{fig_id}: Share of {outcome_name.lower()} around the {key} shock ({gloss}).\n"
+        f"Notes: Dots depict 7-day binned shares. Solid lines show local linear fit (p = 1, h = ±180 days, uniform kernel)\n"
+        rf"with 95% HC1 confidence intervals. Cutoff c = 0 ({datestr}): $\hat{{\tau}} = {jump:+.2f}$ ({sig_txt}) percentage points (SE = {se:.2f} pp, p = {pval:.4f}). Total N = {len(sub):,} acts."
+    )
+    ax.text(
+        0.0,
+        -0.22,
+        caption_text,
+        transform=ax.transAxes,
+        fontsize=7.2,
+        color="#4B5563",
+        va="top",
+        ha="left",
+        linespacing=1.3,
+    )
+
     png_path = FIGS / f"fig_theory_13{fig_id}_rdd_{key}_{outcome_col}.png"
     pdf_path = FIGS / f"fig_theory_13{fig_id}_rdd_{key}_{outcome_col}.pdf"
 
@@ -545,7 +583,7 @@ def plot_rdd_composition_single(key, res_dict, t0, datestr, gloss, outcome_col, 
 
 def plot_did_survival_single(did_surv):
     """Render the most minimalist single-plot Difference-in-Differences visual for Survival."""
-    fig, ax = plt.subplots(figsize=(7.5, 4.4), dpi=300)
+    fig, ax = plt.subplots(figsize=(7.5, 4.8), dpi=300)
     fig.patch.set_facecolor("#FFFFFF")
     ax.set_facecolor("#FFFFFF")
 
@@ -626,6 +664,27 @@ def plot_did_survival_single(did_surv):
 
     ax.legend(loc="lower left", frameon=False, fontsize=8.0)
 
+    # Academic publication caption positioned below horizontal axis
+    total_n = sum(res["n"] for res in did_surv.values())
+    caption_text = (
+        "Figure 13f: Difference-in-Differences estimates of 24-month incumbent civil service survival.\n"
+        "Notes: Comparison of Senior Leadership (Rank >= 65) vs. Operational Civil Service (Rank <= 45) relative to 5-year pre-shock\n"
+        r"matched placebo cohorts. DiD interaction penalties: 1987 ($\hat{\delta} = -5.01^{*}$ pp, SE = 2.40); 2011 ($\hat{\delta} = -7.54^{***}$ pp, SE = 1.23);"
+        "\n"
+        f"2021 ($\\hat{{\\delta}} = +3.40^{{***}}$ pp, SE = 0.74). Total sample N = {total_n:,} tenure spells."
+    )
+    ax.text(
+        0.0,
+        -0.22,
+        caption_text,
+        transform=ax.transAxes,
+        fontsize=7.2,
+        color="#4B5563",
+        va="top",
+        ha="left",
+        linespacing=1.3,
+    )
+
     png_path = FIGS / "fig_theory_13f_did_survival.png"
     pdf_path = FIGS / "fig_theory_13f_did_survival.pdf"
 
@@ -639,7 +698,7 @@ def plot_did_survival_single(did_surv):
 
 def plot_did_demotion_single(did_demo):
     """Render the most minimalist single-plot Difference-in-Differences visual for Demotion."""
-    fig, ax = plt.subplots(figsize=(7.5, 4.4), dpi=300)
+    fig, ax = plt.subplots(figsize=(7.5, 4.8), dpi=300)
     fig.patch.set_facecolor("#FFFFFF")
     ax.set_facecolor("#FFFFFF")
 
@@ -708,6 +767,27 @@ def plot_did_demotion_single(did_demo):
     ax.spines["left"].set_color(RULE)
     ax.spines["bottom"].set_color(RULE)
     ax.tick_params(colors=INK, labelsize=8.0)
+
+    # Academic publication caption positioned below horizontal axis
+    total_n = sum(res["n"] for res in did_demo.values())
+    caption_text = (
+        "Figure 13g: Difference-in-Differences estimates of weaponized downward mobility (demotions).\n"
+        "Notes: Linear probability model of demotion within 36 months of shock among surviving movers vs. 5-year pre-shock moving cohorts.\n"
+        r"Excess demotion rates: 1987 ($-1.24$ pp, n.s., SE = 1.34); 2011 ($-2.22^{**}$ pp, SE = 0.73, p = 0.0024);"
+        "\n"
+        f"2021 ($+9.95^{{***}}$ pp, SE = 0.90, p < 0.0001). Total sample N = {total_n:,} movers."
+    )
+    ax.text(
+        0.0,
+        -0.22,
+        caption_text,
+        transform=ax.transAxes,
+        fontsize=7.2,
+        color="#4B5563",
+        va="top",
+        ha="left",
+        linespacing=1.3,
+    )
 
     png_path = FIGS / "fig_theory_13g_did_demotion.png"
     pdf_path = FIGS / "fig_theory_13g_did_demotion.pdf"
