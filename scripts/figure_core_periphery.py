@@ -521,7 +521,6 @@ def main(argv: list[str] | None = None) -> int:
     n_ridge = ridge["n"]
     ridge_co = sum(1 for i, n in enumerate(nodes)
                    if core[i] == ridge["k"] and cls[n] == "company")
-    inside_max = max(s["max"] for s in stats if s["k"] > ridge["k"])
     top_all = sorted(range(len(nodes)), key=lambda i: -bc[i])
     best_nucleus = min(r for r, i in enumerate(top_all, 1)
                        if core[i] >= NUCLEUS_K)
