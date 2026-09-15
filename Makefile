@@ -145,7 +145,7 @@ APY := PYTHONPATH=src python3
 
 .PHONY: aalam aalam-fetch aalam-ingest aalam-segment aalam-extract aalam-model \
         aalam-relations aalam-romanise aalam-codebook aalam-validate \
-        aalam-gold-draw aalam-gold-score aalam-test
+        aalam-gold-draw aalam-gold-verify aalam-gold-score aalam-test
 
 aalam: aalam-segment aalam-extract aalam-model aalam-relations aalam-romanise aalam-codebook aalam-validate
 
@@ -169,6 +169,8 @@ aalam-validate:   ## consistency, coverage and the verbatim-quote guard
 	$(APY) -m aalam.validate --strict
 aalam-gold-draw:  ## stratified, seeded sample -> coding sheets in gold/
 	$(APY) -m aalam.gold draw
+aalam-gold-verify: ## the committed sheets are still the sample the seed draws
+	$(APY) -m aalam.gold verify
 aalam-gold-score: ## coded sheets -> precision/recall with Wilson intervals
 	$(APY) -m aalam.gold score
 aalam-test:       ## parser and normalisation tests

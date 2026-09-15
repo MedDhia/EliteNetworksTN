@@ -177,26 +177,49 @@ jobs:
       - name: Install dependencies
         run: pip install -e ".[dev]" -r requirements.txt
       - name: Tests
-        run: PYTHONPATH=src python -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py tests/test_gold_aalam.py -q
+        run: PYTHONPATH=src python -m pytest tests/test_names_aalam.py tests/test_extract_aalam.py tests/test_gold_aalam.py tests/test_romanise_aalam.py -q
+
+      # `aalam-romanise` has to be in here. It is the stage that writes
+      # name_fr, name_ijmes and the gloss columns onto every table, so a chain
+      # that stops at `aalam-relations` rebuilds a narrower schema than the one
+      # committed and the diff below fails on all 2,858 rows. It is rule-based
+      # and offline like the rest: the glosses come from a committed config.
       - name: Rebuild the dataset
-        run: make aalam-segment aalam-extract aalam-model aalam-relations
+        run: make aalam-segment aalam-extract aalam-model aalam-relations aalam-romanise
       - name: Validate
         run: make aalam-validate
+
+      # Checks the committed sheets are still the sample the seed produces,
+      # which is the point of seeding the draw: a reviewer can tell the sample
+      # was not chosen after the results were seen.
+      #
+      # It does NOT redraw. A coding sheet is the one artefact here that no
+      # rebuild can reproduce, and `gold draw` writes the coder columns back
+      # empty, so the old version of this step destroyed 266 coded rows every
+      # time it ran and then diffed the wreckage. `gold verify` redraws in
+      # memory instead, and `gold draw` now refuses to overwrite a coded sheet
+      # without --force. Divergence between the coded sheets and an improved
+      # pipeline is pinned in gold/aalam_coding_drift.csv with both values, so
+      # anything new still fails here.
       - name: The gold sample is still the one that was drawn
+        run: make aalam-gold-verify
+
+      # Belt and braces: verify writes nothing, so the coded sheets must be
+      # byte-identical afterwards.
+      - name: The coded sheets were not rewritten
         run: |
-          make aalam-gold-draw
-          if ! git diff --exit-code -- gold/aalam_sample_edges.csv gold/aalam_sample_passages.csv; then
-            echo "::error::Redrawing the gold sample produced a different sample."
-            echo "The draw is seeded so a reviewer can check it was not chosen"
-            echo "after seeing the results; if the corpus changed, redraw and"
-            echo "recode deliberately rather than letting it drift."
+          if ! git diff --exit-code -- gold/; then
+            echo "::error::Verifying the gold sample modified it. Verification"
+            echo "must not write: the coder verdicts cannot be regenerated."
             exit 1
           fi
       - name: Committed tables match the rebuild
         run: |
           if ! git diff --exit-code -- data/processed/aalam-tunisiyun/; then
             echo "::error::Rebuilding produced different tables than those committed."
-            echo "Run 'make aalam' and commit the result."
+            echo "Run 'make aalam' and commit the result. Note that 'make aalam'"
+            echo "includes aalam-romanise, which writes the Latin-edition"
+            echo "columns; a chain that stops at aalam-relations drops them."
             exit 1
           fi
       - name: Coverage summary

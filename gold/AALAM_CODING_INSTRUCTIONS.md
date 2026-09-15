@@ -62,3 +62,20 @@ Put your initials in `coder`. Leave a row blank rather than guessing; a blank
 row is excluded, a guessed one corrupts the estimate.
 
 When finished, run `python -m aalam.gold score`.
+
+## Rows the pipeline has changed since they were coded
+
+Your verdicts cannot be regenerated, so the extractors are allowed to improve
+without the sheets being rewritten underneath them. Where a sampled row has
+since moved, the divergence is recorded in `aalam_coding_drift.csv` with both
+the value you were shown and the value the pipeline now produces, and the
+score report lists the affected rows under "Coding currency".
+
+Some of those entries are bookkeeping — an organisation's name gaining its
+head-word — and some are open questions flagged `NEEDS RECODING`, where the
+register no longer draws a distinction your note relied on. Those are worth
+your attention on a second pass; start there.
+
+`python -m aalam.gold verify` checks the sample is still the one the seed
+draws. It does not rewrite the sheets, and `draw` refuses to run over coded
+sheets without `--force`, so neither can cost you your work.
