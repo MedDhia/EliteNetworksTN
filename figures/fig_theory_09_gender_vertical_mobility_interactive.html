@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Dashboard: Vertical Mobility of Women in the State Apparatus (1957–2026)</title>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #FCFCFB;
+            color: #1A1917;
+            margin: 0;
+            padding: 24px;
+        }
+        .header {
+            max-width: 1400px;
+            margin: 0 auto 18px auto;
+            border-bottom: 2px solid #D3D0C7;
+            padding-bottom: 14px;
+        }
+        h1 {
+            font-size: 23px;
+            margin: 0 0 6px 0;
+            color: #1A1917;
+        }
+        p.subtitle {
+            font-size: 13.5px;
+            color: #6C6D64;
+            margin: 0;
+            line-height: 1.5;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            max-width: 1400px;
+            margin: 0 auto 20px auto;
+        }
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #D3D0C7;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .card-num {
+            font-size: 20px;
+            font-weight: bold;
+            color: #D9480F;
+            margin-bottom: 3px;
+        }
+        .card-label {
+            font-size: 11.5px;
+            color: #6C6D64;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .chart-container {
+            background: #FFFFFF;
+            border: 1px solid #D3D0C7;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            height: 480px;
+        }
+        .footer {
+            max-width: 1400px;
+            margin: 20px auto 0 auto;
+            font-size: 12px;
+            color: #6C6D64;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Vertical Mobility of Women in the Tunisian State Apparatus (1957–2026)</h1>
+        <p class="subtitle">Longitudinal Tracking of the Hierarchical Glass Ceiling, Scissor Effect, and Career Tournament Bottlenecks Across 70 Years of JORT Gazette Records</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="card">
+            <div class="card-num">42.97%</div>
+            <div class="card-label">Peak Entry Share (Saied, Sous-dir)</div>
+        </div>
+        <div class="card">
+            <div class="card-num">13.21%</div>
+            <div class="card-label">Peak Apex Share (Saied, Gov/Min)</div>
+        </div>
+        <div class="card">
+            <div class="card-num">0.651 (p &lt; 10⁻¹⁵)</div>
+            <div class="card-label">DG Promotion Odds Ratio (Women vs Men)</div>
+        </div>
+        <div class="card">
+            <div class="card-num">0.476 (p &lt; 10⁻²⁶)</div>
+            <div class="card-label">Apex Promotion Odds Ratio (Rank ≥ 70)</div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div id="chart-gradient" class="chart-container"></div>
+        <div id="chart-scissor" class="chart-container"></div>
+    </div>
+
+    <div class="footer">
+        <strong>Methodological Note:</strong> Empirical record based on 100,582 career appointment spells from the <em>Journal Officiel de la République Tunisienne</em> (1957–2026). Gender inferred using explicit legal honorifics cross-referenced with a comprehensive first-name probability classifier achieving 98.1% coverage.
+    </div>
+
+    <script>
+        const d = {"regimes": ["Bourguiba (1957\u201387)", "Ben Ali (1987\u20132011)", "Transition (2011\u201314)", "Essebsi (2014\u201319)", "Kais Saied (2019\u201326)"], "ranks": ["Chef de service (35)", "Sous-directeur (45)", "Directeur (55)", "Directeur G\u00e9n\u00e9ral (65)", "SG & Cabinet (70\u201374)", "Apex: Gov/Min (80\u201390)"], "gradient": {"Bourguiba (1957\u201387)": [3.5, 4.4, 3.5, 1.8, 2.0, 1.7], "Ben Ali (1987\u20132011)": [18.1, 21.7, 13.4, 8.3, 3.4, 3.4], "Transition (2011\u201314)": [30.0, 31.5, 22.6, 15.1, 8.5, 0.6], "Essebsi (2014\u201319)": [38.5, 37.3, 26.4, 19.3, 15.6, 9.4], "Kais Saied (2019\u201326)": [40.6, 43.0, 29.9, 26.5, 14.6, 13.2]}, "scissor_bins": ["1975\u20131978", "1979\u20131982", "1983\u20131986", "1987\u20131990", "1991\u20131994", "1995\u20131998", "1999\u20132002", "2003\u20132006", "2007\u20132010", "2011\u20132014", "2015\u20132018", "2019\u20132022", "2023\u20132026"], "scissor_entry": [2.8, 3.8, 7.0, 9.6, 11.9, 15.7, 18.6, 23.7, 25.9, 30.3, 38.4, 39.3, 42.2], "scissor_dir": [3.1, 3.6, 3.7, 3.2, 8.5, 11.2, 12.7, 16.8, 18.8, 22.5, 26.4, 27.3, 32.0], "scissor_dg": [0.0, 0.0, 0.0, 3.4, 5.1, 3.4, 7.2, 13.2, 14.2, 16.1, 21.2, 26.0, 31.1], "scissor_apex": [0.0, 0.7, 3.1, 1.1, 3.1, 3.3, 3.9, 5.0, 7.0, 8.1, 14.6, 13.8, 18.4]};
+
+        // Plot 1: Glass Ceiling Gradient Across Regimes
+        const gradientTraces = d.regimes.map(reg => ({
+            x: d.ranks,
+            y: d.gradient[reg],
+            name: reg,
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: { width: reg.includes('Saied') ? 3 : 2 }
+        }));
+
+        const layoutGradient = {
+            title: { text: '<b>A. The Glass Ceiling Gradient Across Regimes</b>', font: { size: 14 } },
+            xaxis: { tickangle: -25 },
+            yaxis: { title: 'Female Share (%)', range: [0, 50] },
+            font: { family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 11 },
+            margin: { l: 50, r: 20, t: 40, b: 60 },
+            legend: { orientation: 'h', y: -0.28 }
+        };
+        Plotly.newPlot('chart-gradient', gradientTraces, layoutGradient, { responsive: true });
+
+        // Plot 2: The Scissor Effect Over Time
+        const scissorTraces = [
+            { x: d.scissor_bins, y: d.scissor_entry, name: 'Entry Ranks (35–45)', type: 'scatter', mode: 'lines+markers', line: { color: '#D9480F', width: 2.5 } },
+            { x: d.scissor_bins, y: d.scissor_dir, name: 'Directors (55)', type: 'scatter', mode: 'lines+markers', line: { color: '#B5852A', width: 2 } },
+            { x: d.scissor_bins, y: d.scissor_dg, name: 'Directors General (65)', type: 'scatter', mode: 'lines+markers', line: { color: '#1B5FC1', width: 2 } },
+            { x: d.scissor_bins, y: d.scissor_apex, name: 'Apex & Cabinets (70–90)', type: 'scatter', mode: 'lines+markers', line: { color: '#7C3AED', width: 2.5, dash: 'dash' } }
+        ];
+
+        const layoutScissor = {
+            title: { text: '<b>B. The Scissor Effect Over Time (1975–2026)</b>', font: { size: 14 } },
+            xaxis: { tickangle: -30 },
+            yaxis: { title: 'Female Share (%)', range: [0, 50] },
+            font: { family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 11 },
+            margin: { l: 50, r: 20, t: 40, b: 60 },
+            legend: { orientation: 'h', y: -0.28 }
+        };
+        Plotly.newPlot('chart-scissor', scissorTraces, layoutScissor, { responsive: true });
+    </script>
+</body>
+</html>

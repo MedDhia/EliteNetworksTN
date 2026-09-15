@@ -111,7 +111,45 @@ All Regimes (1957–2026)                          85,444                    11,
 
 ---
 
-## 5. Figures & Scripts Index
+## 5. Vertical Mobility of Women in the State Apparatus (1957–2026)
+
+Tracking $N = 100,582$ career spells across **45,634 individual officials** using legal gazette honorifics (`Madame`/`Mademoiselle` vs. `Monsieur`/`M.`) cross-referenced with an empirical first-name Bayesian classifier (98.1% clean coverage).
+
+### The Glass Ceiling Gradient Across Regimes
+```
+========================================================================================================================
+Administrative Rank Tier       Bourguiba (1957–87)  Ben Ali (1987–11)  Transition (2011–14)  Essebsi (2014–19)  Saied (2019–26)
+------------------------------------------------------------------------------------------------------------------------
+Chef de service (Rank 35)                    3.5%             18.4%                 30.0%             38.5%            40.6%
+Sous-directeur (Rank 45)                     4.4%             21.7%                 31.4%             37.3%            43.0%
+Directeur (Rank 55)                          3.6%             13.6%                 22.5%             26.4%            29.9%
+Directeur Général (Rank 65)                  1.9%              8.0%                 15.4%             19.4%            26.5%
+SG & Cabinet (Rank 70–74)                    2.1%              3.7%                 15.0%             15.8%            14.8%
+Apex: Gov/Ministers (Rank 80–90)             1.4%              3.8%                  0.0%              9.3%            13.2%
+========================================================================================================================
+Total Appointments Under Regime              3.5%             16.3%                 26.5%             33.7%            37.0%
+========================================================================================================================
+```
+
+### Empirical Findings: The "Scissor Effect" and Career Tournament Penalties
+1. **The Modern Divergence (Saied Era: 43.0% Entry vs. 13.2% Apex)**:
+   - While female representation reaches historical highs at entry and middle management (43.0% of Sous-directeurs), the glass ceiling steepens sharply at Director General (26.5%), Cabinet (14.8%), and Apex leadership (13.2%)—a **–29.8 percentage point plunge** from entry to apex.
+2. **Career Tournament Promotion Penalties (Rank $\le 45$ Entrants)**:
+   - For officials entering at administrative baseline ranks (Chef de service/Sous-directeur), tracking cumulative promotion over 20 career years reveals that **men enjoy more than double the promotion probability to Director General**:
+     - Cumulative promotion to Director ($\ge 55$): **18.2% (Men) vs. 13.6% (Women)** (gap of –4.6%).
+     - Cumulative promotion to Director General ($\ge 65$): **8.1% (Men) vs. 3.9% (Women)** (**2.07× advantage for men**, $p < 10^{-16}$).
+   - In multivariate logistic regression controlling for entry rank score and entry cohort year:
+     - Promotion to Director ($\ge 55$): $OR = 0.865, p < 0.001$
+     - Promotion to Director General ($\ge 65$): $OR = 0.651, p < 10^{-15}$
+     - Promotion to Political Apex ($\ge 70$): $OR = 0.476, p < 10^{-26}$ (Women face a **52.4% penalty** in reaching political cabinets/governorships).
+3. **Sectoral Glass Ceilings at Senior Ranks (Rank $\ge 55$, Post-2011)**:
+   - Women's representation at Director and DG levels remains heavily stratified by ministry:
+     - **Higher Female Inclusion**: Ministry of Women & Family (**31.4%**), Higher Education (**26.3%**), Equipment & Works (**24.5%**), Finance & Economy (**24.2%**), Social Affairs (**24.1%**).
+     - **Sovereign & Technical Fortresses**: Health (**20.1%**), Defense (**19.9%**), Prime Ministry (**19.4%**), Education (**17.7%**), Justice (**17.7%**), Interior (**17.2%**), Transport (**15.4%**), Agriculture (**14.0%**).
+
+---
+
+## 6. Figures & Scripts Index
 
 ### Python Pipeline Scripts (`scripts/`)
 1. `mobility_model.py`: Multivariate logit model & machine learning feature attribution (Keller framework).
@@ -122,6 +160,7 @@ All Regimes (1957–2026)                          85,444                    11,
 6. `military_appointments_presidencies.py`: Theory 7 (Civil-Military Boundaries Across Five Regimes).
 7. `interior_colonization_state.py`: Theory 8 (Longitudinal Colonization of Civilian State by Interior Personnel).
 8. `generate_interior_sankey.py`: High-resolution Bézier Sankey visualizations and interactive Plotly dashboard.
+9. `gender_vertical_mobility.py`: Theory 9 (Vertical Mobility of Women, Tournament Penalties & Sectoral Ceilings).
 
 ### Publication Figures (`figures/`)
 * `fig_mobility_01_odds_ratios.png` & `.pdf`: Multivariate Logit Model of Upward Mobility.
@@ -139,3 +178,5 @@ All Regimes (1957–2026)                          85,444                    11,
 * `fig_theory_08_interior_colonization.png` & `.pdf`: Colonization of the Civilian State by Former Interior Employees.
 * `fig_theory_08_interior_sankey.png` & `.pdf`: Multi-Stage Sankey Diagrams of Interior Infiltration Pipeline.
 * `fig_theory_08_interior_sankey_interactive.html`: Interactive 4-View Plotly Sankey Dashboard.
+* `fig_theory_09_gender_vertical_mobility.png` & `.pdf`: Vertical Mobility of Women, Scissor Effect & Tournament Curves.
+* `fig_theory_09_gender_vertical_mobility_interactive.html`: Interactive Plotly Dashboard of Gender Mobility Across Regimes.
