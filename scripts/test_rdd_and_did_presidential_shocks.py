@@ -388,76 +388,66 @@ def get_local_linear_prediction(mod, x_min=-180, x_max=180, n_points=200):
 
 
 def plot_rdd_volume_single(key, res, t0, datestr, gloss, color, fig_id):
-    """Render a canonical single-plot RDD visual for appointment volume."""
-    fig, ax = plt.subplots(figsize=(9.2, 6.0), dpi=300)
+    """Render a canonical, clean single-plot RDD visual for appointment volume."""
+    fig, ax = plt.subplots(figsize=(8.5, 5.2), dpi=300)
     fig.patch.set_facecolor(PAPER)
     ax.set_facecolor(PAPER)
 
     daily = res["daily_df"]
     mod = res["mod"]
 
-    # 1. Binned sample means
+    # 1. Binned sample means (clean scatter dots, no heavy error bar spikes)
     pre_bins, post_bins = compute_binned_means(daily, "x", "count", bin_width=7)
 
-    ax.errorbar(
+    ax.scatter(
         pre_bins.x_mean,
         pre_bins.y_mean,
-        yerr=pre_bins.y_se,
-        fmt="o",
-        color="#2D3142",
-        ecolor="#9C9D96",
-        elinewidth=1.0,
-        capsize=2.5,
-        markersize=5.5,
-        alpha=0.85,
-        label="Binned sample means (7-day bins)",
+        color="#4B5563",
+        s=24,
+        alpha=0.75,
+        edgecolors="none",
+        label="Binned mean (7 days)",
         zorder=3,
     )
-    ax.errorbar(
+    ax.scatter(
         post_bins.x_mean,
         post_bins.y_mean,
-        yerr=post_bins.y_se,
-        fmt="o",
-        color="#2D3142",
-        ecolor="#9C9D96",
-        elinewidth=1.0,
-        capsize=2.5,
-        markersize=5.5,
-        alpha=0.85,
+        color="#4B5563",
+        s=24,
+        alpha=0.75,
+        edgecolors="none",
         zorder=3,
     )
 
     # 2. Local Linear Regression lines and 95% CI bands
     pred_pre, pred_post = get_local_linear_prediction(mod, x_min=-180, x_max=180)
 
-    ax.plot(pred_pre.x, pred_pre["mean"], color=color, lw=2.6, label="Local linear fit (pre-shock)", zorder=4)
+    ax.plot(pred_pre.x, pred_pre["mean"], color=color, lw=2.4, label="Local linear fit (95% CI)", zorder=4)
     ax.fill_between(
         pred_pre.x,
         pred_pre["mean_ci_lower"],
         pred_pre["mean_ci_upper"],
         color=color,
-        alpha=0.18,
-        label="95% Confidence interval",
+        alpha=0.15,
         zorder=2,
     )
 
-    ax.plot(pred_post.x, pred_post["mean"], color=color, lw=2.6, ls="-", label="Local linear fit (post-shock)", zorder=4)
+    ax.plot(pred_post.x, pred_post["mean"], color=color, lw=2.4, ls="-", zorder=4)
     ax.fill_between(
         pred_post.x,
         pred_post["mean_ci_lower"],
         pred_post["mean_ci_upper"],
         color=color,
-        alpha=0.18,
+        alpha=0.15,
         zorder=2,
     )
 
     # 3. Cutoff line
-    ax.axvline(0, color=INK, ls="--", lw=1.3, zorder=2)
-    
-    # Scale y-axis appropriately based on binned means and regression bounds (avoiding raw daily outlier distortion)
-    max_bin_val = max(pre_bins.y_mean.max(), post_bins.y_mean.max())
-    max_fit_val = max(pred_pre["mean_ci_upper"].max(), pred_post["mean_ci_upper"].max())
-    y_max = max(max_bin_val * 1.25, max_fit_val * 1.3, 16.0)
+    ax.axvline(0, color=INK, ls="--", lw=1.1, alpha=0.75, zorder=2)
+
+    # Scale y-axis with ample breathing room
+    max_val = max(pre_bins.y_mean.max(), post_bins.y_mean.max(), pred_pre["mean_ci_upper"].max(), pred_post["mean_ci_upper"].max())
+    y_max = max(max_val * 1.25, 12.0)
 
     # 4. Discontinuity jump at c = 0
     y_left = pred_pre.iloc[-1]["mean"]
@@ -465,96 +455,65 @@ def plot_rdd_volume_single(key, res, t0, datestr, gloss, color, fig_id):
     jump = mod.params["d"]
     se = mod.bse["d"]
     pval = mod.pvalues["d"]
-    ci_low = mod.conf_int().loc["d", 0]
-    ci_high = mod.conf_int().loc["d", 1]
 
-    # Draw vertical discontinuity bracket at x = 0
-    bracket_x = 0
-    ax.plot([bracket_x - 3, bracket_x + 3], [y_left, y_left], color=INK, lw=1.5, zorder=5)
-    ax.plot([bracket_x - 3, bracket_x + 3], [y_right, y_right], color=INK, lw=1.5, zorder=5)
-    ax.plot([bracket_x, bracket_x], [y_left, y_right], color=INK, lw=1.5, ls=":", zorder=5)
+    # Vertical discontinuity bracket at x = 0
+    ax.plot([-3, 3], [y_left, y_left], color=INK, lw=1.3, zorder=5)
+    ax.plot([-3, 3], [y_right, y_right], color=INK, lw=1.3, zorder=5)
+    ax.plot([0, 0], [y_left, y_right], color=INK, lw=1.3, ls=":", zorder=5)
 
-    # Annotate Discontinuity Jump without overlapping regression line
-    sig_stars = "^{***}" if pval < 0.001 else ("^{**}" if pval < 0.01 else ("^{*}" if pval < 0.05 else r"\text{ (n.s.)}"))
-    jump_annot_y = (y_left + y_right) / 2
-    
-    # Placement tuning per shock for crystal-clear legibility
-    if key == "1987":
-        box_x = 30
-        box_y = y_max * 0.52
-        arrow_rad = -0.1
-        target_pt = (bracket_x, jump_annot_y)
-    elif key == "2011":
-        box_x = 30
-        box_y = y_max * 0.54
-        arrow_rad = -0.1
-        target_pt = (bracket_x, jump_annot_y)
-    else:  # 2021
-        box_x = 45
-        box_y = y_max * 0.72
-        arrow_rad = 0.12
-        target_pt = (bracket_x, y_left)
+    sig_stars = "^{***}" if pval < 0.001 else ("^{**}" if pval < 0.01 else ("^{*}" if pval < 0.05 else ""))
+    annot_text = rf"$\hat{{\tau}} = {jump:+.2f}{sig_stars}$" + "\n" + rf"$(\mathrm{{SE}} = {se:.2f})$"
 
-    annot_text = (
-        r"$\mathbf{Discontinuity\ Jump\ at\ Cutoff:}$" + "\n"
-        + rf"$\hat{{\tau}}_{{\mathrm{{RDD}}}} = {jump:+.2f}" + sig_stars + r"\ \mathrm{acts/day}$" + "\n"
-        + rf"$\mathrm{{Robust\ SE}} = {se:.2f}\ (t = {jump/se:+.2f},\ p = {pval:.4f})$" + "\n"
-        + rf"$95\%\ \mathrm{{CI}}:\ [{ci_low:+.2f},\ {ci_high:+.2f}]$"
-    )
+    # Compact, clean callout placed directly adjacent to the jump bracket without crossing lines
+    y_mid = (y_left + y_right) / 2
+    callout_x = -8 if key == "2021" else 8
+    callout_ha = "right" if key == "2021" else "left"
 
-    ax.annotate(
+    ax.text(
+        callout_x,
+        y_mid,
         annot_text,
-        xy=target_pt,
-        xytext=(box_x, box_y),
-        ha="left",
+        ha=callout_ha,
         va="center",
-        fontsize=8.5,
+        fontsize=9.0,
+        fontweight="bold",
         color=INK,
-        bbox=dict(boxstyle="round,pad=0.45", facecolor=PAPER, edgecolor=color, lw=1.4, alpha=0.95),
-        arrowprops=dict(arrowstyle="->", color=color, lw=1.4, connectionstyle=f"arc3,rad={arrow_rad}"),
+        bbox=dict(boxstyle="round,pad=0.32", facecolor=PAPER, edgecolor=RULE, lw=0.9, alpha=0.95),
         zorder=6,
     )
 
-    # 5. Econometric Specification Box
+    # Clean academic footnote below the axis (replaces bulky interior specification box)
     ax.text(
-        0.03,
-        0.96,
-        f"Model: Sharp Regression Discontinuity in Time (RDiT)\n"
-        f"Bandwidth: h = ±180 days (Uniform kernel)\n"
-        f"Polynomial: Local Linear (p = 1) with separate slopes\n"
-        f"Inference: HC1 Heteroskedasticity-Robust Standard Errors\n"
-        f"Pre-Cutoff Mean: {res['pre_mean']:.2f} acts/day | Post-Cutoff Mean: {res['post_mean']:.2f} acts/day\n"
-        f"Total Daily Observations: N = {len(daily)} days",
+        0.0,
+        -0.14,
+        f"Notes: Binned means in 7-day windows. Solid lines show local linear fit (h = ±180d, uniform kernel) with 95% HC1 confidence bands. Daily N = {len(daily):,}.",
         transform=ax.transAxes,
         fontsize=8.0,
-        va="top",
-        ha="left",
         color=MUTED,
-        bbox=dict(boxstyle="round,pad=0.4", facecolor="#F5F4F0", edgecolor=RULE, lw=1.0),
-        zorder=5,
+        ha="left",
     )
 
-    # Titles and formatting
+    # Clean title and labels
     ax.set_title(
-        f"Regression Discontinuity in Time (RDD): {key} {gloss}\n"
-        f"Sharp local linear discontinuity in daily state appointment throughput at cutoff c = 0 ({datestr})",
+        f"{key} {gloss}: Daily Appointment Throughput",
         fontsize=11.5,
         fontweight="bold",
         pad=12,
         color=INK,
+        loc="left",
     )
-    ax.set_xlabel(f"Days Relative to the Unexpected Regime Shock (Cutoff c = 0 on {datestr})", fontsize=10, fontweight="bold", labelpad=8)
-    ax.set_ylabel("Daily Gazetted Appointments Count", fontsize=10, fontweight="bold", labelpad=8)
+    ax.set_xlabel(f"Days Relative to Regime Shock (c = 0 on {datestr})", fontsize=9.5, fontweight="bold", labelpad=7)
+    ax.set_ylabel("Daily Gazetted Appointments Count", fontsize=9.5, fontweight="bold", labelpad=7)
     ax.set_xlim(-180, 180)
     ax.set_ylim(0, y_max)
-    ax.grid(True, axis="y", linestyle=":", alpha=0.6, color=RULE)
+    ax.grid(True, axis="y", linestyle=":", alpha=0.5, color=RULE)
 
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_color(RULE)
     ax.spines["bottom"].set_color(RULE)
 
-    ax.legend(loc="upper right", frameon=True, facecolor=PAPER, edgecolor=RULE, fontsize=8.5)
+    ax.legend(loc="upper right", frameon=False, fontsize=8.5)
 
     png_path = FIGS / f"fig_theory_13{fig_id}_rdd_{key}_volume.png"
     pdf_path = FIGS / f"fig_theory_13{fig_id}_rdd_{key}_volume.pdf"
@@ -568,74 +527,64 @@ def plot_rdd_volume_single(key, res, t0, datestr, gloss, color, fig_id):
 
 
 def plot_rdd_composition_single(key, res_dict, t0, datestr, gloss, outcome_col, outcome_name, fig_id, color):
-    """Render a canonical single-plot RDD visual for appointment composition."""
-    fig, ax = plt.subplots(figsize=(9.2, 6.0), dpi=300)
+    """Render a canonical, clean single-plot RDD visual for appointment composition."""
+    fig, ax = plt.subplots(figsize=(8.5, 5.2), dpi=300)
     fig.patch.set_facecolor(PAPER)
     ax.set_facecolor(PAPER)
 
     sub = res_dict["sub_df"].copy()
-    sub[outcome_col] = sub[outcome_col] * 100.0  # Convert to percentage
+    sub[outcome_col] = sub[outcome_col] * 100.0  # Percentage
 
-    # Re-estimate model in percentage points for exact predictions
     mod = smf.ols(f"{outcome_col} ~ d + x + dx", data=sub).fit(cov_type="HC1")
 
-    # 1. Binned sample means
+    # 1. Binned sample shares (clean scatter dots, no heavy error bar spikes)
     pre_bins, post_bins = compute_binned_means(sub, "x", outcome_col, bin_width=7)
 
-    ax.errorbar(
+    ax.scatter(
         pre_bins.x_mean,
         pre_bins.y_mean,
-        yerr=pre_bins.y_se,
-        fmt="o",
-        color="#2D3142",
-        ecolor="#9C9D96",
-        elinewidth=1.0,
-        capsize=2.5,
-        markersize=5.5,
-        alpha=0.85,
-        label="Binned sample share (7-day bins)",
+        color="#4B5563",
+        s=24,
+        alpha=0.75,
+        edgecolors="none",
+        label="Binned share (7 days)",
         zorder=3,
     )
-    ax.errorbar(
+    ax.scatter(
         post_bins.x_mean,
         post_bins.y_mean,
-        yerr=post_bins.y_se,
-        fmt="o",
-        color="#2D3142",
-        ecolor="#9C9D96",
-        elinewidth=1.0,
-        capsize=2.5,
-        markersize=5.5,
-        alpha=0.85,
+        color="#4B5563",
+        s=24,
+        alpha=0.75,
+        edgecolors="none",
         zorder=3,
     )
 
     # 2. Local Linear Regression lines and 95% CI bands
     pred_pre, pred_post = get_local_linear_prediction(mod, x_min=-180, x_max=180)
 
-    ax.plot(pred_pre.x, pred_pre["mean"], color=color, lw=2.6, label="Local linear fit (pre-shock)", zorder=4)
+    ax.plot(pred_pre.x, pred_pre["mean"], color=color, lw=2.4, label="Local linear fit (95% CI)", zorder=4)
     ax.fill_between(
         pred_pre.x,
         pred_pre["mean_ci_lower"],
         pred_pre["mean_ci_upper"],
         color=color,
-        alpha=0.18,
-        label="95% Confidence interval",
+        alpha=0.15,
         zorder=2,
     )
 
-    ax.plot(pred_post.x, pred_post["mean"], color=color, lw=2.6, ls="-", label="Local linear fit (post-shock)", zorder=4)
+    ax.plot(pred_post.x, pred_post["mean"], color=color, lw=2.4, ls="-", zorder=4)
     ax.fill_between(
         pred_post.x,
         pred_post["mean_ci_lower"],
         pred_post["mean_ci_upper"],
         color=color,
-        alpha=0.18,
+        alpha=0.15,
         zorder=2,
     )
 
     # 3. Cutoff line
-    ax.axvline(0, color=INK, ls="--", lw=1.3, zorder=2)
+    ax.axvline(0, color=INK, ls="--", lw=1.1, alpha=0.75, zorder=2)
 
     # 4. Discontinuity jump at c = 0
     y_left = pred_pre.iloc[-1]["mean"]
@@ -643,88 +592,68 @@ def plot_rdd_composition_single(key, res_dict, t0, datestr, gloss, outcome_col, 
     jump = mod.params["d"]
     se = mod.bse["d"]
     pval = mod.pvalues["d"]
-    ci_low = mod.conf_int().loc["d", 0]
-    ci_high = mod.conf_int().loc["d", 1]
 
-    # Draw vertical discontinuity bracket at x = 0
-    bracket_x = 0
-    ax.plot([bracket_x - 3, bracket_x + 3], [y_left, y_left], color=INK, lw=1.5, zorder=5)
-    ax.plot([bracket_x - 3, bracket_x + 3], [y_right, y_right], color=INK, lw=1.5, zorder=5)
-    ax.plot([bracket_x, bracket_x], [y_left, y_right], color=INK, lw=1.5, ls=":", zorder=5)
+    # Vertical discontinuity bracket at x = 0
+    ax.plot([-3, 3], [y_left, y_left], color=INK, lw=1.3, zorder=5)
+    ax.plot([-3, 3], [y_right, y_right], color=INK, lw=1.3, zorder=5)
+    ax.plot([0, 0], [y_left, y_right], color=INK, lw=1.3, ls=":", zorder=5)
 
-    sig_stars = "^{***}" if pval < 0.001 else ("^{**}" if pval < 0.01 else ("^{*}" if pval < 0.05 else r"\text{ (n.s.)}"))
-    jump_annot_y = (y_left + y_right) / 2
+    sig_stars = "^{***}" if pval < 0.001 else ("^{**}" if pval < 0.01 else ("^{*}" if pval < 0.05 else ""))
+    annot_text = rf"$\hat{{\tau}} = {jump:+.2f}{sig_stars}\ \mathrm{{pp}}$" + "\n" + rf"$(\mathrm{{SE}} = {se:.2f}\ \mathrm{{pp}})$"
 
-    # Placement tuning per composition figure so boxes and arrows never cross regression curves or overlap legend
-    if key == "1987":
-        box_x = 20
-        box_y = 80
-        target_pt = (bracket_x, y_right)  # Point directly to top of jump bracket
-    else:  # 2011
-        box_x = 20
-        box_y = 78
-        target_pt = (bracket_x, y_right)  # Point directly to top of jump bracket
+    # Clean callout placed in the clear pocket beside the bracket
+    y_mid = (y_left + y_right) / 2
+    callout_x = -8 if jump > 0 else 8
+    callout_ha = "right" if jump > 0 else "left"
 
-    annot_text = (
-        r"$\mathbf{Discontinuity\ Jump\ at\ Cutoff:}$" + "\n"
-        + rf"$\hat{{\tau}}_{{\mathrm{{RDD}}}} = {jump:+.2f}" + sig_stars + r"\ \mathrm{pp}$" + "\n"
-        + rf"$\mathrm{{Robust\ SE}} = {se:.2f}\ \mathrm{{pp}}\ (t = {jump/se:+.2f},\ p = {pval:.1e})$" + "\n"
-        + rf"$95\%\ \mathrm{{CI}}:\ [{ci_low:+.2f},\ {ci_high:+.2f}]\ \mathrm{{pp}}$"
-    )
-
-    ax.annotate(
+    ax.text(
+        callout_x,
+        y_mid,
         annot_text,
-        xy=target_pt,
-        xytext=(box_x, box_y),
-        ha="center",
+        ha=callout_ha,
         va="center",
-        fontsize=8.5,
+        fontsize=9.0,
+        fontweight="bold",
         color=INK,
-        bbox=dict(boxstyle="round,pad=0.45", facecolor=PAPER, edgecolor=color, lw=1.4, alpha=0.95),
-        arrowprops=dict(arrowstyle="->", color=color, lw=1.4, connectionstyle="arc3,rad=-0.08"),
+        bbox=dict(boxstyle="round,pad=0.32", facecolor=PAPER, edgecolor=RULE, lw=0.9, alpha=0.95),
         zorder=6,
     )
 
-    # 5. Econometric Specification Box
+    # Clean footnote below axis
     ax.text(
-        0.03,
-        0.96,
-        f"Model: Sharp RDD on Appointee Composition\n"
-        f"Target Metric: {outcome_name}\n"
-        f"Bandwidth: h = ±180 days (Uniform kernel)\n"
-        f"Polynomial: Local Linear (p = 1, separate slopes)\n"
-        f"Inference: HC1 Heteroskedasticity-Robust Standard Errors\n"
-        f"Total Gazetted Appointments Analyzed: N = {len(sub):,} acts",
+        0.0,
+        -0.14,
+        f"Notes: Binned shares in 7-day windows. Solid lines show local linear fit (h = ±180d, uniform kernel) with 95% HC1 confidence bands. Acts N = {len(sub):,}.",
         transform=ax.transAxes,
         fontsize=8.0,
-        va="top",
-        ha="left",
         color=MUTED,
-        bbox=dict(boxstyle="round,pad=0.4", facecolor="#F5F4F0", edgecolor=RULE, lw=1.0),
-        zorder=5,
+        ha="left",
     )
 
-    # Titles and formatting
+    # Clean title and labels
     ax.set_title(
-        f"Regression Discontinuity in Time (RDD): {key} {gloss}\n"
-        f"Sharp discontinuous realignment in {outcome_name} at cutoff c = 0 ({datestr})",
+        f"{key} {gloss}: {outcome_name}",
         fontsize=11.5,
         fontweight="bold",
         pad=12,
         color=INK,
+        loc="left",
     )
-    ax.set_xlabel(f"Days Relative to the Unexpected Regime Shock (Cutoff c = 0 on {datestr})", fontsize=10, fontweight="bold", labelpad=8)
-    ax.set_ylabel(f"Share of Gazetted Appointments (%)", fontsize=10, fontweight="bold", labelpad=8)
+    ax.set_xlabel(f"Days Relative to Regime Shock (c = 0 on {datestr})", fontsize=9.5, fontweight="bold", labelpad=7)
+    ax.set_ylabel(f"Share of Gazetted Appointments (%)", fontsize=9.5, fontweight="bold", labelpad=7)
     ax.set_xlim(-180, 180)
-    ax.set_ylim(0, 92)
-    ax.grid(True, axis="y", linestyle=":", alpha=0.6, color=RULE)
+    
+    # Adaptive y-limits with headroom
+    max_share = max(pre_bins.y_mean.max(), post_bins.y_mean.max(), pred_pre["mean_ci_upper"].max(), pred_post["mean_ci_upper"].max())
+    ax.set_ylim(0, max(max_share * 1.3, 15.0))
+    ax.grid(True, axis="y", linestyle=":", alpha=0.5, color=RULE)
 
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_color(RULE)
     ax.spines["bottom"].set_color(RULE)
 
-    ax.legend(loc="upper right", frameon=True, facecolor=PAPER, edgecolor=RULE, fontsize=8.5)
+    ax.legend(loc="upper right", frameon=False, fontsize=8.5)
 
     png_path = FIGS / f"fig_theory_13{fig_id}_rdd_{key}_{outcome_col}.png"
     pdf_path = FIGS / f"fig_theory_13{fig_id}_rdd_{key}_{outcome_col}.pdf"
@@ -738,13 +667,13 @@ def plot_rdd_composition_single(key, res_dict, t0, datestr, gloss, outcome_col, 
 
 
 def plot_did_survival_single(did_surv):
-    """Render a canonical single-plot Difference-in-Differences visual for Hierarchical 24M Survival."""
-    fig, ax = plt.subplots(figsize=(9.5, 6.0), dpi=300)
+    """Render a canonical, clean single-plot Difference-in-Differences visual for Hierarchical 24M Survival."""
+    fig, ax = plt.subplots(figsize=(8.8, 5.2), dpi=300)
     fig.patch.set_facecolor(PAPER)
     ax.set_facecolor(PAPER)
 
     x_c = np.arange(len(RUPTURES))
-    w_c = 0.26
+    w_c = 0.22
 
     for idx, (key, _, datestr, gloss) in enumerate(RUPTURES):
         res = did_surv[key]
@@ -758,11 +687,11 @@ def plot_did_survival_single(did_surv):
             [idx - w_c, idx + w_c],
             [y_plc_low, y_plc_high],
             color=MUTED,
-            lw=1.8,
+            lw=1.6,
             ls=":",
             marker="o",
-            markersize=6.5,
-            label="Matched Placebo Cohorts (5-yr baselines)" if idx == 0 else None,
+            markersize=6,
+            label="Matched Placebo Cohort (5-yr baseline)" if idx == 0 else None,
             zorder=3,
         )
 
@@ -773,75 +702,82 @@ def plot_did_survival_single(did_surv):
             [idx - w_c, idx + w_c],
             [y_trt_low, y_trt_high],
             color=col,
-            lw=2.8,
+            lw=2.5,
             ls="-",
             marker="s",
-            markersize=7.5,
+            markersize=6.5,
             label="Regime Shock Cohort (Treated)" if idx == 0 else None,
             zorder=4,
         )
 
-        # Counterfactual parallel trend point for High Rank:
-        # y_cf = y_trt_low + (y_plc_high - y_plc_low)
+        # Counterfactual parallel trend point for High Rank
         y_cf = y_trt_low + (y_plc_high - y_plc_low)
-        ax.plot([idx + w_c], [y_cf], marker="D", markersize=6.5, color=MUTED, fillstyle="none", markeredgewidth=1.6, zorder=5)
-        ax.plot([idx - w_c, idx + w_c], [y_trt_low, y_cf], color=MUTED, lw=1.2, ls="--", zorder=2)
+        ax.plot([idx + w_c], [y_cf], marker="D", markersize=6, color=MUTED, fillstyle="none", markeredgewidth=1.5, zorder=5)
+        ax.plot([idx - w_c, idx + w_c], [y_trt_low, y_cf], color=MUTED, lw=1.1, ls="--", zorder=2)
 
         # Draw DiD vertical bracket between counterfactual and actual treated high rank
         did_gap = res["did_interaction"]
         pval = res["did_p"]
-        sig = "^{***}" if pval < 0.001 else ("^{**}" if pval < 0.01 else ("^{*}" if pval < 0.05 else r"\text{ (n.s.)}"))
+        sig = "^{***}" if pval < 0.001 else ("^{**}" if pval < 0.01 else ("^{*}" if pval < 0.05 else ""))
 
-        ax.plot([idx + w_c + 0.04, idx + w_c + 0.04], [y_cf, y_trt_high], color=col, lw=1.6, ls="-", zorder=5)
-        ax.plot([idx + w_c + 0.02, idx + w_c + 0.06], [y_cf, y_cf], color=col, lw=1.6, zorder=5)
-        ax.plot([idx + w_c + 0.02, idx + w_c + 0.06], [y_trt_high, y_trt_high], color=col, lw=1.6, zorder=5)
+        ax.plot([idx + w_c + 0.035, idx + w_c + 0.035], [y_cf, y_trt_high], color=col, lw=1.4, ls="-", zorder=5)
+        ax.plot([idx + w_c + 0.02, idx + w_c + 0.05], [y_cf, y_cf], color=col, lw=1.4, zorder=5)
+        ax.plot([idx + w_c + 0.02, idx + w_c + 0.05], [y_trt_high, y_trt_high], color=col, lw=1.4, zorder=5)
 
-        # Annotate DiD estimate
+        # Clean DiD callout
         annot_y = (y_cf + y_trt_high) / 2
-        ax.annotate(
-            rf"$\hat{{\delta}}_{{\mathrm{{DiD}}}} = {did_gap:+.2f}" + sig + r"\ \mathrm{pp}$" + "\n"
-            + rf"$(\mathrm{{SE}} = {res['did_se']:.2f},\ p = {pval:.1e})$",
-            xy=(idx + w_c + 0.05, annot_y),
-            xytext=(idx + w_c + 0.08, annot_y),
+        ax.text(
+            idx + w_c + 0.07,
+            annot_y,
+            rf"$\hat{{\delta}}_{{\mathrm{{DiD}}}} = {did_gap:+.2f}{sig}\ \mathrm{{pp}}$" + "\n"
+            + rf"$(\mathrm{{SE}} = {res['did_se']:.2f})$",
             ha="left",
             va="center",
-            fontsize=8.0,
+            fontsize=8.5,
+            fontweight="bold",
             color=col,
-            bbox=dict(boxstyle="round,pad=0.3", facecolor=PAPER, edgecolor=RULE, alpha=0.95),
+            bbox=dict(boxstyle="round,pad=0.25", facecolor=PAPER, edgecolor=RULE, lw=0.8, alpha=0.92),
             zorder=6,
         )
 
-        # Annotate sample retention percentages
-        y_offset_low = -1.8 if idx == 0 else 1.3
-        ax.text(idx - w_c - (0.04 if idx == 0 else 0.0), y_trt_low + y_offset_low, f"{y_trt_low:.1f}%", ha="center", fontsize=8.0, color=col, fontweight="bold")
-        ax.text(idx + w_c, y_trt_high - 2.2, f"{y_trt_high:.1f}%", ha="center", fontsize=8.0, color=col, fontweight="bold")
+    # Footnote below axis
+    ax.text(
+        0.0,
+        -0.14,
+        "Notes: 24-month survival rates comparing Senior Leadership (Rank ≥ 65) to Operational Civil Service (Rank ≤ 45) vs. 5-year pre-shock matched cohorts.",
+        transform=ax.transAxes,
+        fontsize=8.0,
+        color=MUTED,
+        ha="left",
+    )
 
     # Titles and formatting
     ax.set_title(
-        "Hierarchical Difference-in-Differences (DiD): 24-Month Incumbent Survival\n"
-        "Senior Leadership (Rank >= 65, DGs & Apex) vs. Operational Civil Service (Rank <= 45) Across Regime Shocks",
+        "Hierarchical Difference-in-Differences: 24-Month Incumbent Survival",
         fontsize=11.5,
         fontweight="bold",
         pad=12,
         color=INK,
+        loc="left",
     )
     ax.set_xticks(x_c)
     ax.set_xticklabels([
         f"1987 Ben Ali Coup\n(N = {did_surv['1987']['n']:,})",
         f"2011 Revolution\n(N = {did_surv['2011']['n']:,})",
         f"2021 Saïed Auto-Coup\n(N = {did_surv['2021']['n']:,})",
-    ], fontsize=9.5)
+    ], fontsize=9.0)
 
-    ax.set_ylabel("24-Month Incumbent Retention / Survival Rate (%)", fontsize=10, fontweight="bold", labelpad=8)
-    ax.set_ylim(65, 100)
-    ax.grid(True, axis="y", linestyle=":", alpha=0.6, color=RULE)
+    ax.set_ylabel("24-Month Survival Rate (%)", fontsize=9.5, fontweight="bold", labelpad=7)
+    ax.set_ylim(68, 98)
+    ax.set_xlim(-0.5, 2.75)
+    ax.grid(True, axis="y", linestyle=":", alpha=0.5, color=RULE)
 
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_color(RULE)
     ax.spines["bottom"].set_color(RULE)
 
-    ax.legend(loc="lower left", frameon=True, facecolor=PAPER, edgecolor=RULE, fontsize=8.5)
+    ax.legend(loc="lower left", frameon=False, fontsize=8.5)
 
     png_path = FIGS / "fig_theory_13f_did_survival.png"
     pdf_path = FIGS / "fig_theory_13f_did_survival.pdf"
@@ -855,8 +791,8 @@ def plot_did_survival_single(did_surv):
 
 
 def plot_did_demotion_single(did_demo):
-    """Render a canonical single-plot Difference-in-Differences visual for Weaponized Demotion Probability."""
-    fig, ax = plt.subplots(figsize=(9.2, 5.8), dpi=300)
+    """Render a canonical, clean single-plot Difference-in-Differences visual for Weaponized Demotion Probability."""
+    fig, ax = plt.subplots(figsize=(8.5, 5.0), dpi=300)
     fig.patch.set_facecolor(PAPER)
     ax.set_facecolor(PAPER)
 
@@ -867,19 +803,19 @@ def plot_did_demotion_single(did_demo):
     bars = ax.bar(
         x_d,
         dem_jumps,
-        width=0.42,
+        width=0.38,
         yerr=dem_ses,
-        capsize=5,
+        capsize=4,
         color=[RUPTURE_COLOURS[k] for k, _, _, _ in RUPTURES],
-        edgecolor=PAPER,
-        linewidth=1.2,
+        edgecolor="none",
+        alpha=0.9,
         zorder=3,
     )
 
     for idx, (bar, val, (k, _, _, _)) in enumerate(zip(bars, dem_jumps, RUPTURES)):
         p_val = did_demo[k]["did_p"]
-        sig = " ***" if p_val < 0.001 else (" **" if p_val < 0.01 else (" *" if p_val < 0.05 else " (n.s.)"))
-        
+        sig = "^{***}" if p_val < 0.001 else ("^{**}" if p_val < 0.01 else ("^{*}" if p_val < 0.05 else ""))
+
         if val >= 0:
             y_pos = val + dem_ses[idx] + 0.6
             va_align = "bottom"
@@ -887,45 +823,51 @@ def plot_did_demotion_single(did_demo):
             y_pos = val - dem_ses[idx] - 0.6
             va_align = "top"
 
-        label_txt = (
-            f"{val:+.2f} pp{sig}\n"
-            f"(p = {p_val:.1e})\n"
-            f"Treated: {did_demo[k]['p_rup']:.1f}%\n"
-            f"Placebo: {did_demo[k]['p_plc']:.1f}%"
-        )
+        label_txt = rf"${val:+.2f}{sig}\ \mathrm{{pp}}$" + "\n" + rf"$(\mathrm{{SE}} = {dem_ses[idx]:.2f})$"
 
-        ax.annotate(
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            y_pos,
             label_txt,
-            xy=(bar.get_x() + bar.get_width() / 2, y_pos),
             ha="center",
             va=va_align,
-            fontsize=8.5,
+            fontsize=9.0,
             fontweight="bold",
             color=RUPTURE_COLOURS[k],
-            bbox=dict(boxstyle="round,pad=0.25", facecolor=PAPER, edgecolor=RULE, alpha=0.92),
             zorder=6,
         )
 
-    ax.axhline(0, color=INK, lw=1.2, ls="-", zorder=2)
+    ax.axhline(0, color=INK, lw=1.1, ls="-", zorder=2)
     ax.set_xticks(x_d)
     ax.set_xticklabels([
         f"1987 Ben Ali Coup\n(N = {did_demo['1987']['n']:,} movers)",
         f"2011 Revolution\n(N = {did_demo['2011']['n']:,} movers)",
         f"2021 Saïed Auto-Coup\n(N = {did_demo['2021']['n']:,} movers)",
-    ], fontsize=9.5)
+    ], fontsize=9.0)
+
+    # Footnote below axis
+    ax.text(
+        0.0,
+        -0.14,
+        "Notes: DiD estimates of excess downward rank transition within 36 months of shock relative to 5-year pre-shock moving cohorts. HC1 robust SEs.",
+        transform=ax.transAxes,
+        fontsize=8.0,
+        color=MUTED,
+        ha="left",
+    )
 
     ax.set_title(
-        "Difference-in-Differences (DiD): Weaponized Demotion Probability\n"
-        "Excess Demotion Rate among Surviving Movers within 36 Months vs. 5-Year Pre-Shock Placebos",
+        "Difference-in-Differences: Weaponized Demotion Probability",
         fontsize=11.5,
         fontweight="bold",
         pad=12,
         color=INK,
+        loc="left",
     )
-    ax.set_ylabel("Excess Demotion DiD vs. Placebos (Percentage Points)", fontsize=10, fontweight="bold", labelpad=8)
-    ax.set_ylim(-7.5, 17.5)
-    ax.grid(True, axis="y", linestyle=":", alpha=0.6, color=RULE)
-
+    ax.set_ylabel("Excess Demotion Rate (pp)", fontsize=9.5, fontweight="bold", labelpad=7)
+    ax.set_ylim(-6.0, 15.0)
+    ax.tick_params(axis="x", pad=6)
+    ax.grid(True, axis="y", linestyle=":", alpha=0.5, color=RULE)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_color(RULE)
