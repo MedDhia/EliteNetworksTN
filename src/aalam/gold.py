@@ -8,6 +8,7 @@ side by side, so a coder can mark each tie right or wrong and record what was
 missed.
 
     python -m aalam.gold draw    # stratified sample -> coding sheets
+    python -m aalam.gold verify  # the committed sheets are still that sample
     python -m aalam.gold score   # coded sheets -> precision/recall
 
 Two units, because precision and recall are not answerable from the same one.
@@ -27,7 +28,10 @@ so a generation the extractor reads badly shows up rather than averaging out.
 
 Sampling is seeded and the corpus is sorted before drawing, so the same sample
 comes out every time and a reviewer can check it was not chosen after seeing
-the results.
+the results. That check is `verify`, not a redraw: the sheets on disk carry
+verdicts a person wrote, no input reproduces them, and `draw` writes the coder
+columns back empty. `draw` therefore refuses to overwrite a coded sheet unless
+forced.
 """
 from __future__ import annotations
 
@@ -115,9 +119,15 @@ def _allocate(rng: random.Random, groups: dict[str, list], n: int,
     return chosen
 
 
-def draw(n_edges: int = DEFAULT_EDGES, n_passages: int = DEFAULT_PASSAGES) -> dict:
+def _sample(n_edges: int = DEFAULT_EDGES,
+            n_passages: int = DEFAULT_PASSAGES) -> tuple[list, list, list, dict]:
+    """Draw the sample without writing anything.
+
+    Split out from ``draw`` so the draw can be checked without being redone:
+    the sheets on disk carry a coder's verdicts, and regenerating them to see
+    whether the sample moved would destroy the work being checked.
+    """
     ensure_dirs()
-    GOLD.mkdir(parents=True, exist_ok=True)
 
     with open_text(PROCESSED / "edges" / "all.csv") as fh:
         edges = list(csv.DictReader(fh))
@@ -194,20 +204,228 @@ def draw(n_edges: int = DEFAULT_EDGES, n_passages: int = DEFAULT_PASSAGES) -> di
         passage_texts.append({"coding_id": cid, "entry_uid": p["entry_uid"],
                               "text": p["text"]})
 
-    _write(GOLD / "aalam_sample_edges.csv", edge_rows, EDGE_SHEET_FIELDS)
-    _write(GOLD / "aalam_sample_passages.csv", passage_rows, PASSAGE_SHEET_FIELDS)
-    with (GOLD / "aalam_sample_texts.jsonl").open("w", encoding="utf-8") as fh:
-        for t in passage_texts:
-            fh.write(json.dumps(t, ensure_ascii=False) + "\n")
-    (GOLD / "AALAM_CODING_INSTRUCTIONS.md").write_text(_instructions(), encoding="utf-8")
-
-    return {
+    stats = {
         "edges_in_corpus": len(edges), "edges_sampled": len(edge_rows),
         "edge_strata": len(by_stratum), "strata_taken_whole": len(take_all),
         "passages_in_corpus": sum(len(v) for v in pool.values()),
         "passages_sampled": len(passage_rows),
         "sampling_seed": SEED,
     }
+    return edge_rows, passage_rows, passage_texts, stats
+
+
+def draw(n_edges: int = DEFAULT_EDGES, n_passages: int = DEFAULT_PASSAGES,
+         *, force: bool = False) -> dict:
+    edge_rows, passage_rows, passage_texts, stats = _sample(n_edges, n_passages)
+    GOLD.mkdir(parents=True, exist_ok=True)
+
+    # Written before the guard below, and deliberately: the instructions are
+    # generated from this module alone and hold no sample data, so refreshing
+    # them destroys nothing. Were they behind the guard, an edit to the coding
+    # rules could not be published without a --force redraw of the sheets.
+    (GOLD / "AALAM_CODING_INSTRUCTIONS.md").write_text(_instructions(), encoding="utf-8")
+
+    # A redraw writes the coder columns back as empty strings, so running this
+    # over sheets that have been coded silently deletes the coding - the one
+    # thing in this repository no rebuild can reproduce. Refuse by default;
+    # `--force` is for a deliberate redraw after the corpus has changed, which
+    # means recoding anyway.
+    coded = _coded_sheets()
+    if coded and not force:
+        raise SystemExit(
+            "refusing to redraw: " + ", ".join(
+                f"{p.name} carries {n} coded row(s)" for p, n in coded) +
+            ".\nA redraw blanks the coder columns and the verdicts are not "
+            "recoverable from any input.\nTo check the draw has not moved, run "
+            "`python -m aalam.gold verify`, which redraws in memory.\nTo redraw "
+            "deliberately and recode from scratch, pass --force.")
+
+    _write(GOLD / "aalam_sample_edges.csv", edge_rows, EDGE_SHEET_FIELDS)
+    _write(GOLD / "aalam_sample_passages.csv", passage_rows, PASSAGE_SHEET_FIELDS)
+    with (GOLD / "aalam_sample_texts.jsonl").open("w", encoding="utf-8") as fh:
+        for t in passage_texts:
+            fh.write(json.dumps(t, ensure_ascii=False) + "\n")
+
+    return stats
+
+
+# The columns a human fills in. Everything else on a sheet is machine-written,
+# so everything else is what a redraw is allowed to be compared against.
+EDGE_CODER_FIELDS = ("verdict", "correct_relation", "correct_counterparty",
+                     "coder", "coder_note")
+PASSAGE_CODER_FIELDS = ("ties_stated", "ties_found", "ties_missed",
+                        "passage_relational", "coder", "notes")
+
+SHEETS = (
+    ("aalam_sample_edges.csv", EDGE_SHEET_FIELDS, EDGE_CODER_FIELDS, "coding_id"),
+    ("aalam_sample_passages.csv", PASSAGE_SHEET_FIELDS, PASSAGE_CODER_FIELDS,
+     "coding_id"),
+)
+
+
+def _cell(v) -> str:
+    """A sheet cell as text. Deliberately not ``str(v or "")``: a count of zero
+    is a fact the coder was shown, and folding it to the empty string would
+    report every uncoded passage as drift."""
+    return "" if v is None else str(v)
+
+
+def _coded_sheets() -> list[tuple[Path, int]]:
+    """Which committed sheets already carry a coder's work, and how much."""
+    out = []
+    for name, _fields, coder_fields, _key in SHEETS:
+        path = GOLD / name
+        if not path.exists():
+            continue
+        with path.open(encoding="utf-8") as fh:
+            n = sum(1 for r in csv.DictReader(fh)
+                    if any((r.get(c) or "").strip() for c in coder_fields))
+        if n:
+            out.append((path, n))
+    return out
+
+
+DRIFT_LEDGER = "aalam_coding_drift.csv"
+DRIFT_FIELDS = ["sheet", "coding_id", "column", "coded_value", "current_value",
+                "assessment", "note"]
+
+
+def _load_drift_ledger() -> dict[tuple[str, str, str], dict]:
+    """Drift between the coded sheets and the current pipeline, acknowledged.
+
+    A coded sheet is the one artefact in this repository that no rebuild can
+    reproduce, so when the extractors improve the sheets do not follow. Two
+    wrong answers are available: rewrite the machine columns, which destroys
+    the record of what the coder actually judged and would silently turn a
+    `wrong_relation` verdict into a row that looks like it was always right;
+    or drop the check, which lets the sample itself drift unnoticed.
+
+    This is the third: each known divergence is pinned with both values, so
+    the guard still fails on anything new or on any further movement of a row
+    already listed, and clearing an entry means recoding that row deliberately.
+    """
+    path = GOLD / DRIFT_LEDGER
+    if not path.exists():
+        return {}
+    with path.open(encoding="utf-8") as fh:
+        return {(r["sheet"], r["coding_id"], r["column"]): r
+                for r in csv.DictReader(fh)
+                if r.get("sheet") and not r["sheet"].startswith("#")}
+
+
+def verify(n_edges: int = DEFAULT_EDGES, n_passages: int = DEFAULT_PASSAGES,
+           *, strict: bool = False) -> dict:
+    """Check the committed sheets are still the sample the seed produces.
+
+    The point of a seeded draw is that a reviewer can tell the sample was not
+    chosen after the results were seen. That only needs the draw repeated, not
+    the sheets rewritten, so this compares in memory and touches nothing.
+
+    Every machine-written column is compared, not just the row keys. A verdict
+    is a judgement about a specific quote shown to the coder; if the quote or
+    the extracted counts move underneath it, the verdict no longer applies to
+    what is in the table, and that is drift worth failing on.
+    """
+    edge_rows, passage_rows, passage_texts, stats = _sample(n_edges, n_passages)
+    drawn = {"aalam_sample_edges.csv": edge_rows,
+             "aalam_sample_passages.csv": passage_rows}
+    problems: list[str] = []
+    ledger = _load_drift_ledger()
+    acknowledged: list[tuple[str, str, str]] = []
+
+    for name, fields, coder_fields, key in SHEETS:
+        path = GOLD / name
+        if not path.exists():
+            problems.append(f"{name}: missing; run `gold draw` to create it")
+            continue
+        with path.open(encoding="utf-8") as fh:
+            have = list(csv.DictReader(fh))
+        want = drawn[name]
+        compared = [f for f in fields if f not in coder_fields]
+
+        have_keys = [r.get(key, "") for r in have]
+        want_keys = [r[key] for r in want]
+        if have_keys != want_keys:
+            gone = sorted(set(want_keys) - set(have_keys))
+            extra = sorted(set(have_keys) - set(want_keys))
+            problems.append(
+                f"{name}: the draw selected {len(want_keys)} row(s), the sheet "
+                f"holds {len(have_keys)}"
+                + (f"; not in the sheet: {gone[:5]}" if gone else "")
+                + (f"; not in the draw: {extra[:5]}" if extra else ""))
+            continue
+
+        for h, w in zip(have, want):
+            for f in compared:
+                a, b = _cell(h.get(f)), _cell(w.get(f))
+                if a == b:
+                    continue
+                cid = _cell(h.get(key))
+                pinned = ledger.get((name, cid, f))
+                # Pinned with both values, so a row that moves again is not
+                # covered by the entry that described its last move.
+                if (pinned and pinned["coded_value"] == a
+                        and pinned["current_value"] == b):
+                    acknowledged.append((name, cid, f))
+                    continue
+                problems.append(
+                    f"{name}: row {cid} column {f} drifted\n"
+                    f"    sheet:   {a[:120]!r}\n"
+                    f"    current: {b[:120]!r}"
+                    + (f"\n    (the ledger pins a different pair for this "
+                       f"cell: {pinned['coded_value'][:60]!r} -> "
+                       f"{pinned['current_value'][:60]!r}; it moved again)"
+                       if pinned else
+                       "\n    not in the drift ledger: either recode the row "
+                       f"or pin it in gold/{DRIFT_LEDGER}"))
+
+    texts_path = GOLD / "aalam_sample_texts.jsonl"
+    if not texts_path.exists():
+        problems.append("aalam_sample_texts.jsonl: missing")
+    else:
+        with texts_path.open(encoding="utf-8") as fh:
+            have_texts = [json.loads(line) for line in fh if line.strip()]
+        if have_texts != passage_texts:
+            problems.append(
+                "aalam_sample_texts.jsonl: the passages a coder read are not "
+                f"the ones the draw produces ({len(have_texts)} committed, "
+                f"{len(passage_texts)} drawn)")
+
+    # A ledger entry whose drift has gone means the row now agrees with the
+    # pipeline again. Left in place it would quietly excuse a future change to
+    # the same cell, so it is a failure until it is removed.
+    for keyed in sorted(set(ledger) - set(acknowledged)):
+        problems.append(
+            f"{keyed[0]}: row {keyed[1]} column {keyed[2]} is pinned in "
+            f"gold/{DRIFT_LEDGER} but no longer drifts; delete the entry")
+
+    if problems:
+        print("  the committed gold sample no longer matches the corpus:")
+        for p in problems[:20]:
+            print(f"    - {p}")
+        if len(problems) > 20:
+            print(f"    ... and {len(problems) - 20} more")
+        raise SystemExit(1)
+
+    if acknowledged:
+        rows = sorted({(s, c) for s, c, _f in acknowledged})
+        print(f"  {len(acknowledged)} acknowledged drift(s) over "
+              f"{len(rows)} coded row(s); see gold/{DRIFT_LEDGER}:")
+        for name, cid in rows:
+            cols = sorted(f for s, c, f in acknowledged
+                          if (s, c) == (name, cid))
+            note = ledger[(name, cid, cols[0])].get("assessment", "")
+            print(f"    - {cid} ({', '.join(cols)}) {note}")
+        if strict:
+            print("  --strict: acknowledged drift is a failure. Recode the "
+                  "rows above and clear the ledger.")
+            raise SystemExit(1)
+
+    coded = dict(_coded_sheets())
+    stats["sheets_verified"] = len(SHEETS)
+    stats["coded_rows_intact"] = sum(coded.values())
+    stats["acknowledged_drift"] = len(acknowledged)
+    return stats
 
 
 def _instructions() -> str:
@@ -275,6 +493,23 @@ Put your initials in `coder`. Leave a row blank rather than guessing; a blank
 row is excluded, a guessed one corrupts the estimate.
 
 When finished, run `python -m aalam.gold score`.
+
+## Rows the pipeline has changed since they were coded
+
+Your verdicts cannot be regenerated, so the extractors are allowed to improve
+without the sheets being rewritten underneath them. Where a sampled row has
+since moved, the divergence is recorded in `aalam_coding_drift.csv` with both
+the value you were shown and the value the pipeline now produces, and the
+score report lists the affected rows under "Coding currency".
+
+Some of those entries are bookkeeping — an organisation's name gaining its
+head-word — and some are open questions flagged `NEEDS RECODING`, where the
+register no longer draws a distinction your note relied on. Those are worth
+your attention on a second pass; start there.
+
+`python -m aalam.gold verify` checks the sample is still the one the seed
+draws. It does not rewrite the sheets, and `draw` refuses to run over coded
+sheets without `--force`, so neither can cost you your work.
 """
 
 
@@ -331,6 +566,44 @@ def score() -> dict:
     for v, k in verdicts.most_common():
         lines.append(f"| `{v}` | {k} | {k / len(judged):.1%} |")
     lines.append("")
+
+    # The precision figure is a judgement about rows as the coder saw them.
+    # Where the pipeline has since moved a row, the figure is measuring the old
+    # row, and the direction of the resulting bias is knowable, so say it here
+    # rather than let the number stand unqualified.
+    ledger = _load_drift_ledger()
+    if ledger:
+        stale = defaultdict(list)
+        for (sheet, cid, col), r in ledger.items():
+            if sheet == "aalam_sample_edges.csv":
+                stale[cid].append((col, r))
+        adopted = sorted(
+            cid for cid, cols in stale.items()
+            if any(c == "relation" for c, _r in cols)
+            and any((e.get("correct_relation") or "").strip()
+                    == dict(cols)["relation"]["current_value"]
+                    for e in edges if e["coding_id"] == cid))
+        lines += [
+            "## Coding currency", "",
+            f"{len(stale)} of the {len(edges)} sampled ties have changed in the "
+            "pipeline since they were coded, so the verdict above describes the "
+            "row as it then stood. Each divergence is pinned with both values "
+            f"in `gold/{DRIFT_LEDGER}`; the sample itself is unchanged.", "",
+        ]
+        if adopted:
+            lines += [
+                f"**The precision figure is a lower bound.** On {len(adopted)} "
+                f"row(s) ({', '.join(adopted)}) the pipeline has adopted the "
+                "correction the coder wrote in `correct_relation`, so a tie "
+                "that is now right is still scored as an error here. Recoding "
+                "those rows can only raise precision, never lower it.", "",
+            ]
+        lines += ["| row | columns | assessment |", "| --- | --- | --- |"]
+        for cid in sorted(stale):
+            cols = ", ".join(f"`{c}`" for c, _r in sorted(stale[cid]))
+            note = sorted(stale[cid])[0][1].get("assessment", "")
+            lines.append(f"| `{cid}` | {cols} | {note} |")
+        lines.append("")
 
     for label, key in (("layer", "layer"), ("extractor", "extractor")):
         groups = defaultdict(list)
@@ -416,13 +689,23 @@ def _write(path: Path, rows: list[dict], fields: list[str]) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("command", choices=["draw", "score"])
+    ap.add_argument("command", choices=["draw", "verify", "score"])
     ap.add_argument("-n", "--edges", type=int, default=DEFAULT_EDGES,
                     help="target number of ties to sample for precision")
     ap.add_argument("-p", "--passages", type=int, default=DEFAULT_PASSAGES,
                     help="target number of passages to sample for recall")
+    ap.add_argument("--force", action="store_true",
+                    help="redraw even if the sheets are coded, discarding the "
+                         "coding")
+    ap.add_argument("--strict", action="store_true",
+                    help="verify: treat ledgered drift as a failure too")
     args = ap.parse_args(argv)
-    stats = draw(args.edges, args.passages) if args.command == "draw" else score()
+    if args.command == "draw":
+        stats = draw(args.edges, args.passages, force=args.force)
+    elif args.command == "verify":
+        stats = verify(args.edges, args.passages, strict=args.strict)
+    else:
+        stats = score()
     for k, v in stats.items():
         print(f"  {k:22} {v}")
     return 0

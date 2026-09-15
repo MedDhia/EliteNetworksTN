@@ -18,6 +18,21 @@ Ties asserted where the text states none: **2**.
 | `wrong_counterparty` | 1 | 0.5% |
 | `unclear` | 1 | 0.5% |
 
+## Coding currency
+
+6 of the 206 sampled ties have changed in the pipeline since they were coded, so the verdict above describes the row as it then stood. Each divergence is pinned with both values in `gold/aalam_coding_drift.csv`; the sample itself is unchanged.
+
+**The precision figure is a lower bound.** On 1 row(s) (E0175) the pipeline has adopted the correction the coder wrote in `correct_relation`, so a tie that is now right is still scored as an error here. Recoding those rows can only raise precision, never lower it.
+
+| row | columns | assessment |
+| --- | --- | --- |
+| `E0031` | `counterparty_name` | same body, shorter register form |
+| `E0073` | `counterparty_name` | same body, head-word added |
+| `E0095` | `counterparty_kind`, `counterparty_name` | NEEDS RECODING: institute vs association |
+| `E0175` | `relation` | pipeline adopted this coder's correction |
+| `E0177` | `counterparty_kind` | cosmetic for this verdict |
+| `E0182` | `counterparty_kind`, `counterparty_name` | NEEDS RECODING: school vs association |
+
 ### Precision by layer
 
 | layer | n | precision | 95% CI |
