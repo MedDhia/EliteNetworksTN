@@ -105,7 +105,57 @@ Truncation cuts the other way here and is the honest caveat: lost ties remove
 triangles, so the observed closure is a floor. It would have to be several
 times higher to change the reading.
 
-## 9. Rodovid is a user-edited wiki
+One refinement, from the dated series in
+[`CODEBOOK-rodovid.md`](CODEBOOK-rodovid.md): the 1.00x is an average over two
+and a half centuries, and it is not flat underneath. Against the same
+degree-preserving null, closure reaches 2.10 in the 1875 cohort and 2.28 in the
+1900 one before falling back to 1.0 from 1950. "The elite marries widely rather
+than in circles" holds for the network as a whole and for every generation
+except that one half-century.
+
+## 9. The dates are derived, and the derivation has a direction
+
+Everything in `alliance_panel.csv` and `network_evolution.csv` rests on dates
+that are not in the source. Four things follow, in descending order of how much
+they should worry you.
+
+**A period is a birth cohort, not a wedding date.** `cohort_year` is the mean
+birth year of the two spouses. The wedding follows roughly a generation later —
+the measured parent-child gap is 31 years — so a couple in the 1900 bin married
+around 1925–1935. Any alignment of these periods with a political date is
+off by that much before the estimation error is counted. **Do not read the
+periods against events.** The build deliberately does not add the offset,
+because a constant would give the series a precision it has not got.
+
+**The dated alliances are not a random sample of the alliances.** 86% of
+couples can be dated, and the 14% that cannot are the thinly recorded ones: no
+birth year, no dated relative, often no tie at all. Those are systematically
+the smaller and more peripheral families. Every count in the dated network is
+therefore a floor that is *lower for peripheral families than for central
+ones*, which biases concentration measures upward. The same caution applies to
+the rise in the number of families over time: it is partly the field growing
+and partly the record improving, and nothing here separates them.
+
+**Error grows with distance from a recorded year.** Half the dated people are
+three or more kinship hops from any observed birth year, where MAE runs 9.7 to
+14.7 years. At a 25-year bin width this moves couples between adjacent periods
+but not further: 95% of held-out people land within one bin. Filter on
+`quality` if a finding depends on placement — `observed` and `kin1` are 336 and
+974 of the 3,592 dated couples.
+
+**The period boundaries are arbitrary.** 25 years is chosen because it is the
+resolution the validation supports, not because Tunisian elite generations turn
+over every 25 years. A finding that appears or disappears when the bins move
+is a finding about the bins.
+
+## 10. The last two periods are cut off by the calendar
+
+A couple binned at 2000 was born 2000–2024 and will marry around 2030. The
+`w_` (windowed) columns for 2000 and 2025 therefore measure a marriage market
+that has not happened yet, not one that collapsed — `window_complete` is 0 on
+those rows and the figures stop at 1975. The cumulative columns are unaffected.
+
+## 11. Rodovid is a user-edited wiki
 
 Coverage follows what contributors chose to enter: deep on a few Tunis
 families, thin elsewhere, and dates and offices are as reliable as whoever

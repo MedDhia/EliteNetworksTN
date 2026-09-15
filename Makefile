@@ -179,10 +179,10 @@ aalam-test:       ## parser and normalisation tests
 # about six minutes, so it is out of the default chain and out of CI.
 RPY := PYTHONPATH=src python3
 
-.PHONY: rodovid rodovid-build rodovid-families rodovid-audit rodovid-figures \
-        rodovid-test
+.PHONY: rodovid rodovid-build rodovid-families rodovid-audit rodovid-dynamic \
+        rodovid-validate rodovid-figures rodovid-figures-dynamic rodovid-test
 
-rodovid: rodovid-build rodovid-families rodovid-audit
+rodovid: rodovid-build rodovid-families rodovid-audit rodovid-dynamic
 
 rodovid-build:    ## score every person in the export, keep the Tunisians
 	$(RPY) -m rodovid.build
@@ -190,7 +190,13 @@ rodovid-families: ## collapse the kinship graph to marriage alliances between fa
 	$(RPY) -m rodovid.families
 rodovid-audit:    ## re-measure what the network figures may be read to say
 	$(RPY) -m rodovid.audit
-rodovid-figures:  ## the three network plates (~6 min; needs matplotlib)
+rodovid-dynamic:  ## date every marriage, and measure the network period by period
+	$(RPY) -m rodovid.dynamic
+rodovid-validate: ## the dating error, against held-out birth years -> docs/
+	$(RPY) -m rodovid.dynamic --validate
+rodovid-figures:  ## the three static network plates (~6 min; needs matplotlib)
 	$(RPY) -m rodovid.figures
-rodovid-test:     ## filter and family-collapse unit tests
+rodovid-figures-dynamic: ## the three plates over time (~4 min; needs matplotlib)
+	$(RPY) -m rodovid.figures_dynamic
+rodovid-test:     ## filter, family-collapse and dating unit tests
 	$(RPY) -m pytest tests/test_rodovid.py -q
